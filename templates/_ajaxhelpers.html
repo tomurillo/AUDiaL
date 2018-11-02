@@ -1,0 +1,247 @@
+{% macro load_script_root() %}
+
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+
+{% endmacro %}
+
+{% macro load_script() %}
+
+<script type=text/javascript>
+  $(function() {
+    $('button#submit-retrieve').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/_retrieve_values', {
+    	  current_graphic: $('input[name="currentGraphic"]').val(),
+    	  to_count: $('input[name="inputCount"]').val(),
+    	  to_retrieve: $('input[name="inputRetrieve"]').val()
+      }, function(data) {
+        $("#query-result").empty().append(data.result);
+      });
+      return false;
+    });
+    
+    $('button#submit-filter').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_filter', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            to_filter: $('input[name="inputFilter"]').val(),
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+        });
+        return false;
+      });
+    
+    $('button#submit-derivedValue').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_derived_value', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            query: $('input[name="inputDerivedVal"]').val(),
+            queryExtreme: $('input[name="inputExtreme"]').val(),
+            querySort: $('input[name="inputSort"]').val(),
+            queryRange: $('input[name="inputRange"]').val(),
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+        });
+        return false;
+      });
+    
+    
+    $('button#submit-overview').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_overview', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+        });
+        return false;
+      });
+    
+    $('button#submit-next').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'next',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-previous').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'previous',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-up').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'up',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-down').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'down',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-first').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'first',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-last').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'last',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-highest').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'highest',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val( data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-lowest').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'lowest',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-nav-reset').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'reset',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-where').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'where',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-set-home').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'sethome',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-gotohome').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_navigate', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            action: 'gotohome',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+          $('#inputCurBarTags').val(data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-curBarTags').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_add_user_tags', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            user_tags: $('input[name="inputCurBarTags"]').val(),
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $('#inputCurBarTags').attr('placeholder', data.usertags);
+        });
+        return false;
+      });
+    
+    $('button#submit-intention').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            force_exec: 'no',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $("#intention-result").html(data.intentions)
+        });
+        return false;
+      });
+    
+    $('button#submit-calc-intention').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
+            current_graphic: $('input[name="currentGraphic"]').val(),
+            force_exec: 'yes',
+        }, function(data) {
+          $("#query-result").empty().append(data.result);
+          $("#intention-result").html(data.intentions)
+        });
+        return false;
+      });
+    
+     $('button').keyup(function(e) {
+    	 if (e.keyCode == 13) {
+    		 $("#query-result").empty().append("Your query is being processed...");
+         }
+      });
+     
+     $('button').mouseup(function() {
+             $("#query-result").empty().append("Your query is being processed...");
+      });
+    
+  });
+</script>
+
+{% endmacro %}
