@@ -74,7 +74,7 @@ class Controller(object):
         self.q = self.NL.parseQuery(what)  # Get POCs
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
         self.q = preConsolidateQuery(self.q, self.o)
-        # todo argh continue
+        # todo continue
 
 
     def retrieveValueSimple(self, what):
