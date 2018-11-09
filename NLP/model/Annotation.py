@@ -12,8 +12,9 @@ class Annotation(object):
         self.inOntology = False  # Does this annotation have an associated OC?
         self.isSynonym = False  # Whether the found OC is a synonym of the annotation
         self.text = ''  # Actual text found in the ontology, if any
-        # Types of ontology concept (class, instance, property, ...) found in the ontology (keys) and their URIs (vals)
-        self.oc_type = {}
+        self.oc_type = {}  # Types of ontology concept (class, instance, property, ...) found in the ontology (keys)
+                           # and their URIs (vals)
+        self.extra = {}  # Extra information e.g. classUri of instance, domain and range of property.
 
     def __eq__(self, other):
         if type(other) is not Annotation:

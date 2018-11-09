@@ -54,6 +54,7 @@ class Mapper(object):
                     ann.inOntology = True
                     ann.oc_type = types_found
                     ann.text = syns[0]  # Ignore other synonyms for now
+            self.updateAnnotationExtras(ann, o)
         q.annotations = clean_anns
         return q
 
@@ -122,20 +123,6 @@ class Mapper(object):
         return types
 
 
-    def synonymLookUp(self, o, ann, text_type='all'):
-        """
-        Search for synonyms of an annotation containing a noun, adjective or adverb in the ontology
-        :param o: UpperOntology (or subclass) instance
-        :param ann: Annotation instance
-        :param text_type: What to search for: 'individual', 'class', 'property', 'value', or 'all' (default)
-        :return: Tuple: (synonym (string), type(s)) if something of the given type exists in o; False otherwise
-        """
-        types = False
-        if o and ann:
-            pass
-        return types
-
-
     def tokensToAnnotations(self, query, preferLonger=False):
         """
         Converts tokens (subtrees) of a user query to annotations to be searched in the ontology
@@ -195,6 +182,30 @@ class Mapper(object):
             return removeOverlappingAnnotations(annotations)
         else:
             return annotations
+
+
+    def updateAnnotationExtras(self, ann, o):
+        """
+        Update the extra features of an annotation according to its ontological type
+        :param ann: A previously looked-up annotation
+        :param o: Ontology instance
+        """
+        if ann.inOntology:
+            if o_c.OTYPE_IND in ann.oc_type:
+                #  Add class URIs of instance to Annotation
+                ind_uri = o.stripNamespace(ann.oc_type[o_c.OTYPE_IND])
+                class_uris = o.getClassOfElement(ind_uri, stripns=False)
+                if class_uris:
+                    ann.extra['classUri'] = class_uris
+            if o_c.OTYPE_OPROP in ann.oc_type or o_c.OTYPE_DTPROP in ann.oc_type:
+                p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_OPROP])
+                #  Add property's range and domain to Annotation
+                dom = o.domainOfProperty(p_name, stripns=False)
+                if dom:
+                    ann.extra['domain'] = dom
+                ran = o.rangeOfProperty(p_name, stripns=False)
+                if ran:
+                    ann.extra['range'] = ran
 
 
     def _isTokenIgnored(self, ptree):

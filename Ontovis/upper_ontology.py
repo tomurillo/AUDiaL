@@ -1,6 +1,6 @@
 import rdflib
 from rdflib.term import URIRef
-from rdflib import RDF, Namespace, Literal, XSD
+from rdflib import RDF, RDFS, Namespace, Literal, XSD
 from rdflib.store import NO_STORE, VALID_STORE
 import os
 import bsddb
@@ -251,8 +251,8 @@ class UpperOntology(object):
     def getInstances(self, entityName, ns=None):
         """
         Returns a list of instances of the given class
-        @param entityName: name of a class in the ontology
-        @return list<string>: a list of instance names
+        :param entityName: name of a class in the ontology
+        :return list<string>: a list of instance names
         """
         if not ns:
             ns = self.VIS_NS
@@ -302,9 +302,9 @@ class UpperOntology(object):
         """
         Returns the value of a functional property. An exception is raised
         if more than one (s, p, _) triples are found
-        @param s: name of the subject
-        @param p: name of the (functional) property
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the (functional) property
+        :param ns: namespace, None for default visualization NS
         """
         if not ns:
             ns = self.VIS_NS
@@ -315,10 +315,12 @@ class UpperOntology(object):
             val = self.graph.value(subjectURI, propertyURI)
         return self.stripNamespace(val)
 
-    def getClassOfElement(self, element, ns=None):
+    def getClassOfElement(self, element, stripns=True, ns=None):
         """
         Return the Entities an individual belongs to; an empty list if none found
         :param element: and instace name
+        :param stripns: boolean; whether to remove the namespace from the results
+        :param ns: namespace, None for default visualization NS
         :return: a list with the names of the classes the element belongs to
         """
         classes = []
@@ -329,8 +331,10 @@ class UpperOntology(object):
             propertyURI = URIRef("%s#type" % c.RDF_NS)
             objects = self.graph.objects(subjectURI, propertyURI)
             namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
-            classes = [self.stripNamespace(o) for o in objects
-                       if o != namedIndividualURI]
+            if stripns:
+                classes = [self.stripNamespace(o) for o in objects if o != namedIndividualURI]
+            else:
+                classes = [o for o in objects if o != namedIndividualURI]
         return classes
 
     def getSubclasses(self, parentClass, ns=None):
@@ -384,8 +388,8 @@ class UpperOntology(object):
     def getConstituentElements(self, element):
         """
         Returns the elementary objects that make up the given element
-        @param element: an element's name
-        @return a list of elementary object instance names
+        :param element: an element's name
+        :return a list of elementary object instance names
         """
         subelements = set()
         if element:
@@ -404,8 +408,8 @@ class UpperOntology(object):
         """
         Returns the Composite Graphic Objects containing the given Elementary
         Graphic Object
-        @param element: the name of an Elementary_GO instance
-        @return list<string>: the name of all Composite_GO instances that
+        :param element: the name of an Elementary_GO instance
+        :return list<string>: the name of all Composite_GO instances that
         contain the element
         """
         containers = set(self.getInstances(self.SyntacticEntity.COMPOSITE_GO))
@@ -430,8 +434,8 @@ class UpperOntology(object):
     def getRolesOfElement(self, element):
         """
         Returns the roles of a given element (has_syntactic_role)
-        @param element: an element's name
-        @return a list with role names
+        :param element: an element's name
+        :return a list with role names
         """
         return self.getObjects(element,
                                self.SyntacticProperty.HAS_SYNTACTIC_ROLE)
@@ -439,11 +443,11 @@ class UpperOntology(object):
     def elementHasRole(self, element, role, type="syntactic", ns=None):
         """
         Returns whether the given element has the given syntactic role
-        @param element: an element's name
-        @param role: an role's name. "any" can be used, in which case True
+        :param element: an element's name
+        :param role: an role's name. "any" can be used, in which case True
         will be returned (useful as a default in filters)
-        @param type: "syntactic" or "informational" role
-        @return TRUE if the triple (element, property, role) exists;
+        :param type: "syntactic" or "informational" role
+        :return TRUE if the triple (element, property, role) exists;
                 FALSE otherwise
         """
         if role == "any":
@@ -461,7 +465,7 @@ class UpperOntology(object):
         """
         Returns a generator of elements with a given text (has_text
         property subjects)
-        @param text: the text to find in the label
+        :param text: the text to find in the label
         """
         return self.getSubjects(self.SytacticDataProperty.HAS_TEXT,
                                text, propertyType="datatype")
@@ -469,8 +473,8 @@ class UpperOntology(object):
     def getText(self, element):
         """
         Returns the text associated to a given element
-        @param name: the name of the element
-        @return string: the text of the element or None
+        :param name: the name of the element
+        :return string: the text of the element or None
         """
         text = None
         if element:
@@ -482,8 +486,8 @@ class UpperOntology(object):
     def getOrientation(self, element):
         """
         Returns the named orientation of the object (if any)
-        @param name: the name of the element
-        @return string: the named orientation e.g. Vertical_Orientation
+        :param name: the name of the element
+        :return string: the named orientation e.g. Vertical_Orientation
         """
         o = None
         if element:
@@ -501,8 +505,8 @@ class UpperOntology(object):
     def getLabelsWithText(self, labelText):
         """
         Returns a list with the label instances that have the given text
-        @param labelText: the text of the label
-        @return list<string>: a list of instance names
+        :param labelText: the text of the label
+        :return list<string>: a list of instance names
         """
         elements = []
         if labelText:
@@ -516,8 +520,8 @@ class UpperOntology(object):
         """
         Returns a list with all elements labeled by the labels containing the
         text passed as a parameter
-        @param labelText: the text of the label; NOT the label element's name
-        @return list<string>: a list of instance names
+        :param labelText: the text of the label; NOT the label element's name
+        :return list<string>: a list of instance names
         """
         elements = []
         if labelText:
@@ -532,8 +536,8 @@ class UpperOntology(object):
     def getLabelsOfElement(self, element):
         """
         Returns a list of all the labels assigned to the given element
-        @param element: the name of an instance
-        @return list<string>: a list of label instance names
+        :param element: the name of an instance
+        :return list<string>: a list of label instance names
         """
         labels = []
         if element:
@@ -544,8 +548,8 @@ class UpperOntology(object):
     def getSVGElements(self, element):
         """
         Returns the constituent SVG elements of an instance
-        @param element (string): an instance name
-        @return list<string>: a list of SVGElement IDs
+        :param element (string): an instance name
+        :return list<string>: a list of SVGElement IDs
         """
         elements = []
         if element:
@@ -556,8 +560,8 @@ class UpperOntology(object):
     def getElementsWithSVGElement(self, SVGElement):
         """
         Returns the instances associated with the given SVG element
-        @param SVGElement (string): the ID of a SVG element (path, text...)
-        @return list<string>: a list of entity individual names
+        :param SVGElement (string): the ID of a SVG element (path, text...)
+        :return list<string>: a list of entity individual names
         """
         elements = []
         if SVGElement:
@@ -569,8 +573,8 @@ class UpperOntology(object):
         """
         Returns the instances that satisfy the condition that all their
         constituent SVG elements are within the given ones
-        @param SVGElements list<string>: SVG IDs
-        @return list<string>: a list of entity individual names
+        :param SVGElements list<string>: SVG IDs
+        :return list<string>: a list of entity individual names
         """
         elements = []
         if SVGElements:
@@ -589,11 +593,11 @@ class UpperOntology(object):
         """
         Returns GOs (with a given role) instance names belonging to instances
         of the given graphic relation
-        @param relation: name of the Graphic Relation class
-        @param roles: a list of syntactic roles to filter the output objects
+        :param relation: name of the Graphic Relation class
+        :param roles: a list of syntactic roles to filter the output objects
         (optional), "any" for all.
-        @param type: the type of role: syntactic (default) or informational
-        @return dict<string, list<string>> Keys are relation instance names,
+        :param type: the type of role: syntactic (default) or informational
+        :return dict<string, list<string>> Keys are relation instance names,
         values are lists of GO instances belonging to the relation
         """
         elements = defaultdict(list)
@@ -619,8 +623,8 @@ class UpperOntology(object):
         Returns the navigation properties of a given node and their current
         values. If the property has a boolean range, it returns only those
         with objects set to True.
-        @param node: the instance name of a graphic object
-        @return dict<string, mixed>: key is the property name, value is the
+        :param node: the instance name of a graphic object
+        :return dict<string, mixed>: key is the property name, value is the
         object of the (node, p, value) triple of the ontology converted to
         its Python type
         """
@@ -636,7 +640,7 @@ class UpperOntology(object):
     def getPreviousNodes(self):
         """
         Return the instance name of the previously visited graphic elements
-        @return list<string>: instance name of previous graphic objects in the
+        :return list<string>: instance name of previous graphic objects in the
         ontology according to the IS_PREVIOUS_VISITED datatype property
         """
         pPrev = self.NavigationDataProperty.IS_PREVIOUS_VISITED
@@ -646,8 +650,8 @@ class UpperOntology(object):
         """
         Returns whether the given element belong to any of the previously
         visited graphic elements
-        @param node: instance name of a graphic object
-        @return boolean: whether 'node' was previously selected by the user
+        :param node: instance name of a graphic object
+        :return boolean: whether 'node' was previously selected by the user
         while navigating the graphic.
         """
         isprev = False
@@ -658,7 +662,7 @@ class UpperOntology(object):
     def getCurrentNodes(self):
         """
         Return the instance name of the currently selected graphic elements
-        @return list<string>: instance name of current graphic objects in the
+        :return list<string>: instance name of current graphic objects in the
         ontology according to the IS_CURRENT datatype property
         """
         return self.getNavigationNodes(self.NavigationDataProperty.IS_CURRENT)
@@ -667,8 +671,8 @@ class UpperOntology(object):
         """
         Returns whether the given element belong to any of the currently being
         visited graphic elements
-        @param node: instance name of a graphic object
-        @return boolean: whether 'node' is currently selected by the user
+        :param node: instance name of a graphic object
+        :return boolean: whether 'node' is currently selected by the user
         while navigating the graphic.
         """
         iscur = False
@@ -680,7 +684,7 @@ class UpperOntology(object):
         """
         Set the given elements as the current ones, and set the previous current
         elements as the previous visited ones
-        @param elms iterable: the new current element instance names
+        :param elms iterable: the new current element instance names
         """
         pCurr = self.NavigationDataProperty.IS_CURRENT
         oldCurrent = self.getNavigationNodes(pCurr)
@@ -694,7 +698,7 @@ class UpperOntology(object):
         """
         Return the instance name of the currently chosen graphic elements as
         home nodes
-        @return list<string>: instance names of home node graphic objects in the
+        :return list<string>: instance names of home node graphic objects in the
         ontology according to the IS_HOME_NODE datatype property
         """
         return self.getNavigationNodes(self.NavigationDataProperty.IS_HOME_NODE)
@@ -703,8 +707,8 @@ class UpperOntology(object):
         """
         Returns whether the given element belong to any of the home nodes set
         by the user
-        @param node: instance name of a graphic object
-        @return boolean: whether 'node' is any of the home nodes set by the user
+        :param node: instance name of a graphic object
+        :return boolean: whether 'node' is any of the home nodes set by the user
         """
         ishome = False
         if node:
@@ -714,7 +718,7 @@ class UpperOntology(object):
     def setHomeNodes(self, elms):
         """
         Set the given elements as the current home nodes
-        @param elms iterable: the new home node element instance names
+        :param elms iterable: the new home node element instance names
         """
         self.setNavigationNodes(self.NavigationDataProperty.IS_HOME_NODE, elms)
 
@@ -722,8 +726,8 @@ class UpperOntology(object):
         """
         Return the instance name of the graphic elements with the given
         navigation property set to True
-        @param p: the name of a datatype property with boolean range
-        @return list<string>: instance names of graphic elements with the given
+        :param p: the name of a datatype property with boolean range
+        :return list<string>: instance names of graphic elements with the given
         property set to True
         """
         return self.getSubjects(p, True, 'datatype', XSD.boolean)
@@ -733,8 +737,8 @@ class UpperOntology(object):
         Set the given elements as having the given datatype boolean property (any
         of the properties used for navigation tasks), and deletes all previous
         assertions of the property.
-        @param p: the name of a datatype property with boolean range
-        @param nodes iterable: element instance names to be used as property
+        :param p: the name of a datatype property with boolean range
+        :param nodes iterable: element instance names to be used as property
         subjects
         """
         if len(nodes) > 0:
@@ -752,8 +756,8 @@ class UpperOntology(object):
     def getUserLabels(self, element):
         """
         Returns the user-defined tags for the given element
-        @param element: an instance name
-        @return string: the user-defined information for the element, an empty
+        :param element: an instance name
+        :return string: the user-defined information for the element, an empty
         string if not found
         """
         ul = ""
@@ -765,9 +769,9 @@ class UpperOntology(object):
     def setUserLabels(self, elements, userTags):
         """
         Adds the given string to the given elements as user-defined labels
-        @param iterable<string> or string: a list of graphic object instance
+        :param iterable<string> or string: a list of graphic object instance
         names or a single element name
-        @param string: userTags: the user data to add to the elements. The
+        :param string: userTags: the user data to add to the elements. The
         string will be copied to all elements.
         """
         if elements and userTags:
@@ -781,8 +785,8 @@ class UpperOntology(object):
     def isLowLevelTask(self, task):
         """
         Returns whether the given task is a low-level task
-        @param task: a task instance name
-        @return boolean: True if the task is a low-level task, False otherwise
+        :param task: a task instance name
+        :return boolean: True if the task is a low-level task, False otherwise
         """
         return self.StructuralTask.STRUCTURAL_TASK in \
                                                 self.getClassOfElement(task)
@@ -790,8 +794,8 @@ class UpperOntology(object):
     def getTaskQuery(self, task):
         """
         Return the natural language description of a task
-        @param task: a task instance name
-        @return string: NL description of the task according to its HAS_QUERY
+        :param task: a task instance name
+        :return string: NL description of the task according to its HAS_QUERY
         property
         """
         q = None
@@ -803,8 +807,8 @@ class UpperOntology(object):
     def getTaskSpokenResult(self, task):
         """
         Return the natural language result of a task
-        @param task: a task instance name
-        @return string: NL description of the task's result according to its
+        :param task: a task instance name
+        :return string: NL description of the task's result according to its
         HAS_RESULT_SPOKEN property
         """
         q = None
@@ -816,8 +820,8 @@ class UpperOntology(object):
     def getTaskSummary(self, task):
         """
         Return the natural language summary of a high-level task
-        @param task: a task instance name
-        @return string: NL summary of the task according to its HAS_DESCRIPTION
+        :param task: a task instance name
+        :return string: NL summary of the task according to its HAS_DESCRIPTION
         property
         """
         q = None
@@ -829,9 +833,9 @@ class UpperOntology(object):
     def getLowLevelTasks(self, subtype='all'):
         """
         Return all low-level task instances of the given subtypes
-        @param subtype: a class name to return only taks belonging to that
+        :param subtype: a class name to return only taks belonging to that
         class; 'all' for all low-level tasks
-        @return list<string>: instance names of tasks in the ontology
+        :return list<string>: instance names of tasks in the ontology
         """
         tasks = []
         if subtype:
@@ -845,8 +849,8 @@ class UpperOntology(object):
     def getSubTasks(self, task):
         """
         Return the low-level tasks that make up a given high-level task
-        @param task: a composition or superimposition task instance name
-        @return dict<int, string>: keys are task order values; values are task
+        :param task: a composition or superimposition task instance name
+        :return dict<int, string>: keys are task order values; values are task
         instance names
         """
         subtasks = {}
@@ -862,7 +866,7 @@ class UpperOntology(object):
     def getIntentionTasks(self):
         """
         Return the task instances marked as the author's intention
-        @return list<string>: a list of task instance names
+        :return list<string>: a list of task instance names
         """
         p = self.TaskProperty.IS_INTENTION
         return self.getSubjects(p, True, 'datatype', XSD.boolean)
@@ -870,9 +874,9 @@ class UpperOntology(object):
     def getCoordinate(self, element, coor="x"):
         """
         Returns the chosen coordinate of a given element
-        @param element: the name of an instance in the ontology
-        @param coor: the coordinate; "x" (default) or "y"
-        @return float: the coordinate, False if not found
+        :param element: the name of an instance in the ontology
+        :param coor: the coordinate; "x" (default) or "y"
+        :return float: the coordinate, False if not found
         """
         coorRet = False
         if element:
@@ -945,36 +949,64 @@ class UpperOntology(object):
                     typesFound[o_c.OTYPE_DTPROP] = uri
         return typesFound
 
+    def domainOfProperty(self, prop, stripns=True, ns=None):
+        """
+        Returns the entity(ies) of the domain of the given property.
+        :param prop: Property to be tested
+        :param stripns: boolean; whether to remove the namespace from the results
+        :param ns: namespace, None for default visualization NS
+        :return: List of Entity(ies) with the domain of the given property.
+        """
+        if not ns:
+            ns = self.VIS_NS
+        subjectURI = URIRef("%s#%s" % (ns, prop))
+        objects = self.graph.objects(subjectURI, RDFS.domain)
+        return [self.stripNamespace(s) if stripns else s for s in objects]
+
+    def rangeOfProperty(self, prop, stripns=True, ns=None):
+        """
+        Returns the entity(ies) of the range of the given property.
+        :param prop: Property to be tested.
+        :param stripns: boolean; whether to remove the namespace from the results
+        :param ns: namespace, None for default visualization NS
+        :return: List of Entity(ies) with the range of the given property.
+        """
+        if not ns:
+            ns = self.VIS_NS
+        subjectURI = URIRef("%s#%s" % (ns, prop))
+        objects = self.graph.objects(subjectURI, RDFS.range)
+        return [self.stripNamespace(s) if stripns else s for s in objects]
+
     def addObjectPropertyTriple(self, s, p, o, ns = None):
         """
         Add a new object property to the ontology
-        @param s: name of the subject
-        @param p: name of the property
-        @param o: name of the object
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the property
+        :param o: name of the object
+        :param ns: namespace, None for default visualization NS
         """
         self.addTriple(s, p, o, type="object", ns=ns)
 
     def addDataTypePropertyTriple(self, s, p, o, datatype=None, ns=None):
         """
         Add a new object property to the ontology
-        @param s: name of the subject
-        @param p: name of the property
-        @param o: value of the object
-        @param dataype: a valid XSD datatype for the object, if relevant
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the property
+        :param o: value of the object
+        :param dataype: a valid XSD datatype for the object, if relevant
+        :param ns: namespace, None for default visualization NS
         """
         self.addTriple(s, p, o, "datatype", datatype, ns)
 
     def addTriple(self, s, p, o, type="object", datatype=None, ns=None):
         """
         Add a new triple to the ontology
-        @param s: name of the subject
-        @param p: name of the property
-        @param o: name or value of the object
-        @param type: "object" property or "datatype" property
-        @param datatype: a valid XSD datatype for the object, if relevant
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the property
+        :param o: name or value of the object
+        :param type: "object" property or "datatype" property
+        :param datatype: a valid XSD datatype for the object, if relevant
+        :param ns: namespace, None for default visualization NS
         """
         if not ns:
             ns = self.VIS_NS
@@ -994,21 +1026,21 @@ class UpperOntology(object):
                                      datatype=None, ns=None):
         """
         Removes datatype properties from the ontology
-        @param s: name of the subject
-        @param p: name of the property
-        @param o: name of the object
-        @param dataype: a valid XSD datatype for the object, if relevant
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the property
+        :param o: name of the object
+        :param dataype: a valid XSD datatype for the object, if relevant
+        :param ns: namespace, None for default visualization NS
         """
         self.removeTriple(s, p, o, "datatype", datatype, ns)
 
     def removeObjectPropertyTriple(self, s=None, p=None, o=None, ns=None):
         """
         Removes object properties from the ontology
-        @param s: name of the subject
-        @param p: name of the property
-        @param o: name of the object
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject
+        :param p: name of the property
+        :param o: name of the object
+        :param ns: namespace, None for default visualization NS
         """
         self.removeTriple(s, p, o, ns=ns)
 
@@ -1016,12 +1048,12 @@ class UpperOntology(object):
                                      datatype = None, ns=None):
         """
         Removes triples from the ontology.
-        @param s: name of the subject; None to remove all matching triples.
-        @param p: name of the property; None to remove all matching triples.
-        @param o: name or value of the object; None to remove all matching.
-        @param type: "object" property or "datatype" property
-        @param datatype: a valid XSD datatype for the object, if relevant
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the subject; None to remove all matching triples.
+        :param p: name of the property; None to remove all matching triples.
+        :param o: name or value of the object; None to remove all matching.
+        :param type: "object" property or "datatype" property
+        :param datatype: a valid XSD datatype for the object, if relevant
+        :param ns: namespace, None for default visualization NS
         """
         if not ns:
             ns = self.VIS_NS
@@ -1046,11 +1078,11 @@ class UpperOntology(object):
     def tripleExists(self, s, p, o, type="object", ns=None):
         """
         Returns whether a given triple exists
-        @param s: name of the triple's subject
-        @param p: name of the triple's property
-        @param o: name or value of the triple's object
-        @param type: "object" property or "datatype" property
-        @param ns: namespace, None for default visualization NS
+        :param s: name of the triple's subject
+        :param p: name of the triple's property
+        :param o: name or value of the triple's object
+        :param type: "object" property or "datatype" property
+        :param ns: namespace, None for default visualization NS
         """
         exists = False
         if not ns:
@@ -1068,9 +1100,9 @@ class UpperOntology(object):
     def addProperty(self, propertyName, type, ns=None):
         """
         Adds a new property to the ontology (n.b. NOT a property occurrence)
-        @param propertyName: Name of the property to be added
-        @param type: Type of the property ("object" or "datatype")
-        @param ns: namespace, None for default visualization NS
+        :param propertyName: Name of the property to be added
+        :param type: Type of the property ("object" or "datatype")
+        :param ns: namespace, None for default visualization NS
         """
         if not ns:
             ns = self.VIS_NS
@@ -1086,10 +1118,10 @@ class UpperOntology(object):
     def hasProperty(self, propertyName, type, ns=None):
         """
         Check whether a property exists in the ontology.
-        @param propertyName: Name of the property to be tested
-        @param type: Type of the property ("object" or "datatype")
-        @param ns: namespace, None for default visualization NS
-        @return: 'True' if the property with propertyName exists
+        :param propertyName: Name of the property to be tested
+        :param type: Type of the property ("object" or "datatype")
+        :param ns: namespace, None for default visualization NS
+        :return: 'True' if the property with propertyName exists
             in the ontology, 'False' otherwise
         """
         if not ns:
@@ -1105,8 +1137,8 @@ class UpperOntology(object):
     def stripNamespace(self, item):
         """
         Returns the name of the given item without the namespace prefix
-        @param item: an instance's name, with a NS prefix appended
-        @return string: the name without the NS prefix
+        :param item: an instance's name, with a NS prefix appended
+        :return string: the name without the NS prefix
         """
         if item:
             if '#' in item:
@@ -1116,8 +1148,8 @@ class UpperOntology(object):
     def itemEntityCategory(self, normalizedItem):
         """
         Tries to infer the kind of entity its argument belongs to
-        @param normalizedItem: A normalized single word
-        @return: a category (Main, Role, None...)
+        :param normalizedItem: A normalized single word
+        :return: a category (Main, Role, None...)
         """
         category = self.SyntacticEntity.NONE
         if normalizedItem:
@@ -1226,8 +1258,8 @@ class UpperOntology(object):
     def isNumber(self, n):
         """
         Checks whether the given string is a number
-        @param n: The string to be checked
-        @return boolean: True if the string can be converted to a float,
+        :param n: The string to be checked
+        :return boolean: True if the string can be converted to a float,
         False otherwise
         """
         try:
