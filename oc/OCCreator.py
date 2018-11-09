@@ -47,7 +47,7 @@ class OCCreator(object):
                     oe = OntologyObjectPropertyElement()
                     if 'domain' in annotation.extra:
                         oe.domain = annotation.extra['domain']
-                    if 'range' in annotation.extra:
+                    if 'range' in annotation.extra: 
                         oe.range = annotation.extra['range']
                 elif ann_type == o_c.OTYPE_DTPROP:
                     oe = OntologyDatatypePropertyElement()
