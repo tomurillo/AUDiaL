@@ -1,6 +1,7 @@
 import Ontovis.constants as o_c
 from NLP.model.OE import *
 
+
 class OCCreator(object):
     """
     Ontology Concept Creator
@@ -14,6 +15,7 @@ class OCCreator(object):
         """
         overlapped_anns = self.getOverlappedAnnotations(annotations)
         overlapped_oes = self.getOverlappedOntologyElements(overlapped_anns)
+        overlapped_by_text = self.getOverlappedOntologyElementsGroupByText(overlapped_oes)
 
 
     def getOverlappedOntologyElements(self, nested_annotations):
@@ -27,13 +29,10 @@ class OCCreator(object):
         for ann, overlapped_anns in nested_annotations.iteritems():
             oe_list = self.annotationToOntologyElements(ann)
             for ov_ann in overlapped_anns:
-                    ov_oe_list = self.annotationToOntologyElements(ov_ann)
+                 ov_oe_list = self.annotationToOntologyElements(ov_ann)
             for oe in oe_list:
-                oelements[oe] = []
-                for ov_oe in ov_oe_list:
-                    oelements[oe].append(ov_oe)
+                oelements[oe] = ov_oe_list
         return oelements
-
 
     def annotationToOntologyElements(self, annotation):
         """
@@ -75,7 +74,6 @@ class OCCreator(object):
                     oe_list.append(oe)
         return oe_list
 
-
     def getOverlappedAnnotations(self, annotations):
         """
         Returns which annotations are overlapped by other annotations
@@ -84,6 +82,7 @@ class OCCreator(object):
         are overlapped by the key
         """
         overlapped_anns = {}
+        added = set()
         i = 0
         while i < len(annotations):
             j = i + 1
@@ -96,9 +95,34 @@ class OCCreator(object):
                     overlapping, overlapped = ann2, ann1
                 else:
                     overlapping, overlapped = None, None
-                if overlapping and overlapped:
+                if overlapping and overlapped and overlapped not in added:
                     if overlapping not in overlapped_anns:
                         overlapped_anns[overlapping] = []
                     overlapped_anns[overlapping].append(overlapped)
+                    added.add(overlapping)
+                    added.add(overlapped)
             i += 1
         return overlapped_anns
+
+    def getOverlappedOntologyElementsGroupByText(self, oelements):
+        """
+        Given a dict of overlapped ontology elements, group them up according to their textual representation.
+        :param oelements: A dict of overlapped OEs as given by the getOverlappedOntologyElements method
+        :return: list<list<OntologyElement>> A list with overlapping OEs (lists of OEs) that have the same
+        underlying text. The first element of each sub-list is the overlapping OE.
+        """
+        overlapped_oe_by_text = []
+        for overlapping_oe, overlapped_oes in oelements.iteritems():
+            text_overlaps = {}  # Key is text, value is list of overlapping OEs with that text
+            oe_text = overlapping_oe.annotation.text
+            text_overlaps[oe_text] = [overlapping_oe]
+            for overlapped_oe in overlapped_oes:
+                overlapped_text = overlapped_oe.annotation.text
+                if overlapped_text in text_overlaps:
+                    text_overlaps[overlapped_text].append(overlapped_oe)
+                else:
+                    text_overlaps[overlapped_text] = [overlapped_oe]
+            for text in text_overlaps:
+                oes_with_text = text_overlaps[text]
+                overlapped_oe_by_text.append(oes_with_text)
+        return overlapped_oe_by_text
