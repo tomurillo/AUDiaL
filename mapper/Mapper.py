@@ -2,8 +2,9 @@ from NLP.parser.StanfordParser import *
 from NLP.model.Annotation import *
 from constants import *
 from NLP.util.TreeUtil import treeRawString
-from nltk.corpus import wordnet as wn
 from oc.OCUtil import *
+from NLP.NLHandler import synonymsOfTree
+
 
 class Mapper(object):
     """
@@ -316,32 +317,3 @@ class Mapper(object):
             if NP_TREE_POS_TAG in label:  # Considers NP (singular and plural) and WHNP
                 special = True
         return special
-
-def synonymsOfTree(ptree):
-    """
-    Returns synonyms for the whole string represented by the given parse tree
-    :param ptree: an nltk.Tree instance
-    :return: list<string> with synonyms
-    """
-    syns = set()
-    if isinstance(ptree, nltk.Tree) and ptree.height() > 1:
-        label = ptree.label()
-        text = treeRawString(ptree)
-        if text:
-            text_norm = text.replace(" ", "_").lower()  # Compound names are underscored in Wordnet
-            if label in POS_TAG_NOUN:
-                pos_tag = wn.NOUN
-            elif label in POS_TAG_ADVB:
-                pos_tag = wn.ADV
-            elif label in POS_TAG_JJ:
-                pos_tag = wn.ADJ
-            elif label in POS_TAG_VERB:
-                pos_tag = wn.VERB
-            else:
-                return list()
-            syn_set = wn.synsets(text_norm, pos=pos_tag)
-            if len(syn_set) > 0:
-                s = syn_set[0]  # Take into consideration only the most relevant synonym set
-                lemmas = s.lemma_names()
-                syns.update([l.replace("_", " ") for l in lemmas if l != text_norm])
-    return list(syns)
