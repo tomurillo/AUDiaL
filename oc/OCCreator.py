@@ -1,5 +1,7 @@
 import Ontovis.constants as o_c
 from NLP.model.OE import *
+from NLP.model.SemanticConcept import *
+from OCUtil import SemanticConceptListCompareOffset
 
 
 class OCCreator(object):
@@ -14,9 +16,19 @@ class OCCreator(object):
         :return:
         """
         overlapped_anns = self.getOverlappedAnnotations(annotations)
+        #  Create OEs from overlapped Annotations
         overlapped_oes = self.getOverlappedOntologyElements(overlapped_anns)
+        #  Group overlapped OEs by text
         overlapped_by_text = self.getOverlappedOntologyElementsGroupByText(overlapped_oes)
-
+        sem_concepts = []
+        for oe_list in overlapped_by_text:
+            sem_overlapped = []
+            for oe in oe_list:
+                sem_con = SemanticConcept()
+                sem_con.OE = oe
+                sem_overlapped.append(sem_con)
+            sem_concepts.append(sem_overlapped)
+        return sorted(sem_concepts, cmp=SemanticConceptListCompareOffset)
 
     def getOverlappedOntologyElements(self, nested_annotations):
         """

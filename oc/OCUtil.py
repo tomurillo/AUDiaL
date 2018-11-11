@@ -117,3 +117,29 @@ def AnnotationsCompareOffset(ann1, ann2):
     else:
         offset = -1
     return offset
+
+
+def SemanticConceptListCompareOffset(sem_list_1, sem_list_2):
+    """
+    Returns whether one list of overlapping semantic concepts appears before another one by comparing the annotations
+    of their main overlapping OEs
+    :param sem_list_1: first SemanticConcept instance list
+    :param sem_list_2: second SemanticConcept instance list
+    :return: a positive number if sem_list_1 appears before sem_list_2 according to their main overlapping OEs
+    """
+    if sem_list_1 and sem_list_2:
+        ann1 = sem_list_1[0].OE.annotation
+        ann2 = sem_list_2[0].OE.annotation
+        if ann1.start >= 0 and ann2.start >= 0:
+            offset = ann1.start - ann2.start
+            if offset == 0:
+                offset = ann1.end - ann2.end
+        elif ann2.start < 0:
+            offset = 1
+        else:
+            offset = -1
+    elif sem_list_1:
+        offset = 1
+    else:
+        offset = -1
+    return offset
