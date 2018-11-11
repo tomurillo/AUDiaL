@@ -6,6 +6,16 @@ class OCCreator(object):
     Ontology Concept Creator
     """
 
+    def getSemanticConcepts(self, annotations):
+        """
+        Converts annotations to semantic concepts
+        :param annotations: An offset-sorted list of Annotation
+        :return:
+        """
+        overlapped_anns = self.getOverlappedAnnotations(annotations)
+        overlapped_oes = self.getOverlappedOntologyElements(overlapped_anns)
+
+
     def getOverlappedOntologyElements(self, nested_annotations):
         """
         Creates Ontology Elements according to a given list of overlapped annotations
@@ -16,12 +26,12 @@ class OCCreator(object):
         oelements = {}
         for ann, overlapped_anns in nested_annotations.iteritems():
             oe_list = self.annotationToOntologyElements(ann)
+            for ov_ann in overlapped_anns:
+                    ov_oe_list = self.annotationToOntologyElements(ov_ann)
             for oe in oe_list:
                 oelements[oe] = []
-                for ov_ann in overlapped_anns:
-                    ov_oe_list = self.annotationToOntologyElements(ov_ann)
-                    for ov_oe in ov_oe_list:
-                        oelements[oe].append(ov_oe)
+                for ov_oe in ov_oe_list:
+                    oelements[oe].append(ov_oe)
         return oelements
 
 
@@ -47,7 +57,7 @@ class OCCreator(object):
                     oe = OntologyObjectPropertyElement()
                     if 'domain' in annotation.extra:
                         oe.domain = annotation.extra['domain']
-                    if 'range' in annotation.extra: 
+                    if 'range' in annotation.extra:
                         oe.range = annotation.extra['range']
                 elif ann_type == o_c.OTYPE_DTPROP:
                     oe = OntologyDatatypePropertyElement()
@@ -74,11 +84,21 @@ class OCCreator(object):
         are overlapped by the key
         """
         overlapped_anns = {}
-        for ann1 in annotations:
-            if ann1 not in overlapped_anns:
-                for ann2 in annotations:
-                    if ann1.overlaps(ann2):
-                        if ann1 not in overlapped_anns:
-                            overlapped_anns[ann1] = []
-                        overlapped_anns[ann1].append(ann2)
+        i = 0
+        while i < len(annotations):
+            j = i + 1
+            ann1 = annotations[i]
+            while j < len(annotations):
+                ann2 = annotations[j]
+                if ann1.overlaps(ann2):
+                    overlapping, overlapped = ann1, ann2
+                elif ann2.overlaps(ann1):
+                    overlapping, overlapped = ann2, ann1
+                else:
+                    overlapping, overlapped = None, None
+                if overlapping and overlapped:
+                    if overlapping not in overlapped_anns:
+                        overlapped_anns[overlapping] = []
+                    overlapped_anns[overlapping].append(overlapped)
+            i += 1
         return overlapped_anns

@@ -18,6 +18,7 @@ class Controller(object):
         self.q = None  # User query and attributes
         self.o = None  # Ontology
         self.NL = SimpleNLHandler() #Natural Language Handler
+        self.mapper = Mapper()
         if type == c.BAR_CHART:
             self.o = BarChartOntology(RDFpath)
         else:
@@ -69,7 +70,6 @@ class Controller(object):
         :param what: a NL query
         :return: void
         """
-        self.mapper = Mapper()
         self.NL = NLHandler(self.mapper)
         self.q = self.NL.parseQuery(what)  # Get POCs
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs

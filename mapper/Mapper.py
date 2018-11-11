@@ -191,14 +191,22 @@ class Mapper(object):
         :param o: Ontology instance
         """
         if ann.inOntology:
+            p_name = None
             if o_c.OTYPE_IND in ann.oc_type:
                 #  Add class URIs of instance to Annotation
                 ind_uri = o.stripNamespace(ann.oc_type[o_c.OTYPE_IND])
                 class_uris = o.getClassOfElement(ind_uri, stripns=False)
                 if class_uris:
                     ann.extra['classUri'] = class_uris
-            if o_c.OTYPE_OPROP in ann.oc_type or o_c.OTYPE_DTPROP in ann.oc_type:
+            if o_c.OTYPE_DTPROP in ann.oc_type:
+                p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_DTPROP])
+            if o_c.OTYPE_OPROP in ann.oc_type:
+                if p_name:
+                    import sys
+                    print('Dtype and object properties with same name found (%s). Priority given to object property.' %
+                          p_name, sys.stdout)
                 p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_OPROP])
+            if p_name:
                 #  Add property's range and domain to Annotation
                 dom = o.domainOfProperty(p_name, stripns=False)
                 if dom:
@@ -206,6 +214,8 @@ class Mapper(object):
                 ran = o.rangeOfProperty(p_name, stripns=False)
                 if ran:
                     ann.extra['range'] = ran
+            if o_c.OTYPE_LITERAL in ann.oc_type:
+                pass
 
 
     def _isTokenIgnored(self, ptree):
