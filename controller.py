@@ -4,6 +4,8 @@ from NLP.SimpleNLHandler import *
 from NLP.NLHandler import *
 from mapper.Mapper import *
 from oc.OCUtil import *
+from oc.OCCreator import addSemanticConcepts
+
 
 class Controller(object):
 
@@ -74,6 +76,9 @@ class Controller(object):
         self.q = self.NL.parseQuery(what)  # Get POCs
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
         self.q = preConsolidateQuery(self.q, self.o)
+        self.q = addSemanticConcepts(self.q)
+
+
         # todo continue with consolidation
 
 

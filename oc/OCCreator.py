@@ -4,6 +4,17 @@ from NLP.model.SemanticConcept import *
 from OCUtil import SemanticConceptListCompareOffset, appendOntologyNoneElements
 
 
+def addSemanticConcepts(q):
+    """
+    Add a list of semantic concepts to a Query instance
+    :param q: A Query instance with annotations
+    :return: Updated query instance
+    """
+    query_anns = q.annotations
+    q.semanticConcepts = getSemanticConcepts(query_anns)
+    return q
+
+
 def getSemanticConcepts(self, annotations, add_none=False):
     """
     Converts annotations to semantic concepts
@@ -29,6 +40,7 @@ def getSemanticConcepts(self, annotations, add_none=False):
     if add_none:
         return appendOntologyNoneElements(sorted_sems)
     return sorted_sems
+
 
 def getOverlappedOntologyElements(self, nested_annotations):
     """

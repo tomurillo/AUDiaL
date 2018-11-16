@@ -1,7 +1,6 @@
 import Ontovis.constants as o_c
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
-from NLP.model.Annotation import *
 
 
 def preConsolidateQuery(q, o):
