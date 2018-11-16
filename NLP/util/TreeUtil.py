@@ -249,7 +249,9 @@ def immutableCopy(ptree):
     :param ptree: an nltk.Tree instance
     :return: an nltk.ImmutableTree instance copied from ptree
     """
-    if type(ptree) is nltk.Tree:
+    if type(ptree) is nltk.ImmutableTree:
+        return ptree.copy()
+    elif type(ptree) is nltk.Tree:
         return nltk.ImmutableTree(ptree.label(), [immutableCopy(c) for c in ptree])
     elif type(ptree) is str or type(ptree) is unicode:
         return ptree
@@ -264,6 +266,8 @@ def mutableCopy(ptree):
     """
     if type(ptree) is nltk.ImmutableTree:
         return nltk.Tree(ptree.label(), [mutableCopy(c) for c in ptree])
+    elif type(ptree) is nltk.Tree:
+        return ptree.copy()
     elif type(ptree) is str or type(ptree) is unicode:
         return ptree
     else:

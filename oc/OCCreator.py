@@ -13,7 +13,8 @@ class OCCreator(object):
         """
         Converts annotations to semantic concepts
         :param annotations: An offset-sorted list of Annotation
-        :return:
+        :return: list<list<annotation>>: a list of overlapped semantic concepts by text, where the first SC of each
+        list is the overlapping one.
         """
         overlapped_anns = self.getOverlappedAnnotations(annotations)
         #  Create OEs from overlapped Annotations

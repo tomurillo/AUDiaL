@@ -136,3 +136,20 @@ class OntologyLiteralElement(OntologyElement):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+
+class OntologyNoneElement(OntologyElement):
+    """
+    An ontology element not underpinned by any ontological element
+    """
+    def __init__(self):
+        super(OntologyNoneElement, self).__init__()
+
+    def __eq__(self, other):
+        if not type(other, OntologyNoneElement):
+            return False
+        else:
+            super(OntologyNoneElement, self).__eq__(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)

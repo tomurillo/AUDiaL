@@ -34,6 +34,53 @@ class Annotation(object):
     def __hash__(self):
         return hash(self.tree) ^ hash(self.start) ^ hash(self.end) ^ hash((self.start, self.end))
 
+    def copy(self):
+        ann_copy = Annotation()
+        if self.tree:
+            ann_copy.tree = self.tree.copy()
+        else:
+            ann_copy.tree = None
+        if self.lemma_tree:
+            ann_copy.lemma_tree = self.lemma_tree.copy()
+        else:
+            ann_copy.lemma_tree = None
+        ann_copy.rawText = self.rawText
+        ann_copy.start = self.start
+        ann_copy.end = self.end
+        ann_copy.stem = self.stem
+        ann_copy.inOntology = self.inOntology
+        ann_copy.isSynonym = self.isSynonym
+        ann_copy.text = self.text
+        ann_copy.oc_type = self.oc_type.copy()
+        ann_copy.extra = self.extra.copy()
+        return ann_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        import copy
+        ann_copy = Annotation()
+        if self.tree:
+            ann_copy.tree = self.tree.copy(deep=True)
+        else:
+            ann_copy.tree = None
+        if self.lemma_tree:
+            ann_copy.lemma_tree = self.lemma_tree.copy(deep=True)
+        else:
+            ann_copy.lemma_tree = None
+        ann_copy.rawText = self.rawText
+        ann_copy.start = self.start
+        ann_copy.end = self.end
+        ann_copy.stem = self.stem
+        ann_copy.inOntology = self.inOntology
+        ann_copy.isSynonym = self.isSynonym
+        ann_copy.text = self.text
+        ann_copy.oc_type = copy.deepcopy(self.oc_type)
+        ann_copy.extra = copy.deepcopy(self.extra)
+        return ann_copy
+
+    __deepcopy__ = copy
+
     def equalsNonStrict(self, other):
         """
         Returns whether the current annotation is more or less equal to another one i.e they have the same
