@@ -115,6 +115,7 @@ def getOverlappedAnnotations(self, annotations):
                 overlapped_anns[overlapping].append(overlapped)
                 added.add(overlapping)
                 added.add(overlapped)
+            j += 1
         i += 1
     return overlapped_anns
 
