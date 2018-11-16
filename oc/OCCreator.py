@@ -155,6 +155,7 @@ def getOverlappedOntologyElementsGroupByText(self, oelements):
             overlapped_oe_by_text.append(oes_with_text)
     return overlapped_oe_by_text
 
+
 def appendOntologyNoneElements(semantic_concepts):
     """
     Appends an OntologyNoneElement to each list of overlapped semantic concepts

@@ -75,14 +75,34 @@ def getPocs(ptree):
             already_poc = False
             # Check whether potential POC has already been covered by a pre-preterminal
             for prepre_poc in prepre_pocs:
-                for prepre_poc_child in prepre_poc:
-                    if prepre_poc_child == subtree:
-                        already_poc = True
+                already_poc = isSubTree(subtree, prepre_poc)
+                if already_poc:
+                    break
             if not already_poc:
                 pocs.append(subtree)
     # Sort results as they appear in query
     sorted_pocs = [s for s in allpres if s in pocs]
     return sorted_pocs
+
+
+def isSubTree(subTree, mainTree):
+    """
+    Returns whether subTree is contained in mainTree
+    :param subTree: an nltk.Tree instance
+    :param mainTree: an nltk.Tree instance
+    :return: True if subTree is subtree of mainTree; False otherwise
+    """
+    isSub = False
+    if subTree and mainTree:
+        if subTree.height() == mainTree.height():
+            if subTree == mainTree:
+                isSub = True
+        elif subTree.height() < mainTree.height():
+            for child in mainTree:
+                isSub = isSubTree(subTree, child)
+                if isSub:
+                    break
+    return isSub
 
 
 def getPrePreTerminals(ptree):
