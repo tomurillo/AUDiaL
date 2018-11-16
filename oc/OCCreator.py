@@ -1,7 +1,7 @@
 import Ontovis.constants as o_c
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
-from OCUtil import SemanticConceptListCompareOffset, appendOntologyNoneElements
+from OCUtil import SemanticConceptListCompareOffset
 
 
 def addSemanticConcepts(q):
@@ -154,3 +154,21 @@ def getOverlappedOntologyElementsGroupByText(self, oelements):
             oes_with_text = text_overlaps[text]
             overlapped_oe_by_text.append(oes_with_text)
     return overlapped_oe_by_text
+
+def appendOntologyNoneElements(semantic_concepts):
+    """
+    Appends an OntologyNoneElement to each list of overlapped semantic concepts
+    :param semantic_concepts: list<list<SC>>: overlapped SCs, where the first one in each sub-list overlaps the rest
+    :return: The input list with a new appended OntologyNoneElement on each sub-list
+    """
+    for overlapping_scs in semantic_concepts:
+        for sc in overlapping_scs:
+            if sc.OE and type(sc.OE) is not OntologyNoneElement and sc.OE.annotation:
+                sem_none = SemanticConcept()
+                ann_copy = sc.OE.annotation.deepcopy()
+                o_none = OntologyNoneElement()
+                o_none.annotation = ann_copy
+                sem_none.OE = o_none
+                overlapping_scs.append(sem_none)
+                break  # Consider only the first OE with an annotation
+    return overlapping_scs

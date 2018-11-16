@@ -143,8 +143,8 @@ class GraphNavStanfordParser(object):
         # First element in query matching heuristics
         for poc in query.pocs:
             if poc.tree.label() in focus_tags and not poc in ignore_list:
-                focus = poc
-                query.focus = poc
+                focus = poc.deepcopy()  # Focus has to be preserved after POC resolution
+                query.focus = focus
                 break
         return focus
 
