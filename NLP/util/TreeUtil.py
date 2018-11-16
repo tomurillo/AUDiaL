@@ -258,6 +258,7 @@ def immutableCopy(ptree):
     else:
         raise TypeError("immutableCopy: unknown type given")
 
+
 def mutableCopy(ptree):
     """
     Copies an immutable tree into a normal nltk.Tree instance
@@ -272,6 +273,7 @@ def mutableCopy(ptree):
         return ptree
     else:
         raise TypeError("mutableCopy: unknown type given")
+
 
 def printTree(ptree):
     """
