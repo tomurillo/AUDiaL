@@ -1,5 +1,5 @@
 class SemanticConcept(object):
-    def __init__(self, rawText, tree):
+    def __init__(self):
         """
         Semantic Concept constructor
         """
