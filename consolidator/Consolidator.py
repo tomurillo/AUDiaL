@@ -13,6 +13,15 @@ class Consolidator(object):
         """
         pass
 
+    def consolidateQuery(self, query):
+        """
+        Perform an automatic mapping of POCs into OCs
+        :param query: A Query instance
+        :return:
+        """
+        newpocs = self.separatePOCswithJJ(query.pocs)
+
+
     def separatePOCswithJJ(self, pocs):
         """
         Given a list of POCs, split each POC containing an adjective into two new POCs; one containing the adjective
@@ -53,18 +62,22 @@ class Consolidator(object):
         :param root_label: the label of the new POC Parse Tree root
         :return: a new POC instance
         """
+        newPoc = None
         if poc and poc.start >= 0 and poc.end >= 0:
-            newrawtext = ''
-            new_tokens = []
-            for t in new_trees:
-                newrawtext += ' ' + treeRawString(t)
-                new_tokens.extend(t.leaves())
-            newtree = nltk.Tree(root_label, new_trees)
-            newPoc = POC(newrawtext, newtree)
-            newPoc.start, newPoc.end = Consolidator.getSplitPOCOffsets(poc, new_tokens)
-            newPoc.head = poc.head
-            newPoc.modifiers = poc.modifiers
-            return newPoc
+            if len(new_trees) > 1:
+                newrawtext = ''
+                new_tokens = []
+                for t in new_trees:
+                    newrawtext += ' ' + treeRawString(t)
+                    new_tokens.extend(t.leaves())
+                newtree = nltk.Tree(root_label, new_trees)
+                newPoc = POC(newrawtext, newtree)
+                newPoc.start, newPoc.end = Consolidator.getSplitPOCOffsets(poc, new_tokens)
+                newPoc.head = poc.head
+                newPoc.modifiers = poc.modifiers
+            else:
+                newPoc = poc
+        return newPoc
 
     @staticmethod
     def getSplitPOCOffsets(poc, new_tokens):
@@ -78,7 +91,7 @@ class Consolidator(object):
         start_delay = 0
         end_delay = 0
         i = 0
-        while new_tokens[i] != old_tokens[i]:
+        while i < len(old_tokens) and old_tokens[i] != new_tokens[-1]:
             start_delay += 1
             i += 1
         i = len(old_tokens) - 1

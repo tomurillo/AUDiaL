@@ -1,7 +1,15 @@
 class POC(object):
+    """
+    Potential Ontology Concept (POC) class
+    """
+
+    #  Main Subject Priorities
+    MSUB_PRIORITY_MIN = 'min'
+    MSUB_PRIORITY_MAX = 'max'
+
     def __init__(self, rawText, tree):
         """
-        POC (Potential Ontology Concept) constructor
+        POC constructor
         """
         self.tree = tree
         self.rawText = rawText
@@ -9,6 +17,7 @@ class POC(object):
         self.head = ''
         self.start = -1  # Start offset in query
         self.end = -1  # End offset in query
+        self.mainSubjectPriority = self.MSUB_PRIORITY_MIN
 
     def copy(self):
         poc_copy = POC()

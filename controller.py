@@ -77,8 +77,6 @@ class Controller(object):
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
         self.q = preConsolidateQuery(self.q, self.o)
         self.q = addSemanticConcepts(self.q)
-
-
         # todo continue with consolidation
 
 

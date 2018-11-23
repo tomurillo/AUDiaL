@@ -143,11 +143,24 @@ class GraphNavStanfordParser(object):
         # First element in query matching heuristics
         for poc in query.pocs:
             if poc.tree.label() in focus_tags and not poc in ignore_list:
+                poc.mainSubjectPriority = self.priorityOfFocus(poc)
                 focus = poc.deepcopy()  # Focus has to be preserved after POC resolution
                 query.focus = focus
                 break
         return focus
 
+    def priorityOfFocus(self, focus):
+        """
+        Returns the Main Subject priority of a question's focus
+        :param focus: POC instance representing a Query's focus
+        :return:
+        """
+        priority = POC.MSUB_PRIORITY_MIN
+        if focus and focus.rawText:
+            start_tokens = ["how", "where", "when", "since", "since", "who", "list", "show", "tell"]
+            if any(focus.rawText.lower().startswith(s) for s in start_tokens):
+                priority = POC.MSUB_PRIORITY_MAX
+        return priority
 
     def findQuestionType(self, query):
         """

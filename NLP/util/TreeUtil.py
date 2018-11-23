@@ -9,8 +9,6 @@ def getPocs(ptree):
     Finds POCs (potential ontology concepts) in a parse tree
     See Damljanovic, D. (2011), page 188
     :param ptree: an nltk.Tree parse tree
-    :param labels: List<string>. If given, only POCs with the given labels are returned. Otherwise, default
-    labels are used.
     :return: List of nltk.Tree
     """
     if not ptree:
