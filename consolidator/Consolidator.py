@@ -19,15 +19,37 @@ class Consolidator(object):
         :param query: A Query instance
         :return:
         """
-        newpocs = self.separatePOCswithJJ(query.pocs)
+        pocs_no_jj = self.separatePOCswithJJ(query.pocs)
+        query.pocs = self.removeUselessTokens(pocs_no_jj)
+        self.cleanSemanticConcepts(query)
 
+
+    def cleanSemanticConcepts(self, q):
+        """
+        Given an populated Query instance, remove those SemanticConcepts that overlap its focus if it has
+        maximum priority
+        :param q: Query instance
+        :return: Nothing, the Query object gets updated
+        """
+        focus = q.focus
+        if q.semanticConcepts and focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
+            new_scs = []
+            for sc_list in q.semanticConcepts:
+                if sc_list:
+                    first_sc = sc_list[0]
+                    if first_sc and first_sc.OE and first_sc.OE.annotation:
+                        ann = first_sc.OE.annotation
+                        if ann.start != focus.start or ann.end != focus.end:
+                            #  No overlap --> keep SemanticConcept list
+                            new_scs.append(sc_list)
+            q.semanticConcepts = new_scs
 
     def separatePOCswithJJ(self, pocs):
         """
         Given a list of POCs, split each POC containing an adjective into two new POCs; one containing the adjective
         and one containing everything else
-        :param poc: A POC instance
-        :return: (POC, POC) tuple
+        :param pocs: List of POC instances from a Query
+        :return: Updated list of POCs
         """
         newpocs = []
         #  Node tags that indicate an adjective in a pre-terminal POC
@@ -75,7 +97,7 @@ class Consolidator(object):
                 if ignore:
                     if len(poc.tree) > 1:
                         new_pt = removeSubTree(newpoc.tree, child)
-                        newpoc = Consolidator.updateSplitPOC(poc, new_pt, poc.tree.label())
+                        newpoc = self.updateSplitPOC(poc, new_pt, poc.tree.label())
                     else:
                         newpoc = None
             if newpoc:

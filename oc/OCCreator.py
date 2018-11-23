@@ -20,7 +20,7 @@ def getSemanticConcepts(self, annotations, add_none=False):
     Converts annotations to semantic concepts
     :param annotations: An offset-sorted list of Annotation
     :param add_none: Whether to add None Semantic Concepts to the output lists
-    :return: list<list<annotation>>: a list of overlapped semantic concepts by text, where the first SC of each
+    :return: list<list<SemanticConcept>>: a list of overlapped semantic concepts by text, where the first SC of each
     list is the overlapping one.
     """
     overlapped_anns = getOverlappedAnnotations(annotations)
