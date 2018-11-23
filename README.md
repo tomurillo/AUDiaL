@@ -2,7 +2,7 @@
 
 (Work in progress)
 
-A Python Web application prototype of a Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams** (i.e. knowledge representation graphics). Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml),  and [RDFLib](https://rdflib.readthedocs.io).
+A Python Web application prototype of a Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams** (i.e. knowledge representation graphics). Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NL Query consolidation taken from [FREyA](http://services.gate.ac.uk/freya/)
 
 ## System Requirements
 
