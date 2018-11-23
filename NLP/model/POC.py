@@ -7,7 +7,7 @@ class POC(object):
     MSUB_PRIORITY_MIN = 'min'
     MSUB_PRIORITY_MAX = 'max'
 
-    def __init__(self, rawText, tree):
+    def __init__(self, rawText='', tree=None):
         """
         POC constructor
         """

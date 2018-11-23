@@ -202,11 +202,9 @@ def removeSubElementFromTree(ptree, tag):
     :param tag: String with a tag e.g. 'DT'
     :return: nltk.Tree
     """
-    if type(ptree) is nltk.Tree:
+    if isinstance(ptree, nltk.Tree):
         filtered_children = [ct for ct in ptree if type(ct) is not nltk.Tree or ct.label() != tag]
         return nltk.Tree(ptree.label(), [removeSubElementFromTree(c, tag) for c in filtered_children])
-    elif type(ptree) is nltk.ImmutableTree:
-        raise TypeError("Elements cannot be remove from Immutable Trees")
     else:
         return ptree
 
@@ -217,11 +215,30 @@ def removeSubTree(ptree, subtree):
     :param subtree: subtree to remove
     :return: copy of ptree without any instances of subtree
     """
-    if type(ptree) is nltk.Tree:
+    if isinstance(ptree, nltk.Tree):
         filtered_children = [ct for ct in ptree if type(ct) is not nltk.Tree or ct != subtree]
         return nltk.Tree(ptree.label(), [removeSubTree(c, subtree) for c in filtered_children])
-    elif type(ptree) is nltk.ImmutableTree:
-        raise TypeError("Elements cannot be remove from Immutable Trees")
+    else:
+        return ptree
+
+
+def removeLeafs(ptree, leafs):
+    """
+    Returns a copy of the given tree without the leaves having any of the given texts
+    :param ptree: an nltk.Tree
+    :param leafs: list<str>: a list of lowercase strings to consider or a single string
+    :return: copy of ptree without any leaves of the given list
+    """
+    if leafs and isinstance(ptree, nltk.Tree):
+        if type(leafs) == str or type(leafs) == unicode:
+            leafs = [leafs]
+        p_clean = ptree.copy(deep=True)
+        preters = getSubtreesAtHeight(ptree, 2)  # Pre-terminals have exactly one leaf
+        for pt in preters:
+            pt_str = treeRawString(pt).lower().strip()
+            if any(s == pt_str for s in leafs):
+                p_clean = removeSubTree(p_clean, pt)
+        return p_clean
     else:
         return ptree
 

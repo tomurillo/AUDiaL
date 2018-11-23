@@ -1,7 +1,7 @@
 from NLP.util.TreeUtil import *
 from NLP.constants import *
 from NLP.model.POC import *
-
+from consolidator.constants import *
 
 class Consolidator(object):
     """
@@ -52,6 +52,35 @@ class Consolidator(object):
                 adjpoc = self.updateSplitPOC(poc, adjs, poc.tree.label())
                 newpocs.append(adjpoc)
         return newpocs
+
+    def removeUselessTokens(self, pocs):
+        """
+        Updates POCs by removing useless tokens at the starting offset e.g. 'which', 'what'...
+        If the whole POCs has to be ignored, completely removes it from the input list
+        :param pocs: A list of POC instances
+        :return: Updated list of POCs
+        """
+        new_pocs = []
+        for poc in pocs:
+            newpoc = poc
+            children = getSubtreesAtHeight(poc.tree, 2)
+            for child in children:
+                child_str = treeRawString(child)
+                if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
+                    ignore = True
+                elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
+                    ignore = True
+                else:
+                    ignore = False
+                if ignore:
+                    if len(poc.tree) > 1:
+                        new_pt = removeSubTree(newpoc.tree, child)
+                        newpoc = Consolidator.updateSplitPOC(poc, new_pt, poc.tree.label())
+                    else:
+                        newpoc = None
+            if newpoc:
+                new_pocs.append(newpoc)
+        return new_pocs
 
     @staticmethod
     def updateSplitPOC(poc, new_trees, root_label):
