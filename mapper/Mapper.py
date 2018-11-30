@@ -142,6 +142,8 @@ class Mapper(object):
                 pos = positionsInList(tokens, words)
                 if pos:
                     start, end = pos[visited.count(words)]
+                else:
+                    start, end = -1, -1
                 if len(t) > 1 or type(t[0]) is not nltk.Tree:  # Ignore when same words will come again
                     visited.append(words)
                 if n_words == 1:

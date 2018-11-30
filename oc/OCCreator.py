@@ -15,7 +15,7 @@ def addSemanticConcepts(q):
     return q
 
 
-def getSemanticConcepts(self, annotations, add_none=False):
+def getSemanticConcepts(annotations, add_none=False):
     """
     Converts annotations to semantic concepts
     :param annotations: An offset-sorted list of Annotation
@@ -42,7 +42,7 @@ def getSemanticConcepts(self, annotations, add_none=False):
     return sorted_sems
 
 
-def getOverlappedOntologyElements(self, nested_annotations):
+def getOverlappedOntologyElements(nested_annotations):
     """
     Creates Ontology Elements according to a given list of overlapped annotations
     :param nested_annotations: A dict of Annotation as given by the getOverlappedAnnotations method
@@ -59,7 +59,7 @@ def getOverlappedOntologyElements(self, nested_annotations):
     return oelements
 
 
-def annotationToOntologyElements(self, annotation):
+def annotationToOntologyElements(annotation):
     """
     Creates Ontology Elements according to a given annotation
     :param annotation: Annotation instance
@@ -100,7 +100,7 @@ def annotationToOntologyElements(self, annotation):
     return oe_list
 
 
-def getOverlappedAnnotations(self, annotations):
+def getOverlappedAnnotations(annotations):
     """
     Returns which annotations are overlapped by other annotations
     :param annotations: a sorted list of Annotation instances
@@ -132,7 +132,7 @@ def getOverlappedAnnotations(self, annotations):
     return overlapped_anns
 
 
-def getOverlappedOntologyElementsGroupByText(self, oelements):
+def getOverlappedOntologyElementsGroupByText(oelements):
     """
     Given a dict of overlapped ontology elements, group them up according to their textual representation.
     :param oelements: A dict of overlapped OEs as given by the getOverlappedOntologyElements method

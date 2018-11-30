@@ -15,8 +15,10 @@ class POC(object):
         self.rawText = rawText
         self.modifiers = None
         self.head = ''
-        self.start = -1  # Start offset in query
-        self.end = -1  # End offset in query
+        self.start = -1  # Start word offset in query
+        self.end = -1  # End word offset in query
+        self.start_original = -1  # Copy of start offset in case POC is altered
+        self.end_original = -1  # Copy of end offset in case POC is altered
         self.mainSubjectPriority = self.MSUB_PRIORITY_MIN
 
     def copy(self):
@@ -27,7 +29,9 @@ class POC(object):
             poc_copy.tree = None
         poc_copy.rawText = self.rawText
         poc_copy.start = self.start
+        poc_copy.start_original = self.start_original
         poc_copy.end = self.end
+        poc_copy.end_original = self.end_original
         poc_copy.head = self.head
         if self.modifiers:
             poc_copy.modifiers = [m.copy() for m in self.modifiers]
@@ -45,7 +49,9 @@ class POC(object):
             poc_copy.tree = None
         poc_copy.rawText = self.rawText
         poc_copy.start = self.start
+        poc_copy.start_original = self.start_original
         poc_copy.end = self.end
+        poc_copy.end_original = self.end_original
         poc_copy.head = self.head
         if self.modifiers:
             poc_copy.modifiers = [m.copy(deep=True) for m in self.modifiers]
@@ -54,3 +60,14 @@ class POC(object):
         return poc_copy
 
     __deepcopy__ = copy
+
+    def overlapsOC(self, oc):
+        """
+        Returns whether this POC overlaps the given Ontology Concept
+        :param oc: SemanticConcept instance
+        :return: True if the OC's text is contained within the POC's, false otherwise.
+        """
+        overlaps = False
+        if oc and oc.start >= self.start and oc.end <= self.end:
+            overlaps = True
+        return overlaps

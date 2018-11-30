@@ -32,7 +32,9 @@ class Annotation(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.tree) ^ hash(self.start) ^ hash(self.end) ^ hash((self.start, self.end))
+        return hash(self.rawText) ^ hash(self.tree) ^ hash(self.start) ^ hash(self.end) \
+               ^ hash((self.start, self.end)) ^ hash(self.stem) ^ hash(self.inOntology) \
+               ^ hash((self.stem, self.inOntology))
 
     def copy(self):
         ann_copy = Annotation()
@@ -102,7 +104,7 @@ class Annotation(object):
     def overlaps(self, other):
         """
         Returns whether the current annotation overlaps the given one i.e.
-        whether the other annotation is strictly contained within the current one
+        whether the other annotation is strictly contained within this
         :param other:
         :return:
         """

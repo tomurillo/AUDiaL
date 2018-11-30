@@ -54,7 +54,7 @@ class OntologyInstanceElement(OntologyElement):
     def __eq__(self, other):
         if not type(other, OntologyInstanceElement):
             return False
-        elif self.classUri != other.classUri:
+        elif self.classUris != other.classUris:
             return False
         else:
             super(OntologyInstanceElement, self).__eq__(other)
@@ -63,7 +63,7 @@ class OntologyInstanceElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.classUri) ^ hash((self.uri, self.classUri)) ^ hash(self.added) \
+        return hash(self.uri) ^ hash(self.classUris) ^ hash((self.uri, self.classUris)) ^ hash(self.added) \
                ^ hash(self.annotation)
 
 

@@ -17,19 +17,104 @@ class Consolidator(object):
         """
         Perform an automatic mapping of POCs into OCs
         :param query: A Query instance
-        :return:
+        :return: A consolidated Query with unresolved POCs and updated OCs
         """
         pocs_no_jj = self.separatePOCswithJJ(query.pocs)
         query.pocs = self.removeUselessTokens(pocs_no_jj)
-        self.cleanSemanticConcepts(query)
+        query = self.cleanSemanticConcepts(query)
+        query = self.consolidatePOCsWithOCs(query)
+        return query
 
+    def consolidatePOCsWithOCs(self, q):
+        """
+        Given a question, remove those POCs which overlap with any of its OCs and update overlapped OCs with
+        information from the POC.
+        :param q: A Query instance
+        :return: Updated Query instance
+        """
+        pocs_clean = []
+        for poc in q.pocs:
+            matching_ocs = self.matchingOCsOfPOC(poc, q.semanticConcepts)
+            add = True  # Add POCs not contained in any OC for future resolution
+            if matching_ocs:
+                add = False
+            else:
+                for scs in q.semanticConcepts:
+                    if not add:
+                        break
+                    for i, sc in enumerate(scs):
+                        if sc.overlapsPOC(poc):
+                            add = False
+                            break
+                        elif poc.overlapsOC(sc):
+                            sc.OE.annotation.tree = poc.tree
+                            if i == 0:
+                                #  Create new POC without the contained OC
+                                new_tree = removeSubTree(poc.tree, sc.OE.annotation.tree)
+                                if new_tree and isinstance(new_tree, nltk.Tree):
+                                    new_poc = POC()
+                                    new_poc.tree = new_tree
+                                    new_poc.start_original = poc.start_original
+                                    new_poc.end_original = poc.end_original
+                                    new_poc.start, new_poc.end = Consolidator.getSplitPOCOffsets(poc, new_tree.leaves())
+                                    new_poc.rawText = treeRawString(new_tree)
+                                    new_poc.head = poc.head
+                                    new_poc.modifiers = poc.modifiers
+                                    new_poc.mainSubjectPriority = poc.mainSubjectPriority
+                                    pocs_clean.append(new_poc)
+                                    add = False
+            if add:
+                pocs_clean.append(poc)
+        q.pocs = pocs_clean
+        return q
+
+    def matchingOCsOfPOC(self, poc, semantic_concepts):
+        """
+        Returns which of the given Semantic Concepts match the given POC (i.e. they have the same start and
+        end offsets)
+        :param poc: a POC instance
+        :param semantic_concepts: list<list<SemanticConcept>>: a Query's overlapping OCs
+        :return: list<list<SemanticConcept>>: Overlapping OCs matching the given POC
+        """
+        match_found = False
+        filtered_ocs = []
+        for i, sc_list in enumerate(semantic_concepts):  # Overlapping OCs
+            if match_found:
+                break
+            filtered_sc_list = set()
+            for sc in sc_list:
+                if poc.start == sc.OE.annotation.start:
+                    filtered_sc_list.add(sc)
+                    if poc.end == sc.OE.annotation.end:
+                        match_found = True
+                        break
+                    else:
+                        j = i + 1
+                        matched = False
+                        while j < len(semantic_concepts):
+                            sc_list_next = semantic_concepts[j]
+                            filtered_next_sc_list = set()
+                            for sc_next in sc_list_next:
+                                filtered_next_sc_list.add(sc_next)
+                                if poc == sc_next.OE.annotation.end:
+                                    match_found = True
+                                    matched = True
+                                    break
+                            if filtered_next_sc_list:
+                                filtered_ocs.append(list(filtered_next_sc_list))
+                            if matched:
+                                break
+                            j += 1
+            if filtered_sc_list:
+                filtered_ocs.append(list(filtered_sc_list))
+        return filtered_ocs
 
     def cleanSemanticConcepts(self, q):
         """
         Given an populated Query instance, remove those SemanticConcepts that overlap its focus if it has
         maximum priority
         :param q: Query instance
-        :return: Nothing, the Query object gets updated
+        :return: updated Query object
         """
         focus = q.focus
         if q.semanticConcepts and focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
@@ -43,6 +128,7 @@ class Consolidator(object):
                             #  No overlap --> keep SemanticConcept list
                             new_scs.append(sc_list)
             q.semanticConcepts = new_scs
+        return q
 
     def separatePOCswithJJ(self, pocs):
         """
@@ -149,6 +235,6 @@ class Consolidator(object):
         while i >= 0 and old_tokens[i] != new_tokens[-1]:
             end_delay += 1
             i -= 1
-        newstart = poc.start + start_delay
-        newend = poc.end - end_delay
-        return newstart, newend
+        new_start = poc.start + start_delay
+        new_end = poc.end - end_delay
+        return new_start, new_end

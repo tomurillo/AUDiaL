@@ -3,7 +3,7 @@
 class QuestionType(object):
     """
     Enum-workaround class: NL query types
-    See See Damljanovic, D. (2011)
+    See Damljanovic, D. (2011)
     """
     VOID, BOOLEAN, COUNT, BOW, = range(4)
 
@@ -20,5 +20,5 @@ class Query(object):
         self.tokens = []
         self.pt = None  # Syntax parse tree (PT) of type nltk.Tree
         self.answerType = None
-        self.semanticConcepts = []  # List of overlapped-by-text SemanticConcepts, first one overlaps the rest
+        self.semanticConcepts = []  # list<list<SemanticConcept>>: overlapped-by-text SCs, first one overlaps the rest
         self.annotations = []  # Annotations to be looked up in the ontology; they do *not* have to be in the KB

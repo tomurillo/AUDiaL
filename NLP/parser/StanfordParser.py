@@ -121,6 +121,8 @@ class GraphNavStanfordParser(object):
                 n_words_after = len(poc_tree_clean.leaves())
                 poc.start = start + n_words_before - n_words_after
             poc.end = end
+            poc.start_original = poc.start
+            poc.end_original = poc.end
             pocs.append(poc)
         query.pt = tree
         query.pocs = pocs
