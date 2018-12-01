@@ -52,6 +52,7 @@ def getOverlappedOntologyElements(nested_annotations):
     oelements = {}
     for ann, overlapped_anns in nested_annotations.iteritems():
         oe_list = annotationToOntologyElements(ann)
+        ov_oe_list = []
         for ov_ann in overlapped_anns:
              ov_oe_list = annotationToOntologyElements(ov_ann)
         for oe in oe_list:
@@ -128,6 +129,8 @@ def getOverlappedAnnotations(annotations):
                 added.add(overlapping)
                 added.add(overlapped)
             j += 1
+        if ann1 not in added:  # ann1 does not overlap or is overlapped, add its own empty list to dict
+            overlapped_anns[ann1] = []
         i += 1
     return overlapped_anns
 
