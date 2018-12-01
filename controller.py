@@ -79,7 +79,7 @@ class Controller(object):
         self.q = preConsolidateQuery(self.q, self.o)
         self.q = addSemanticConcepts(self.q)
         consolidator = Consolidator()
-        self.q = consolidator.consolidatePOCsWithOCs(self.q)
+        self.q = consolidator.consolidateQuery(self.q)
         # TODO continue with parsing
 
 

@@ -144,7 +144,7 @@ class Consolidator(object):
         for poc in pocs:
             others = set()
             adjs = []
-            poc_preters = getSubtreesAtHeight(poc.tree, 2)
+            poc_preters = [immutableCopy(t) for t in getSubtreesAtHeight(poc.tree, 2)]
             if len(poc_preters) > 1:
                 for preter in poc_preters:
                     if preter.label() in adj_tags:
@@ -154,10 +154,10 @@ class Consolidator(object):
             else:
                 others.add(poc_preters[0])
             if others:
-                newpoc = self.updateSplitPOC(poc, list(others), poc.tree.label())
+                newpoc = self.updateSplitPOC(poc, [mutableCopy(t) for t in others], poc.tree.label())
                 newpocs.append(newpoc)
             if adjs:
-                adjpoc = self.updateSplitPOC(poc, adjs, poc.tree.label())
+                adjpoc = self.updateSplitPOC(poc, [mutableCopy(t) for t in adjs], poc.tree.label())
                 newpocs.append(adjpoc)
         return newpocs
 
@@ -173,7 +173,7 @@ class Consolidator(object):
             newpoc = poc
             children = getSubtreesAtHeight(poc.tree, 2)
             for child in children:
-                child_str = treeRawString(child)
+                child_str = quick_norm(treeRawString(child))
                 if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
                     ignore = True
                 elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
@@ -201,19 +201,23 @@ class Consolidator(object):
         """
         newPoc = None
         if poc and poc.start >= 0 and poc.end >= 0:
-            if len(new_trees) > 1:
-                newrawtext = ''
-                new_tokens = []
-                for t in new_trees:
+            newrawtext = ''
+            new_tokens = []
+            first = False
+            for t in new_trees:
+                if first:
+                    first = False
+                    newrawtext += treeRawString(t)
+                else:
                     newrawtext += ' ' + treeRawString(t)
-                    new_tokens.extend(t.leaves())
-                newtree = nltk.Tree(root_label, new_trees)
-                newPoc = POC(newrawtext, newtree)
-                newPoc.start, newPoc.end = Consolidator.getSplitPOCOffsets(poc, new_tokens)
-                newPoc.head = poc.head
-                newPoc.modifiers = poc.modifiers
-            else:
-                newPoc = poc
+                new_tokens.extend(t.leaves())
+            newtree = nltk.Tree(root_label, new_trees)
+            newPoc = POC(newrawtext, newtree)
+            newPoc.start_original = poc.start
+            newPoc.end_original = poc.end
+            newPoc.start, newPoc.end = Consolidator.getSplitPOCOffsets(poc, new_tokens)
+            newPoc.head = poc.head
+            newPoc.modifiers = poc.modifiers
         return newPoc
 
     @staticmethod

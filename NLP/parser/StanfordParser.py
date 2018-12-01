@@ -112,6 +112,8 @@ class GraphNavStanfordParser(object):
             pos = positionsInList(query_token_list, poc_token_list)
             if pos:
                 start, end = pos[visited.count(poc_token_list)]
+            else:
+                start, end = -1, -1
             if len(poc_tree) > 1 or type(poc_tree[0]) is not nltk.Tree:
                 visited.append(poc_token_list)
             if poc_tree == poc_tree_clean:
