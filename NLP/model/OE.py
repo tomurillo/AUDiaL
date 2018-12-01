@@ -48,7 +48,7 @@ class OntologyInstanceElement(OntologyElement):
     An ontology element underpinned by an ontology instance
     """
     def __init__(self):
-        self.classUris = ''  # URIs of the Classes the instance belongs to
+        self.classUris = []  # URIs of the Classes the instance belongs to
         super(OntologyInstanceElement, self).__init__()
 
     def __eq__(self, other):
@@ -63,8 +63,7 @@ class OntologyInstanceElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.classUris) ^ hash((self.uri, self.classUris)) ^ hash(self.added) \
-               ^ hash(self.annotation)
+        return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(self.added) ^ hash(self.annotation)
 
 
 class OntologyObjectPropertyElement(OntologyElement):
