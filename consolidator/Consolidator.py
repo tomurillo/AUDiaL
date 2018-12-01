@@ -203,7 +203,7 @@ class Consolidator(object):
         if poc and poc.start >= 0 and poc.end >= 0:
             newrawtext = ''
             new_tokens = []
-            first = False
+            first = True
             for t in new_trees:
                 if first:
                     first = False
