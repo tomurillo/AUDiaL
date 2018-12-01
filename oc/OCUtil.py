@@ -12,11 +12,12 @@ def preConsolidateQuery(q, o):
     """
     filtered_anns, removed_anns = filterInstancesOfClass(q.annotations, o)
     pocs_clean = []
-    for poc in q.pocs:
-        for ann in removed_anns:
-            if poc.start != ann.start and poc.end != ann.end and poc.rawText != ann.rawText:
-                pocs_clean.append(poc)
-    q.pocs = pocs_clean
+    if removed_anns:
+        for poc in q.pocs:
+            for ann in removed_anns:
+                if poc.start != ann.start and poc.end != ann.end and poc.rawText != ann.rawText:
+                    pocs_clean.append(poc)
+        q.pocs = pocs_clean
     q.annotations = sorted(filtered_anns, cmp=AnnotationsCompareOffset)
     return q
 

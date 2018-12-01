@@ -61,7 +61,7 @@ class NLHandler(object):
         return l
 
 
-def synonymsOfTree(self, ptree):
+def synonymsOfTree(ptree):
     """
     Returns synonyms for the whole string represented by the given parse tree
     :param ptree: an nltk.Tree instance
