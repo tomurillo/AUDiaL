@@ -54,7 +54,7 @@ class OntologyInstanceElement(OntologyElement):
     def __eq__(self, other):
         if not type(other, OntologyInstanceElement):
             return False
-        elif self.classUris != other.classUris:
+        elif set(self.classUris) != set(other.classUris):
             return False
         else:
             super(OntologyInstanceElement, self).__eq__(other)
@@ -89,8 +89,8 @@ class OntologyObjectPropertyElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.domain) ^ hash(self.range) ^ hash((self.uri, self.domain, self.range)) \
-               ^ hash(self.added) ^ hash(self.annotation)
+        return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
+               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation)
 
 
 class OntologyDatatypePropertyElement(OntologyElement):
@@ -116,8 +116,8 @@ class OntologyDatatypePropertyElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.domain) ^ hash(self.range) ^ hash((self.uri, self.domain, self.range)) \
-               ^ hash(self.added) ^ hash(self.annotation)
+        return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
+               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation)
 
 
 class OntologyLiteralElement(OntologyElement):

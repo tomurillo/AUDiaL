@@ -68,6 +68,6 @@ class POC(object):
         :return: True if the OC's text is contained within the POC's, false otherwise.
         """
         overlaps = False
-        if oc and oc.start >= self.start and oc.end <= self.end:
+        if oc and oc.OE.annotation.start >= self.start and oc.OE.annotation.end <= self.end:
             overlaps = True
         return overlaps

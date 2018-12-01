@@ -46,17 +46,16 @@ def getOverlappedOntologyElements(nested_annotations):
     """
     Creates Ontology Elements according to a given list of overlapped annotations
     :param nested_annotations: A dict of Annotation as given by the getOverlappedAnnotations method
-    :return: dict{OntologyElement: list<OntologyElement>}: Key is overlapping OntologyElement,
-    value is a list of OntologyElements overlapped by their key
+    :return: list<list<SemanticConcept>>: a list of overlapped OEs where the first OEs of each
+    list are the overlapping ones.
     """
-    oelements = {}
+    oelements = []
     for ann, overlapped_anns in nested_annotations.iteritems():
-        oe_list = annotationToOntologyElements(ann)
         ov_oe_list = []
+        ov_oe_list.extend(annotationToOntologyElements(ann))
         for ov_ann in overlapped_anns:
-             ov_oe_list = annotationToOntologyElements(ov_ann)
-        for oe in oe_list:
-            oelements[oe] = ov_oe_list
+             ov_oe_list.extend(annotationToOntologyElements(ov_ann))
+        oelements.append(ov_oe_list)
     return oelements
 
 
@@ -138,21 +137,19 @@ def getOverlappedAnnotations(annotations):
 def getOverlappedOntologyElementsGroupByText(oelements):
     """
     Given a dict of overlapped ontology elements, group them up according to their textual representation.
-    :param oelements: A dict of overlapped OEs as given by the getOverlappedOntologyElements method
+    :param oelements: A list of overlapped OEs as given by the getOverlappedOntologyElements method
     :return: list<list<OntologyElement>> A list with overlapping OEs (lists of OEs) that have the same
     underlying text. The first element of each sub-list is the overlapping OE.
     """
     overlapped_oe_by_text = []
-    for overlapping_oe, overlapped_oes in oelements.iteritems():
+    for overlapped_oes in oelements:
         text_overlaps = {}  # Key is text, value is list of overlapping OEs with that text
-        oe_text = overlapping_oe.annotation.text
-        text_overlaps[oe_text] = [overlapping_oe]
-        for overlapped_oe in overlapped_oes:
-            overlapped_text = overlapped_oe.annotation.text
-            if overlapped_text in text_overlaps:
-                text_overlaps[overlapped_text].append(overlapped_oe)
+        for oe in overlapped_oes:
+            oe_text = oe.annotation.text
+            if oe_text in text_overlaps:
+                text_overlaps[oe_text].append(oe)
             else:
-                text_overlaps[overlapped_text] = [overlapped_oe]
+                text_overlaps[oe_text] = [oe]
         for text in text_overlaps:
             oes_with_text = text_overlaps[text]
             overlapped_oe_by_text.append(oes_with_text)
