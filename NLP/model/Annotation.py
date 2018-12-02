@@ -81,7 +81,7 @@ class Annotation(object):
         ann_copy.extra = copy.deepcopy(self.extra)
         return ann_copy
 
-    __deepcopy__ = copy
+    __deepcopy__ = deepcopy
 
     def equalsNonStrict(self, other):
         """

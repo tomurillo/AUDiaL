@@ -59,7 +59,7 @@ class POC(object):
             poc_copy.modifiers = None
         return poc_copy
 
-    __deepcopy__ = copy
+    __deepcopy__ = deepcopy
 
     def overlapsOC(self, oc):
         """
