@@ -2,6 +2,7 @@ from NLP.util.TreeUtil import *
 from NLP.constants import *
 from NLP.model.POC import *
 from consolidator.constants import *
+from oc.OCUtil import SemanticConceptListCompareOffset
 
 class Consolidator(object):
     """
@@ -111,8 +112,8 @@ class Consolidator(object):
 
     def cleanSemanticConcepts(self, q):
         """
-        Given an populated Query instance, remove those SemanticConcepts that overlap its focus if it has
-        maximum priority
+        Given an populated Query instance, remove those OCs that overlap its focus if it has maximum priority
+        and sort the resulting OCs
         :param q: Query instance
         :return: updated Query object
         """
@@ -127,7 +128,7 @@ class Consolidator(object):
                         if ann.start != focus.start or ann.end != focus.end:
                             #  No overlap --> keep SemanticConcept list
                             new_scs.append(sc_list)
-            q.semanticConcepts = new_scs
+            q.semanticConcepts = sorted(new_scs, cmp=SemanticConceptListCompareOffset)
         return q
 
     def separatePOCswithJJ(self, pocs):

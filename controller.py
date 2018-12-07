@@ -22,6 +22,7 @@ class Controller(object):
         self.o = None  # Ontology
         self.NL = SimpleNLHandler() #Natural Language Handler
         self.mapper = Mapper()
+        self.consolidator = None
         if type == c.BAR_CHART:
             self.o = BarChartOntology(RDFpath)
         else:
@@ -39,6 +40,40 @@ class Controller(object):
         """
         if self.o:
             self.o.close()
+
+    def processQuery(self, what):
+        """
+        Processes a user's single query in Natural Language, returning a dialog to resolve
+        unknown or ambiguous concepts.
+        :param what: A single NL phrase
+        :return:
+        """
+        self.parseAndLookUp(what)
+        self.consolidateQuery()
+
+
+    def parseAndLookUp(self, what):
+        """
+        see Mapper.processQuestion method
+        Performs the query parsing and ontology lookup steps before consolidation
+        After calling this method there will be a fully initialized Query instance in self.q
+        :param what: a NL query
+        :return: void
+        """
+        self.NL = NLHandler(self.mapper)
+        self.q = self.NL.parseQuery(what)  # Get POCs
+        self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
+        self.q = preConsolidateQuery(self.q, self.o)
+        self.q = addSemanticConcepts(self.q)
+
+    def consolidateQuery(self):
+        """
+        Performs the consolidation step of mapping POCs to OCs, including automatic and manual
+        consolidation sub-steps.
+        :return: void; self.q is consolidated.
+        """
+        self.consolidator = Consolidator()
+        self.q = self.consolidator.consolidateQuery(self.q)
 
     def count(self,element):
         """
@@ -60,28 +95,8 @@ class Controller(object):
     def retrieveValue(self, what): #TODO
         output = ""
         if self.type == c.BAR_CHART:
-            self.parseAndLookUp(what)
-
-
+            self.processQuery(what)
         return output
-
-    def parseAndLookUp(self, what):
-        """
-        see Mapper.processQuestion method
-        Performs the query parsing and ontology lookup steps before consolidation
-        After calling this method there will be a fully initialized Query instance in self.q
-        :param what: a NL query
-        :return: void
-        """
-        self.NL = NLHandler(self.mapper)
-        self.q = self.NL.parseQuery(what)  # Get POCs
-        self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
-        self.q = preConsolidateQuery(self.q, self.o)
-        self.q = addSemanticConcepts(self.q)
-        consolidator = Consolidator()
-        self.q = consolidator.consolidateQuery(self.q)
-        # TODO continue with parsing
-
 
     def retrieveValueSimple(self, what):
         """

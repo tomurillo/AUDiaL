@@ -8,6 +8,7 @@ class SemanticConcept(object):
         Semantic Concept constructor
         """
         self.OE = None
+        self.verified = False  # Whether this OC has been manually verified in a Disambiguation dialog
 
     def overlapsPOC(self, poc):
         """
@@ -23,6 +24,8 @@ class SemanticConcept(object):
     def __eq__(self, other):
         if not isinstance(other, SemanticConcept):
             return False
+        elif self.verified != other.verified:
+            return False
         elif self.OE != other.OE:
             return False
         else:
@@ -32,4 +35,4 @@ class SemanticConcept(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.OE)
+        return hash(self.OE) ^ hash(self.verified)

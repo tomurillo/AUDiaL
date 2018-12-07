@@ -269,8 +269,8 @@ def pathBetweenAnnotations(ptree, ann1, ann2):
     """
     Returns the path between 2 annotations in a query
     :param ptree: a Parse Tree of a user's query
-    :param ann1: Annotation instance
-    :param ann2: Annotation instance
+    :param ann1: Annotation or POC instance
+    :param ann2: Annotation or POC instance
     :return: list<str> Path of nodes between the parse trees of ann1 and ann2 in ptree
     """
     path = []

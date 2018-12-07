@@ -1,6 +1,6 @@
 import Ontovis.constants as o_c
+from NLP.util.TreeUtil import pathBetweenAnnotations
 from NLP.model.OE import *
-from NLP.model.SemanticConcept import *
 
 
 def preConsolidateQuery(q, o):
@@ -20,6 +20,7 @@ def preConsolidateQuery(q, o):
         q.pocs = pocs_clean
     q.annotations = sorted(filtered_anns, cmp=AnnotationsCompareOffset)
     return q
+
 
 def filterInstancesOfClass(annotations, o):
     """
@@ -48,6 +49,14 @@ def filterInstancesOfClass(annotations, o):
 
 
 def removeNeighborAnnotation(first_annotations, second_annotations, o):
+    """
+    Given two lists of annotations, returns which annotations from the first list need to be removed
+    because they are underpinned by classes with instances existing in the annotations of the second list
+    :param first_annotations: list<Annotation>
+    :param second_annotations: list<Annotation>
+    :param o: instantiated Ontology
+    :return: list<Annotation>
+    """
     to_remove = set()
     first_classes = [a1 for a1 in first_annotations if o_c.OTYPE_CLASS in a1.oc_type]
     second_instances = [a2 for a2 in second_annotations if o_c.OTYPE_IND in a2.oc_type]
@@ -96,6 +105,63 @@ def removeSimilarAnnotations(annotations):
             j += 1
         i += 1
     return list(set(annotations) - to_remove)
+
+
+def overlappingOCsVerified(ocs):
+    """
+    Returns whether the given list of overlapping OCs have been manually disambiguated by the user
+    :param ocs: list<SemanticConcept> a list of overlapping (by text) OCs
+    :return: True if the OCs have been already verified; False otherwise
+    """
+    return any(oc.verified for oc in ocs)
+
+
+def nextAmbiguousOCs(q):
+    """
+    Choose which query's OCs must be disambiguated next by the user according to which ones lay the closest
+    to the question's focus.
+    :param q: a consolidated Query instance
+    :return: list<SemanticConcept>: Overlapping OCs that need disambiguation next
+    """
+    ocs_next = []
+    if not q.focus:
+        if q.semanticConcepts:
+            ocs_next = q.semanticConcepts[0]
+    else:
+        min_dist = float("inf")
+        for ocs in q.semanticConcepts:
+            if len(ocs) > 1 and not overlappingOCsVerified(ocs):
+                first_oc = ocs[0]
+                distance_to_focus = len(pathBetweenAnnotations(q.pt, first_oc.OE.annotation, q.focus))
+                if distance_to_focus < min_dist:
+                    ocs_next = ocs
+                    min_dist = distance_to_focus
+    return ocs_next
+
+
+def findNearestOCsInQuery(q, overlapped_ocs):
+    """
+    Given a list of overlapped OCs, finds the nearest ones in the given query, where the distace between OCs
+    is given by the distance of the paths between the parse tree roots.
+    :param q: A consolidated Query instance
+    :param overlapped_ocs: list<SemanticConcept> with overlapping OCs, where the first OC overlaps the rest
+    :return: list<SemanticConcept> nearest OCs
+    """
+    nearest = []
+    if q and q.semanticConcepts and overlapped_ocs:
+        first_oc = overlapped_ocs[0]
+        min_dist = float("inf")
+        for ocs in q.semanticConcepts:
+            if ocs != overlapped_ocs:
+                for oc in ocs:
+                    if type(oc.OE) is not OntologyNoneElement:
+                        dist = len(pathBetweenAnnotations(q.pt, first_oc.OE.annotation.tree, oc.OE.annotation.tree))
+                        if dist < min_dist:
+                            nearest = [oc]
+                            min_dist = dist
+                        elif dist == min_dist:
+                            nearest.append(oc)
+    return nearest
 
 
 def AnnotationsCompareOffset(ann1, ann2):
