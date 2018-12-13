@@ -4,21 +4,20 @@ Graphic Navigator constants
 Created on Sept 29, 2016
 @author: Tomas Murillo-Morales
 """
+import os
 
 """
 Current Environment, used to specify file paths.
 Supported values: 'windows' and 'unix'
 """
-CURR_ENV = 'windows'
+CURR_ENV = 'windows' if os.name == 'nt' else 'unix'
 
 """Absolute path to the directory where to persist the ontology between requests"""
 if CURR_ENV == 'windows':
-    import os
     path = os.path.realpath(__file__)[:-len("const.py")]
     STOREDIR = path + '\\tmp\\ontologyStore'
 else:
     STOREDIR = '/tmp/ontologyStore'
-
 
 """Namespaces"""
 VIS_NS = "http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization"

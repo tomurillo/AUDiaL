@@ -125,16 +125,22 @@ class OntologyLiteralElement(OntologyElement):
     An ontology element underpinned by an ontology literal
     """
     def __init__(self):
+        self.triples = []  # (Subject, Property, Literal) triples where this literal appears in the ontology
         super(OntologyLiteralElement, self).__init__()
 
     def __eq__(self, other):
         if not type(other, OntologyLiteralElement):
+            return False
+        if self.triples != other.triples:
             return False
         else:
             super(OntologyLiteralElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.annotation)
 
 
 class OntologyNoneElement(OntologyElement):

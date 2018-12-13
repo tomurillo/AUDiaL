@@ -911,6 +911,17 @@ class UpperOntology(object):
         """
         return self.thingExists(name, 'instance', ns)
 
+    def contextOfLiteral(self, elementURI):
+        """
+        Given a literal, returns the triples where it appears in the ontology
+        :param elementURI: A full URI to an existing Literal
+        :return: list<(subject, predicate, object)>: triples where the given literal is the object
+        """
+        context = []
+        for triple in self.graph.triples((None, None, elementURI)):
+            context.append(triple)
+        return context
+
     def thingExists(self, name, thing_type, ns=None):
         """
         Returns whether something with the given name exists in the ontology

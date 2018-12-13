@@ -91,6 +91,7 @@ def annotationToOntologyElements(annotation):
                     oe.range = annotation.extra['range']
             elif ann_type == o_c.OTYPE_LITERAL:
                 oe = OntologyLiteralElement()
+                oe.triples = annotation.extra['triples']
             else:
                 oe = None
             if oe:

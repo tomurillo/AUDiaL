@@ -141,7 +141,7 @@ def nextAmbiguousOCs(q):
 
 def findNearestOCsInQuery(q, overlapped_ocs):
     """
-    Given a list of overlapped OCs, finds the nearest ones in the given query, where the distace between OCs
+    Given a list of overlapped OCs, finds the nearest ones in the given query, where the distance between OCs
     is given by the distance of the paths between the parse tree roots.
     :param q: A consolidated Query instance
     :param overlapped_ocs: list<SemanticConcept> with overlapping OCs, where the first OC overlaps the rest

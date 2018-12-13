@@ -218,8 +218,10 @@ class Mapper(object):
                 if ran:
                     ann.extra['range'] = ran
             if o_c.OTYPE_LITERAL in ann.oc_type:
-                pass
-
+                #  Add Literal's context (triples where it appears)
+                literal_uri = ann.oc_type[o_c.OTYPE_LITERAL]
+                triples = o.contextOfLiteral(literal_uri)
+                ann.extra['triples'] = triples
 
     def _isTokenIgnored(self, ptree):
         """
