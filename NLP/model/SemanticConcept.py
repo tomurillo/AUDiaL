@@ -9,6 +9,7 @@ class SemanticConcept(object):
         """
         self.OE = None
         self.verified = False  # Whether this OC has been manually verified in a Disambiguation dialog
+        self.task = None  # Maps this OC to an analytical task to be performed
 
     def overlapsPOC(self, poc):
         """
@@ -26,6 +27,8 @@ class SemanticConcept(object):
             return False
         elif self.verified != other.verified:
             return False
+        elif self.task != other.task:
+            return False
         elif self.OE != other.OE:
             return False
         else:
@@ -35,4 +38,4 @@ class SemanticConcept(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.OE) ^ hash(self.verified)
+        return hash(self.OE) ^ hash(self.verified) ^ hash(self.task)
