@@ -70,6 +70,8 @@ def annotationToOntologyElements(annotation):
         for ann_type in annotation.oc_type:
             if ann_type == o_c.OTYPE_CLASS:
                 oe = OntologyEntityElement()
+                if 'class_specScore' in annotation.extra:
+                    oe.specificity = annotation.extra['class_specScore']
             elif ann_type == o_c.OTYPE_IND:
                 oe = OntologyInstanceElement()
                 if 'classUri' in annotation.extra:
@@ -83,12 +85,16 @@ def annotationToOntologyElements(annotation):
                     oe.domain = annotation.extra['domain']
                 if 'range' in annotation.extra:
                     oe.range = annotation.extra['range']
+                if 'prop_specScore' in annotation.extra:
+                    oe.specificity = annotation.extra['prop_specScore']
             elif ann_type == o_c.OTYPE_DTPROP:
                 oe = OntologyDatatypePropertyElement()
                 if 'domain' in annotation.extra:
                     oe.domain = annotation.extra['domain']
                 if 'range' in annotation.extra:
                     oe.range = annotation.extra['range']
+                if 'prop_specScore' in annotation.extra:
+                    oe.specificity = annotation.extra['prop_specScore']
             elif ann_type == o_c.OTYPE_LITERAL:
                 oe = OntologyLiteralElement()
                 oe.triples = annotation.extra['triples']

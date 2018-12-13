@@ -48,6 +48,25 @@ def filterInstancesOfClass(annotations, o):
     return [a for a in annotations if a not in to_remove], list(to_remove)
 
 
+def removeOverlappingAnnotations(annotations):
+    """
+    Given a list of annotations, removes those which are contained within already existing ones
+    :param annotations: a list of Annotation instances
+    :return: a list of non-overlapping Annotation instances
+    """
+    sorted_anns = set(sorted(annotations, cmp=AnnotationsCompareOffset))
+    visited = []
+    to_remove = set()
+    for a in sorted_anns:
+        if a not in visited:
+            visited.append(a)
+            for b in sorted_anns:
+                if b not in visited and a.overlaps(b):
+                    to_remove.add(b)
+                    visited.append(b)
+    return list(sorted_anns - to_remove)
+
+
 def removeNeighborAnnotation(first_annotations, second_annotations, o):
     """
     Given two lists of annotations, returns which annotations from the first list need to be removed
@@ -67,25 +86,6 @@ def removeNeighborAnnotation(first_annotations, second_annotations, o):
             if o.instanceIsOfClass(o.stripNamespace(i_uri), o.stripNamespace(c_uri)):
                 to_remove.add(c)
     return to_remove
-
-
-def removeOverlappingAnnotations(annotations):
-    """
-    Given a list of annotations, removes those which are contained within already existing ones
-    :param annotations: a list of Annotation instances
-    :return: a list of non-overlapping Annotation instances
-    """
-    sorted_anns = set(sorted(annotations, cmp=AnnotationsCompareOffset))
-    visited = []
-    to_remove = set()
-    for a in sorted_anns:
-        if a not in visited:
-            visited.append(a)
-            for b in sorted_anns:
-                if b not in visited and a.overlaps(b):
-                    to_remove.add(b)
-                    visited.append(b)
-    return list(sorted_anns - to_remove)
 
 
 def removeSimilarAnnotations(annotations):

@@ -31,16 +31,22 @@ class OntologyEntityElement(OntologyElement):
     An ontology element underpinned by an ontology Class
     """
     def __init__(self):
+        self.specificity = 0  # Specificity distance
         super(OntologyEntityElement, self).__init__()
 
     def __eq__(self, other):
         if not type(other, OntologyEntityElement):
+            return False
+        elif self.specificity != other.specificity:
             return False
         else:
             super(OntologyEntityElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.specificity)
 
 
 class OntologyInstanceElement(OntologyElement):
@@ -73,6 +79,7 @@ class OntologyObjectPropertyElement(OntologyElement):
     def __init__(self):
         self.domain = []  # Domain of property
         self.range = []  # Range of property
+        self.specificity = 0
         super(OntologyObjectPropertyElement, self).__init__()
 
     def __eq__(self, other):
@@ -82,6 +89,8 @@ class OntologyObjectPropertyElement(OntologyElement):
             return False
         elif set(self.range) != set(other.range):
             return False
+        elif self.specificity != other.specificity:
+            return False
         else:
             super(OntologyObjectPropertyElement, self).__eq__(other)
 
@@ -90,7 +99,8 @@ class OntologyObjectPropertyElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
-               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation)
+               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
+               ^ hash(self.specificity)
 
 
 class OntologyDatatypePropertyElement(OntologyElement):
@@ -100,6 +110,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
     def __init__(self):
         self.domain = []  # Domain of property
         self.range = []  # Range of property
+        self.specificity = 0
         super(OntologyDatatypePropertyElement, self).__init__()
 
     def __eq__(self, other):
@@ -109,6 +120,8 @@ class OntologyDatatypePropertyElement(OntologyElement):
             return False
         elif set(self.range) != set(other.range):
             return False
+        elif self.specificity != other.specificity:
+            return False
         else:
             super(OntologyDatatypePropertyElement, self).__eq__(other)
 
@@ -117,7 +130,8 @@ class OntologyDatatypePropertyElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
-               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation)
+               ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
+               ^ hash(self.specificity)
 
 
 class OntologyLiteralElement(OntologyElement):
@@ -125,7 +139,7 @@ class OntologyLiteralElement(OntologyElement):
     An ontology element underpinned by an ontology literal
     """
     def __init__(self):
-        self.triples = []  # (Subject, Property, Literal) triples where this literal appears in the ontology
+        self.triples = []  # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology
         super(OntologyLiteralElement, self).__init__()
 
     def __eq__(self, other):

@@ -356,18 +356,32 @@ class UpperOntology(object):
     def getParentClasses(self, childClass, ns=None):
         """
         Returns all parent classes for the given class.
-        :param childClass: The name of the child class
+        :param childClass: The name or URI of the child class
         :return: List<string> its parent classes
         """
         if not ns:
             ns = self.VIS_NS
         namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
         propertyURI = URIRef("%s#subClassOf" % c.RDFS_NS)
-        subjectURI = URIRef("%s#%s" % (ns, childClass))
+        subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childClass)))
         objects = self.graph.objects(subjectURI, propertyURI)
         classes = [self.stripNamespace(o) for o in objects
                    if o != namedIndividualURI]
         return classes
+
+    def getParentProperties(self, childProp, ns=None):
+        """
+        Returns all parent properties for the given property.
+        :param childProp: The name or URI of the child property
+        :return: List<string> its parent classes
+        """
+        if not ns:
+            ns = self.VIS_NS
+        propertyURI = URIRef("%s#subPropertyOf" % c.RDFS_NS)
+        subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childProp)))
+        objects = self.graph.objects(subjectURI, propertyURI)
+        props = [self.stripNamespace(o) for o in objects]
+        return props
 
     def instanceIsOfClass(self, instance, entity, ns=None):
         """
@@ -959,6 +973,42 @@ class UpperOntology(object):
                 if uri:
                     typesFound[o_c.OTYPE_DTPROP] = uri
         return typesFound
+
+    def specificityOfClass(self, name, ns=None):
+        """
+        Returns the specificity distance for the given class
+        :param name: Class to consider (or its URI)
+        :param ns: namespace, None for default visualization NS
+        :return: int: distance of class to the furthermost parent class, starting from 1
+        """
+        if not ns:
+            ns = self.VIS_NS
+        distance = 1
+        max_distance = 0
+        parents = self.getParentClasses(name, ns)
+        for p in parents:
+            p_d = self.specificityOfClass(p, ns)
+            if p_d > max_distance:
+                max_distance = p_d
+        return distance + max_distance
+
+    def specificityOfProperty(self, name, ns=None):
+        """
+        Returns the specificity distance for the given property
+        :param name: Property to consider (or its URI)
+        :param ns: namespace, None for default visualization NS
+        :return: int: distance of property to the furthermost parent property, starting from 1
+        """
+        if not ns:
+            ns = self.VIS_NS
+        distance = 1
+        max_distance = 0
+        parents = self.getParentProperties(name, ns)
+        for p in parents:
+            p_d = self.specificityOfProperty(p, ns)
+            if p_d > max_distance:
+                max_distance = p_d
+        return distance + max_distance
 
     def domainOfProperty(self, prop, stripns=True, ns=None):
         """

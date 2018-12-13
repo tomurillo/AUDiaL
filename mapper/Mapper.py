@@ -195,6 +195,9 @@ class Mapper(object):
         """
         if ann.inOntology:
             p_name = None
+            if o_c.OTYPE_CLASS in ann.oc_type:
+                distance = o.specificityOfClass(ann.oc_type[o_c.OTYPE_CLASS])
+                ann.extra['class_specScore'] = distance
             if o_c.OTYPE_IND in ann.oc_type:
                 #  Add class URIs of instance to Annotation
                 ind_uri = o.stripNamespace(ann.oc_type[o_c.OTYPE_IND])
@@ -217,6 +220,8 @@ class Mapper(object):
                 ran = o.rangeOfProperty(p_name, stripns=False)
                 if ran:
                     ann.extra['range'] = ran
+                distance = o.specificityOfProperty(p_name)
+                ann.extra['prop_specScore'] = distance
             if o_c.OTYPE_LITERAL in ann.oc_type:
                 #  Add Literal's context (triples where it appears)
                 literal_uri = ann.oc_type[o_c.OTYPE_LITERAL]
