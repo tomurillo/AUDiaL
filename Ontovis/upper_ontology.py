@@ -1,7 +1,6 @@
 import rdflib
 from rdflib.term import URIRef
-from rdflib import RDF, RDFS, Namespace, Literal, XSD
-from rdflib.store import NO_STORE, VALID_STORE
+from rdflib import RDF, RDFS, OWL, Namespace, Literal, XSD
 import os
 import bsddb
 import const as c
@@ -247,6 +246,43 @@ class UpperOntology(object):
             else:
                 c = len(set(self.getInstances(normElement)))
         return c
+
+    def getClasses(self, ns='all'):
+        """
+        Returns all classes in the ontology
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :return: list<string>: a list of class URIs
+        """
+        classes = [i for i in self.graph.subjects(RDF.type, URIRef("%s#%s" % (c.OWL_NS, "Class")))]
+        if ns == 'all':
+            return classes
+        else:
+            if not isinstance(ns, list):
+                ns = [ns]
+            return [i for i in classes if self.getNamespace(i) in ns]
+
+    def getProperties(self, prop_type='all', ns='all'):
+        """
+        Returns properties in the ontology
+        :param prop_type: 'object', 'datatype', or 'all'. The kind of properties to consider.
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :return: list<string>: a list of class URIs
+        """
+        props = []
+        if prop_type in ['all', 'object']:
+            props = [i for i in self.graph.subjects(RDF.type,
+                                                      URIRef("%s#%s" % (c.OWL_NS, "ObjectProperty")))]
+        dtype_prop = []
+        if prop_type in ['all', 'datatype']:
+            dtype_prop = [i for i in self.graph.subjects(RDF.type,
+                                                      URIRef("%s#%s" % (c.OWL_NS, "DatatypeProperty")))]
+        props.extend(dtype_prop)
+        if ns == 'all':
+            return props
+        else:
+            if not isinstance(ns, list):
+                ns = [ns]
+            return [i for i in props if self.getNamespace(i) in ns]
 
     def getInstances(self, entityName, ns=None):
         """
@@ -1201,10 +1237,20 @@ class UpperOntology(object):
         :param item: an instance's name, with a NS prefix appended
         :return string: the name without the NS prefix
         """
-        if item:
-            if '#' in item:
-                return item.split('#')[1]
+        if item and '#' in item:
+            return item.split('#')[1]
         return item
+
+    def getNamespace(self, uri):
+        """
+        Returns the namespace of the given URI
+        :param item: an element's URI
+        :return: The namespace part of the URI
+        """
+        ns = ''
+        if uri and '#' in uri:
+            return uri.split('#')[0]
+        return ns
 
     def itemEntityCategory(self, normalizedItem):
         """
