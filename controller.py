@@ -36,7 +36,7 @@ class Controller(object):
 
     def clean(self):
         """
-        Closes the ontology to avoid memory leaks
+        Closes the ontology to prevent memory leaks
         """
         if self.o:
             self.o.close()

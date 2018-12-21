@@ -1,8 +1,7 @@
 from Ontovis.upper_ontology import UpperOntology
 from sys import float_info
 from rdflib import XSD
-import re
-import const as c
+from util import *
 
 
 class BarChartOntology(UpperOntology):
@@ -456,7 +455,7 @@ class BarChartOntology(UpperOntology):
         labels = self.labelsOfAxis(axis)
         for l in labels:
             lText = self.getText(l)
-            if lText and not self.__isNumber(lText):
+            if lText and not isNumber(lText):
                 title = lText
         return title
 
@@ -527,7 +526,7 @@ class BarChartOntology(UpperOntology):
                 bottomYCoor = float_info.min
                 for label in labels:
                     lText = self.getText(label)
-                    if lText and self.__isNumber(lText):
+                    if lText and isNumber(lText):
                         y = self.getCoordinate(label, coor="y")
                         if y:
                             if y < topYCoor:
@@ -813,6 +812,7 @@ class BarChartOntology(UpperOntology):
         predicates.
         @return string: instance name of first bar
         """
+        self._UpperOntology__resetNavigation()
         self.computeBarsNavOrder()
         return self.__moveFirst()
 
@@ -1006,16 +1006,3 @@ class BarChartOntology(UpperOntology):
         else:
             tags = ""
         return tags
-
-    def __isNumber(self, test):
-        """
-        Returns whether the given string represents a number
-        @param test: the string to test
-        @return boolean: True if the string can be casted to float, otherwise
-        False.
-        """
-        try:
-            a = float(test)
-            return True
-        except ValueError:
-            return False

@@ -1,6 +1,7 @@
 import rdflib
 from rdflib.term import URIRef
 from rdflib import RDF, RDFS, OWL, Namespace, Literal, XSD
+from util import *
 import os
 import bsddb
 import const as c
@@ -177,6 +178,7 @@ class UpperOntology(object):
         HAS_RESULT_SPOKEN = "task_has_spoken_result"
         HAS_ORDER = "hasOrder"
         IS_INTENTION = "task_is_intention"
+        HAS_SPECIFICITY = "has_specificity"
 
     """Syntactic Entities Array i.e. ['GRAPHIC_OBJECT', ... ]"""
     SYNT_ENTS = []
@@ -364,12 +366,13 @@ class UpperOntology(object):
             objects = self.graph.objects(subjectURI, propertyURI)
         return [self.stripNamespace(o) for o in objects]
 
-    def getValue(self, s, p, ns=None):
+    def getValue(self, s, p, default=None, ns=None):
         """
         Returns the value of a functional property. An exception is raised
         if more than one (s, p, _) triples are found
         :param s: name of the subject
         :param p: name of the (functional) property
+        :param default: default value to use if nothing found
         :param ns: namespace, None for default visualization NS
         """
         if not ns:
@@ -378,7 +381,7 @@ class UpperOntology(object):
         if s and p:
             subjectURI = URIRef("%s#%s" % (ns, s))
             propertyURI = URIRef("%s#%s" % (ns, p))
-            val = self.graph.value(subjectURI, propertyURI)
+            val = self.graph.value(subjectURI, propertyURI, default=default)
         return self.stripNamespace(val)
 
     def getClassOfElement(self, element, stripns=True, ns=None):
@@ -1040,9 +1043,20 @@ class UpperOntology(object):
             context.append(triple)
         return context
 
-    def specificityOfClass(self, name, ns=None):
+    def specificityOfElement(self, name, ns=None):
         """
-        Returns the specificity distance for the given class
+        Returns the specificity score for the given element (class or property
+        :param name: Class or Property to consider
+        :param ns: namespace, None for default visualization NS
+        :return: int: specificity score of the element according to the "has_specificity" property
+        """
+        if not ns:
+            ns = self.VIS_NS
+        return self.getValue(name, self.TaskProperty.HAS_SPECIFICITY, default=0, ns=ns)
+
+    def specificityDistanceOfClass(self, name, ns=None):
+        """
+        Computes the specificity distance for the given class
         :param name: Class to consider (or its URI)
         :param ns: namespace, None for default visualization NS
         :return: int: distance of class to the furthermost parent class, starting from 1
@@ -1053,12 +1067,12 @@ class UpperOntology(object):
         max_distance = 0
         parents = self.getParentClasses(name, ns)
         for p in parents:
-            p_d = self.specificityOfClass(p, ns)
+            p_d = self.specificityDistanceOfClass(p, ns)
             if p_d > max_distance:
                 max_distance = p_d
         return distance + max_distance
 
-    def specificityOfProperty(self, name, ns=None):
+    def specificityDistanceOfProperty(self, name, ns=None):
         """
         Returns the specificity distance for the given property
         :param name: Property to consider (or its URI)
@@ -1071,7 +1085,7 @@ class UpperOntology(object):
         max_distance = 0
         parents = self.getParentProperties(name, ns)
         for p in parents:
-            p_d = self.specificityOfProperty(p, ns)
+            p_d = self.specificityDistanceOfProperty(p, ns)
             if p_d > max_distance:
                 max_distance = p_d
         return distance + max_distance
@@ -1344,7 +1358,7 @@ class UpperOntology(object):
                 elementURI = Literal(name.lower().replace(' ', '_'))
                 exists = (None, None, elementURI) in self.graph
             if not exists:
-                elementURI = Literal(self.stringToID(name, subjectType))
+                elementURI = Literal(stringToID(name, subjectType))
                 exists = (None, None, elementURI) in self.graph
         else:
             if subjectType == 'individual':
@@ -1366,41 +1380,48 @@ class UpperOntology(object):
                 exists = (elementURI, RDF.type, o_uri) in self.graph
                 if not exists:
                     # Try ontology format
-                    name_norm = self.stringToID(name, subjectType)
+                    name_norm = stringToID(name, subjectType)
                     elementURI = URIRef("%s#%s" % (ns, name_norm))
                     exists = (elementURI, RDF.type, o_uri) in self.graph
-        if exists:
-            return elementURI
+        return elementURI if exists else False
+
+    def computeSpecificity(self, type='class'):
+        """
+        Computes the specificity score of all classes or properties in the ontology
+        :param type: 'class' or 'property'
+        :return: None, updates the serialized ontology
+        """
+        self.addProperty(self.TaskProperty.HAS_SPECIFICITY, 'datatype')
+        distances = {}
+        if type == 'class':
+            items = self.getClasses()
+        elif type == 'property':
+            items = self.getProperties()
         else:
-            return False
-
-    def stringToID(self, what, thing_type='entity'):
-        """
-        Converts a free-formed string to the format of ontology elements
-        :param what: input string
-        :param type: the type of element to consider: entity, property, instance
-        :return: string
-        """
-        norm_string = ''
-        if what:
-            import re
-            norm_string = re.sub(r"\s+", '_', what)
-            if 'Property' not in thing_type and 'property' not in thing_type:
-                # Words may start with uppercase
-                words = norm_string.split("_")
-                norm_string = '_'.join([w.title() for w in words])
-        return norm_string
+            raise ValueError('computeSpecificity: invalid type %s.' % type)
+        max_spec = 0
+        for i in items:
+            if type == 'class':
+                s = self.specificityDistanceOfClass(i) - 1
+            else:
+                s = self.specificityDistanceOfProperty(i) - 1
+            distances[i] = s
+            if s > max_spec:
+                max_spec = s
+        max_spec = float(max_spec)
+        for i, s in distances.iteritems():
+            s = float(s)
+            self.addDataTypePropertyTriple(self.stripNamespace(i),
+                                           self.TaskProperty.HAS_SPECIFICITY,
+                                           s/max_spec, XSD.float)
 
 
-    def isNumber(self, n):
+    def __resetNavigation(self):
         """
-        Checks whether the given string is a number
-        :param n: The string to be checked
-        :return boolean: True if the string can be converted to a float,
-        False otherwise
+        Recomputes properties useful for navigation of the graphic:
+        1. Specificity of classes and properties
+        :return: None, updates the serialized ontology
         """
-        try:
-            float(n)
-            return True
-        except ValueError:
-            return False
+        self.computeSpecificity('class')
+        self.computeSpecificity('property')
+
