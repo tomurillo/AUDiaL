@@ -253,6 +253,8 @@ class UpperOntology(object):
         :param ns: namespaces to consider (string or list), 'all' for all
         :return: list<string>: a list of class URIs
         """
+        if not ns:
+            ns = self.VIS_NS
         classes = [i for i in self.graph.subjects(RDF.type, URIRef("%s#%s" % (c.OWL_NS, "Class")))]
         if ns == 'all':
             return classes
@@ -268,6 +270,8 @@ class UpperOntology(object):
         :param ns: namespaces to consider (string or list), 'all' for all
         :return: list<string>: a list of class URIs
         """
+        if not ns:
+            ns = self.VIS_NS
         props = []
         if prop_type in ['all', 'object']:
             props = [i for i in self.graph.subjects(RDF.type,
@@ -284,22 +288,48 @@ class UpperOntology(object):
                 ns = [ns]
             return [i for i in props if self.getNamespace(i) in ns]
 
-    def getInstances(self, entityName, ns=None):
+    def getInstances(self, entityName='all', stripns=True, ns=None):
         """
         Returns a list of instances of the given class
-        :param entityName: name of a class in the ontology
-        :return list<string>: a list of instance names
+        :param entityName: name of a class in the ontology, 'all' to get all individuals regardless of class
+        :param stripns: True to strip the namespace from the output (default), False otherwise
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :return list<string>: a list of instance names or URIs, depending on the stripns parameter
         """
         if not ns:
             ns = self.VIS_NS
         instances = []
         if self.graph and entityName:
-            entityURI = URIRef("%s#%s" % (ns, entityName))
             namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
-            for instance in self.graph.subjects(RDF.type, entityURI):
-                if (instance, RDF.type, namedIndividualURI) in self.graph:
-                    instances.append(instance)
-        return [self.stripNamespace(i) for i in instances]
+            if entityName != 'all':
+                entityURI = URIRef("%s#%s" % (ns, entityName))
+                for instance in self.graph.subjects(RDF.type, entityURI):
+                    if (instance, RDF.type, namedIndividualURI) in self.graph:
+                        instances.append(instance)
+            else:
+                inst = [i for i in self.graph.subjects(RDF.type, namedIndividualURI)]
+                if ns != 'all':
+                    if not isinstance(ns, list):
+                        ns = [ns]
+                    instances = [i for i in inst if self.getNamespace(i) in ns]
+                else:
+                    instances = inst
+        if stripns:
+            return [self.stripNamespace(i) for i in instances]
+        else:
+            return instances
+
+    def getLiterals(self):
+        """
+        Returns all literals in the ontology
+        :return: list<string>: a list of literal values
+        """
+        query = """SELECT DISTINCT ?o
+                   WHERE { ?s ?p ?o
+                        FILTER isLiteral(?o)
+                   }"""
+        query_res = self.graph.query(query)
+        return [row[0].toPython() for row in query_res]
 
     def getSubjects(self, property, obj, propertyType='object', dtype=None,
                     ns=None):
@@ -961,17 +991,6 @@ class UpperOntology(object):
         """
         return self.thingExists(name, 'instance', ns)
 
-    def contextOfLiteral(self, elementURI):
-        """
-        Given a literal, returns the triples where it appears in the ontology
-        :param elementURI: A full URI to an existing Literal
-        :return: list<(subject, predicate, object)>: triples where the given literal is the object
-        """
-        context = []
-        for triple in self.graph.triples((None, None, elementURI)):
-            context.append(triple)
-        return context
-
     def thingExists(self, name, thing_type, ns=None):
         """
         Returns whether something with the given name exists in the ontology
@@ -1009,6 +1028,17 @@ class UpperOntology(object):
                 if uri:
                     typesFound[o_c.OTYPE_DTPROP] = uri
         return typesFound
+
+    def contextOfLiteral(self, elementURI):
+        """
+        Given a literal, returns the triples where it appears in the ontology
+        :param elementURI: A full URI to an existing Literal
+        :return: list<(subject, predicate, object)>: triples where the given literal is the object
+        """
+        context = []
+        for triple in self.graph.triples((None, None, elementURI)):
+            context.append(triple)
+        return context
 
     def specificityOfClass(self, name, ns=None):
         """
