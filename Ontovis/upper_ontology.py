@@ -85,6 +85,8 @@ class UpperOntology(object):
         IS_HOME_NODE = "isHomeNode"
         IS_PREVIOUS_VISITED = "isPreviousVisitedNode"
         HAS_USER_LABEL = "has_user_label" # User-defined element label
+        HAS_SPECIFICITY = "has_specificity"
+        HAS_DISTANCE_SCORE = "has_distance_score"
 
     class SytacticDataProperty:
         """Upper visualization ontology datatype properties"""
@@ -178,7 +180,6 @@ class UpperOntology(object):
         HAS_RESULT_SPOKEN = "task_has_spoken_result"
         HAS_ORDER = "hasOrder"
         IS_INTENTION = "task_is_intention"
-        HAS_SPECIFICITY = "has_specificity"
 
     """Syntactic Entities Array i.e. ['GRAPHIC_OBJECT', ... ]"""
     SYNT_ENTS = []
@@ -1045,14 +1046,16 @@ class UpperOntology(object):
 
     def specificityOfElement(self, name, ns=None):
         """
-        Returns the specificity score for the given element (class or property
+        Returns the specificity score for the given element (class or property)
         :param name: Class or Property to consider
         :param ns: namespace, None for default visualization NS
-        :return: int: specificity score of the element according to the "has_specificity" property
+        :return: float: specificity score of the element according to the "has_specificity" property
         """
         if not ns:
             ns = self.VIS_NS
-        return self.getValue(name, self.TaskProperty.HAS_SPECIFICITY, default=0, ns=ns)
+        spec = self.getValue(name, self.NavigationDataProperty.HAS_SPECIFICITY,
+                             default=Literal(0.0, datatype=XSD.float), ns=ns)
+        return spec.toPython()
 
     def specificityDistanceOfClass(self, name, ns=None):
         """
@@ -1209,7 +1212,7 @@ class UpperOntology(object):
             allNone = False
             if type == 'datatype':
                 if datatype is None:
-                    dataype = XSD.string
+                    datatype = XSD.string
                 o = Literal(o, datatype=datatype)
             else:
                 o = URIRef("%s#%s" % (ns, o))
@@ -1385,20 +1388,20 @@ class UpperOntology(object):
                     exists = (elementURI, RDF.type, o_uri) in self.graph
         return elementURI if exists else False
 
-    def computeSpecificity(self, type='class'):
+    def computeSpecificities(self, type='class'):
         """
         Computes the specificity score of all classes or properties in the ontology
         :param type: 'class' or 'property'
         :return: None, updates the serialized ontology
         """
-        self.addProperty(self.TaskProperty.HAS_SPECIFICITY, 'datatype')
+        self.addProperty(self.NavigationDataProperty.HAS_SPECIFICITY, 'datatype')
         distances = {}
         if type == 'class':
             items = self.getClasses()
         elif type == 'property':
             items = self.getProperties()
         else:
-            raise ValueError('computeSpecificity: invalid type %s.' % type)
+            raise ValueError('computeSpecificities: invalid type %s.' % type)
         max_spec = 0
         for i in items:
             if type == 'class':
@@ -1412,16 +1415,38 @@ class UpperOntology(object):
         for i, s in distances.iteritems():
             s = float(s)
             self.addDataTypePropertyTriple(self.stripNamespace(i),
-                                           self.TaskProperty.HAS_SPECIFICITY,
+                                           self.NavigationDataProperty.HAS_SPECIFICITY,
                                            s/max_spec, XSD.float)
 
+    def computeDistanceScores(self):
+        """
+        Computes the distance scores of all properties in the ontology
+        :return: None, updates the serialized ontology
+        """
+        self.addProperty(self.NavigationDataProperty.HAS_DISTANCE_SCORE, 'datatype')
+        props = self.getProperties()
+        for p in props:
+            specs = []
+            dom = self.domainOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
+            ran = self.rangeOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
+            specs.extend([self.specificityOfElement(self.stripNamespace(d), ns=self.getNamespace(d)) for d in dom])
+            specs.extend([self.specificityOfElement(self.stripNamespace(r), ns=self.getNamespace(r)) for r in ran])
+            avg = 0.0
+            if specs:
+                avg = float(sum(specs)) / float(len(specs))
+            self.addDataTypePropertyTriple(self.stripNamespace(p),
+                                           self.NavigationDataProperty.HAS_DISTANCE_SCORE,
+                                           avg, XSD.float)
 
     def __resetNavigation(self):
         """
         Recomputes properties useful for navigation of the graphic:
-        1. Specificity of classes and properties
+        1. Specificity scores of classes and properties
+        2. Distance scores of properties
         :return: None, updates the serialized ontology
         """
-        self.computeSpecificity('class')
-        self.computeSpecificity('property')
-
+        self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_SPECIFICITY, None)
+        self.computeSpecificities('class')
+        self.computeSpecificities('property')
+        self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_DISTANCE_SCORE, None)
+        self.computeDistanceScores()
