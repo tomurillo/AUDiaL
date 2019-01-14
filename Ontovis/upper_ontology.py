@@ -87,6 +87,7 @@ class UpperOntology(object):
         HAS_USER_LABEL = "has_user_label" # User-defined element label
         HAS_SPECIFICITY = "has_specificity"
         HAS_DISTANCE_SCORE = "has_distance_score"
+        HAS_PROP_FINAL_SCORE = "has_property_final_score"
 
     class SytacticDataProperty:
         """Upper visualization ontology datatype properties"""
@@ -1044,6 +1045,19 @@ class UpperOntology(object):
             context.append(triple)
         return context
 
+    def distanceScoreOfProperty(self, name, ns=None):
+        """
+        Returns the distance score for the given property
+        :param name: A property's name
+        :param ns: namespace, None for default visualization NS
+        :return:
+        """
+        if not ns:
+            ns = self.VIS_NS
+        spec = self.getValue(name, self.NavigationDataProperty.HAS_DISTANCE_SCORE,
+                             default=Literal(0.0, datatype=XSD.float), ns=ns)
+        return spec.toPython()
+
     def specificityOfElement(self, name, ns=None):
         """
         Returns the specificity score for the given element (class or property)
@@ -1309,7 +1323,7 @@ class UpperOntology(object):
         if normalizedItem:
             checkItem = normalizedItem.upper()
             if checkItem in self.SYNT_ENTS or (checkItem + "_GO") in self.SYNT_ENTS:
-                categry = "Main"
+                category = "Main"
             elif checkItem in self.SYNT_ROLES:
                 category = self.SyntacticEntity.SYNTACTIC_ROLE
         return category
@@ -1388,20 +1402,22 @@ class UpperOntology(object):
                     exists = (elementURI, RDF.type, o_uri) in self.graph
         return elementURI if exists else False
 
-    def computeSpecificities(self, type='class'):
+    def computeSpecificities(self, items=None, type='class'):
         """
         Computes the specificity score of all classes or properties in the ontology
-        :param type: 'class' or 'property'
+        :param items: items to consider, None to fetch all.
+        :param type: type of the items; 'class' or 'property'
         :return: None, updates the serialized ontology
         """
         self.addProperty(self.NavigationDataProperty.HAS_SPECIFICITY, 'datatype')
         distances = {}
-        if type == 'class':
-            items = self.getClasses()
-        elif type == 'property':
-            items = self.getProperties()
-        else:
-            raise ValueError('computeSpecificities: invalid type %s.' % type)
+        if not items:
+            if type == 'class':
+                items = self.getClasses()
+            elif type == 'property':
+                items = self.getProperties()
+            else:
+                raise ValueError('computeSpecificities: invalid type %s.' % type)
         max_spec = 0
         for i in items:
             if type == 'class':
@@ -1418,13 +1434,15 @@ class UpperOntology(object):
                                            self.NavigationDataProperty.HAS_SPECIFICITY,
                                            s/max_spec, XSD.float)
 
-    def computeDistanceScores(self):
+    def computeDistanceScores(self, props=None):
         """
         Computes the distance scores of all properties in the ontology
+        :param props: properties to consider, None to fetch all.
         :return: None, updates the serialized ontology
         """
         self.addProperty(self.NavigationDataProperty.HAS_DISTANCE_SCORE, 'datatype')
-        props = self.getProperties()
+        if not props:
+            props = self.getProperties()
         for p in props:
             specs = []
             dom = self.domainOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
@@ -1446,7 +1464,9 @@ class UpperOntology(object):
         :return: None, updates the serialized ontology
         """
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_SPECIFICITY, None)
-        self.computeSpecificities('class')
-        self.computeSpecificities('property')
+        all_clases = self.getClasses()
+        all_props = self.getProperties()
+        self.computeSpecificities(all_clases, 'class')
+        self.computeSpecificities(all_props, 'property')
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_DISTANCE_SCORE, None)
-        self.computeDistanceScores()
+        self.computeDistanceScores(all_props)

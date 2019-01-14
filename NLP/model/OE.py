@@ -79,7 +79,8 @@ class OntologyObjectPropertyElement(OntologyElement):
     def __init__(self):
         self.domain = []  # Domain of property
         self.range = []  # Range of property
-        self.specificity = 0
+        self.specificity_score = 0
+        self.distance_score = 0
         super(OntologyObjectPropertyElement, self).__init__()
 
     def __eq__(self, other):
@@ -89,7 +90,9 @@ class OntologyObjectPropertyElement(OntologyElement):
             return False
         elif set(self.range) != set(other.range):
             return False
-        elif self.specificity != other.specificity:
+        elif self.specificity_score != other.specificity_score:
+            return False
+        elif self.distance_score != other.distance_score:
             return False
         else:
             super(OntologyObjectPropertyElement, self).__eq__(other)
@@ -100,7 +103,8 @@ class OntologyObjectPropertyElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
                ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.specificity)
+               ^ hash(self.specificity_score) ^ hash(self.distance_score) \
+               ^ hash((self.specificity_score, self.distance_score))
 
 
 class OntologyDatatypePropertyElement(OntologyElement):
@@ -110,7 +114,8 @@ class OntologyDatatypePropertyElement(OntologyElement):
     def __init__(self):
         self.domain = []  # Domain of property
         self.range = []  # Range of property
-        self.specificity = 0
+        self.specificity_score = 0
+        self.distance_score = 0
         super(OntologyDatatypePropertyElement, self).__init__()
 
     def __eq__(self, other):
@@ -120,7 +125,9 @@ class OntologyDatatypePropertyElement(OntologyElement):
             return False
         elif set(self.range) != set(other.range):
             return False
-        elif self.specificity != other.specificity:
+        elif self.specificity_score != other.specificity_score:
+            return False
+        elif self.distance_score != other.distance_score:
             return False
         else:
             super(OntologyDatatypePropertyElement, self).__eq__(other)
@@ -131,7 +138,8 @@ class OntologyDatatypePropertyElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
                ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.specificity)
+               ^ hash(self.specificity_score) ^ hash(self.distance_score) \
+               ^ hash((self.specificity_score, self.distance_score))
 
 
 class OntologyLiteralElement(OntologyElement):

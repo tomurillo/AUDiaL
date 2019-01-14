@@ -220,8 +220,10 @@ class Mapper(object):
                 ran = o.rangeOfProperty(p_name, stripns=False)
                 if ran:
                     ann.extra['range'] = ran
-                distance = o.specificityOfElement(o.stripNamespace(p_name))
-                ann.extra['prop_specScore'] = distance
+                specificity = o.specificityOfElement(o.stripNamespace(p_name))
+                ann.extra['prop_specScore'] = specificity
+                distance = o.distanceScoreOfProperty(o.stripNamespace(p_name))
+                ann.extra['prop_distScore'] = distance
             if o_c.OTYPE_LITERAL in ann.oc_type:
                 #  Add Literal's context (triples where it appears)
                 literal_uri = ann.oc_type[o_c.OTYPE_LITERAL]

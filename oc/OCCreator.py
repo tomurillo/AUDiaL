@@ -86,7 +86,9 @@ def annotationToOntologyElements(annotation):
                 if 'range' in annotation.extra:
                     oe.range = annotation.extra['range']
                 if 'prop_specScore' in annotation.extra:
-                    oe.specificity = annotation.extra['prop_specScore']
+                    oe.specificity_score = annotation.extra['prop_specScore']
+                if 'prop_distScore' in annotation.extra:
+                    oe.distance_score = annotation.extra['prop_distScore']
             elif ann_type == o_c.OTYPE_DTPROP:
                 oe = OntologyDatatypePropertyElement()
                 if 'domain' in annotation.extra:
@@ -94,7 +96,9 @@ def annotationToOntologyElements(annotation):
                 if 'range' in annotation.extra:
                     oe.range = annotation.extra['range']
                 if 'prop_specScore' in annotation.extra:
-                    oe.specificity = annotation.extra['prop_specScore']
+                    oe.specificity_score = annotation.extra['prop_specScore']
+                if 'prop_distScore' in annotation.extra:
+                    oe.distance_score = annotation.extra['prop_distScore']
             elif ann_type == o_c.OTYPE_LITERAL:
                 oe = OntologyLiteralElement()
                 oe.triples = annotation.extra['triples']
