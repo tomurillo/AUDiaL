@@ -183,4 +183,4 @@ def appendOntologyNoneElements(semantic_concepts):
                 sem_none.OE = o_none
                 overlapping_scs.append(sem_none)
                 break  # Consider only the first OE with an annotation
-    return overlapping_scs
+    return semantic_concepts

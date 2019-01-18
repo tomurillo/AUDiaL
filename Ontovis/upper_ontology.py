@@ -344,14 +344,14 @@ class UpperOntology(object):
             ns = self.VIS_NS
         subjects = []
         if self.graph and property and obj:
-            propertyURI = URIRef("%s#%s" % (ns, property))
+            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(property)))
             if propertyType == 'datatype':
                 if not dtype:
                     objectURI = Literal(obj)
                 else:
                     objectURI = Literal(obj, datatype=dtype)
             else:
-                objectURI = URIRef("%s#%s" % (ns, obj))
+                objectURI = URIRef("%s#%s" % (ns, self.stripNamespace(obj)))
             subjects = self.graph.subjects(propertyURI, objectURI)
         return [self.stripNamespace(s) for s in subjects]
 
@@ -363,8 +363,8 @@ class UpperOntology(object):
             ns = self.VIS_NS
         objects = []
         if self.graph and property and subj:
-            propertyURI = URIRef("%s#%s" % (ns, property))
-            subjectURI = URIRef("%s#%s" % (ns, subj))
+            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(property)))
+            subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(subj)))
             objects = self.graph.objects(subjectURI, propertyURI)
         return [self.stripNamespace(o) for o in objects]
 
@@ -381,8 +381,8 @@ class UpperOntology(object):
             ns = self.VIS_NS
         val = None
         if s and p:
-            subjectURI = URIRef("%s#%s" % (ns, s))
-            propertyURI = URIRef("%s#%s" % (ns, p))
+            subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(s)))
+            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(p)))
             val = self.graph.value(subjectURI, propertyURI, default=default)
         return self.stripNamespace(val)
 
@@ -408,26 +408,35 @@ class UpperOntology(object):
                 classes = [o for o in objects if o != namedIndividualURI]
         return classes
 
-    def getTopClasses(self, childClass, ns=None, depth=-1):
+    def getTopElements(self, child, elem_type='class', ns=None, depth=-1):
         """
-        Returns the most generic parent class of the given child class
-        :param childClass: The name of the child class
+        Returns the most generic parent element (class or property) of the given child
+        :param child: The name of the child class or property
+        :param elem_type: ontology resource type of element: 'class' or 'property'
         :param ns: namespace, None for default visualization NS
         :param int: current depth level of search
-        :return: list<string>: the URIs of the topmost parent classes (usually just one) of the given class
+        :return: list<string>: the URIs of the topmost parent elements (usually just one)
         """
-        parents = self.getParentClasses(childClass, ns, stripns=False)
-        max_parent_depth = -1
-        topclasses = [childClass]
-        depth += 1
-        for c in parents:
-            next_classes, next_depth = self.getTopClasses(c, ns, depth)
-            if next_depth > max_parent_depth:
-                max_parent_depth = next_depth
-                topclasses = next_classes
-                depth = max_parent_depth + 1
-            elif next_depth == max_parent_depth:
-                topclasses.extend(next_classes)
+        if child:
+            if elem_type == 'class':
+                parents = self.getParentClasses(child, ns, stripns=False)
+            elif elem_type == 'property':
+                parents = self.getParentProperties(child, ns, stripns=False)
+            else:
+                parents = []
+            max_parent_depth = -1
+            topclasses = [child]
+            depth += 1
+            for c in parents:
+                next_classes, next_depth = self.getTopElements(c, elem_type, ns, depth)
+                if next_depth > max_parent_depth:
+                    max_parent_depth = next_depth
+                    topclasses = next_classes
+                    depth = max_parent_depth + 1
+                elif next_depth == max_parent_depth:
+                    topclasses.extend(next_classes)
+        else:
+            topclasses = []
         return topclasses, depth
 
     def getSubclasses(self, parentClass, ns=None):
@@ -468,11 +477,12 @@ class UpperOntology(object):
             classes = [o for o in objects if o != namedIndividualURI]
         return classes
 
-    def getParentProperties(self, childProp, ns=None):
+    def getParentProperties(self, childProp, ns=None, stripns=True):
         """
         Returns all parent properties for the given property.
         :param childProp: The name or URI of the child property
         :param ns: namespace, None for default visualization NS
+        :param stripns: True to strip the namespace from the output (default), False otherwise
         :return: List<string> its parent classes
         """
         if not ns:
@@ -480,8 +490,10 @@ class UpperOntology(object):
         propertyURI = URIRef("%s#subPropertyOf" % c.RDFS_NS)
         subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childProp)))
         objects = self.graph.objects(subjectURI, propertyURI)
-        props = [self.stripNamespace(o) for o in objects]
-        return props
+        if stripns:
+            return [self.stripNamespace(o) for o in objects]
+        else:
+            return objects
 
     def instanceIsOfClass(self, instance, entity, ns=None):
         """
@@ -1016,6 +1028,21 @@ class UpperOntology(object):
         :return: True or False
         """
         return self.thingExists(name, 'entity', ns)
+
+    def propertyExists(self, name, type='all', ns=None):
+        """
+        Returns whether a property with the given name exists
+        :param name: property name
+        :param type: type of property: 'objectProperty', 'datatypeProperty', or 'all' (default)
+        :param ns: namespace, None for default visualization NS
+        :return: True or False
+        """
+        exists = False
+        if type in ['objectProperty', 'all']:
+            exists = self.thingOfTypeExists(name, 'objectProperty', ns)
+        if not exists and type in ['datatypeProperty', 'all']:
+            exists = self.thingOfTypeExists(name, 'datatypeProperty', ns)
+        return exists
 
     def individualExists(self, name, ns=None):
         """

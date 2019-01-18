@@ -1,5 +1,7 @@
+from dialog.model.SuggestionKey import *
+from dialog.model.SuggestionPair import *
+from dialog.model.Key import *
 from oc.OCUtil import *
-
 
 class DialogHandler(object):
     """
@@ -27,8 +29,16 @@ class DialogHandler(object):
         Generates a user dialog to disambiguate between ambiguous OCs in the query
         :return:
         """
+        key = SuggestionKey()
+        pair = SuggestionPair()
         next_ocs = nextAmbiguousOCs(self.q)  # OC closest to question focus
+        if next_ocs:
+            oc_first = next_ocs[0]
+            key.text = oc_first.OE.annotation.rawText
         neighbor_ocs = findNearestOCsInQuery(self.q, next_ocs)
+        key.nearest_neighbors = neighbor_ocs
+
+        pair.key = key
 
 
 
@@ -43,4 +53,20 @@ class DialogHandler(object):
                 disambiguate = True
                 break
         return disambiguate
+
+
+    def createLearningKey(self, key):
+        """
+        Create new learning keys given a Suggestion Key
+        :param key: SuggestionKey instance
+        :return: list<Key>
+        """
+        keys = []
+        if key and key.nearest_neighbors:
+            for sc in key.nearest_neighbors:
+                k = Key()
+                k.text = key.text
+
+        else:
+            pass
 

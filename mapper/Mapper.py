@@ -225,8 +225,8 @@ class Mapper(object):
                 distance = o.distanceScoreOfProperty(o.stripNamespace(p_name))
                 ann.extra['prop_distScore'] = distance
             if o_c.OTYPE_LITERAL in ann.oc_type:
-                #  Add Literal's context (triples where it appears)
                 literal_uri = ann.oc_type[o_c.OTYPE_LITERAL]
+                #  Add Literal's context (triples where it appears)
                 triples = o.contextOfLiteral(literal_uri)
                 ann.extra['triples'] = triples
 
