@@ -408,10 +408,33 @@ class UpperOntology(object):
                 classes = [o for o in objects if o != namedIndividualURI]
         return classes
 
+    def getTopClasses(self, childClass, ns=None, depth=-1):
+        """
+        Returns the most generic parent class of the given child class
+        :param childClass: The name of the child class
+        :param ns: namespace, None for default visualization NS
+        :param int: current depth level of search
+        :return: list<string>: the names of the topmost parent classes (usually just one) of the given class
+        """
+        parents = self.getParentClasses(childClass, ns)
+        max_parent_depth = -1
+        topclasses = [childClass]
+        depth += 1
+        for c in parents:
+            next_classes, next_depth = self.getTopClasses(c, ns, depth)
+            if next_depth > max_parent_depth:
+                max_parent_depth = next_depth
+                topclasses = next_classes
+                depth = next_depth
+            elif next_depth == max_parent_depth:
+                topclasses.extend(next_classes)
+        return topclasses, depth
+
     def getSubclasses(self, parentClass, ns=None):
         """
         Returns all subclasses for the parent class.
         :param parentClass: The name of the parent class
+        :param ns: namespace, None for default visualization NS
         :return: List<string> its subclasses
         """
         if not ns:
@@ -428,6 +451,7 @@ class UpperOntology(object):
         """
         Returns all parent classes for the given class.
         :param childClass: The name or URI of the child class
+        :param ns: namespace, None for default visualization NS
         :return: List<string> its parent classes
         """
         if not ns:
@@ -444,6 +468,7 @@ class UpperOntology(object):
         """
         Returns all parent properties for the given property.
         :param childProp: The name or URI of the child property
+        :param ns: namespace, None for default visualization NS
         :return: List<string> its parent classes
         """
         if not ns:
@@ -459,6 +484,7 @@ class UpperOntology(object):
         Returns whether the given individual is of the given class
         :param instance: The name of the individual
         :param entity: The name of a class
+        :param ns: namespace, None for default visualization NS
         :return: True if 'instance' is of type 'class'
         """
         if not ns:
@@ -1464,9 +1490,8 @@ class UpperOntology(object):
         :return: None, updates the serialized ontology
         """
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_SPECIFICITY, None)
-        all_clases = self.getClasses()
+        self.computeSpecificities('class')
         all_props = self.getProperties()
-        self.computeSpecificities(all_clases, 'class')
         self.computeSpecificities(all_props, 'property')
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_DISTANCE_SCORE, None)
         self.computeDistanceScores(all_props)
