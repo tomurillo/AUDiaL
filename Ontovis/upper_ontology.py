@@ -414,9 +414,9 @@ class UpperOntology(object):
         :param childClass: The name of the child class
         :param ns: namespace, None for default visualization NS
         :param int: current depth level of search
-        :return: list<string>: the names of the topmost parent classes (usually just one) of the given class
+        :return: list<string>: the URIs of the topmost parent classes (usually just one) of the given class
         """
-        parents = self.getParentClasses(childClass, ns)
+        parents = self.getParentClasses(childClass, ns, stripns=False)
         max_parent_depth = -1
         topclasses = [childClass]
         depth += 1
@@ -425,7 +425,7 @@ class UpperOntology(object):
             if next_depth > max_parent_depth:
                 max_parent_depth = next_depth
                 topclasses = next_classes
-                depth = next_depth
+                depth = max_parent_depth + 1
             elif next_depth == max_parent_depth:
                 topclasses.extend(next_classes)
         return topclasses, depth
@@ -447,11 +447,12 @@ class UpperOntology(object):
                    if s != namedIndividualURI]
         return classes
 
-    def getParentClasses(self, childClass, ns=None):
+    def getParentClasses(self, childClass, ns=None, stripns=True):
         """
         Returns all parent classes for the given class.
         :param childClass: The name or URI of the child class
         :param ns: namespace, None for default visualization NS
+        :param stripns: True to strip the namespace from the output (default), False otherwise
         :return: List<string> its parent classes
         """
         if not ns:
@@ -460,8 +461,11 @@ class UpperOntology(object):
         propertyURI = URIRef("%s#subClassOf" % c.RDFS_NS)
         subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childClass)))
         objects = self.graph.objects(subjectURI, propertyURI)
-        classes = [self.stripNamespace(o) for o in objects
-                   if o != namedIndividualURI]
+        if stripns:
+            classes = [self.stripNamespace(o) for o in objects
+                       if o != namedIndividualURI]
+        else:
+            classes = [o for o in objects if o != namedIndividualURI]
         return classes
 
     def getParentProperties(self, childProp, ns=None):
