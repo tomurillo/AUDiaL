@@ -39,3 +39,21 @@ class SemanticConcept(object):
 
     def __hash__(self):
         return hash(self.OE) ^ hash(self.verified) ^ hash(self.task)
+
+    def copy(self):
+        sc_copy = SemanticConcept()
+        sc_copy.OE = self.OE.copy()
+        sc_copy.verified = self.verified
+        sc_copy.task = self.task
+        return sc_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        sc_copy = SemanticConcept()
+        sc_copy.OE = self.OE.deepcopy()
+        sc_copy.verified = self.verified
+        sc_copy.task = self.task
+        return sc_copy
+
+    __deepcopy__ = deepcopy

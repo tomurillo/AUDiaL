@@ -25,6 +25,24 @@ class OntologyElement(object):
     def __hash__(self):
         return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation)
 
+    def copy(self):
+        oe_copy = OntologyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        return oe_copy
+
+    __deepcopy__ = deepcopy
+
 
 class OntologyEntityElement(OntologyElement):
     """
@@ -48,6 +66,26 @@ class OntologyEntityElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.specificity)
 
+    def copy(self):
+        oe_copy = OntologyEntityElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        oe_copy.specificity = self.specificity
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyEntityElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        oe_copy.specificity = self.specificity
+        return oe_copy
+
+    __deepcopy__ = deepcopy
+
 
 class OntologyInstanceElement(OntologyElement):
     """
@@ -70,6 +108,26 @@ class OntologyInstanceElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(self.added) ^ hash(self.annotation)
+
+    def copy(self):
+        oe_copy = OntologyInstanceElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        oe_copy.classUris = self.classUris
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyInstanceElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        oe_copy.classUris = list(self.classUris)
+        return oe_copy
+
+    __deepcopy__ = deepcopy
 
 
 class OntologyObjectPropertyElement(OntologyElement):
@@ -106,6 +164,32 @@ class OntologyObjectPropertyElement(OntologyElement):
                ^ hash(self.specificity_score) ^ hash(self.distance_score) \
                ^ hash((self.specificity_score, self.distance_score))
 
+    def copy(self):
+        oe_copy = OntologyObjectPropertyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        oe_copy.domain = self.domain
+        oe_copy.range = self.range
+        oe_copy.specificity_score = self.specificity_score
+        oe_copy.distance_score = self.distance_score
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyObjectPropertyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        oe_copy.domain = list(self.domain)
+        oe_copy.range = list(self.range)
+        oe_copy.specificity_score = self.specificity_score
+        oe_copy.distance_score = self.distance_score
+        return oe_copy
+
+    __deepcopy__ = deepcopy
+
 
 class OntologyDatatypePropertyElement(OntologyElement):
     """
@@ -141,6 +225,32 @@ class OntologyDatatypePropertyElement(OntologyElement):
                ^ hash(self.specificity_score) ^ hash(self.distance_score) \
                ^ hash((self.specificity_score, self.distance_score))
 
+    def copy(self):
+        oe_copy = OntologyDatatypePropertyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        oe_copy.domain = self.domain
+        oe_copy.range = self.range
+        oe_copy.specificity_score = self.specificity_score
+        oe_copy.distance_score = self.distance_score
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyDatatypePropertyElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        oe_copy.domain = list(self.domain)
+        oe_copy.range = list(self.range)
+        oe_copy.specificity_score = self.specificity_score
+        oe_copy.distance_score = self.distance_score
+        return oe_copy
+
+    __deepcopy__ = deepcopy
+
 
 class OntologyLiteralElement(OntologyElement):
     """
@@ -164,6 +274,26 @@ class OntologyLiteralElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.annotation)
 
+    def copy(self):
+        oe_copy = OntologyLiteralElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        oe_copy.triples = self.triples
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyLiteralElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        oe_copy.triples = list(self.triples)
+        return oe_copy
+
+    __deepcopy__ = deepcopy
+
 
 class OntologyNoneElement(OntologyElement):
     """
@@ -180,3 +310,21 @@ class OntologyNoneElement(OntologyElement):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def copy(self):
+        oe_copy = OntologyNoneElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.copy()
+        return oe_copy
+
+    __copy__ = copy
+
+    def deepcopy(self):
+        oe_copy = OntologyNoneElement()
+        oe_copy.added = self.added
+        oe_copy.uri = self.uri
+        oe_copy.annotation = self.annotation.deepcopy()
+        return oe_copy
+
+    __deepcopy__ = deepcopy
