@@ -7,6 +7,13 @@ class OntologyElement(object):
         self.annotation = None  # Associated Query annotation
         self.added = False
 
+    def print_uri(self):
+        """
+        Returns this element's URI (for all OEs which do not represent Literals)
+        :return: string: this OE's URI
+        """
+        return self.uri
+
     def __eq__(self, other):
         if not isinstance(other, OntologyElement):
             return False
@@ -259,6 +266,13 @@ class OntologyLiteralElement(OntologyElement):
     def __init__(self):
         self.triples = []  # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology
         super(OntologyLiteralElement, self).__init__()
+
+    def print_uri(self):
+        """
+        Returns this element's triples' URIs
+        :return: string: A string representation of this element's triples' URIs
+        """
+        return str(self.triples)
 
     def __eq__(self, other):
         if not type(other, OntologyLiteralElement):

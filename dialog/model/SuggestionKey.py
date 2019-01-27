@@ -4,7 +4,7 @@ class SuggestionKey(object):
         Dialog Suggestion Key constructor
         """
         self.text = text  # Text that needs clarification
-        self.nearest_neighbors = []
+        self.nearest_neighbors = []  # List of SemanticConcept nearest neighbors
 
     def __eq__(self, other):
             if type(other) is not SuggestionKey:
@@ -18,3 +18,6 @@ class SuggestionKey(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.text) ^ hash(tuple(self.nearest_neighbors))

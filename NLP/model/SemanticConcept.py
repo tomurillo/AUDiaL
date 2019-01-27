@@ -8,7 +8,8 @@ class SemanticConcept(object):
         Semantic Concept constructor
         """
         self.OE = None
-        self.verified = False  # Whether this OC has been manually verified in a Disambiguation dialog
+        self.verified = False  # Whether this OC has been manually verified in a disambiguation dialog
+        self.score = None  # Learning score
         self.task = None  # Maps this OC to an analytical task to be performed
 
     def overlapsPOC(self, poc):
@@ -29,6 +30,8 @@ class SemanticConcept(object):
             return False
         elif self.task != other.task:
             return False
+        elif self.score != other.score:
+            return False
         elif self.OE != other.OE:
             return False
         else:
@@ -38,13 +41,14 @@ class SemanticConcept(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.OE) ^ hash(self.verified) ^ hash(self.task)
+        return hash(self.OE) ^ hash(self.verified) ^ hash(self.task) ^ hash(self.score)
 
     def copy(self):
         sc_copy = SemanticConcept()
         sc_copy.OE = self.OE.copy()
         sc_copy.verified = self.verified
         sc_copy.task = self.task
+        sc_copy.score = self.score
         return sc_copy
 
     __copy__ = copy
@@ -54,6 +58,7 @@ class SemanticConcept(object):
         sc_copy.OE = self.OE.deepcopy()
         sc_copy.verified = self.verified
         sc_copy.task = self.task
+        sc_copy.score = self.score
         return sc_copy
 
     __deepcopy__ = deepcopy

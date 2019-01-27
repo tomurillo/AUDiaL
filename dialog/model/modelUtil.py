@@ -40,6 +40,15 @@ def saveLearningModel(model):
         return success
 
 
+def clearLearningModel():
+    """
+    Clear the persisted learning model
+    :return: True on success; False otherwise
+    """
+    model = {}
+    return saveLearningModel(model)
+
+
 def getLearningModelPath():
     """
     Returns the platform-specific path to the learning model
