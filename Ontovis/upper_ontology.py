@@ -1217,6 +1217,31 @@ class UpperOntology(object):
         subjects = self.graph.subjects(prop, objectURI)
         return [self.stripNamespace(s) if stripns else s for s in subjects]
 
+    def neighborRangeOrDomainClasses(self, element, range_or_domain, stripns=True):
+        """
+        Return the neighbor classes of the given one according to the domain or range of the properties in the
+        ontology. For each property in the ontology, if the class belongs to a propery's domain, the classes on the
+        property's range are returned. Similarly, if the class belongs to a propery's range, the classes on its domain
+        are returned.
+        :param element: URI of the class to be considered
+        :param range_or_domain: 'range' or 'domain' depending on whether :element must belong to the properties' range
+        or domain, respectively.
+        :param stripns: boolean; whether to remove the namespace from the results
+        :return: List of neighbor classes for :element.
+        """
+        neighbors = set()
+        props = self.propertiesWithRangeOrDomain(element, range_or_domain, stripns=False)
+        for p in props:
+            if range_or_domain == 'range':
+                neighbors.update(self.domainOfProperty(self.stripNamespace(p), False, self.getNamespace(p)))
+            else:
+                neighbors.update(self.rangeOfProperty(self.stripNamespace(p), False, self.getNamespace(p)))
+        if stripns:
+            neighbors_list = [self.stripNamespace(e) for e in neighbors]
+        else:
+            neighbors_list = list(neighbors)
+        return neighbors_list
+
     def addObjectPropertyTriple(self, s, p, o, ns = None):
         """
         Add a new object property to the ontology
