@@ -442,12 +442,14 @@ class UpperOntology(object):
     def getSubclasses(self, parentClass, ns=None):
         """
         Returns all subclasses for the parent class.
-        :param parentClass: The name of the parent class
+        :param parentClass: The name or URI of the parent class
         :param ns: namespace, None for default visualization NS
         :return: List<string> its subclasses
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(parentClass)
+            if not ns:
+                ns = self.VIS_NS
         namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
         propertyURI = URIRef("%s#subClassOf" % c.RDFS_NS)
         objectURI = URIRef("%s#%s" % (ns, parentClass))
@@ -465,7 +467,9 @@ class UpperOntology(object):
         :return: List<string> its parent classes
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(childClass)
+            if not ns:
+                ns = self.VIS_NS
         namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
         propertyURI = URIRef("%s#subClassOf" % c.RDFS_NS)
         subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childClass)))
@@ -1192,6 +1196,27 @@ class UpperOntology(object):
         objects = self.graph.objects(subjectURI, RDFS.range)
         return [self.stripNamespace(s) if stripns else s for s in objects]
 
+    def propertiesWithRangeOrDomain(self, element, range_or_domain, stripns=True):
+        """
+        Returns the properties having the given class as a member of their range or domain
+        :param element: URI of the class to be considered
+        :param range_or_domain: 'range' or 'domain' depending on what needs to be returned
+        :param stripns: boolean; whether to remove the namespace from the results
+        :return: List of object properties with @element in their range
+        """
+        ns = self.getNamespace(element)
+        if not ns:
+            ns = self.VIS_NS
+        if range_or_domain == 'domain':
+            prop = RDFS.domain
+        elif range_or_domain == 'range':
+            prop = RDFS.range
+        else:
+            return []
+        objectURI = URIRef("%s#%s" % (ns, self.stripNamespace(element)))
+        subjects = self.graph.subjects(prop, objectURI)
+        return [self.stripNamespace(s) if stripns else s for s in subjects]
+
     def addObjectPropertyTriple(self, s, p, o, ns = None):
         """
         Add a new object property to the ontology
@@ -1503,7 +1528,7 @@ class UpperOntology(object):
         for p in props:
             specs = []
             dom = self.domainOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
-            ran = self.rangeOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
+            ran = self.OfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
             specs.extend([self.specificityOfElement(self.stripNamespace(d), ns=self.getNamespace(d)) for d in dom])
             specs.extend([self.specificityOfElement(self.stripNamespace(r), ns=self.getNamespace(r)) for r in ran])
             avg = 0.0
