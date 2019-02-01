@@ -389,14 +389,17 @@ class UpperOntology(object):
     def getClassOfElement(self, element, stripns=True, ns=None):
         """
         Return the Entities an individual belongs to; an empty list if none found
-        :param element: and instace name
+        :param element: and instace name or uri
         :param stripns: boolean; whether to remove the namespace from the results
         :param ns: namespace, None for default visualization NS
         :return: a list with the names of the classes the element belongs to
         """
         classes = []
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(element)
+            if not ns:
+                ns = self.VIS_NS
+        element = self.stripNamespace(element)
         if element:
             subjectURI = URIRef("%s#%s" % (ns, element))
             propertyURI = URIRef("%s#type" % c.RDF_NS)
@@ -1060,7 +1063,7 @@ class UpperOntology(object):
     def thingExists(self, name, thing_type, ns=None):
         """
         Returns whether something with the given name exists in the ontology
-        :param name: The thing's name
+        :param name: The thing's name or URI
         :param thing_type: what to search for: 'instance', 'class', 'objectProperty', 'datatypeProperty', 'property',
         or 'literal', or 'all'
         :param ns: namespace, None for default visualization NS
@@ -1069,10 +1072,13 @@ class UpperOntology(object):
         given type
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(name)
+            if not ns:
+                ns = self.VIS_NS
         exists = False
         typesFound = {}
         if name and (type(name) is str or type(name) is unicode):
+            name = self.stripNamespace(name)
             if thing_type in ['all', 'value', 'literal']:
                 uri = self.thingOfTypeExists(name, 'literal', ns)
                 if uri:
@@ -1177,7 +1183,10 @@ class UpperOntology(object):
         :return: List of Entity(ies) with the domain of the given property.
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(prop)
+            if not ns:
+                ns = self.VIS_NS
+        prop = self.stripNamespace(prop)
         subjectURI = URIRef("%s#%s" % (ns, prop))
         objects = self.graph.objects(subjectURI, RDFS.domain)
         return [self.stripNamespace(s) if stripns else s for s in objects]
@@ -1191,7 +1200,10 @@ class UpperOntology(object):
         :return: List of Entity(ies) with the range of the given property.
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(prop)
+            if not ns:
+                ns = self.VIS_NS
+        prop = self.stripNamespace(prop)
         subjectURI = URIRef("%s#%s" % (ns, prop))
         objects = self.graph.objects(subjectURI, RDFS.range)
         return [self.stripNamespace(s) if stripns else s for s in objects]
@@ -1474,7 +1486,10 @@ class UpperOntology(object):
         :return: Found element's URI if exists, False otherwise
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(name)
+            if not ns:
+                ns = self.VIS_NS
+        name = self.stripNamespace(name)
         if subjectType == 'literal':
             elementURI = Literal(name.replace(' ', '_'))
             exists = (None, None, elementURI) in self.graph

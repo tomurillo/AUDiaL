@@ -1,4 +1,5 @@
 from NLP.model.OE import *
+from dialog.config import *
 
 class SuggestionGenerator(object):
     """
@@ -48,9 +49,11 @@ class SuggestionGenerator(object):
             elif isinstance(oe, OntologyEntityElement):
                 class_uris.append(oe.uri)
             elif isinstance(oe, OntologyLiteralElement):
-                pass  # TODO
+                prop_uris = self.findCandidatesForLiteral(oe)
+                for p in prop_uris:
+                    candidates.append(self.createOntologyElementforURI(p, 'datatypeProperty'))
             elif isinstance(oe, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
-                pass  # TODO
+                candidates.extend(self.findCandidatesForProperty(oe))
             neighbor_classes = set()
             for uri in class_uris:
                 candidate_uris = self.findCandidatesForClass(uri)
@@ -80,6 +83,59 @@ class SuggestionGenerator(object):
             candidates.extend(self.o.propertiesWithRangeOrDomain(c, 'range', stripns=False))
             candidates.extend(self.o.propertiesWithRangeOrDomain(c, 'domain', stripns=False))
         return list(set(candidates))
+
+    def findCandidatesForProperty(self, prop_oe):
+        """
+        Find candidate suggestions for the given property: properties having the same range or domain; and neighbor
+        classes of the classes of its range and domain
+        :param prop_oe: OntologyObjectPropertyElement or OntologyDatatypePropertyElement instance
+        :return: list<OntologyElement>: list of candidate OEs
+        """
+        candidates = []
+        if isinstance(prop_oe, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
+            classes = []
+            classes_parents = []
+            classes_neighbor = []
+            properties = []
+            classes.extend(self.o.rangeOfProperty(prop_oe.uri, stripns=False))
+            classes.extend(self.o.domainOfProperty(prop_oe.uri, stripns=False))
+            if self.force_parents:
+                for c in classes:
+                    classes_parents.extend(self.o.getParentClasses(c, ns=None, stripns=False))
+            classes.extend(classes_parents)
+            if len(classes) <= 1 and FORCE_SUGGESTIONS:
+                classes.extend(self.o.getClasses(self.o.getNamespace(prop_oe.uri)))
+            for class_uri in classes:
+                properties.extend(self.o.propertiesWithRangeOrDomain(class_uri, 'domain', stripns=False))
+                properties.extend(self.o.propertiesWithRangeOrDomain(class_uri, 'range', stripns=False))
+                classes_neighbor.extend(self.o.neighborRangeOrDomainClasses(class_uri, 'domain', stripns=False))
+                classes_neighbor.extend(self.o.neighborRangeOrDomainClasses(class_uri, 'range', stripns=False))
+            if FORCE_SUGGESTIONS:
+                properties.extend(self.o.getProperties(prop_type='all', ns=self.o.getNamespace(prop_oe.uri)))
+            for p in properties:
+                candidates.append(self.createOntologyElementforURI(p, 'property'))
+            for c in classes_neighbor:
+                candidates.append(self.createOntologyElementforURI(c, 'entity'))
+        return candidates
+
+    def findCandidatesForLiteral(self, literal_oe):
+        """
+        Find candidate suggestions for the given Literal (candidates of the classes having the Literal as the value
+        for one of their datatype properties)
+        :param literal_oe: OntologyLiteralElement instance
+        :return: list<string>; candidate property URIs
+        """
+        candidates = []
+        if isinstance(literal_oe, OntologyLiteralElement) and literal_oe.triples:
+            classes = []
+            for s, p, _ in literal_oe.triples:
+                if self.o.individualExists(s):
+                    classes.extend(self.o.getClassOfElement(s, stripns=False))
+                elif self.o.classExists(s):
+                    classes.append(s)
+            for c in classes:
+                candidates.extend(self.findCandidatesForClass(c))
+        return candidates
 
     def createOntologyElementforURI(self, uri, oe_type='any'):
         """

@@ -15,7 +15,7 @@ class OntologyElement(object):
         return self.uri
 
     def __eq__(self, other):
-        if not isinstance(other, OntologyElement):
+        if not type(other, OntologyElement):
             return False
         elif self.uri != other.uri:
             return False
