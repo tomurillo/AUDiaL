@@ -33,11 +33,10 @@ class SuggestionGenerator(object):
 
         return votes
 
-    def findCandidateElements(self, sc, text):
+    def findCandidateElements(self, sc):
         """
         Searches for candidate OEs for a clarification dialogue given a Semantic Concept
         :param sc: SemanticConcept instance
-        :param text: text from a LearningKey
         :return: list<OntologyElement>: list of candidate OEs to be presented to the user
         """
         candidates = []
