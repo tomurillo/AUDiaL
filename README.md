@@ -16,6 +16,7 @@ A Python Web application prototype of a Natural Language Interface (**NLI**) to 
     pip install Flask
     pip install rdflib
     pip install nltk
+    pip install textdistance
     ```
 3. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
 4. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.

@@ -67,12 +67,11 @@ def synonymsOfTree(ptree):
     :param ptree: an nltk.Tree instance
     :return: list<string> with synonyms
     """
-    syns = set()
+    syns = []
     if isinstance(ptree, nltk.Tree) and ptree.height() > 1:
         label = ptree.label()
         text = treeRawString(ptree)
         if text:
-            text_norm = text.replace(" ", "_").lower()  # Compound names are underscored in Wordnet
             if label in POS_TAG_NOUN:
                 pos_tag = wn.NOUN
             elif label in POS_TAG_ADVB:
@@ -83,9 +82,78 @@ def synonymsOfTree(ptree):
                 pos_tag = wn.VERB
             else:
                 return list()
-            syn_set = wn.synsets(text_norm, pos=pos_tag)
-            if len(syn_set) > 0:
-                s = syn_set[0]  # Take into consideration only the most relevant synonym set
-                lemmas = s.lemma_names()
-                syns.update([l.replace("_", " ") for l in lemmas if l != text_norm])
-    return list(syns)
+            syns = synonymsOfWord(text, pos_tag)
+    return syns
+
+
+def synonymsOfWord(word, pos_tag=None, n_synonyms=None):
+    """
+    Returns synonyms from the Wordnet corpus for the given word
+    :param word: string; word whose synonyms to fetch
+    :param pos_tag: string; Wordnet part-of-speech tag of the input word, None (default) for all
+    :param n_synonyms: int; maximum number of synonyms to return, None (default) for all
+    :return: list<string> with synonyms of :word
+    """
+    syns = set()
+    if word:
+        text_norm = word.replace(" ", "_").lower()  # Compound names are underscored in Wordnet
+        syn_set = wn.synsets(text_norm, pos=pos_tag)
+        if len(syn_set) > 0:
+            s = syn_set[0]  # Take into consideration only most relevant synonym set
+            lemmas = s.lemma_names()
+            syns.update([l.replace("_", " ") for l in lemmas if l != text_norm])
+    return list(syns[0:n_synonyms])
+
+
+def similarityBetweenWords(word_one, word_two, metric):
+    """
+    Returns the numeric similarity between two given words
+    :param word_one: string; a word
+    :param word_two: string; a word
+    :param metric: a function returning the similarity distance
+    :return: float; similarity between word_one and word_two
+    """
+    similarity = 0.0
+    if word_one and word_two:
+        similarity = float(metric(word_one, word_two))
+    return similarity
+
+
+def soundexSimilarityBetweenWords(word_one, word_two):
+    """
+    Returns the soundex phonetic similarity between two given words
+    :param word_one: string; a word
+    :param word_two: string; a word
+    :return: float; soundex similarity between word_one and word_two
+    """
+    similarity = 0.0
+    if word_one and word_two:
+        from textdistance import jaro  # Jaro-Winkler distance
+        soundex_one = soundex(word_one)
+        soundex_two = soundex(word_two)
+        similarity = float(jaro(soundex_one, soundex_two))
+        if similarity <= 0.5:  # Minimum soundex similarity is 0.5 because of padding zeroes
+            similarity = 0.0
+    return similarity
+
+
+def soundex(word):
+    """
+    Returns the soundex representation of the given word
+    :param word: string; a word
+    :return: float; soundex code for the input word
+    """
+    soundex = ""
+    if word:
+        word = word.upper()
+        soundex += word[0]
+        dictionary = {"BFPV": "1", "CGJKQSXZ":"2", "DT":"3", "L":"4", "MN":"5", "R":"6", "AEIOUHWY":"."}
+        for char in word[1:]:
+            for key in dictionary.keys():
+                if char in key:
+                    code = dictionary[key]
+                    if code != soundex[-1]:
+                        soundex += code
+        soundex = soundex.replace(".", "")
+        soundex = soundex[:4].ljust(4, "0")
+    return soundex

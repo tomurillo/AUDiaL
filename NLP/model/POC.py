@@ -14,6 +14,7 @@ class POC(object):
         self.tree = tree
         self.rawText = rawText
         self.modifiers = None
+        self.annotation = None
         self.head = ''
         self.start = -1  # Start word offset in query
         self.end = -1  # End word offset in query
@@ -33,6 +34,8 @@ class POC(object):
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
         poc_copy.head = self.head
+        if self.annotation:
+            poc_copy.annotation = self.annotation.copy()
         if self.modifiers:
             poc_copy.modifiers = [m.copy() for m in self.modifiers]
         else:
@@ -53,6 +56,8 @@ class POC(object):
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
         poc_copy.head = self.head
+        if self.annotation:
+            poc_copy.annotation = self.annotation.deepcopy()
         if self.modifiers:
             poc_copy.modifiers = [m.copy(deep=True) for m in self.modifiers]
         else:

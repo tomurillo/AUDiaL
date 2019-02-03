@@ -1,5 +1,9 @@
+from dialog.model.Vote import *
 from NLP.model.OE import *
+from NLP.model.SemanticConcept import *
 from dialog.config import *
+from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
+from GeneralUtil import beautifyOutputString
 
 class SuggestionGenerator(object):
     """
@@ -19,7 +23,7 @@ class SuggestionGenerator(object):
     def createVotes(self, key, poc, add_none, skip=None):
         """
         Generate learning votes for the given parameters
-        :param key:
+        :param key: SuggestionKey instance
         :param poc:
         :param add_none:
         :param skip: list of SemanticConcepts to skip; default None
@@ -29,13 +33,62 @@ class SuggestionGenerator(object):
         if skip is None:
             skip = []
         skip_uris = [sc.OE.print_uri() for sc in skip]
-        # TODO
+        candidates = set()
+        for neighbor_sc in key.nearest_neighbors:
+            sc_candidates = self.findCandidateElements(neighbor_sc)
+            candidates.update(sc_candidates)
 
         return votes
 
+    def createVotesfromOEs(self, oe_list, skip_uris, poc, text, sc_neighbor=None):
+        """
+        Generate a vote from suggestion OntologyElements
+        :param oe_list: A list of OntologyElement instances
+        :param skip_uris: URIs of suggestions not to consider
+        :param poc: A POC instance
+        :param text: Text from a SuggestionKey
+        :param sc_neighbor: SemanticConcept instance
+        :return: list<Vote>: votes created from oe_list
+        """
+        suggestions = []
+        for oe in oe_list:
+            if oe.print_uri() not in skip_uris:
+                oe_uri = oe.uri
+                if oe_uri not in suggestions:
+                    suggestions.append(oe_uri)
+                    if poc.annotation:
+                        oe.annotation = poc.annotation
+                    if isinstance(oe, OntologyDatatypePropertyElement) and sc_neighbor:
+                        oe.governor = sc_neighbor.OE
+                    name = self.o.stripNamespace(oe_uri)
+                    if not name:
+                        name = oe_uri
+                    vote = self.createVote(text, name, oe)
+                    suggestions.append(vote)
+                    # TODO
+        return suggestions
+
+    def createVote(self, text, p_name, oe, task=None):
+        """
+        Creates a new Vote from the given parameters
+        :param text: Text from a SuggestionKey
+        :param p_name: string; formal ontology name (or URI) of an OntologyElement
+        :param oe: OntologyElement instance
+        :param task: Ontology task
+        :return: Vote instance
+        """
+        vote = Vote()
+        human_name = beautifyOutputString(p_name)
+        sc = SemanticConcept()
+        sc.OE = oe
+        sc.task = task
+        vote.candidate = sc
+        vote.vote = self.computeSimilarityScore(text, human_name)
+        return vote
+
     def findCandidateElements(self, sc):
         """
-        Searches for candidate OEs for a clarification dialogue given a Semantic Concept
+        Searches in the ontology for candidate OEs for a clarification dialogue given a Semantic Concept
         :param sc: SemanticConcept instance
         :return: list<OntologyElement>: list of candidate OEs to be presented to the user
         """
@@ -160,3 +213,30 @@ class SuggestionGenerator(object):
         if oe:
             oe.uri = uri
         return oe
+
+    def computeSimilarityScore(self, text_one, text_two, with_synoynms=3):
+        """
+        Returns the similarity score between the two given strings
+        :param text_one: string
+        :param text_two: string
+        :param with_synoynms: int; how many synonyms from each input string to consider for final score computation
+        :return: float; similarity score between text_one and text_two
+        """
+        from textdistance import monge_elkan
+        sim_main = similarityBetweenWords(text_one, text_two, monge_elkan)  # Main similarity between the words
+        #  Similarity measures between each word and the other one's synonyms
+        synonyms_one = synonymsOfWord(text_one, pos_tag=None, n_synonyms=with_synoynms)
+        synonyms_two = synonymsOfWord(text_two, pos_tag=None, n_synonyms=with_synoynms)
+        simsyn_one = 0.0
+        if synonyms_one:
+            for syn in synonyms_one:
+                simsyn_one += similarityBetweenWords(syn, text_two, monge_elkan)
+            simsyn_one /= len(synonyms_one)
+        simsyn_two = 0.0
+        if synonyms_two:
+            for syn in synonyms_two:
+                simsyn_two += similarityBetweenWords(syn, text_one, monge_elkan)
+            simsyn_two /= len(synonyms_two)
+        soundex_sim = soundexSimilarityBetweenWords(text_one, text_two)  # Phonetic similarity between the words
+        sim_final = 0.45 * sim_main + 0.15 * soundex_sim + 0.2 * simsyn_one + 0.2 * simsyn_two
+        return sim_final

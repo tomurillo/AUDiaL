@@ -1,5 +1,6 @@
 import uuid
 
+
 class Vote(object):
     def __init__(self):
         """
