@@ -3,6 +3,8 @@ from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
 from dialog.config import *
 from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
+from NLP.constants import *
+from NLP.util.TreeUtil import containNodes
 from GeneralUtil import beautifyOutputString
 
 class SuggestionGenerator(object):
@@ -65,13 +67,13 @@ class SuggestionGenerator(object):
                         name = oe_uri
                     vote = self.createVote(text, name, oe)
                     suggestions.append(vote)
-                    # TODO
+                    suggestions.extend(self.createAdditionalVotes(text, name, oe, poc, added=False))
         return suggestions
 
     def createVote(self, text, p_name, oe, task=None):
         """
         Creates a new Vote from the given parameters
-        :param text: Text from a SuggestionKey
+        :param text: User-input text from a SuggestionKey
         :param p_name: string; formal ontology name (or URI) of an OntologyElement
         :param oe: OntologyElement instance
         :param task: Ontology task
@@ -85,6 +87,27 @@ class SuggestionGenerator(object):
         vote.candidate = sc
         vote.vote = self.computeSimilarityScore(text, human_name)
         return vote
+
+    def createAdditionalVotes(self, text, p_name, oe, poc, added):
+        """
+        Generates new votes from a given OE to consider common numerical tasks
+        :param text: User-input text from a SuggestionKey
+        :param p_name: string; formal ontology name (or URI) of an OntologyElement
+        :param oe: OntologyElement instance
+        :param poc: POC instance
+        :param added: Whether the OE has already been added to the suggestions
+        :return: List<Vote> additional votes
+        """
+        suggestions = []
+        if QUICK_TASKS and isinstance(oe, OntologyDatatypePropertyElement):
+            jj_tags = [JJ_TREE_POS_TAG, JJR_TREE_POS_TAG, JJS_TREE_POS_TAG, VBN_TREE_POS_TAG, RBS_TREE_POS_TAG]
+            if containNodes(poc.tree, jj_tags):
+                for task in QUICK_TASKS:
+                    new_oe = oe.deepcopy()
+                    new_oe.added = added
+                    vote = self.createVote(text, p_name, new_oe, task)
+                    suggestions.append(vote)
+        return suggestions
 
     def findCandidateElements(self, sc):
         """
@@ -214,7 +237,8 @@ class SuggestionGenerator(object):
             oe.uri = uri
         return oe
 
-    def computeSimilarityScore(self, text_one, text_two, with_synoynms=3):
+    @staticmethod
+    def computeSimilarityScore(text_one, text_two, with_synoynms=3):
         """
         Returns the similarity score between the two given strings
         :param text_one: string
@@ -238,5 +262,8 @@ class SuggestionGenerator(object):
                 simsyn_two += similarityBetweenWords(syn, text_one, monge_elkan)
             simsyn_two /= len(synonyms_two)
         soundex_sim = soundexSimilarityBetweenWords(text_one, text_two)  # Phonetic similarity between the words
-        sim_final = 0.45 * sim_main + 0.15 * soundex_sim + 0.2 * simsyn_one + 0.2 * simsyn_two
+        w_main = VOTE_CRITERIA_WEIGHTS[0]
+        w_sound = VOTE_CRITERIA_WEIGHTS[1]
+        w_syn = VOTE_CRITERIA_WEIGHTS[2] / 2.0
+        sim_final = w_main * sim_main + w_sound * soundex_sim + w_syn * simsyn_one + w_syn * simsyn_two
         return sim_final
