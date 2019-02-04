@@ -1229,6 +1229,36 @@ class UpperOntology(object):
         subjects = self.graph.subjects(prop, objectURI)
         return [self.stripNamespace(s) if stripns else s for s in subjects]
 
+    def propertiesWithoutRangeOrDomain(self, type='object', range_or_domain='both', stripns=True):
+        """
+        Returns the properties without any specified range or domain
+        :param type: string; type of property to consider: 'object' or 'datatype' properties.
+        :param range_or_domain: 'range', 'domain', or 'both'
+        :param stripns: boolean; whether to remove the namespace from the results or return full URIs
+        :return: List<string>: property names or URIs
+        """
+        query = """prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                   prefix owl: <http://www.w3.org/2002/07/owl#> 
+                   select ?p where {
+                   """
+        if type == 'datatype':
+            query += "?p a owl:DatatypeProperty\n"
+        elif type == 'object':
+            query += "?p a owl:ObjectProperty\n"
+        if range_or_domain in ['domain', 'both']:
+            query += """filter not exists {
+                        ?p rdfs:domain ?dom
+                        }
+                        """
+        if range_or_domain in ['range', 'both']:
+            query += """filter not exists {
+                        ?p rdfs:range ?ran
+                        }
+                        """
+        query += "}"
+        query_res = self.graph.query(query)
+        return [self.stripNamespace(row.p) if stripns else row.p for row in query_res]
+
     def neighborRangeOrDomainClasses(self, element, range_or_domain, stripns=True):
         """
         Return the neighbor classes of the given one according to the domain or range of the properties in the
