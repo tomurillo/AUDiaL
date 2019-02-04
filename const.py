@@ -14,7 +14,11 @@ CURR_ENV = 'windows' if os.name == 'nt' else 'unix'
 
 """Absolute path to the directory where to persist the ontology between requests"""
 if CURR_ENV == 'windows':
-    path = os.path.realpath(__file__)[:-len("const.py")]
+    path = os.path.realpath(__file__)
+    if path.endswith("pyc"):
+        path = path[:-len("const.pyc")]
+    else:
+        path = path[:-len("const.py")]
     STOREDIR = path + '\\tmp\\ontologyStore'
 else:
     STOREDIR = '/tmp/ontologyStore'

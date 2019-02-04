@@ -224,7 +224,9 @@ class GraphNavStanfordParser(object):
         Loads the Stanford POS Tagger
         @return StanfordPOSTagger instance
         """
-        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.py")]
+        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.pyc")]
+        if not base.endswith("/") or not base.endswith("\\"):
+            base += "/"
         stanfdir = base + 'lib/postaggers/stanford-postagger/'
         modeldir = stanfdir + 'models/'
         if c.CURR_ENV == 'windows':
@@ -240,7 +242,9 @@ class GraphNavStanfordParser(object):
         Loads a Stanford Parser
         @return An instance of the given parser class
         """
-        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.py")]
+        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.pyc")]
+        if not base.endswith("/") or not base.endswith("\\"):
+            base += "/"
         stanfdir = base + 'lib/parsers/stanford-parser-full/'
         modeldir = stanfdir + 'models/'
         if c.CURR_ENV == 'windows':

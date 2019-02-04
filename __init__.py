@@ -17,7 +17,11 @@ GRAPHICS = Content()
 
 def ontologyPath(fileName):
     if c.CURR_ENV == 'windows':
-        path = os.path.realpath(__file__)[:-len("__init__.py")]
+        path = os.path.realpath(__file__)
+        if path.endswith("pyc"):
+            path = path[:-len("__init__.pyc")]
+        else:
+            path = path[:-len("__init__.py")]
         return path + "static\\graphics\\%s" % fileName
     else:
         return "/home/FlaskApp/FlaskApp/static/graphics/%s" % fileName
