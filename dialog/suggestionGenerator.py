@@ -1,6 +1,7 @@
 from dialog.model.Vote import *
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
+from NLP.model.Annotation import *
 from dialog.config import *
 from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
 from NLP.constants import *
@@ -25,11 +26,12 @@ class SuggestionGenerator(object):
     def createVotes(self, key, poc, add_none, skip=None):
         """
         Generate learning votes for the given parameters
-        :param key: SuggestionKey instance
-        :param poc:
-        :param add_none:
+        :param key: SuggestionKey instance; contains neighbor OEs
+        :param poc: POC instance; user input without a supporting ontology resource
+        :param add_none: whether to add None votes to the list
         :param skip: list of SemanticConcepts to skip; default None
-        :return: list<Vote>
+        :return: list<Vote>: votes generated from the SuggestionKey (neighbor suggested ontology resources) and a POC
+        (user input not found in the ontology)
         """
         votes = []
         if skip is None:
@@ -37,22 +39,39 @@ class SuggestionGenerator(object):
         skip_uris = [sc.OE.print_uri() for sc in skip]
         candidates = set()
         for neighbor_sc in key.nearest_neighbors:
+            neighbor_candidates = set()
             sc_candidates = self.findCandidateElements(neighbor_sc)
             candidates.update(sc_candidates)
-
+            neighbor_candidates.update(sc_candidates)
+            votes.extend(self.createVotesfromOEs(sc_candidates, poc, key.text, neighbor_sc, skip_uris))
+            if neighbor_sc.OE not in neighbor_candidates:
+                votes.extend(self.createAdditionalVotes(key.text, neighbor_sc.OE, poc, added=True))
+        left_over_votes_oes = []
+        left_over_oes = self.findLeftOverOEs()
+        for oe in left_over_oes:
+            if oe not in candidates:
+                candidates.add(oe)
+                left_over_votes_oes.append(oe)
+        votes.extend(self.createVotesfromOEs(left_over_votes_oes, poc, key.text, None, skip_uris))
+        if add_none:
+            none_vote = self.createNoneVote(poc.annotation)
+            votes.append(none_vote)
         return votes
 
-    def createVotesfromOEs(self, oe_list, skip_uris, poc, text, sc_neighbor=None):
+    def createVotesfromOEs(self, oe_list, poc, text, sc_neighbor=None, skip_uris=None):
         """
         Generate a vote from suggestion OntologyElements
         :param oe_list: A list of OntologyElement instances
-        :param skip_uris: URIs of suggestions not to consider
         :param poc: A POC instance
         :param text: Text from a SuggestionKey
         :param sc_neighbor: SemanticConcept instance
+        :param skip_uris: URIs of suggestions not to consider
         :return: list<Vote>: votes created from oe_list
         """
+        if skip_uris is None:
+            skip_uris = []
         suggestions = []
+        votes = []
         for oe in oe_list:
             if oe.print_uri() not in skip_uris:
                 oe_uri = oe.uri
@@ -62,37 +81,53 @@ class SuggestionGenerator(object):
                         oe.annotation = poc.annotation
                     if isinstance(oe, OntologyDatatypePropertyElement) and sc_neighbor:
                         oe.governor = sc_neighbor.OE
-                    name = self.o.stripNamespace(oe_uri)
-                    if not name:
-                        name = oe_uri
-                    vote = self.createVote(text, name, oe)
-                    suggestions.append(vote)
-                    suggestions.extend(self.createAdditionalVotes(text, name, oe, poc, added=False))
-        return suggestions
+                    vote = self.createVote(text, oe)
+                    votes.append(vote)
+                    votes.extend(self.createAdditionalVotes(text, oe, poc, added=False))
+        return votes
 
-    def createVote(self, text, p_name, oe, task=None):
+    def createVote(self, text, oe, task=None):
         """
         Creates a new Vote from the given parameters
         :param text: User-input text from a SuggestionKey
-        :param p_name: string; formal ontology name (or URI) of an OntologyElement
         :param oe: OntologyElement instance
         :param task: Ontology task
         :return: Vote instance
         """
-        vote = Vote()
-        human_name = beautifyOutputString(p_name)
-        sc = SemanticConcept()
-        sc.OE = oe
-        sc.task = task
-        vote.candidate = sc
-        vote.vote = self.computeSimilarityScore(text, human_name)
+        vote = None
+        if isinstance(oe, OntologyElement):
+            vote = Vote()
+            name = self.o.stripNamespace(oe.uri)
+            if not name:
+                name = oe.uri
+            human_name = beautifyOutputString(name)
+            sc = SemanticConcept()
+            sc.OE = oe
+            sc.task = task
+            vote.candidate = sc
+            vote.vote = self.computeSimilarityScore(text, human_name)
         return vote
 
-    def createAdditionalVotes(self, text, p_name, oe, poc, added):
+    def createNoneVote(self, annotation=None):
+        """
+        Creates a lowest-priority Vote for an empty option
+        :param annotation: Annotation instance (optional)
+        :return: Vote instance
+        """
+        vote = Vote()
+        oe = OntologyNoneElement()
+        if isinstance(annotation, Annotation):
+            oe.annotation = annotation.copy()
+        sc = SemanticConcept()
+        sc.OE = oe
+        vote.candidate = sc
+        vote.vote = -1.0
+        return vote
+
+    def createAdditionalVotes(self, text, oe, poc, added):
         """
         Generates new votes from a given OE to consider common numerical tasks
         :param text: User-input text from a SuggestionKey
-        :param p_name: string; formal ontology name (or URI) of an OntologyElement
         :param oe: OntologyElement instance
         :param poc: POC instance
         :param added: Whether the OE has already been added to the suggestions
@@ -105,7 +140,7 @@ class SuggestionGenerator(object):
                 for task in QUICK_TASKS:
                     new_oe = oe.deepcopy()
                     new_oe.added = added
-                    vote = self.createVote(text, p_name, new_oe, task)
+                    vote = self.createVote(text, new_oe, task)
                     suggestions.append(vote)
         return suggestions
 
@@ -212,26 +247,60 @@ class SuggestionGenerator(object):
                 candidates.extend(self.findCandidatesForClass(c))
         return candidates
 
-    def createOntologyElementforURI(self, uri, oe_type='any'):
+    def findLeftOverOEs(self):
+        """
+        Returns properties without range and domain (or generic range and domains) and generic ontology resources; this
+        are left over elements since they have not been considered anywhere else in the generation of suggestions.
+        :return: List<OntologyElement> Leftover OntologyElements
+        """
+        from rdflib import RDF, RDFS, OWL  # Namespaces
+        #  Generic resources
+        p_label = self.createOntologyElementforURI(RDFS.label, 'datatypeProperty', check_exists=False)
+        p_type = self.createOntologyElementforURI(RDF.type, 'objectProperty', check_exists=False)
+        c_thing = self.createOntologyElementforURI(OWL.thing, 'entity', check_exists=False)
+        elements = [p_label, p_type, c_thing]
+        #  Datatype properties without domain
+        dps_no_domain = self.o.propertiesWithoutRangeOrDomain('datatype', 'domain', stripns=False)
+        elements.extend(self.createOntologyElementforURI(uri, 'datatypeProperty', False) for uri in dps_no_domain)
+        #  Properties having owl:Thing as their domain or range
+        general_dom_ps = self.o.propertiesWithRangeOrDomain(OWL.thing, 'domain', stripns=False)
+        if self.force_parents:
+            general_dom_ps_parents = [self.o.getParentProperties(uri, ns=None, stripns=False) for uri in general_dom_ps]
+            general_dom_ps.extend(general_dom_ps_parents)
+        elements.extend(self.createOntologyElementforURI(uri, 'property', False) for uri in general_dom_ps)
+        general_ran_ps = self.o.propertiesWithRangeOrDomain(OWL.thing, 'range', stripns=False)
+        if self.force_parents:
+            general_ran_ps_parents = [self.o.getParentProperties(uri, ns=None, stripns=False) for uri in general_ran_ps]
+            general_ran_ps.extend(general_ran_ps_parents)
+        elements.extend(self.createOntologyElementforURI(uri, 'property') for uri in general_ran_ps)
+        #  Instances of owl:Thing
+        things = self.o.getInstances(OWL.thing, stripns=False)
+        elements.extend(self.createOntologyElementforURI(uri, 'individual', check_exists=False) for uri in things)
+        return elements
+
+    def createOntologyElementforURI(self, uri, oe_type='any', check_exists=True):
         """
         Given an URI creates an appropriate OntologyElement instance
         :param uri: an element's URI (string)
         :param oe_type: the specific OntologyElement subclass to create. 'Any' to infer it automatically
+        :param check_exists: boolean; whether to check if the element exists in the ontology before creating it
         :return: an OntologyElement instance (N.B. only its uri property is set); None if the URI does not match an
         element of the given type in the ontology or if it does not exist.
         """
         ns = self.o.getNamespace(uri)
         name = self.o.stripNamespace(uri)
         oe = None
-        if oe_type in ['class', 'entity', 'any'] and self.o.classExists(name, ns):
+        if oe_type in ['class', 'entity', 'any'] and (not check_exists or self.o.classExists(name, ns)):
             oe = OntologyEntityElement()
-        elif oe_type in ['individual', 'instance', 'any'] and self.o.individualExists(name, ns):
+        elif oe_type in ['individual', 'instance', 'any'] and (not check_exists or self.o.individualExists(name, ns)):
             oe = OntologyInstanceElement()
-        elif oe_type in ['objectProperty', 'property', 'any'] and self.o.propertyExists(name, 'objectProperty', ns):
+        elif oe_type in ['objectProperty', 'property', 'any'] and \
+                (not check_exists or self.o.propertyExists(name, 'objectProperty', ns)):
             oe = OntologyObjectPropertyElement()
-        elif oe_type in ['datatypeProperty', 'property', 'any'] and self.o.propertyExists(name, 'datatypeProperty', ns):
+        elif oe_type in ['datatypeProperty', 'property', 'any'] and \
+                (not check_exists or self.o.propertyExists(name, 'datatypeProperty', ns)):
             oe = OntologyDatatypePropertyElement()
-        elif oe_type in ['literal', 'value', 'any'] and self.o.individualExists(name, ns):
+        elif oe_type in ['literal', 'value', 'any'] and (not check_exists or self.o.individualExists(name, ns)):
             oe = OntologyLiteralElement()
         if oe:
             oe.uri = uri

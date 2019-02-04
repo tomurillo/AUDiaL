@@ -190,7 +190,7 @@ def getModifiersOfNounPhrase(ptree):
     """
     modif = []
     noun_labels = [NN_TREE_POS_TAG, NNS_TREE_POS_TAG, NNP_TREE_POS_TAG, NNPS_TREE_POS_TAG, NP_TREE_POS_TAG]
-    if type(ptree, nltk.Tree) and ptree.label() == NP_TREE_POS_TAG:
+    if type(ptree) is nltk.Tree and ptree.label() == NP_TREE_POS_TAG:
         modif = [t for t in ptree if t.label() not in noun_labels]
     return modif
 
@@ -203,7 +203,7 @@ def containNodes(ptree, labels):
     :return: True if the tree contains any of the labels, False otherwise
     """
     contains = False
-    if type(ptree, nltk.Tree) and labels:
+    if type(ptree) is nltk.Tree and labels:
         if ptree.label() in labels:
             contains = True
         else:

@@ -301,7 +301,9 @@ class UpperOntology(object):
         :return list<string>: a list of instance names or URIs, depending on the stripns parameter
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.stripNamespace(entityName)
+            if not ns:
+                ns = self.VIS_NS
         instances = []
         if self.graph and entityName:
             namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
@@ -493,7 +495,9 @@ class UpperOntology(object):
         :return: List<string> its parent classes
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.stripNamespace(childProp)
+            if not ns:
+                ns = self.VIS_NS
         propertyURI = URIRef("%s#subPropertyOf" % c.RDFS_NS)
         subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(childProp)))
         objects = self.graph.objects(subjectURI, propertyURI)

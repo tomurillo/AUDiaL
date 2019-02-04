@@ -330,7 +330,7 @@ class OntologyLiteralElement(OntologyElement):
 
 class OntologyNoneElement(OntologyElement):
     """
-    An ontology element not underpinned by any ontological element
+    An ontology element not underpinned by any ontology resource
     """
     def __init__(self):
         super(OntologyNoneElement, self).__init__()
