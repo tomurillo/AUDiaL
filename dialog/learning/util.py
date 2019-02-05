@@ -1,5 +1,5 @@
 from NLP.model.OE import *
-
+from dialog.model.LearningVote import *
 
 def getGenericElement(element, o):
     """
@@ -54,7 +54,6 @@ def getGenericElementofURI(element_uri, o):
     :param o: Ontology instance
     :return: string; The URI of the generic element
     """
-    generic = None
     ns = o.getNamespace(element_uri)
     name = o.stripNamespace(element_uri)
     if o.classExists(name, ns):
@@ -110,3 +109,38 @@ def getGenericElementofIndividualURI(ind_uri, o):
     else:
         generic = ind_uri
     return generic
+
+
+def getLearningVotesfromVotes(votes):
+    """
+    Create LearningVote instances from the given votes
+    :param votes: list<Vote>
+    :return: list<LearningVote>
+    """
+    lvotes = []
+    for vote in votes:
+        lvote = LearningVote()
+        lvote.id = vote.id
+        lvote.score = vote.score
+        if vote.candidate:
+            lvote.task = vote.candidate.task
+            if vote.candidate.OE:
+                lvote.identifier = vote.candidate.OE.print_uri()
+        lvotes.append(lvote)
+    return lvotes
+
+
+def getVotesFromLearningVotes(lvotes, old_votes):
+    """
+    Update Vote instances from the given learning votes
+    :param votes: list<LearningVote>
+    :param old_votes: list<Vote>; Vote instances to update
+    :return: list<Vote>; list of Votes with updated vote scores
+    """
+    for lvote in lvotes:
+        for old_vote in old_votes:
+            if old_vote.candidate and old_vote.candidate.OE:
+                if lvote.identifier == old_vote.candidate.OE.print_uri():
+                    if lvote.task is None or lvote.task == old_vote.candidate.task:
+                        old_vote.vote = lvote.vote
+    return old_votes

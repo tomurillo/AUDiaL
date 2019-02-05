@@ -4,7 +4,10 @@ from dialog.model.Key import *
 from dialog.model.Vote import *
 from dialog.model.modelUtil import *
 from dialog.learning.util import *
+from dialog.config import *
+from dialog.suggestionGenerator import SuggestionGenerator
 from oc.OCUtil import *
+from NLP.model.POC import *
 
 
 class DialogHandler(object):
@@ -36,14 +39,15 @@ class DialogHandler(object):
     def generateDisambiguationDialog(self):
         """
         Generates a user dialog to disambiguate between ambiguous OCs in the query
-        :return:
+        :return: SuggestionPair instance
         """
         key = SuggestionKey()
         pair = SuggestionPair()
-        next_ocs = nextAmbiguousOCs(self.q)  # OC closest to question focus
+        next_ocs = nextAmbiguousOCs(self.q)  # OCs (SemanticConcepts) closest to question focus
+        sc_first = None
         if next_ocs:
-            oc_first = next_ocs[0]
-            key.text = oc_first.OE.annotation.rawText
+            sc_first = next_ocs[0]
+            key.text = sc_first.OE.annotation.rawText
         neighbor_ocs = findNearestOCsInQuery(self.q, next_ocs)
         key.nearest_neighbors = neighbor_ocs
         pair.key = key
@@ -52,9 +56,32 @@ class DialogHandler(object):
         learning_votes = self.generateLearningVotes(learning_keys)
         #  Initialize suggestion pair votes from ambiguous OCs
         suggestion_votes = self.generateInitialVotes(next_ocs)
-        #############################
-        # TODO
-        #############################
+        if FORCE_DIALOG and sc_first:
+            #  Find additional votes by creating a new POC from the OE
+            sug_generator = SuggestionGenerator(self.o, force_parents=True)
+            poc = POC()
+            poc.populateFromAnnotation(sc_first.OE.annotation.copy())
+            poc_votes = []
+            if neighbor_ocs:
+                poc_votes.extend(sug_generator.createVotes(key, poc, add_none=False, skip=next_ocs))
+            else:
+                poc_votes.extend(sug_generator.createGenericVotes(key, poc, add_none=False, skip=next_ocs))
+            candidate_oes = []
+            for poc_vote in poc_votes:
+                if poc_vote.candidate not in next_ocs and not isinstance(poc_vote.candidate.OE, OntologyNoneElement):
+                    poc_vote.candidate.score = poc_vote.vote
+                    candidate_oes.append(poc_vote.candidate)
+            suggestion_votes.extend(self.generateInitialVotes(candidate_oes))
+        if learning_votes:
+            pair.votes = getVotesFromLearningVotes(learning_votes, suggestion_votes)
+        else:
+            pair.votes = suggestion_votes
+            l_model = {}
+            for lkey in learning_keys:
+                learning_votes = getLearningVotesfromVotes(suggestion_votes)
+                l_model[lkey] = learning_votes
+                saveLearningModel(l_model)
+        return pair
 
     def generateLearningKeys(self, sugkey):
         """
@@ -82,9 +109,9 @@ class DialogHandler(object):
 
     def generateLearningVotes(self, learning_keys):
         """
-        Generate a list of stored votes from a list of learning Keys
+        Generate a list of stored learning votes from a list of learning Keys
         :param learning_keys: list of Key
-        :return: list<Vote>
+        :return: list<LearningVote>
         """
         votes = []
         model = loadLearningModel()

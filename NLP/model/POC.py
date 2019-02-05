@@ -22,6 +22,21 @@ class POC(object):
         self.end_original = -1  # Copy of end offset in case POC is altered
         self.mainSubjectPriority = self.MSUB_PRIORITY_MIN
 
+    def populateFromAnnotation(self, ann):
+        """
+        Populates this POC's members according to the data from an annotation
+        :param ann: Annotation instance
+        :return: None
+        """
+        if ann:
+            self.annotation = ann
+            self.rawText = ann.rawText
+            self.tree = ann.tree
+            self.start = ann.start
+            self.start_original = ann.start
+            self.end = ann.end
+            self.end_original = ann.end
+
     def copy(self):
         poc_copy = POC()
         if self.tree:

@@ -251,6 +251,32 @@ class UpperOntology(object):
                 c = len(set(self.getInstances(normElement)))
         return c
 
+    def yieldResource(self, prop_type='all', ns='all'):
+        """
+        Yield a new URI of the given type each time
+        :param prop_type: 'class', 'individual', 'property', 'objectProperty', 'datatypeProperty', or 'all'. The kind
+        of resource to consider.
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :return: generator of (URI, type) string tuples
+        """
+        dtype_uri = URIRef("%s#%s" % (c.OWL_NS, "DatatypeProperty"))
+        object_uri = URIRef("%s#%s" % (c.OWL_NS, "ObjectProperty"))
+        class_uri = URIRef("%s#%s" % (c.OWL_NS, "Class"))
+        ind_uri = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
+        for s, p, o in self.graph.triples((None, RDF.type, None)):
+            if o == object_uri and prop_type in ['object', 'property', 'all']:
+                if ns == 'all' or self.getNamespace(s) == ns:
+                    yield s, "objectProperty"
+            elif o == dtype_uri and prop_type in ['datatype', 'property', 'all']:
+                if ns == 'all' or self.getNamespace(s) == ns:
+                    yield s, "datatypeProperty"
+            elif o == class_uri and prop_type in ['class', 'entity', 'all']:
+                if ns == 'all' or self.getNamespace(s) == ns:
+                    yield s, "class"
+            elif o == ind_uri and prop_type in ['individual', 'instance', 'all']:
+                if ns == 'all' or self.getNamespace(s) == ns:
+                    yield s, "individual"
+
     def getClasses(self, ns='all'):
         """
         Returns all classes in the ontology
@@ -291,32 +317,6 @@ class UpperOntology(object):
             if not isinstance(ns, list):
                 ns = [ns]
             return [i for i in props if self.getNamespace(i) in ns]
-
-    def yieldResource(self, prop_type='all', ns='all'):
-        """
-        Yield a new URI of the given type each time
-        :param prop_type: 'class', 'individual', 'property', 'objectProperty', 'datatypeProperty', or 'all'. The kind
-        of resource to consider.
-        :param ns: namespaces to consider (string or list), 'all' for all
-        :return: generator of URIs
-        """
-        dtype_uri = URIRef("%s#%s" % (c.OWL_NS, "DatatypeProperty"))
-        object_uri = URIRef("%s#%s" % (c.OWL_NS, "ObjectProperty"))
-        class_uri = URIRef("%s#%s" % (c.OWL_NS, "Class"))
-        ind_uri = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
-        for s, p, o in self.graph.triples((None, RDF.type, None)):
-            if o == object_uri and prop_type in ['object', 'property', 'all']:
-                if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s
-            elif o == dtype_uri and prop_type in ['datatype', 'property', 'all']:
-                if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s
-            elif o == class_uri and prop_type in ['class', 'entity', 'all']:
-                if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s
-            elif o == ind_uri and prop_type in ['individual', 'instance', 'all']:
-                if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s
 
     def getInstances(self, entityName='all', stripns=True, ns=None):
         """

@@ -2,7 +2,9 @@
 Dialogue configuration constants
 """
 
-FORCE_SUGGESTIONS = True  # Whether to force creation of suggestions during dialogue if none have been found
+FORCE_SUGGESTIONS = False  # Whether to force creation of suggestions during dialogue if none have been found
+
+FORCE_DIALOG = False
 
 """
 Weights of each criteria when computing suggestion votes (must sum up to 1):

@@ -7,6 +7,7 @@ from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilar
 from NLP.constants import *
 from NLP.util.TreeUtil import containNodes
 from GeneralUtil import beautifyOutputString
+from dialog.model.modelUtil import *
 
 class SuggestionGenerator(object):
     """
@@ -60,7 +61,7 @@ class SuggestionGenerator(object):
 
     def createVotesfromOEs(self, oe_list, poc, text, sc_neighbor=None, skip_uris=None):
         """
-        Generate a vote from suggestion OntologyElements
+        Generate votes from suggestion OntologyElements
         :param oe_list: A list of OntologyElement instances
         :param poc: A POC instance
         :param text: Text from a SuggestionKey
@@ -86,6 +87,72 @@ class SuggestionGenerator(object):
                     votes.extend(self.createAdditionalVotes(text, oe, poc, added=False))
         return votes
 
+    def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None):
+        """
+        Create potential votes when no neighbor OEs have been found in the user query
+        :param key: SuggestionKey instance
+        :param poc: POC instance
+        :param add_none: whether to add None votes to the output
+        :param max: int; maximum number of votes to generate
+        :param skip: list of SemanticConcepts to skip; default None
+        :return: list<Vote>
+        """
+        votes = []
+        n = 0
+        if skip is None:
+            skip = []
+        skip_uris = [sc.OE.print_uri() for sc in skip]
+        oes = self.findGenericOEs(max, skip_uris)
+        for oe in oes:
+            oe.annotation = poc.annotation.copy()
+            vote = self.createVote(key.text, oe)
+            votes.append(vote)
+            n += 1
+            n_left = max - n
+            if n_left > 0:
+                all_additional_votes = self.createAdditionalVotes(key.text, oe, poc, added=False)
+                additional_votes = all_additional_votes[:n_left]
+                votes.extend(additional_votes)
+                n += len(additional_votes)
+                if n >= max:
+                    break
+        if n < max:
+            n_left = max - n
+            all_leftover_votes = self.createVotesfromOEs(self.findLeftOverOEs(), poc, key.text, None, skip_uris)
+            leftover_votes = all_leftover_votes[:n_left]
+            n += len(leftover_votes)
+            votes.extend(leftover_votes)
+        if add_none and n < max:
+            none_vote = self.createNoneVote(poc.annotation)
+            votes.append(none_vote)
+        return votes
+
+    def findGenericOEs(self, max, skip_uris=None):
+        """
+        Find top-most ontology resources (entities and properties) and return them as OntologyElement instances
+        :param max: int; maximum number of elements to return
+        :param skip_uris: list<string>; URIs of OntologyElements not to consider
+        :return: list<OntologyElement>
+        """
+        if skip_uris is None:
+            skip_uris = []
+        n = 0
+        oes = []
+        for p_uri, p_type in self.o.yieldResource(type='property'):
+            if p_uri not in skip_uris and not self.o.getParentProperties(p_uri, ns=None, stripns=False):
+                n += 1
+                oes.append(self.createOntologyElementforURI(p_uri, p_type, check_exists=False))
+                if n >= max:
+                    break
+        if n < max:
+            for c_uri, _ in self.o.yieldResource(type='class'):
+                if c_uri not in skip_uris and not self.o.getParentClasses(c_uri, ns=None, stripns=False):
+                    n += 1
+                    oes.append(self.createOntologyElementforURI(c_uri, "class", check_exists=False))
+                    if n >= max:
+                        break
+        return oes
+
     def createVote(self, text, oe, task=None):
         """
         Creates a new Vote from the given parameters
@@ -102,7 +169,7 @@ class SuggestionGenerator(object):
                 name = oe.uri
             human_name = beautifyOutputString(name)
             sc = SemanticConcept()
-            sc.OE = oe
+            sc.OE = oe.deepcopy()
             sc.task = task
             vote.candidate = sc
             vote.vote = self.computeSimilarityScore(text, human_name)
