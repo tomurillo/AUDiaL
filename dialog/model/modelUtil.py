@@ -1,7 +1,7 @@
 import json
 import os
 from dialog.model.Key import *
-from dialog.model.Vote import *
+from dialog.model.LearningVote import *
 from GeneralUtil import asWindows
 
 MODEL_FILE = 'dialog/storage/votes.json'
@@ -10,7 +10,7 @@ MODEL_FILE = 'dialog/storage/votes.json'
 def loadLearningModel():
     """
     Load the current learning model from a serialized file on disk
-    :return: dict<Key, list<Vote>>
+    :return: dict<Key, list<LearningVote>>
     """
     model_path = getLearningModelPath()
     model = {}
@@ -23,7 +23,7 @@ def loadLearningModel():
                 k.from_dict(key_dict)
                 votes = []
                 for vote_dict in vote_list_dict:
-                    v = Vote()
+                    v = LearningVote()
                     v.from_dict(vote_dict)
                     votes.append(v)
                 model[k] = votes
@@ -36,7 +36,7 @@ def loadLearningModel():
 def saveLearningModel(model):
     """
     Serialize and store a learning model to disk
-    :param model: A dict<Key, list<Vote>> containing the learning model
+    :param model: A dict<Key, list<LearningVote>> containing the learning model
     :return: True on successful storage; False otherwise
     """
     model_path = getLearningModelPath()

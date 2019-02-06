@@ -125,7 +125,7 @@ def getLearningVotesfromVotes(votes):
         if vote.candidate:
             lvote.task = vote.candidate.task
             if vote.candidate.OE:
-                lvote.identifier = vote.candidate.OE.print_uri()
+                lvote.identifier = vote.candidate
         lvotes.append(lvote)
     return lvotes
 
@@ -140,7 +140,7 @@ def getVotesFromLearningVotes(lvotes, old_votes):
     for lvote in lvotes:
         for old_vote in old_votes:
             if old_vote.candidate and old_vote.candidate.OE:
-                if lvote.identifier == old_vote.candidate.OE.print_uri():
+                if lvote.identifier == old_vote.candidate:
                     if lvote.task is None or lvote.task == old_vote.candidate.task:
                         old_vote.vote = lvote.vote
     return old_votes
