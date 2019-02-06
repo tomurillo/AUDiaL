@@ -1,3 +1,5 @@
+from NLP.model.Annotation import *
+
 class OntologyElement(object):
     def __init__(self):
         """
@@ -13,6 +15,33 @@ class OntologyElement(object):
         :return: string: this OE's URI
         """
         return self.uri
+
+    def to_dict(self):
+        """
+        Converts this OntologyElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = {'type': 'OntologyElement', 'uri': self.uri, 'added': self.added}
+        if self.annotation:
+            d['annotation'] = self.annotation.to_dict()
+        else:
+            d['annotation'] = None
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        self.uri = d.get('uri', '')
+        self.added = d.get('added', False)
+        ann_dict = d.get('annotation')
+        if ann_dict:
+            self.annotation = Annotation()
+            self.annotation.from_dict(ann_dict)
+        else:
+            self.annotation = None
 
     def __eq__(self, other):
         if not isinstance(other, OntologyElement):
@@ -69,6 +98,25 @@ class OntologyEntityElement(OntologyElement):
         else:
             super(OntologyEntityElement, self).__eq__(other)
 
+    def to_dict(self):
+        """
+        Converts this OntologyEntityElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyEntityElement, self).to_dict()
+        d['type'] = 'OntologyEntityElement'
+        d['specificity'] = self.specificity
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        super(OntologyEntityElement, self).from_dict(d)
+        self.specificity = d.get('specificity', 0)
+
     def __ne__(self, other):
         return not self.__eq__(other)
 
@@ -105,6 +153,25 @@ class OntologyInstanceElement(OntologyElement):
     def __init__(self):
         self.classUris = []  # URIs of the Classes the instance belongs to
         super(OntologyInstanceElement, self).__init__()
+
+    def to_dict(self):
+        """
+        Converts this OntologyInstanceElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyInstanceElement, self).to_dict()
+        d['type'] = 'OntologyInstanceElement'
+        d['classUris'] = self.classUris
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        super(OntologyInstanceElement, self).from_dict(d)
+        self.classUris = d.get('classUris', [])
 
     def __eq__(self, other):
         if not type(other, OntologyInstanceElement):
@@ -153,6 +220,31 @@ class OntologyObjectPropertyElement(OntologyElement):
         self.specificity_score = 0
         self.distance_score = 0
         super(OntologyObjectPropertyElement, self).__init__()
+
+    def to_dict(self):
+        """
+        Converts this OntologyObjectPropertyElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyObjectPropertyElement, self).to_dict()
+        d['type'] = 'OntologyObjectPropertyElement'
+        d['domain'] = self.domain
+        d['range'] = self.range
+        d['specificity_score'] = self.specificity_score
+        d['distance_score'] = self.distance_score
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        super(OntologyObjectPropertyElement, self).from_dict(d)
+        self.domain = d.get('domain', [])
+        self.range = d.get('range', [])
+        self.specificity_score = d.get('specificity_score', 0)
+        self.distance_score = d.get('distance_score', 0)
 
     def __eq__(self, other):
         if not type(other, OntologyObjectPropertyElement):
@@ -217,6 +309,43 @@ class OntologyDatatypePropertyElement(OntologyElement):
         self.distance_score = 0
         self.governor = None  # OntologyElement instance from its domain
         super(OntologyDatatypePropertyElement, self).__init__()
+
+    def to_dict(self):
+        """
+        Converts this OntologyDatatypePropertyElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyDatatypePropertyElement, self).to_dict()
+        d['type'] = 'OntologyDatatypePropertyElement'
+        d['domain'] = self.domain
+        d['range'] = self.range
+        d['specificity_score'] = self.specificity_score
+        d['distance_score'] = self.distance_score
+        if self.governor:
+            d['governor'] = self.governor.to_dict()
+        else:
+            d['governor'] = None
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        super(OntologyDatatypePropertyElement, self).from_dict(d)
+        self.domain = d.get('domain', [])
+        self.range = d.get('range', [])
+        self.specificity_score = d.get('specificity_score', 0)
+        self.distance_score = d.get('distance_score', 0)
+        self.governor = None
+        governor_dict = d.get('governor')
+        if governor_dict:
+            gov_type = governor_dict.get('type', 'OntologyElement')
+            if gov_type in globals():
+                gov_class = globals()[gov_type]
+                self.governor = gov_class()
+                self.governor.from_dict(governor_dict)
 
     def __eq__(self, other):
         if not type(other, OntologyDatatypePropertyElement):
@@ -284,6 +413,25 @@ class OntologyLiteralElement(OntologyElement):
         self.triples = []  # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology
         super(OntologyLiteralElement, self).__init__()
 
+    def to_dict(self):
+        """
+        Converts this OntologyLiteralElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyLiteralElement, self).to_dict()
+        d['type'] = 'OntologyLiteralElement'
+        d['triples'] = self.triples
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        super(OntologyLiteralElement, self).from_dict(d)
+        self.triples = d.get('triples', [])
+
     def print_uri(self):
         """
         Returns this element's triples' URIs
@@ -334,6 +482,15 @@ class OntologyNoneElement(OntologyElement):
     """
     def __init__(self):
         super(OntologyNoneElement, self).__init__()
+
+    def to_dict(self):
+        """
+        Converts this OntologyNoneElement to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = super(OntologyNoneElement, self).to_dict()
+        d['type'] = 'OntologyNoneElement'
+        return d
 
     def __eq__(self, other):
         if not type(other, OntologyNoneElement):

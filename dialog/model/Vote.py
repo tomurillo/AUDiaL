@@ -1,3 +1,4 @@
+from NLP.model.SemanticConcept import *
 import uuid
 
 
@@ -9,6 +10,29 @@ class Vote(object):
         self.id = str(uuid.uuid4())
         self.vote = -1.0
         self.candidate = None  # Candidate SemanticConcept instance
+
+    def to_dict(self):
+        """
+        Converts this Vote to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = {'id': self.id, 'vote': self.vote, 'candidate': self.candidate.to_dict()}
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d: dict
+        :return: None; updates current instance
+        """
+        self.id = d.get('id', '')
+        self.vote = d.get('vote', -1.0)
+        self.candidate = None
+        candidate_dict = d.get('candidate')
+        if candidate_dict:
+            candidate = SemanticConcept()
+            candidate.from_dict(candidate_dict)
+            self.candidate = candidate
 
     def __eq__(self, other):
             if not isinstance(other, Vote):

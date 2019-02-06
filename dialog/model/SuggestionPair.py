@@ -4,7 +4,7 @@ class SuggestionPair(object):
         Dialog Suggestion Pair constructor
         """
         self.key = None
-        self.votes = []
+        self.votes = []  # List of Vote
         self.subject = None
 
     def __eq__(self, other):
@@ -21,3 +21,6 @@ class SuggestionPair(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.key) ^ hash(tuple(self.votes)) ^ hash(self.subject)

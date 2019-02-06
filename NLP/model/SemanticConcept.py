@@ -1,3 +1,5 @@
+from NLP.model.OE import *
+
 class SemanticConcept(object):
     """
     Semantic Concepts are extended Ontology Concepts (OCs) belonging to a user's query i.e. elements of a query
@@ -22,6 +24,39 @@ class SemanticConcept(object):
         if poc and poc.start >= self.OE.annotation.start and poc.end <= self.OE.annotation.end:
             overlaps = True
         return overlaps
+
+    def to_dict(self):
+        """
+        Converts this SemanticConcept to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = {}
+        if self.OE:
+            d['OE'] = self.OE.to_dict()
+        else:
+            d['OE'] = None
+        d['verified'] = self.verified
+        d['score'] = self.score
+        d['task'] = self.task
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d: dict
+        :return: None; updates current instance
+        """
+        self.verified = d.get('verified', False)
+        self.score = d.get('score')
+        self.task = d.get('task')
+        self.OE = None
+        oe_dict = d.get('OE')
+        if oe_dict:
+            oe_type = oe_dict.get('type', 'OntologyElement')
+            if oe_type in globals():
+                oe_class = globals()[oe_type]
+                self.OE = oe_class()
+                self.OE.from_dict(oe_dict)
 
     def __eq__(self, other):
         if not isinstance(other, SemanticConcept):

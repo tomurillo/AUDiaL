@@ -16,6 +16,46 @@ class Annotation(object):
                            # and their URIs (vals)
         self.extra = {}  # Extra information e.g. classUri of instance, domain and range of property.
 
+    def to_dict(self):
+        """
+        Converts this Annotation to an equivalent dictionary (of built-in types) representation
+        :return: dict
+        """
+        d = {'start': self.start, 'end': self.end, 'stem': self.stem, 'inOntology': self.inOntology,
+             'isSynonym': self.isSynonym, 'text': self.text, 'oc_type': self.oc_type, 'extra': self.extra}
+        if self.tree:
+            d['tree'] = str(self.tree)
+        else:
+            d['tree'] = None
+        if self.lemma_tree:
+            d['lemma_tree'] = str(self.lemma_tree)
+        else:
+            d['lemma_tree'] = None
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        if type(d) is dict:
+            from nltk import ImmutableTree, Tree
+            tree = d.get('tree')
+            lemma = d.get('lemma_tree')
+            self.tree = ImmutableTree.fromstring(tree) if tree else None
+            self.lemma_tree = Tree.fromstring(lemma) if lemma else None
+            self.start = d.get('start', -1)
+            self.end = d.get('end', -1)
+            self.stem = d.get('stem', False)
+            self.inOntology = d.get('inOntology', False)
+            self.isSynonym = d.get('isSynonym', False)
+            self.text = d.get('text', '')
+            self.oc_type = d.get('oc_type', {})
+            self.extra = d.get('extra', {})
+        else:
+            raise ValueError('Annotation.from_dict: parameter must be of type dict.')
+
     def __eq__(self, other):
         if type(other) is not Annotation:
             return False

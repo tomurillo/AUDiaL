@@ -81,6 +81,7 @@ class DialogHandler(object):
                 learning_votes = getLearningVotesfromVotes(suggestion_votes)
                 l_model[lkey] = learning_votes
                 saveLearningModel(l_model)
+        pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
         return pair
 
     def generateLearningKeys(self, sugkey):
@@ -117,10 +118,7 @@ class DialogHandler(object):
         model = loadLearningModel()
         if model:
             for k in learning_keys:
-                key_votes = []
-                key_str = str(k)
-                if key_str in model:
-                    key_votes = model[key_str]
+                key_votes = model.get(k, [])
                 votes.extend(key_votes)
         return votes
 
