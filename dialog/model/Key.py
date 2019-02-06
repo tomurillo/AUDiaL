@@ -42,17 +42,22 @@ class Key(object):
 
     def __str__(self):
         if self.triples:
-            triple_str = '\'triples\': ['
+            triple_str = r'"triples": ['
+            first = True
             for uri in self.triples:
-                triple_str += '\'' + uri + '\''
-            triple_str = ']'
+                if first:
+                    first = False
+                else:
+                    triple_str += ", "
+                triple_str += r'"' + uri + r'"'
+            triple_str += ']'
         else:
-            triple_str = '\'triples\': []'
+            triple_str = r'"triples": []'
         if self.oe_id:
-            oe_id_str = '\'oe_id\': \'' + self.oe_id + '\''
+            oe_id_str = r'"oe_id": "' + self.oe_id + r'"'
         else:
-            oe_id_str = '\'oe_id\': None'
-        return '{\'text\': \'' + self.text + '\', ' + oe_id_str + ', ' + triple_str + '}'
+            oe_id_str = r'"oe_id": null'
+        return r'{"text": "' + self.text + r'", ' + oe_id_str + r', ' + triple_str + r'}'
 
     def __hash__(self):
         return hash(self.text) ^ hash(self.oe_id) ^ hash(tuple(self.triples))

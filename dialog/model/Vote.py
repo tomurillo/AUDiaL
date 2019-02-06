@@ -16,7 +16,11 @@ class Vote(object):
         Converts this Vote to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'id': self.id, 'vote': self.vote, 'candidate': self.candidate.to_dict()}
+        d = {'id': self.id, 'vote': self.vote}
+        if self.candidate:
+            d['candidate'] = self.candidate.to_dict()
+        else:
+            d['candidate'] = None
         return d
 
     def from_dict(self, d):

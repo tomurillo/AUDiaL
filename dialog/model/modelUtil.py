@@ -4,7 +4,7 @@ from dialog.model.Key import *
 from dialog.model.Vote import *
 from GeneralUtil import asWindows
 
-MODEL_FILE = '../storage/votes.json'
+MODEL_FILE = 'dialog/storage/votes.json'
 
 
 def loadLearningModel():
@@ -12,7 +12,6 @@ def loadLearningModel():
     Load the current learning model from a serialized file on disk
     :return: dict<Key, list<Vote>>
     """
-    import ast
     model_path = getLearningModelPath()
     model = {}
     try:
@@ -20,7 +19,7 @@ def loadLearningModel():
             model_serialized = json.load(f)
             for key_str, vote_list_dict in model_serialized.iteritems():
                 k = Key()
-                key_dict = ast.literal_eval(key_str)
+                key_dict = json.loads(key_str)
                 k.from_dict(key_dict)
                 votes = []
                 for vote_dict in vote_list_dict:
@@ -28,9 +27,9 @@ def loadLearningModel():
                     v.from_dict(vote_dict)
                     votes.append(v)
                 model[k] = votes
-    except Exception:
+    except Exception as e:
         import sys
-        print('Learning model could not be loaded from path: %s' % model_path, sys.stderr)
+        print('Learning model could not be loaded from path: %s: %s' % (model_path, str(e)), sys.stderr)
     return model
 
 
@@ -52,9 +51,9 @@ def saveLearningModel(model):
                     vote_dict_list.append(v.to_dict())
                 model_dict[key_str] = vote_dict_list
             json.dump(model_dict, f)
-    except Exception:
+    except Exception as e:
         import sys
-        print('Learning model could not be stored to file: %s' % model_path, sys.stderr)
+        print('Learning model could not be stored to file %s: %s' % (model_path, str(e)), sys.stderr)
         success = False
     finally:
         return success
