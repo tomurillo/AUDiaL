@@ -130,7 +130,7 @@ def getLearningVotesfromVotes(votes):
     return lvotes
 
 
-def getVotesFromLearningVotes(lvotes, old_votes):
+def updateVotesFromLearningVotes(lvotes, old_votes):
     """
     Update Vote instances from the given learning votes
     :param votes: list<LearningVote>

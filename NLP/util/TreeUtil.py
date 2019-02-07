@@ -281,6 +281,22 @@ def getLabeledSubTrees(ptree, label):
     return list(ptree.subtrees(filter=lambda x: x.label() == label))
 
 
+def distanceBetweenAnnotations(ptree, ann1, ann2):
+    """
+    Returns the distance between the parse trees of the two given annotations or POCs
+    :param ptree: a Parse Tree of a user's query
+    :param ann1: Annotation or POC instance
+    :param ann2: Annotation or POC instance
+    :return: int; Node distance between the leftmost leaf of ann1 and the rightmost leaf of ann2
+    """
+    path = pathBetweenAnnotations(ptree, ann1, ann2)
+    if path:
+        distance = len(path)
+    else:
+        distance = float("inf")
+    return distance
+
+
 def pathBetweenAnnotations(ptree, ann1, ann2):
     """
     Returns the path between 2 annotations in a query
@@ -290,7 +306,7 @@ def pathBetweenAnnotations(ptree, ann1, ann2):
     :return: list<str> Path of nodes between the parse trees of ann1 and ann2 in ptree
     """
     path = []
-    if ptree and ann1.start and ann2.end:
+    if ptree and ann1.start > -1 and ann2.end > -1:
         leafs_path = pathBetweenLeafs(ptree, ann1.start, ann2.end)
         root1 = ann1.tree.label()
         i = 0

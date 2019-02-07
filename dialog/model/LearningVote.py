@@ -33,7 +33,7 @@ class LearningVote(object):
         self.id = d.get('id', '')
         self.score = d.get('score', -1.0)
         self.task = d.get('task')
-        self.candidate = None
+        self.identifier = None
         candidate_dict = d.get('identifier')
         if candidate_dict:
             candidate = SemanticConcept()

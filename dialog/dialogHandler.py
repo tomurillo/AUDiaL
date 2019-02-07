@@ -33,8 +33,11 @@ class DialogHandler(object):
         Checks whether it is necessary to generate disambiguation and mapping dialogs; if so, creates them
         :return:
         """
-        if self.disambiguationRequired():
-            pass
+        if self.disambiguationRequired():  # Give priority to disambiguation between OCs
+            pair = self.generateDisambiguationDialog()
+        elif self.mappingRequired():
+            pair = self.generateMappingDialog()
+        # TODO
 
     def generateDisambiguationDialog(self):
         """
@@ -43,7 +46,7 @@ class DialogHandler(object):
         """
         key = SuggestionKey()
         pair = SuggestionPair()
-        next_ocs = nextAmbiguousOCs(self.q)  # OCs (SemanticConcepts) closest to question focus
+        next_ocs = nextAmbiguousOCs(self.q)  # OCs (SemanticConcept instances) closest to question focus
         sc_first = None
         if next_ocs:
             sc_first = next_ocs[0]
@@ -53,7 +56,7 @@ class DialogHandler(object):
         pair.key = key
         #  Search for learning keys in the Ontology and learning votes in the model
         learning_keys = self.generateLearningKeys(key)
-        learning_votes = self.generateLearningVotes(learning_keys)
+        learning_votes = self.loadLearningVotes(learning_keys)
         #  Initialize suggestion pair votes from ambiguous OCs
         suggestion_votes = self.generateInitialVotes(next_ocs)
         if FORCE_DIALOG and sc_first:
@@ -73,15 +76,47 @@ class DialogHandler(object):
                     candidate_oes.append(poc_vote.candidate)
             suggestion_votes.extend(self.generateInitialVotes(candidate_oes))
         if learning_votes:
-            pair.votes = getVotesFromLearningVotes(learning_votes, suggestion_votes)
+            pair.votes = updateVotesFromLearningVotes(learning_votes, suggestion_votes)
         else:
             pair.votes = suggestion_votes
             l_model = {}
+            learning_votes = getLearningVotesfromVotes(suggestion_votes)
             for lkey in learning_keys:
-                learning_votes = getLearningVotesfromVotes(suggestion_votes)
                 l_model[lkey] = learning_votes
-                saveLearningModel(l_model)
+            saveLearningModel(l_model)
         pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
+        return pair
+
+    def generateMappingDialog(self):
+        """
+        Generates a dialog to map unresolved POCs in the user query to ontology resources (OCs)
+        :return: SuggestionPair instance
+        """
+        pair = SuggestionPair()
+        key = SuggestionKey()
+        poc = nextPOC(self.q)
+        neighbor_ocs = findNearestOCsOfPOC(self.q, poc)
+        key.text = poc.rawText
+        key.nearest_neighbors = neighbor_ocs
+        pair.key = key
+        pair.subject = poc
+        learning_keys = self.generateLearningKeys(key)
+        sug_generator = SuggestionGenerator(self.o, force_parents=True)
+        if neighbor_ocs:
+            votes = sug_generator.createVotes(key, poc, add_none=True)
+        else:
+            votes = sug_generator.createGenericVotes(key, poc, add_none=True)
+        learning_votes = self.loadLearningVotes(learning_keys)
+        if learning_votes:
+            pair.votes = updateVotesFromLearningVotes(learning_votes, votes)
+        else:
+            pair.votes = votes
+            l_model = {}
+            learning_votes = getLearningVotesfromVotes(votes)
+            for lkey in learning_keys:
+                l_model[lkey] = learning_votes
+            saveLearningModel(l_model)
+        pair.votes.sort(key=lambda v: v.vote, reverse=True)
         return pair
 
     def generateLearningKeys(self, sugkey):
@@ -108,7 +143,7 @@ class DialogHandler(object):
                 key_list.append(lk)
         return key_list
 
-    def generateLearningVotes(self, learning_keys):
+    def loadLearningVotes(self, learning_keys):
         """
         Generate a list of stored learning votes from a list of learning Keys
         :param learning_keys: list of Key
@@ -150,3 +185,13 @@ class DialogHandler(object):
                 disambiguate = True
                 break
         return disambiguate
+
+    def mappingRequired(self):
+        """
+        Returns whether an POC to OC mapping dialog is currently necessary
+        :return: True if user must be prompted to map a POC to an ontology resource, False otherwise
+        """
+        mapping = False
+        if self.q and self.q.pocs:
+            mapping = True
+        return mapping

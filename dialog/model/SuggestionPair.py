@@ -5,7 +5,7 @@ class SuggestionPair(object):
         """
         self.key = None
         self.votes = []  # List of Vote
-        self.subject = None
+        self.subject = None  # POC instance
 
     def __eq__(self, other):
             if type(other) is not SuggestionPair:

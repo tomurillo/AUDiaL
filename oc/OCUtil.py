@@ -1,5 +1,5 @@
 import Ontovis.constants as o_c
-from NLP.util.TreeUtil import pathBetweenAnnotations
+from NLP.util.TreeUtil import distanceBetweenAnnotations
 from NLP.model.OE import *
 
 
@@ -132,11 +132,57 @@ def nextAmbiguousOCs(q):
         for ocs in q.semanticConcepts:
             if len(ocs) > 1 and not overlappingOCsVerified(ocs):
                 first_oc = ocs[0]
-                distance_to_focus = len(pathBetweenAnnotations(q.pt, first_oc.OE.annotation, q.focus))
+                distance_to_focus = distanceBetweenAnnotations(q.pt, first_oc.OE.annotation, q.focus)
                 if distance_to_focus < min_dist:
                     ocs_next = ocs
                     min_dist = distance_to_focus
     return ocs_next
+
+
+def nextPOC(q):
+    """
+    Chooses which POC from the given question needs to be mapped to an OC next
+    :param q: a consolidated Query instance
+    :return: POC instance
+    """
+    next_poc = None
+    if q and q.pocs:
+        min_dist = float("inf")
+        for poc in q.pocs:
+            neighbor_scs = findNearestOCsOfPOC(q, poc)
+            if neighbor_scs:
+                sc = neighbor_scs[0]
+                dist = distanceBetweenAnnotations(q, poc, sc.OE)
+                if dist < min_dist:
+                    next_poc = poc
+                    min_dist = dist
+                elif dist == min_dist and next_poc and poc.start > next_poc.start:
+                    next_poc = poc
+        if next_poc is None:
+            next_poc = q.pocs[0]
+    return next_poc
+
+
+def findNearestOCsOfPOC(q, poc):
+    """
+    Returns the nearest ontology resources to the given POC of a user query
+    :param q: a consolidated Query instance
+    :param poc: POC instance
+    :return: List<SemanticConcept> Nearest ontology resources available in the query to the POC
+    """
+    neighbors = []
+    if q and q.semanticConcepts:
+        min_dist = float("inf")
+        flattened_scs = q.flattened_scs()
+        for sc in flattened_scs:
+            if type(sc.OE) is not OntologyNoneElement:
+                distance = distanceBetweenAnnotations(q.pt, poc, sc.OE.annotation)  # Distance between POC and OC
+                if distance < min_dist:
+                    neighbors = [sc]
+                    min_dist = distance
+                elif distance == min_dist:
+                    neighbors.append(sc)
+    return neighbors
 
 
 def findNearestOCsInQuery(q, overlapped_ocs):
@@ -155,7 +201,7 @@ def findNearestOCsInQuery(q, overlapped_ocs):
             if ocs != overlapped_ocs:
                 for oc in ocs:
                     if type(oc.OE) is not OntologyNoneElement:
-                        dist = len(pathBetweenAnnotations(q.pt, first_oc.OE.annotation.tree, oc.OE.annotation.tree))
+                        dist = distanceBetweenAnnotations(q.pt, first_oc.OE.annotation, oc.OE.annotation)
                         if dist < min_dist:
                             nearest = [oc]
                             min_dist = dist
