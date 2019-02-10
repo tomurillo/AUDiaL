@@ -327,7 +327,7 @@ class UpperOntology(object):
         :return list<string>: a list of instance names or URIs, depending on the stripns parameter
         """
         if not ns:
-            ns = self.stripNamespace(entityName)
+            ns = self.getNamespace(entityName)
             if not ns:
                 ns = self.VIS_NS
         instances = []
@@ -396,7 +396,7 @@ class UpperOntology(object):
             objects = self.graph.objects(subjectURI, propertyURI)
         return [self.stripNamespace(o) for o in objects]
 
-    def getValue(self, s, p, default=None, ns=None):
+    def getValue(self, s, p, default=None, ns=None, stripns=True):
         """
         Returns the value of a functional property. An exception is raised
         if more than one (s, p, _) triples are found
@@ -404,6 +404,7 @@ class UpperOntology(object):
         :param p: name of the (functional) property
         :param default: default value to use if nothing found
         :param ns: namespace, None for default visualization NS
+        :param stripns: boolean; whether to remove the namespace from the results
         """
         if not ns:
             ns = self.VIS_NS
@@ -412,7 +413,7 @@ class UpperOntology(object):
             subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(s)))
             propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(p)))
             val = self.graph.value(subjectURI, propertyURI, default=default)
-        return self.stripNamespace(val)
+        return self.stripNamespace(val) if stripns else val
 
     def getClassOfElement(self, element, stripns=True, ns=None):
         """
@@ -1057,6 +1058,21 @@ class UpperOntology(object):
                     coorRet = float(l[0])
         return coorRet
 
+    def getRDFLabel(self, element, ns=None, stripns=True):
+        """
+        Returns the RDF label of the given element, if it exists
+        :param element: A resource URI or name
+        :param ns: namespace, None for default visualization NS if not already in element
+        :param stripns: boolean; whether to remove the namespace from the results
+        :return: string; the label value or label URI for the given element, empty if none found
+        """
+        if not ns:
+            ns = self.getNamespace(element)
+            if not ns:
+                ns = self.VIS_NS
+        name = self.stripNamespace(element)
+        return self.getValue(name, RDFS.label, default='', ns=ns, stripns=stripns)
+
     def classExists(self, name, ns=None):
         """
         Returns whether a class with the given name exists
@@ -1523,10 +1539,10 @@ class UpperOntology(object):
                     classid = normItem[-2:].upper()
                     if classid in self.ENTITY_ABBRV:
                         normItem = "%s%s" % (normItem[:-2], classid)
-                elif normItem.lower() in c.NavFilters: # Navigation Filters
+                elif normItem.lower() in c.NavFilters:  # Navigation Filters
                     normItem = c.NavFilters[normItem.lower()]
-                else:
-                    normItem = normItem.replace('_', ' ')
+                # else:
+                #    normItem = normItem.replace('_', ' ')
             else:
                 normItem = s
         else:
