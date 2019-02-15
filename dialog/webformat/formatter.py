@@ -48,8 +48,16 @@ class SuggestionFormatter(object):
         uri = ""
         if isinstance(oe, OntologyElement):
             uri = oe.uri
-        if uri and isinstance(oe, OntologyInstanceElement):
-            instance_label = self.findLabels(uri) if USE_LABELS else uri
+        if isinstance(oe, OntologyInstanceElement):
+            instance_label = ""
+            if len(oe.uris) > 1:  # Several instances of same class
+                i_labels = []
+                for i_uri in oe.uris:
+                    i_labels.extend(self.findLabels(i_uri) if USE_LABELS else i_uri)
+                if len(i_labels) > 1:
+                    instance_label = ", ".join(i_labels)
+            if not instance_label:
+                instance_label = ", ".join(self.findLabels(uri)) if USE_LABELS else uri
             if instance_label:
                 class_labels = []
                 for c_uri in oe.classUris:
@@ -61,7 +69,7 @@ class SuggestionFormatter(object):
         elif isinstance(oe, OntologyLiteralElement):
             label = uri
         else:
-            label = self.findLabels(uri) if USE_LABELS else uri
+            label = ", ".join(self.findLabels(uri)) if USE_LABELS else uri
         return label
 
     def findLabels(self, uri):
