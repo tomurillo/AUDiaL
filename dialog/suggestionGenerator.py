@@ -127,10 +127,10 @@ class SuggestionGenerator(object):
             votes.append(none_vote)
         return votes
 
-    def findGenericOEs(self, max, skip_uris=None):
+    def findGenericOEs(self, max_elems, skip_uris=None):
         """
         Find top-most ontology resources (entities and properties) and return them as OntologyElement instances
-        :param max: int; maximum number of elements to return
+        :param max_elems: int; maximum number of elements to return
         :param skip_uris: list<string>; URIs of OntologyElements not to consider
         :return: list<OntologyElement>
         """
@@ -142,14 +142,14 @@ class SuggestionGenerator(object):
             if p_uri not in skip_uris and not self.o.getParentProperties(p_uri, ns=None, stripns=False):
                 n += 1
                 oes.append(self.createOntologyElementforURI(p_uri, p_type, check_exists=False))
-                if n >= max:
+                if n >= max_elems:
                     break
-        if n < max:
+        if n < max_elems:
             for c_uri, _ in self.o.yieldResource(type='class'):
                 if c_uri not in skip_uris and not self.o.getParentClasses(c_uri, ns=None, stripns=False):
                     n += 1
                     oes.append(self.createOntologyElementforURI(c_uri, "class", check_exists=False))
-                    if n >= max:
+                    if n >= max_elems:
                         break
         return oes
 
@@ -361,6 +361,7 @@ class SuggestionGenerator(object):
             oe = OntologyEntityElement()
         elif oe_type in ['individual', 'instance', 'any'] and (not check_exists or self.o.individualExists(name, ns)):
             oe = OntologyInstanceElement()
+            oe.uris = [uri]
         elif oe_type in ['objectProperty', 'property', 'any'] and \
                 (not check_exists or self.o.propertyExists(name, 'objectProperty', ns)):
             oe = OntologyObjectPropertyElement()

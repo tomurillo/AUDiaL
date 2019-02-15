@@ -148,10 +148,11 @@ class OntologyEntityElement(OntologyElement):
 
 class OntologyInstanceElement(OntologyElement):
     """
-    An ontology element underpinned by an ontology instance
+    An ontology element underpinned by one or more ontology instances of the same classes
     """
     def __init__(self):
-        self.classUris = []  # URIs of the Classes the instance belongs to
+        self.uris = []  # URIs of instances of the same class(s); this way they are all grouped under the same OE
+        self.classUris = []  # URIs of the Classes the instance(s) belongs to
         super(OntologyInstanceElement, self).__init__()
 
     def to_dict(self):
@@ -161,6 +162,7 @@ class OntologyInstanceElement(OntologyElement):
         """
         d = super(OntologyInstanceElement, self).to_dict()
         d['type'] = 'OntologyInstanceElement'
+        d['uris'] = self.uris
         d['classUris'] = self.classUris
         return d
 
@@ -171,12 +173,15 @@ class OntologyInstanceElement(OntologyElement):
         :return: None; updates current instance
         """
         super(OntologyInstanceElement, self).from_dict(d)
+        self.uris = d.get('uris', [])
         self.classUris = d.get('classUris', [])
 
     def __eq__(self, other):
         if not type(other, OntologyInstanceElement):
             return False
         elif set(self.classUris) != set(other.classUris):
+            return False
+        elif set(self.uris) != set(other.uris):
             return False
         else:
             super(OntologyInstanceElement, self).__eq__(other)
@@ -185,7 +190,8 @@ class OntologyInstanceElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(self.added) ^ hash(self.annotation)
+        return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(tuple(self.uris)) ^ hash(self.added) \
+               ^ hash(self.annotation)
 
     def copy(self):
         oe_copy = OntologyInstanceElement()
@@ -194,6 +200,7 @@ class OntologyInstanceElement(OntologyElement):
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
         oe_copy.classUris = self.classUris
+        oe_copy.uris = self.uris
         return oe_copy
 
     __copy__ = copy
@@ -205,6 +212,7 @@ class OntologyInstanceElement(OntologyElement):
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
         oe_copy.classUris = list(self.classUris)
+        oe_copy.uris = list(self.uris)
         return oe_copy
 
     __deepcopy__ = deepcopy

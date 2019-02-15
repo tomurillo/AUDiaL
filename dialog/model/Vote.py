@@ -39,16 +39,16 @@ class Vote(object):
             self.candidate = candidate
 
     def __eq__(self, other):
-            if not isinstance(other, Vote):
-                return False
-            elif self.id != other.id:
-                return False
-            elif self.vote != other.vote:
-                return False
-            elif self.candidate != other.candidate:
-                return False
-            else:
-                return True
+        if not isinstance(other, Vote):
+            return False
+        elif self.id != other.id:
+            return False
+        elif self.vote != other.vote:
+            return False
+        elif self.candidate != other.candidate:
+            return False
+        else:
+            return True
 
     def __ne__(self, other):
         return not self.__eq__(other)

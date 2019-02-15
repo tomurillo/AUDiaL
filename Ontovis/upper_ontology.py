@@ -369,10 +369,15 @@ class UpperOntology(object):
         Returns a list with all subjects for a given property, object pair
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(obj)
+            if not ns:
+                ns = self.VIS_NS
+        prop_ns = self.getNamespace(property)
+        if not prop_ns:
+            prop_ns = self.VIS_NS
         subjects = []
         if self.graph and property and obj:
-            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(property)))
+            propertyURI = URIRef("%s#%s" % (prop_ns, self.stripNamespace(property)))
             if propertyType == 'datatype':
                 if not dtype:
                     objectURI = Literal(obj)
@@ -533,7 +538,7 @@ class UpperOntology(object):
         :return: List<string> its parent classes
         """
         if not ns:
-            ns = self.stripNamespace(childProp)
+            ns = self.getNamespace(childProp)
             if not ns:
                 ns = self.VIS_NS
         propertyURI = URIRef("%s#subPropertyOf" % c.RDFS_NS)
@@ -549,11 +554,13 @@ class UpperOntology(object):
         Returns whether the given individual is of the given class
         :param instance: The name of the individual
         :param entity: The name of a class
-        :param ns: namespace, None for default visualization NS
+        :param ns: instance and class namespace, None for default visualization NS
         :return: True if 'instance' is of type 'class'
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(instance)
+            if not ns:
+                ns = self.VIS_NS
         namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
         subjectURI = URIRef("%s#%s" % (ns, instance))
         propertyURI = URIRef("%s#type" % c.RDF_NS)
@@ -1171,8 +1178,10 @@ class UpperOntology(object):
         :return:
         """
         if not ns:
-            ns = self.VIS_NS
-        spec = self.getValue(name, self.NavigationDataProperty.HAS_DISTANCE_SCORE,
+            ns = self.getNamespace(name)
+            if not ns:
+                ns = self.VIS_NS
+        spec = self.getValue(self.stripNamespace(name), self.NavigationDataProperty.HAS_DISTANCE_SCORE,
                              default=Literal(0.0, datatype=XSD.float), ns=ns)
         return spec.toPython()
 
@@ -1184,8 +1193,10 @@ class UpperOntology(object):
         :return: float: specificity score of the element according to the "has_specificity" property
         """
         if not ns:
-            ns = self.VIS_NS
-        spec = self.getValue(name, self.NavigationDataProperty.HAS_SPECIFICITY,
+            ns = self.getNamespace(name)
+            if not ns:
+                ns = self.VIS_NS
+        spec = self.getValue(self.stripNamespace(name), self.NavigationDataProperty.HAS_SPECIFICITY,
                              default=Literal(0.0, datatype=XSD.float), ns=ns)
         return spec.toPython()
 
@@ -1196,8 +1207,6 @@ class UpperOntology(object):
         :param ns: namespace, None for default visualization NS
         :return: int: distance of class to the furthermost parent class, starting from 1
         """
-        if not ns:
-            ns = self.VIS_NS
         distance = 1
         max_distance = 0
         parents = self.getParentClasses(name, ns)
@@ -1214,8 +1223,6 @@ class UpperOntology(object):
         :param ns: namespace, None for default visualization NS
         :return: int: distance of property to the furthermost parent property, starting from 1
         """
-        if not ns:
-            ns = self.VIS_NS
         distance = 1
         max_distance = 0
         parents = self.getParentProperties(name, ns)
@@ -1553,7 +1560,6 @@ class UpperOntology(object):
         else:
             normItem = ""
         return normItem
-
 
     def thingOfTypeExists(self, name, subjectType, ns):
         """

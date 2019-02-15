@@ -28,8 +28,10 @@ def getSemanticConcepts(annotations, add_none=False):
     overlapped_oes = getOverlappedOntologyElements(overlapped_anns)
     #  Group overlapped OEs by text
     overlapped_by_text = getOverlappedOntologyElementsGroupByText(overlapped_oes)
+    #  Group overlapping instances of the same class under one OE
+    overlapped_and_grouped = groupInstancesOfSameClass(overlapped_by_text)
     sem_concepts = []
-    for oe_list in overlapped_by_text:
+    for oe_list in overlapped_and_grouped:
         sem_overlapped = []
         for oe in oe_list:
             sem_con = SemanticConcept()
@@ -54,7 +56,7 @@ def getOverlappedOntologyElements(nested_annotations):
         ov_oe_list = []
         ov_oe_list.extend(annotationToOntologyElements(ann))
         for ov_ann in overlapped_anns:
-             ov_oe_list.extend(annotationToOntologyElements(ov_ann))
+            ov_oe_list.extend(annotationToOntologyElements(ov_ann))
         oelements.append(ov_oe_list)
     return oelements
 
@@ -74,6 +76,7 @@ def annotationToOntologyElements(annotation):
                     oe.specificity = annotation.extra['class_specScore']
             elif ann_type == o_c.OTYPE_IND:
                 oe = OntologyInstanceElement()
+                oe.uris = [annotation.oc_type[ann_type]]
                 if 'classUri' in annotation.extra:
                     oe.classUris = annotation.extra['classUri']
                 else:
@@ -166,6 +169,35 @@ def getOverlappedOntologyElementsGroupByText(oelements):
             oes_with_text = text_overlaps[text]
             overlapped_oe_by_text.append(oes_with_text)
     return overlapped_oe_by_text
+
+
+def groupInstancesOfSameClass(oelements):
+    """
+    Given a dict of overlapped-by-text ontology elements (OE), combines overlapping OEs which are instance of the
+    same class(es) into a single OE containing all instances
+    :param oelements: A list of overlapped OEs as given by the getOverlappedOntologyElementsGroupByText method
+    :return: list<list<OntologyElement>> A list with overlapping OEs (lists of OEs) that have the same
+    underlying text. The first element of each sub-list is the overlapping OE. Overlapping instances of the same
+    class are represented by a single OntologyInstanceElement.
+    """
+    final_oes = []
+    for overlapped_oes in oelements:
+        grouped_oes = []
+        instance_groups = {}
+        for oe in overlapped_oes:
+            if isinstance(oe, OntologyInstanceElement):
+                c_str = str(oe.classUris)  # Classes this instance belongs to
+                if c_str in instance_groups:
+                    instance_groups[c_str].uris.append(oe.uri)  # Group instances under same OE
+                else:
+                    instances_oe = oe.copy()
+                    instances_oe.uris = [oe.uri]
+                    instance_groups[c_str] = instances_oe
+                    grouped_oes.append(instances_oe)
+            else:
+                grouped_oes.append(oe)
+        final_oes.append(grouped_oes)
+    return final_oes
 
 
 def appendOntologyNoneElements(semantic_concepts):

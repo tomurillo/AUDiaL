@@ -135,6 +135,8 @@ class DialogHandler(object):
                     lk.oe_id = getGenericElement(sc.OE, self.o)
                     if isinstance(sc.OE, OntologyLiteralElement):
                         lk.triples = sc.OE.triples
+                    if isinstance(sc.OE, OntologyInstanceElement) and len(sc.OE.uris) > 1:
+                        lk.instance_uris = sc.OE.uris
                     key_list.append(lk)
             else:
                 lk = Key()
