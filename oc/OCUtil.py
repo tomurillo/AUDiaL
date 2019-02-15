@@ -152,7 +152,7 @@ def nextPOC(q):
             neighbor_scs = findNearestOCsOfPOC(q, poc)
             if neighbor_scs:
                 sc = neighbor_scs[0]
-                dist = distanceBetweenAnnotations(q, poc, sc.OE)
+                dist = distanceBetweenAnnotations(q.pt, poc, sc.OE.annotation)
                 if dist < min_dist:
                     next_poc = poc
                     min_dist = dist

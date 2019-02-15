@@ -368,7 +368,7 @@ class UpperOntology(object):
         """
         Returns a list with all subjects for a given property, object pair
         """
-        if not ns:
+        if not ns and propertyType == 'object':
             ns = self.getNamespace(obj)
             if not ns:
                 ns = self.VIS_NS
@@ -524,9 +524,9 @@ class UpperOntology(object):
         objects = self.graph.objects(subjectURI, propertyURI)
         if stripns:
             classes = [self.stripNamespace(o) for o in objects
-                       if o != namedIndividualURI]
+                       if o != namedIndividualURI and not isinstance(o, rdflib.BNode)]
         else:
-            classes = [o for o in objects if o != namedIndividualURI]
+            classes = [o for o in objects if o != namedIndividualURI and not isinstance(o, rdflib.BNode)]
         return classes
 
     def getParentProperties(self, childProp, ns=None, stripns=True):
@@ -1166,8 +1166,8 @@ class UpperOntology(object):
         :return: list<(subject, predicate, object)>: triples where the given literal is the object
         """
         context = []
-        for triple in self.graph.triples((None, None, elementURI)):
-            context.append(triple)
+        for s, p, o in self.graph.triples((None, None, elementURI)):
+            context.append((str(s), str(p), str(o)))
         return context
 
     def distanceScoreOfProperty(self, name, ns=None):

@@ -48,16 +48,20 @@ class Controller(object):
         Processes a user's single query in Natural Language, returning a dialog to resolve
         unknown or ambiguous concepts.
         :param what: A single NL phrase
-        :return:
+        :return: A suggestion pair if the query cannot be resolved; None otherwise (query instance is resolved and
+        task needs to be performed next)
         """
         self.parseAndLookUp(what)
         self.consolidateQuery()
-        self.dialogue = DialogHandler(self.q, self.o)
+        self.dialogue = DialogHandler(self.q, self.o)  # Dialog needs consolidated query
         suggestion_pair = self.dialogue.generateDialogs()
         if suggestion_pair:
-            pass  # Create dialogue TODO
+            # Output dialog
+            from dialog.webformat.formatter import SuggestionFormatter
+            formatter = SuggestionFormatter(self.o)
+            return formatter.suggestionPairToJSON(suggestion_pair)
         else:
-            pass  # Generate answer TODO
+            pass  # Find task, Generate answer TODO
 
     def parseAndLookUp(self, what):
         """
@@ -101,7 +105,9 @@ class Controller(object):
     def retrieveValue(self, what): #TODO
         output = ""
         if self.type == c.BAR_CHART:
-            self.processQuery(what)
+            suggestion = self.processQuery(what)
+            if suggestion:
+                output = suggestion
         return output
 
     def retrieveValueSimple(self, what):

@@ -1,6 +1,6 @@
 from NLP.model.OE import *
 from dialog.model.SuggestionPair import SuggestionPair
-from dialog.config import USE_LABELS, LABEL_PROPS
+from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString
 
 
@@ -8,13 +8,12 @@ class SuggestionFormatter(object):
     """
     Utility methods for transforming Dialog suggestions into JSON for Web display
     """
-    def __init__(self, ontology, max_suggestions=100):
+    def __init__(self, ontology):
         """
         SuggestionFormatter constructor
 
         """
         self.o = ontology
-        self.max = max_suggestions
 
     def suggestionPairToJSON(self, pair):
         """
@@ -26,7 +25,7 @@ class SuggestionFormatter(object):
         if isinstance(pair, SuggestionPair):
             json_pair['text'] = pair.key.text
             json_pair['votes'] = []
-            votes = pair.votes[: self.max]
+            votes = pair.votes[: MAX_SUGGESTIONS]
             for vote in votes:
                 if vote.candidate and vote.candidate.OE:
                     json_vote = {}

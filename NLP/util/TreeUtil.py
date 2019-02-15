@@ -403,7 +403,7 @@ def immutableCopy(ptree):
     elif type(ptree) is str or type(ptree) is unicode:
         return ptree
     else:
-        raise TypeError("immutableCopy: unknown type given")
+        raise TypeError("immutableCopy: unknown type given: %s" % str(type(ptree)))
 
 
 def mutableCopy(ptree):
@@ -419,7 +419,7 @@ def mutableCopy(ptree):
     elif type(ptree) is str or type(ptree) is unicode:
         return ptree
     else:
-        raise TypeError("mutableCopy: unknown type given")
+        raise TypeError("mutableCopy: unknown type given: %s" % str(type(ptree)))
 
 
 def toParentedTree(ptree):
@@ -433,7 +433,7 @@ def toParentedTree(ptree):
     elif type(ptree) is str or type(ptree) is unicode:
         return ptree
     else:
-        raise TypeError("toParentedTree: unknown type given")
+        raise TypeError("toParentedTree: unknown type given: %s" % str(type(ptree)))
 
 
 def printTree(ptree):

@@ -138,14 +138,14 @@ class SuggestionGenerator(object):
             skip_uris = []
         n = 0
         oes = []
-        for p_uri, p_type in self.o.yieldResource(type='property'):
+        for p_uri, p_type in self.o.yieldResource(prop_type='property'):
             if p_uri not in skip_uris and not self.o.getParentProperties(p_uri, ns=None, stripns=False):
                 n += 1
                 oes.append(self.createOntologyElementforURI(p_uri, p_type, check_exists=False))
                 if n >= max_elems:
                     break
         if n < max_elems:
-            for c_uri, _ in self.o.yieldResource(type='class'):
+            for c_uri, _ in self.o.yieldResource(prop_type='class'):
                 if c_uri not in skip_uris and not self.o.getParentClasses(c_uri, ns=None, stripns=False):
                     n += 1
                     oes.append(self.createOntologyElementforURI(c_uri, "class", check_exists=False))
@@ -243,7 +243,9 @@ class SuggestionGenerator(object):
                     neighbor_classes.update(self.o.neighborRangeOrDomainClasses(c_uri, 'domain', stripns=False))
                     neighbor_classes.update(self.o.neighborRangeOrDomainClasses(c_uri, 'range', stripns=False))
             for neighbor_uri in neighbor_classes:
-                candidates.append(self.createOntologyElementforURI(neighbor_uri, 'entity'))
+                oe_candidate = self.createOntologyElementforURI(neighbor_uri, 'entity')
+                if oe_candidate:
+                    candidates.append(oe_candidate)
         return list(set(candidates))
 
     def findCandidatesForClass(self, class_uri):
@@ -304,12 +306,12 @@ class SuggestionGenerator(object):
         """
         candidates = []
         if isinstance(literal_oe, OntologyLiteralElement) and literal_oe.triples:
-            classes = []
+            classes = set()
             for s, p, _ in literal_oe.triples:
                 if self.o.individualExists(s):
-                    classes.extend(self.o.getClassOfElement(s, stripns=False))
+                    classes.update(self.o.getClassOfElement(s, stripns=False))
                 elif self.o.classExists(s):
-                    classes.append(s)
+                    classes.update(s)
             for c in classes:
                 candidates.extend(self.findCandidatesForClass(c))
         return candidates

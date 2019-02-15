@@ -29,7 +29,7 @@ def getGenericElement(element, o):
                     if specificity > max_spec:
                         top_class = c
                         max_spec = specificity
-                generic_classes = o.getTopElements(top_class, 'class')
+                generic_classes, _ = o.getTopElements(top_class, 'class')
                 generic = generic_classes[0] if generic_classes else element.uri
             else:
                 generic = element.uri
@@ -44,7 +44,7 @@ def getGenericElement(element, o):
                 generic = element.uri  # URI actually contains value of Literal
         else:
             generic = element.uri
-    return generic
+    return str(generic)
 
 
 def getGenericElementofURI(element_uri, o):
@@ -74,7 +74,7 @@ def getGenericElementofClassURI(class_uri, o):
     :param o: Ontology instance
     :return: string; The URI of the generic element (top-level parent class)
     """
-    generic_classes = o.getTopElements(class_uri, 'class')
+    generic_classes, _ = o.getTopElements(class_uri, 'class')
     return generic_classes[0] if generic_classes else class_uri
 
 
@@ -85,7 +85,7 @@ def getGenericElementofPropertyURI(prop_uri, o):
     :param o: Ontology instance
     :return: string; The URI of the generic element (top-level parent property)
     """
-    generic_props = o.getTopElements(prop_uri, 'property')
+    generic_props, _ = o.getTopElements(prop_uri, 'property')
     return generic_props[0] if generic_props else prop_uri
 
 
@@ -121,7 +121,7 @@ def getLearningVotesfromVotes(votes):
     for vote in votes:
         lvote = LearningVote()
         lvote.id = vote.id
-        lvote.score = vote.score
+        lvote.score = vote.vote
         if vote.candidate:
             lvote.task = vote.candidate.task
             if vote.candidate.OE:
