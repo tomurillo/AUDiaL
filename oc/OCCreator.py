@@ -147,7 +147,8 @@ def getOverlappedAnnotations(annotations):
 
 def getOverlappedOntologyElementsGroupByText(oelements):
     """
-    Given a dict of overlapped ontology elements, group them up according to their textual representation.
+    Given a dict of overlapped ontology elements, splits those overlapped elements that have different underlying
+    text into different groups.
     :param oelements: A list of overlapped OEs as given by the getOverlappedOntologyElements method
     :return: list<list<OntologyElement>> A list with overlapping OEs (lists of OEs) that have the same
     underlying text. The first element of each sub-list is the overlapping OE.

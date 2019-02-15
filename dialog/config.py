@@ -4,6 +4,13 @@ Dialogue configuration constants
 
 FORCE_SUGGESTIONS = False  # Whether to force creation of suggestions during dialogue if none have been found
 
+MAX_SUGGESTIONS = 100  # Maximum number of suggestions to display to the user at once in a dialogue
+
+USE_LABELS = True  # Whether to return resource's labels in the dialogue instead of their URIs
+
+#  Label property URIs (besides rdfs:label) to be looked for, in order. To be shown in dialog suggestions for each element.
+LABEL_PROPS = ['http://purl.org/dc/terms/title', 'http://purl.org/dc/elements/1.1/title']
+
 FORCE_DIALOG = False
 
 """

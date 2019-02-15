@@ -1,6 +1,5 @@
 from dialog.model.SuggestionKey import *
 from dialog.model.SuggestionPair import *
-from dialog.model.Key import *
 from dialog.model.Vote import *
 from dialog.model.modelUtil import *
 from dialog.learning.util import *
@@ -31,13 +30,14 @@ class DialogHandler(object):
     def generateDialogs(self):
         """
         Checks whether it is necessary to generate disambiguation and mapping dialogs; if so, creates them
-        :return:
+        :return: SuggestionPair instance if a dialogue is necessary; None otherwise (question can be resolved)
         """
+        pair = None
         if self.disambiguationRequired():  # Give priority to disambiguation between OCs
             pair = self.generateDisambiguationDialog()
         elif self.mappingRequired():
             pair = self.generateMappingDialog()
-        # TODO
+        return pair
 
     def generateDisambiguationDialog(self):
         """

@@ -159,7 +159,7 @@ def getSubtreesAtHeight(ptree, height):
 
 def getHeadOfNounPhrase(ptree):
     """
-    Tries to find the head of a noun phrase of the given types (labels)
+    Tries to find the head of a noun phrase
     TODO: Improve it according to Collins 1999, Appendix A
     :param ptree: an nltk.Tree parse tree
     :return: String: the inferred head of the phrase

@@ -6,6 +6,7 @@ from mapper.Mapper import *
 from oc.OCUtil import *
 from oc.OCCreator import addSemanticConcepts
 from consolidator.Consolidator import *
+from dialog.dialogHandler import DialogHandler
 
 
 class Controller(object):
@@ -20,9 +21,10 @@ class Controller(object):
         self.type = type
         self.q = None  # User query and attributes
         self.o = None  # Ontology
-        self.NL = SimpleNLHandler() #Natural Language Handler
+        self.NL = SimpleNLHandler()  # Natural Language handler
         self.mapper = Mapper()
         self.consolidator = None
+        self.dialogue = None  # Dialogue controller
         if type == c.BAR_CHART:
             self.o = BarChartOntology(RDFpath)
         else:
@@ -50,11 +52,15 @@ class Controller(object):
         """
         self.parseAndLookUp(what)
         self.consolidateQuery()
-
+        self.dialogue = DialogHandler(self.q, self.o)
+        suggestion_pair = self.dialogue.generateDialogs()
+        if suggestion_pair:
+            pass  # Create dialogue TODO
+        else:
+            pass  # Generate answer TODO
 
     def parseAndLookUp(self, what):
         """
-        see Mapper.processQuestion method
         Performs the query parsing and ontology lookup steps before consolidation
         After calling this method there will be a fully initialized Query instance in self.q
         :param what: a NL query

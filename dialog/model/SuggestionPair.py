@@ -3,7 +3,7 @@ class SuggestionPair(object):
         """
         Dialog Suggestion Pair constructor
         """
-        self.key = None
+        self.key = None  # SuggestionKey instance
         self.votes = []  # List of Vote
         self.subject = None  # POC instance
 

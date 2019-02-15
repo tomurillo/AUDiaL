@@ -30,7 +30,8 @@ def loadLearningModel():
     except Exception as e:
         import sys
         print('Learning model could not be loaded from path: %s: %s' % (model_path, str(e)), sys.stderr)
-    return model
+    finally:
+        return model
 
 
 def saveLearningModel(model):

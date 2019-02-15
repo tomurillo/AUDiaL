@@ -364,7 +364,7 @@ class UpperOntology(object):
         return [row[0].toPython() for row in query_res]
 
     def getSubjects(self, property, obj, propertyType='object', dtype=None,
-                    ns=None):
+                    ns=None, stripns=True):
         """
         Returns a list with all subjects for a given property, object pair
         """
@@ -381,20 +381,31 @@ class UpperOntology(object):
             else:
                 objectURI = URIRef("%s#%s" % (ns, self.stripNamespace(obj)))
             subjects = self.graph.subjects(propertyURI, objectURI)
-        return [self.stripNamespace(s) for s in subjects]
+        if stripns:
+            return map(self.stripNamespace, subjects)
+        else:
+            return subjects
 
-    def getObjects(self, subj, property, ns=None):
+    def getObjects(self, subj, property, ns=None, stripns=True):
         """
         Returns a list with all objects for a given subject, property pair
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(subj)
+            if not ns:
+                ns = self.VIS_NS
+        prop_ns = self.getNamespace(property)
+        if not prop_ns:
+            prop_ns = self.VIS_NS
         objects = []
         if self.graph and property and subj:
-            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(property)))
+            propertyURI = URIRef("%s#%s" % (prop_ns, self.stripNamespace(property)))
             subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(subj)))
             objects = self.graph.objects(subjectURI, propertyURI)
-        return [self.stripNamespace(o) for o in objects]
+        if stripns:
+            return map(self.stripNamespace, objects)
+        else:
+            return objects
 
     def getValue(self, s, p, default=None, ns=None, stripns=True):
         """
@@ -1058,20 +1069,14 @@ class UpperOntology(object):
                     coorRet = float(l[0])
         return coorRet
 
-    def getRDFLabel(self, element, ns=None, stripns=True):
+    def getRDFLabel(self, element, stripns=True):
         """
-        Returns the RDF label of the given element, if it exists
+        Returns the RDF labels of the given element, if it exists
         :param element: A resource URI or name
-        :param ns: namespace, None for default visualization NS if not already in element
         :param stripns: boolean; whether to remove the namespace from the results
-        :return: string; the label value or label URI for the given element, empty if none found
+        :return: list<string>; label values or URIs for the given element, empty if none found
         """
-        if not ns:
-            ns = self.getNamespace(element)
-            if not ns:
-                ns = self.VIS_NS
-        name = self.stripNamespace(element)
-        return self.getValue(name, RDFS.label, default='', ns=ns, stripns=stripns)
+        return self.getObjects(element, RDFS.label, stripns=stripns)
 
     def classExists(self, name, ns=None):
         """

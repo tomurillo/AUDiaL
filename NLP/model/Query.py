@@ -15,7 +15,7 @@ class Query(object):
         """
         self.rawQuery = rawQuery
         self.questionType = QuestionType.VOID
-        self.focus = None
+        self.focus = None  # POC instance
         self.pocs = []
         self.tokens = []
         self.pt = None  # Syntax parse tree (PT) of type nltk.Tree
