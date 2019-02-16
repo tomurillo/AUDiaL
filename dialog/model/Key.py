@@ -24,7 +24,7 @@ class Key(object):
         """
         self.text = d.get('text', '')
         self.oe_id = d.get('oe_id')
-        self.triples = d.get('triples', [])
+        self.triples = [tuple(t) for t in d.get('triples', [])]
         self.instance_uris = d.get('instance_uris', [])
 
     def __eq__(self, other):
@@ -48,12 +48,12 @@ class Key(object):
         if self.triples:
             triple_str = r'"triples": ['
             first = True
-            for uri in self.triples:
+            for triple in self.triples:
                 if first:
                     first = False
                 else:
                     triple_str += ", "
-                triple_str += r'"' + uri + r'"'
+                triple_str += r'[' + ", ".join([r'"' + t + r'"' for t in triple]) + r']'
             triple_str += ']'
         else:
             triple_str = r'"triples": []'

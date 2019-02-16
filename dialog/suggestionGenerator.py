@@ -74,7 +74,7 @@ class SuggestionGenerator(object):
         suggestions = []
         votes = []
         for oe in oe_list:
-            if oe.print_uri() not in skip_uris:
+            if isinstance(oe, OntologyElement) and oe.print_uri() not in skip_uris:
                 oe_uri = oe.uri
                 if oe_uri not in suggestions:
                     suggestions.append(oe_uri)
@@ -228,7 +228,7 @@ class SuggestionGenerator(object):
             elif isinstance(oe, OntologyLiteralElement):
                 prop_uris = self.findCandidatesForLiteral(oe)
                 for p in prop_uris:
-                    candidates.append(self.createOntologyElementforURI(p, 'datatypeProperty'))
+                    candidates.append(self.createOntologyElementforURI(p, 'objectProperty'))
             elif isinstance(oe, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
                 candidates.extend(self.findCandidatesForProperty(oe))
             neighbor_classes = set()

@@ -142,5 +142,5 @@ def updateVotesFromLearningVotes(lvotes, old_votes):
             if old_vote.candidate and old_vote.candidate.OE:
                 if lvote.identifier == old_vote.candidate:
                     if lvote.task is None or lvote.task == old_vote.candidate.task:
-                        old_vote.vote = lvote.vote
+                        old_vote.vote = lvote.score
     return old_votes

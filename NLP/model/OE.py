@@ -46,7 +46,7 @@ class OntologyElement(object):
     def __eq__(self, other):
         if not isinstance(other, OntologyElement):
             return False
-        elif self.uri != other.uri:
+        elif str(self.uri) != str(other.uri):
             return False
         elif self.added != other.added:
             return False
@@ -91,12 +91,12 @@ class OntologyEntityElement(OntologyElement):
         super(OntologyEntityElement, self).__init__()
 
     def __eq__(self, other):
-        if not type(other, OntologyEntityElement):
+        if not isinstance(other, OntologyEntityElement):
             return False
         elif self.specificity != other.specificity:
             return False
         else:
-            super(OntologyEntityElement, self).__eq__(other)
+            return super(OntologyEntityElement, self).__eq__(other)
 
     def to_dict(self):
         """
@@ -177,14 +177,14 @@ class OntologyInstanceElement(OntologyElement):
         self.classUris = d.get('classUris', [])
 
     def __eq__(self, other):
-        if not type(other, OntologyInstanceElement):
+        if not isinstance(other, OntologyInstanceElement):
             return False
         elif set(self.classUris) != set(other.classUris):
             return False
         elif set(self.uris) != set(other.uris):
             return False
         else:
-            super(OntologyInstanceElement, self).__eq__(other)
+            return super(OntologyInstanceElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -255,7 +255,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         self.distance_score = d.get('distance_score', 0)
 
     def __eq__(self, other):
-        if not type(other, OntologyObjectPropertyElement):
+        if not isinstance(other, OntologyObjectPropertyElement):
             return False
         elif set(self.domain) != set(other.domain):
             return False
@@ -266,7 +266,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         elif self.distance_score != other.distance_score:
             return False
         else:
-            super(OntologyObjectPropertyElement, self).__eq__(other)
+            return super(OntologyObjectPropertyElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -356,7 +356,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
                 self.governor.from_dict(governor_dict)
 
     def __eq__(self, other):
-        if not type(other, OntologyDatatypePropertyElement):
+        if not isinstance(other, OntologyDatatypePropertyElement):
             return False
         elif set(self.domain) != set(other.domain):
             return False
@@ -369,7 +369,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         elif self.governor != other.governor:
             return False
         else:
-            super(OntologyDatatypePropertyElement, self).__eq__(other)
+            return super(OntologyDatatypePropertyElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -448,12 +448,12 @@ class OntologyLiteralElement(OntologyElement):
         return str(self.triples)
 
     def __eq__(self, other):
-        if not type(other, OntologyLiteralElement):
+        if not isinstance(other, OntologyLiteralElement):
             return False
         if self.triples != other.triples:
             return False
         else:
-            super(OntologyLiteralElement, self).__eq__(other)
+            return super(OntologyLiteralElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -501,10 +501,10 @@ class OntologyNoneElement(OntologyElement):
         return d
 
     def __eq__(self, other):
-        if not type(other, OntologyNoneElement):
+        if not isinstance(other, OntologyNoneElement):
             return False
         else:
-            super(OntologyNoneElement, self).__eq__(other)
+            return super(OntologyNoneElement, self).__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)

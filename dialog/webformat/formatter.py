@@ -84,7 +84,7 @@ class SuggestionFormatter(object):
             #  Search custom label properties
             from rdflib import URIRef
             for label_prop in LABEL_PROPS:
-                rdf_labels = self.o.graph.objects(URIRef(uri), URIRef(label_prop))
+                rdf_labels = list(self.o.graph.objects(URIRef(uri), URIRef(label_prop)))
                 if rdf_labels:
                     break
         if rdf_labels:
