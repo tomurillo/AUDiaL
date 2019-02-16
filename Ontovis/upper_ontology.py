@@ -266,16 +266,16 @@ class UpperOntology(object):
         for s, p, o in self.graph.triples((None, RDF.type, None)):
             if o == object_uri and prop_type in ['object', 'property', 'all']:
                 if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s, "objectProperty"
+                    yield str(s), "objectProperty"
             elif o == dtype_uri and prop_type in ['datatype', 'property', 'all']:
                 if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s, "datatypeProperty"
+                    yield str(s), "datatypeProperty"
             elif o == class_uri and prop_type in ['class', 'entity', 'all']:
                 if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s, "class"
+                    yield str(s), "class"
             elif o == ind_uri and prop_type in ['individual', 'instance', 'all']:
                 if ns == 'all' or self.getNamespace(s) == ns:
-                    yield s, "individual"
+                    yield str(s), "individual"
 
     def getClasses(self, ns='all'):
         """
@@ -285,7 +285,7 @@ class UpperOntology(object):
         """
         if not ns:
             ns = self.VIS_NS
-        classes = [i for i in self.graph.subjects(RDF.type, URIRef("%s#%s" % (c.OWL_NS, "Class")))]
+        classes = [str(i) for i in self.graph.subjects(RDF.type, URIRef("%s#%s" % (c.OWL_NS, "Class")))]
         if ns == 'all':
             return classes
         else:
@@ -304,11 +304,11 @@ class UpperOntology(object):
             ns = self.VIS_NS
         props = []
         if prop_type in ['all', 'object']:
-            props = [i for i in self.graph.subjects(RDF.type,
+            props = [str(i) for i in self.graph.subjects(RDF.type,
                                                       URIRef("%s#%s" % (c.OWL_NS, "ObjectProperty")))]
         dtype_prop = []
         if prop_type in ['all', 'datatype']:
-            dtype_prop = [i for i in self.graph.subjects(RDF.type,
+            dtype_prop = [str(i) for i in self.graph.subjects(RDF.type,
                                                       URIRef("%s#%s" % (c.OWL_NS, "DatatypeProperty")))]
         props.extend(dtype_prop)
         if ns == 'all':
@@ -339,7 +339,7 @@ class UpperOntology(object):
                     if (instance, RDF.type, namedIndividualURI) in self.graph:
                         instances.append(instance)
             else:
-                inst = [i for i in self.graph.subjects(RDF.type, namedIndividualURI)]
+                inst = [str(i) for i in self.graph.subjects(RDF.type, namedIndividualURI)]
                 if ns != 'all':
                     if not isinstance(ns, list):
                         ns = [ns]
@@ -389,7 +389,7 @@ class UpperOntology(object):
         if stripns:
             return map(self.stripNamespace, subjects)
         else:
-            return subjects
+            return [str(s) for s in subjects]
 
     def getObjects(self, subj, property, ns=None, stripns=True):
         """
@@ -410,7 +410,7 @@ class UpperOntology(object):
         if stripns:
             return map(self.stripNamespace, objects)
         else:
-            return objects
+            return [str(o) for o in objects]
 
     def getValue(self, s, p, default=None, ns=None, stripns=True):
         """
@@ -429,7 +429,7 @@ class UpperOntology(object):
             subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(s)))
             propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(p)))
             val = self.graph.value(subjectURI, propertyURI, default=default)
-        return self.stripNamespace(val) if stripns else val
+        return self.stripNamespace(val) if stripns else str(val)
 
     def getClassOfElement(self, element, stripns=True, ns=None):
         """
@@ -453,7 +453,7 @@ class UpperOntology(object):
             if stripns:
                 classes = [self.stripNamespace(o) for o in objects if o != namedIndividualURI]
             else:
-                classes = [o for o in objects if o != namedIndividualURI]
+                classes = [str(o) for o in objects if o != namedIndividualURI]
         return classes
 
     def getTopElements(self, child, elem_type='class', ns=None, depth=-1):
@@ -500,7 +500,7 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
         propertyURI = URIRef("%s#subClassOf" % c.RDFS_NS)
-        objectURI = URIRef("%s#%s" % (ns, parentClass))
+        objectURI = URIRef("%s#%s" % (ns, self.stripNamespace(parentClass)))
         subjects = self.graph.subjects(propertyURI, objectURI)
         classes = [self.stripNamespace(s) for s in subjects
                    if s != namedIndividualURI]
@@ -526,7 +526,7 @@ class UpperOntology(object):
             classes = [self.stripNamespace(o) for o in objects
                        if o != namedIndividualURI and not isinstance(o, rdflib.BNode)]
         else:
-            classes = [o for o in objects if o != namedIndividualURI and not isinstance(o, rdflib.BNode)]
+            classes = [str(o) for o in objects if o != namedIndividualURI and not isinstance(o, rdflib.BNode)]
         return classes
 
     def getParentProperties(self, childProp, ns=None, stripns=True):
@@ -547,7 +547,7 @@ class UpperOntology(object):
         if stripns:
             return [self.stripNamespace(o) for o in objects]
         else:
-            return objects
+            return [str(o) for o in objects]
 
     def instanceIsOfClass(self, instance, entity, ns=None):
         """
@@ -1247,7 +1247,7 @@ class UpperOntology(object):
         prop = self.stripNamespace(prop)
         subjectURI = URIRef("%s#%s" % (ns, prop))
         objects = self.graph.objects(subjectURI, RDFS.domain)
-        return [self.stripNamespace(s) if stripns else s for s in objects]
+        return [self.stripNamespace(s) if stripns else str(s) for s in objects]
 
     def rangeOfProperty(self, prop, stripns=True, ns=None):
         """
@@ -1264,7 +1264,7 @@ class UpperOntology(object):
         prop = self.stripNamespace(prop)
         subjectURI = URIRef("%s#%s" % (ns, prop))
         objects = self.graph.objects(subjectURI, RDFS.range)
-        return [self.stripNamespace(s) if stripns else s for s in objects]
+        return [self.stripNamespace(s) if stripns else str(s) for s in objects]
 
     def propertiesWithRangeOrDomain(self, element, range_or_domain, stripns=True):
         """
@@ -1285,7 +1285,10 @@ class UpperOntology(object):
             return []
         objectURI = URIRef("%s#%s" % (ns, self.stripNamespace(element)))
         subjects = self.graph.subjects(prop, objectURI)
-        return [self.stripNamespace(s) if stripns else s for s in subjects]
+        if stripns:
+            return map(self.stripNamespace, subjects)
+        else:
+            return [str(s) for s in subjects]
 
     def propertiesWithoutRangeOrDomain(self, type='object', range_or_domain='both', stripns=True):
         """
@@ -1505,8 +1508,11 @@ class UpperOntology(object):
         :param item: an instance's name, with a NS prefix appended
         :return string: the name without the NS prefix
         """
-        if item and '#' in item:
-            return item.split('#')[1]
+        if item:
+            if '#' in item:
+                return item.split('#')[1]
+            else:
+                return str(item)
         return item
 
     def getNamespace(self, uri):
