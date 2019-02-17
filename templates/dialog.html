@@ -1,0 +1,27 @@
+<div id="dialog-container" class="container-fluid">
+    <table id="suggestions-table" class="table table-striped" style="width: 100%">
+        <caption>Is "{{ output.text }}" related to any of the following elements? I need your help to continue:</caption>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Function</th>
+                <th scope="col">Resource</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in output.votes %}
+                    <tr class='suggestion-row' data-voteid={{ vote.id }}>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>
+                        {% if vote.task %}
+                            {{ vote.task }}
+                        {% else -%}
+                            -
+                        {%- endif %}
+                    </td>
+                    <td>{{ vote.candidate }} (score: {{ vote.score }})</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
