@@ -1615,7 +1615,7 @@ class UpperOntology(object):
                     name_norm = stringToID(name, subjectType)
                     elementURI = URIRef("%s#%s" % (ns, name_norm))
                     exists = (elementURI, RDF.type, o_uri) in self.graph
-        return elementURI if exists else False
+        return str(elementURI) if exists else False
 
     def computeSpecificities(self, items=None, type='class'):
         """

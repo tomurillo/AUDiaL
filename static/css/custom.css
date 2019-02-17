@@ -13,3 +13,7 @@
 #intention-buttons {
 	margin: 0 10px 10px 10px;
 }
+
+#suggestions-table caption {
+    caption-side: top;
+}

@@ -16,7 +16,7 @@
     	  to_count: $('input[name="inputCount"]').val(),
     	  to_retrieve: $('input[name="inputRetrieve"]').val()
       }, function(data) {
-        $("#query-result").empty().append(data.result);
+
       });
       return false;
     });
@@ -230,6 +230,11 @@
         });
         return false;
       });
+
+      $(".suggestion-row").bind('click', function() {
+          let voteid = $(this).data("voteid");
+        // TODO: handle row click
+    });
     
      $('button').keyup(function(e) {
     	 if (e.keyCode == 13) {

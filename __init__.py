@@ -48,11 +48,11 @@ def homepage():
         return render_template("graphic_nav.html",
                                GRAPHICS=GRAPHICS,
                                current=current,
-                               curBarTags=curBarTags)
+                               curBarTags=curBarTags,
+                               output='Please enter a query below',
+                               output_type='result')
     except Exception as e:
         return printException(e)
-        #return str(e)
-        #logging.exception("Error. Stack trace:")
 
 @app.route('/_retrieve_values')
 def retrieve_values():
@@ -60,21 +60,28 @@ def retrieve_values():
         current = request.args.get('current_graphic', '')
         to_count = request.args.get('to_count', '')
         to_retrieve = request.args.get('to_retrieve', '')
+        output_type = 'answer'
         c = Controller(current)
         if c.isOntologyLoaded():
             output = "No results"
             if to_count:
                 output = c.retrieveCount(to_count)
             elif to_retrieve:
-                output = c.retrieveValue(to_retrieve)
+                output, output_type = c.retrieveValue(to_retrieve)
         else:
             output = "Ontology not loaded!"
+        curBarTags = ""
+        if c.isOntologyLoaded():
+            curBarTags = c.o.getCurrentBarUserTags()
         c.clean()
-        return jsonify(result=output)
+        return render_template("graphic_nav.html",
+                               GRAPHICS=GRAPHICS,
+                               current=current,
+                               curBarTags=curBarTags,
+                               output=output,
+                               output_type=output_type)
     except Exception as e:
         return jsonify(result=printException(e))
-        #return str(e)
-        #logging.exception("Error. Stack trace:")
 
 @app.route('/_filter')
 def query_filter():

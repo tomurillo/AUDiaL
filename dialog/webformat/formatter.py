@@ -32,7 +32,7 @@ class SuggestionFormatter(object):
                     key_label = self.findKeyLabel(vote.candidate.OE)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
-                    json_vote['vote'] = vote.vote
+                    json_vote['score'] = vote.vote
                     json_vote['task'] = vote.candidate.task
                     json_pair['votes'].append(json_vote)
         return json_pair
