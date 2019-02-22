@@ -63,25 +63,41 @@ def retrieve_values():
         output_type = 'answer'
         c = Controller(current)
         if c.isOntologyLoaded():
-            output = "No results"
+            output = ''
             if to_count:
                 output = c.retrieveCount(to_count)
             elif to_retrieve:
                 output, output_type = c.retrieveValue(to_retrieve)
+            if not output:
+                output = "No results"
         else:
             output = "Ontology not loaded!"
-        curBarTags = ""
-        if c.isOntologyLoaded():
-            curBarTags = c.o.getCurrentBarUserTags()
         c.clean()
-        return render_template("graphic_nav.html",
-                               GRAPHICS=GRAPHICS,
-                               current=current,
-                               curBarTags=curBarTags,
-                               output=output,
-                               output_type=output_type)
+        return jsonify(result=output,
+                       output_type=output_type)
     except Exception as e:
         return jsonify(result=printException(e))
+
+
+@app.route('/_vote_selected')
+def vote_selected():
+    try:
+        current = request.args.get('current_graphic', '')
+        vote_id = request.args.get('vote_id', '')
+        c = Controller(current)
+        if c.isOntologyLoaded():
+            output = "No results"
+            if vote_id:
+                output = c.processVoteSelection(vote_id)
+            else:
+                output = "Invalid selection! Please try a different one."
+        else:
+            output = "Ontology not loaded!"
+        c.clean()
+        return jsonify(result=output)
+    except Exception as e:
+        return jsonify(result=printException(e))
+
 
 @app.route('/_filter')
 def query_filter():
@@ -190,6 +206,7 @@ def fetchIntention():
     except Exception as e:
         return jsonify(result=printException(e))
 
+
 def intentionDictToHTML(intentions):
     """
     Converts an intention dictionary to HTML ready to be embedded.
@@ -216,6 +233,7 @@ def intentionDictToHTML(intentions):
     html += '</div>'
     return html
 
+
 def printException(e):
     """
     Pretty-print an exception
@@ -226,5 +244,6 @@ def printException(e):
     pretty_e =  "%s\n%s" % (str(e), t)
     return pretty_e.replace("\n", "<br/>")
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(threaded=True)

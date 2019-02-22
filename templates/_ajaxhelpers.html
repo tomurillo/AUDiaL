@@ -10,242 +10,291 @@
 
 <script type=text/javascript>
   $(function() {
-    $('button#submit-retrieve').bind('click', function() {
-      $.getJSON($SCRIPT_ROOT + '/_retrieve_values', {
-    	  current_graphic: $('input[name="currentGraphic"]').val(),
-    	  to_count: $('input[name="inputCount"]').val(),
-    	  to_retrieve: $('input[name="inputRetrieve"]').val()
-      }, function(data) {
 
-      });
-      return false;
-    });
-    
-    $('button#submit-filter').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_filter', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            to_filter: $('input[name="inputFilter"]').val(),
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-        });
-        return false;
-      });
-    
-    $('button#submit-derivedValue').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_derived_value', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            query: $('input[name="inputDerivedVal"]').val(),
-            queryExtreme: $('input[name="inputExtreme"]').val(),
-            querySort: $('input[name="inputSort"]').val(),
-            queryRange: $('input[name="inputRange"]').val(),
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-        });
-        return false;
-      });
-    
-    
-    $('button#submit-overview').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_overview', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-        });
-        return false;
-      });
-    
-    $('button#submit-next').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'next',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-previous').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'previous',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-up').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'up',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-down').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'down',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-first').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'first',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-last').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'last',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-highest').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'highest',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val( data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-lowest').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'lowest',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-nav-reset').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'reset',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-where').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'where',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-set-home').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'sethome',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-gotohome').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_navigate', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            action: 'gotohome',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-          $('#inputCurBarTags').val(data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-curBarTags').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_add_user_tags', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            user_tags: $('input[name="inputCurBarTags"]').val(),
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $('#inputCurBarTags').attr('placeholder', data.usertags);
-        });
-        return false;
-      });
-    
-    $('button#submit-intention').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            force_exec: 'no',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $("#intention-result").html(data.intentions)
-        });
-        return false;
-      });
-    
-    $('button#submit-calc-intention').bind('click', function() {
-        $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
-            current_graphic: $('input[name="currentGraphic"]').val(),
-            force_exec: 'yes',
-        }, function(data) {
-          $("#query-result").empty().append(data.result);
-          $("#intention-result").html(data.intentions)
-        });
-        return false;
+      $('button#submit-retrieve').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_retrieve_values', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              to_count: $('input[name="inputCount"]').val(),
+              to_retrieve: $('input[name="inputRetrieve"]').val()
+          }, function (data) {
+              if (data) {
+                  if (data.output_type === 'answer') {
+                      $("#query-result").empty().append(data.result);
+                  } else if (data.output_type === 'dialogue') {
+                        $("#query-result").html(dialog_table(data.result));
+                  } else {
+                      $("#query-result").empty().append('Your query could not be resolved.');
+                  }
+              }
+          });
+          return false;
       });
 
-      $(".suggestion-row").bind('click', function() {
+      $('button#submit-filter').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_filter', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              to_filter: $('input[name="inputFilter"]').val(),
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+          });
+          return false;
+      });
+
+      $('button#submit-derivedValue').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_derived_value', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              query: $('input[name="inputDerivedVal"]').val(),
+              queryExtreme: $('input[name="inputExtreme"]').val(),
+              querySort: $('input[name="inputSort"]').val(),
+              queryRange: $('input[name="inputRange"]').val(),
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+          });
+          return false;
+      });
+
+
+      $('button#submit-overview').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_overview', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+          });
+          return false;
+      });
+
+      $('button#submit-next').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'next',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-previous').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'previous',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-up').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'up',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-down').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'down',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-first').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'first',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-last').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'last',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-highest').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'highest',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-lowest').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'lowest',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-nav-reset').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'reset',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-where').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'where',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-set-home').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'sethome',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-gotohome').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_navigate', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              action: 'gotohome',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+              $('#inputCurBarTags').val(data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-curBarTags').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_add_user_tags', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              user_tags: $('input[name="inputCurBarTags"]').val(),
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $('#inputCurBarTags').attr('placeholder', data.usertags);
+          });
+          return false;
+      });
+
+      $('button#submit-intention').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              force_exec: 'no',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $("#intention-result").html(data.intentions)
+          });
+          return false;
+      });
+
+      $('button#submit-calc-intention').bind('click', function () {
+          $.getJSON($SCRIPT_ROOT + '/_fetch_intention', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              force_exec: 'yes',
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+              $("#intention-result").html(data.intentions)
+          });
+          return false;
+      });
+
+      // User has chosen a suggestion from the suggestions table
+      $(document).on("click", "tr.suggestion-row" , function() {
           let voteid = $(this).data("voteid");
-        // TODO: handle row click
-    });
-    
-     $('button').keyup(function(e) {
-    	 if (e.keyCode == 13) {
-    		 $("#query-result").empty().append("Your query is being processed...");
-         }
+          $.getJSON($SCRIPT_ROOT + '/_vote_selected', {
+              current_graphic: $('input[name="currentGraphic"]').val(),
+              vote_id: voteid,
+          }, function (data) {
+              $("#query-result").empty().append(data.result);
+          });
+          return false;
       });
-     
-     $('button').mouseup(function() {
-             $("#query-result").empty().append("Your query is being processed...");
+
+      $('button').keyup(function (e) {
+          if (e.keyCode == 13) {
+              $("#query-result").empty().append("Your query is being processed...");
+          }
       });
-    
+      $('button').mouseup(function () {
+          $("#query-result").empty().append("Your query is being processed...");
+      });
+
+      function dialog_table(suggestion_json) {
+          let table = '<div id="dialog-container" class="container-fluid">';
+          table += '<table id="suggestions-table" class="table table-striped" style="width: 100%">';
+          table += '<caption>Is "';
+          table += suggestion_json['text'];
+          table += '" related to any of the following elements? I need your help to continue:</caption><thead><tr>';
+          table += '<th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th></tr></thead><tbody>';
+          for (let i=0; i<suggestion_json['votes'].length; i++) {
+            table += '<tr class="suggestion-row" data-voteid="';
+            table += suggestion_json['votes'][i]['id'];
+            table += '"><th scope="row">';
+            table += i+1;
+            table += '</th><td>';
+            if (suggestion_json['votes'][i]['task']) {
+                table += suggestion_json['votes'][i]['task'];
+            } else {
+                table += ' - ';
+            }
+            table += '</td><td>';
+            if (suggestion_json['votes'][i]['candidate']) {
+                table += suggestion_json['votes'][i]['candidate'];
+                table += ' (score: ';
+                table += suggestion_json['votes'][i]['score'];
+                table += ')';
+            } else {
+                table += 'None of the previous elements';
+            }
+            table += '</td></tr>';
+          }
+          table += '</tbody>';
+          table += '</table>';
+          table += '</div>';
+          return table
+      }
   });
 </script>
 

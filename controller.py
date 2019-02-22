@@ -63,6 +63,15 @@ class Controller(object):
         else:
             return False
 
+    def processVoteSelection(self, vote_id):
+        """
+        Processes a user selection of a suggestion from a disambiguation or mapping dialog
+        :param vote_id: (string) The ID of the chosen vote
+        :return:
+        """
+        # TODO.
+        return ""
+
     def parseAndLookUp(self, what):
         """
         Performs the query parsing and ontology lookup steps before consolidation
