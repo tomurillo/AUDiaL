@@ -1,9 +1,5 @@
-import os
 import traceback
-
 from flask import Flask, render_template, jsonify, request
-
-from Ontovis.bar_chart_ontology import *
 from content_management import Content
 from controller import *
 
@@ -12,6 +8,8 @@ app.config['DEBUG'] = True
 app.config['PROPAGATE_EXCEPTIONS'] = True
 # Bubble HTTP exceptions through the exception stack
 app.config['TRAP_HTTP_EXCEPTIONS'] = True
+# Keep this secret in production environments!
+app.secret_key = u'l\x04\x8a\x01T\xbb\xb5P4\x88h\xc2\x02\x0c\xe7|'
 
 GRAPHICS = Content()
 
@@ -44,6 +42,7 @@ def homepage():
         curBarTags = ""
         if c.isOntologyLoaded():
             curBarTags = c.o.getCurrentBarUserTags()
+        c.clearSessionContext()
         c.clean()
         return render_template("graphic_nav.html",
                                GRAPHICS=GRAPHICS,
@@ -52,6 +51,7 @@ def homepage():
                                output='Please enter a query below',
                                output_type='result')
     except Exception as e:
+        session.clear()
         return printException(e)
 
 @app.route('/_retrieve_values')
@@ -62,6 +62,7 @@ def retrieve_values():
         to_retrieve = request.args.get('to_retrieve', '')
         output_type = 'answer'
         c = Controller(current)
+        c.clearSessionContext()
         if c.isOntologyLoaded():
             output = ''
             if to_count:
@@ -72,10 +73,13 @@ def retrieve_values():
                 output = "No results"
         else:
             output = "Ontology not loaded!"
+        if output_type == 'dialogue':
+            c.saveContextToSession()
         c.clean()
         return jsonify(result=output,
                        output_type=output_type)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 
@@ -84,18 +88,22 @@ def vote_selected():
     try:
         current = request.args.get('current_graphic', '')
         vote_id = request.args.get('vote_id', '')
+        output_type = 'answer'
         c = Controller(current)
         if c.isOntologyLoaded():
             output = "No results"
             if vote_id:
-                output = c.processVoteSelection(vote_id)
+                output, output_type = c.processVoteSelection(vote_id)
             else:
                 output = "Invalid selection! Please try a different one."
         else:
             output = "Ontology not loaded!"
+        if output_type == 'dialogue':
+            c.saveContextToSession()
         c.clean()
         return jsonify(result=output)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 
@@ -105,6 +113,7 @@ def query_filter():
         current = request.args.get('current_graphic', '')
         filter = request.args.get('to_filter', '')
         c = Controller(current)
+        c.clearSessionContext()
         if c.isOntologyLoaded():
             output = "No results"
             if filter:
@@ -116,6 +125,7 @@ def query_filter():
         c.clean()
         return jsonify(result=output)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 @app.route('/_derived_value')
@@ -127,6 +137,7 @@ def query_derived_value():
         querySort =  request.args.get('querySort', '')
         queryRange = request.args.get('queryRange', '')
         c = Controller(current)
+        c.clearSessionContext()
         if c.isOntologyLoaded():
             output = ""
             if query:
@@ -144,6 +155,7 @@ def query_derived_value():
         c.clean()
         return jsonify(result=output)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 @app.route('/_overview')
@@ -151,10 +163,12 @@ def overview():
     try:
         current = request.args.get('current_graphic', '')
         c = Controller(current)
+        c.clearSessionContext()
         output = c.retrieveSummary()
         c.clean()
         return jsonify(result=output)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 @app.route('/_navigate')
@@ -163,12 +177,14 @@ def navigate():
         current = request.args.get('current_graphic', '')
         action = request.args.get('action', '')
         c = Controller(current)
+        c.clearSessionContext()
         output = c.navigate(action)
         usertags = c.o.getCurrentBarUserTags()
         c.clean()
         return jsonify(result=output,
                        usertags=usertags)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e),
                        usertags="")
 
@@ -178,11 +194,13 @@ def addUserTagsToCurrentBar():
         current = request.args.get('current_graphic', '')
         usertags = request.args.get('user_tags', '')
         c = Controller(current)
+        c.clearSessionContext()
         output = c.setUserTags(usertags, to='current')
         c.clean()
         return jsonify(result=output,
                        usertags=usertags)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e),
                        usertags="")
 
@@ -192,6 +210,7 @@ def fetchIntention():
         current = request.args.get('current_graphic', '')
         force = request.args.get('force_exec', '')
         c = Controller(current)
+        c.clearSessionContext()
         intentions = c.getAuthorIntentions(force == 'yes')
         html = intentionDictToHTML(intentions)
         if intentions:
@@ -204,6 +223,7 @@ def fetchIntention():
         return jsonify(result=output,
                        intentions=html)
     except Exception as e:
+        session.clear()
         return jsonify(result=printException(e))
 
 

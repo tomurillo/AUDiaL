@@ -104,7 +104,8 @@ class SuggestionGenerator(object):
         skip_uris = [sc.OE.print_uri() for sc in skip]
         oes = self.findGenericOEs(max, skip_uris)
         for oe in oes:
-            oe.annotation = poc.annotation.copy()
+            if poc.annotation:
+                oe.annotation = poc.annotation.copy()
             vote = self.createVote(key.text, oe)
             votes.append(vote)
             n += 1

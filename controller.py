@@ -1,3 +1,4 @@
+from flask import session
 from Ontovis.upper_ontology import UpperOntology
 from Ontovis.bar_chart_ontology import BarChartOntology
 from NLP.SimpleNLHandler import *
@@ -19,7 +20,12 @@ class Controller(object):
         serialized ontology.
         """
         self.type = type
-        self.q = None  # User query and attributes
+        if 'user_query' in session:  # Coming from a dialogue, fetch consolidated query from session
+            q = Query()
+            q.from_dict(session['user_query'])
+            self.q = q
+        else:
+            self.q = None
         self.o = None  # Ontology
         self.NL = SimpleNLHandler()  # Natural Language handler
         self.mapper = Mapper()
@@ -69,8 +75,10 @@ class Controller(object):
         :param vote_id: (string) The ID of the chosen vote
         :return:
         """
+        output = ''
+        output_type = 'answer'
         # TODO.
-        return ""
+        return output, output_type
 
     def parseAndLookUp(self, what):
         """
@@ -715,6 +723,24 @@ class Controller(object):
             output += "<br/>"
         return output
 
+    def saveContextToSession(self):
+        """
+        Stores the current execution context into the session
+        :return: None, session object gets updated
+        """
+        if self.q:
+            session['user_query'] = self.q.to_dict()
+            session.modified = True
+
+    def clearSessionContext(self):
+        """
+        Clears query-related information from the user's session
+        :return: None, session object gets updated
+        """
+        if 'user_query' in session:
+            session.pop('user_query')
+            self.q = None
+
     def __printOutputList(self, generator, *args):
         """
         Takes the output of a given method and its arguments and outputs a
@@ -724,4 +750,3 @@ class Controller(object):
         @returns a comma-separated string of the method's output
         """
         return ",".join([f for f in generator(*args) if f])
-            

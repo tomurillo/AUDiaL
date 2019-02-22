@@ -54,6 +54,7 @@ class Consolidator(object):
                                 new_tree = removeSubTree(poc.tree, sc.OE.annotation.tree)
                                 if new_tree and isinstance(new_tree, nltk.Tree):
                                     new_poc = POC()
+                                    new_poc.annotation = poc.annotation
                                     new_poc.tree = new_tree
                                     new_poc.start_original = poc.start_original
                                     new_poc.end_original = poc.end_original
@@ -97,7 +98,7 @@ class Consolidator(object):
                             filtered_next_sc_list = set()
                             for sc_next in sc_list_next:
                                 filtered_next_sc_list.add(sc_next)
-                                if poc == sc_next.OE.annotation.end:
+                                if poc.end == sc_next.OE.annotation.end:
                                     match_found = True
                                     matched = True
                                     break

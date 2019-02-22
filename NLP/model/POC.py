@@ -79,7 +79,7 @@ class POC(object):
             self.tree = Tree.fromstring(tree) if tree else None
             self.rawText = d.get('rawText', '')
             modif = d.get('modifiers', [])
-            self.modifiers = [Tree.fromstring(m) for m in modif]
+            self.modifiers = [Tree.fromstring(m) for m in modif] if modif else None
             annotation_dict = d.get('annotation')
             if annotation_dict:
                 ann = Annotation()

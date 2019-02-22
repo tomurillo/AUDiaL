@@ -21,7 +21,7 @@ class Annotation(object):
         Converts this Annotation to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'start': self.start, 'end': self.end, 'stem': self.stem, 'inOntology': self.inOntology,
+        d = {'rawText': self.rawText, 'start': self.start, 'end': self.end, 'stem': self.stem, 'inOntology': self.inOntology,
              'isSynonym': self.isSynonym, 'text': self.text, 'oc_type': self.oc_type, 'extra': self.extra}
         if self.tree:
             d['tree'] = str(self.tree)
@@ -45,6 +45,7 @@ class Annotation(object):
             lemma = d.get('lemma_tree')
             self.tree = ImmutableTree.fromstring(tree) if tree else None
             self.lemma_tree = Tree.fromstring(lemma) if lemma else None
+            self.rawText = d.get('rawText', '')
             self.start = d.get('start', -1)
             self.end = d.get('end', -1)
             self.stem = d.get('stem', False)

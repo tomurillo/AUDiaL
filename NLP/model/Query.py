@@ -9,7 +9,7 @@ class QuestionType(object):
 
 
 class Query(object):
-    def __init__(self, rawQuery):
+    def __init__(self, rawQuery=''):
         """
         Query (NL question) constructor
         """
