@@ -1,4 +1,7 @@
 class Key(object):
+
+    NEIGHBORS_NONE = 'Neighbors_None'
+
     def __init__(self, text=''):
         """
         Learning Key constructor

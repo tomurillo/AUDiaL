@@ -10,7 +10,7 @@ class SemanticConcept(object):
         Semantic Concept constructor
         """
         self.OE = None  # OntologyElement instance
-        self.verified = False  # Whether this OC has been manually verified in a disambiguation dialog
+        self.verified = False  # Whether this OC has been manually verified in a mapping dialog
         self.score = None  # Learning score
         self.task = None  # Maps this OC to an analytical task to be performed
 

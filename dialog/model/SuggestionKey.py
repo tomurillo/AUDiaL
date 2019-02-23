@@ -7,7 +7,7 @@ class SuggestionKey(object):
         Dialog Suggestion Key constructor
         """
         self.text = text  # Text that needs clarification
-        self.nearest_neighbors = []  # List of SemanticConcept nearest neighbors
+        self.nearest_neighbors = []  # List of SemanticConcept nearest neighbors (context of self.text)
 
     def to_dict(self):
         """

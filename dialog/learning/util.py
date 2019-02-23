@@ -1,5 +1,8 @@
 from NLP.model.OE import *
 from dialog.model.LearningVote import *
+from dialog.model.SuggestionPair import *
+from dialog.model.Key import *
+from dialog.learning.config import *
 
 def getGenericElement(element, o):
     """
@@ -109,6 +112,53 @@ def getGenericElementofIndividualURI(ind_uri, o):
     else:
         generic = ind_uri
     return generic
+
+
+def updateVoteScores(suggestion_pair, vote_id):
+    """
+    Updates the learning scores for a given dialogue
+    :param suggestion_pair: SuggestionPair instance shown to the user in a dialogue
+    :param vote_id: string; id of the suggestion the user chose
+    :return: list<Vote> list of chosen votes; generally only one
+    """
+    votes = []
+    if isinstance(suggestion_pair, SuggestionPair) and vote_id:
+        for v in suggestion_pair.votes:
+            if v.id:
+                if v.id == vote_id:
+                    v.vote += CHOSEN_REWARD
+                    votes.append(v)
+                else:
+                    v.vote += NEGATIVE_REWARD
+    return votes
+
+
+def updateLearningModel(suggestion_pair, o):
+    """
+    Updates the learning model after a user dialogue
+    :param suggestion_pair: SuggestionPair instance with newly computed votes from a user selection
+    :param o: Ontology instance
+    :return: None; learning model is updated
+    """
+    if isinstance(suggestion_pair, SuggestionPair) and suggestion_pair.key.nearest_neighbors:
+        from dialog.model.modelUtil import saveLearningModel
+        model = {}
+        lvotes = getLearningVotesfromVotes(suggestion_pair.votes)
+        if suggestion_pair.key.nearest_neighbors:
+            for sc in suggestion_pair.key.nearest_neighbors:
+                key = Key(suggestion_pair.key.text)
+                key.instance_uris = list(suggestion_pair.key.instance_uris)
+                key.triples = list(suggestion_pair.key.triples)
+                key.oe_id = getGenericElement(sc.OE, o)
+                model[key] = list(lvotes)
+        else:
+            key = Key(suggestion_pair.key.text)
+            key.instance_uris = list(suggestion_pair.key.instance_uris)
+            key.triples = list(suggestion_pair.key.triples)
+            key.oe_id = Key.NEIGHBORS_NONE
+            model[key] = lvotes
+        if model:
+            saveLearningModel(model)
 
 
 def getLearningVotesfromVotes(votes):

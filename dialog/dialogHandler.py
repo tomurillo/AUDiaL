@@ -14,9 +14,6 @@ class DialogHandler(object):
     User/system dialog (disambiguation and mapping) utility class
     """
 
-    class Constants:
-        NEIGHBORS_NONE = 'Neighbors_None'
-
     def __init__(self, query, o):
         """
         DialogHandler constructor.
@@ -141,7 +138,7 @@ class DialogHandler(object):
             else:
                 lk = Key()
                 lk.text = sugkey.text
-                lk.oe_id = self.Constants.NEIGHBORS_NONE  # No nearest neighbors to question focus were found
+                lk.oe_id = Key.NEIGHBORS_NONE  # No nearest neighbors to question focus were found
                 key_list.append(lk)
         return key_list
 

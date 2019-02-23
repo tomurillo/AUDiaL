@@ -76,11 +76,21 @@ class Controller(object):
         :param vote_id: (string) The ID of the chosen vote
         :return:
         """
+        from dialog.learning.util import updateVoteScores, updateLearningModel
         output = 'Your selection could not be resolved.'
         output_type = 'answer'
         suggestion_pair = session.get('suggestion_pair')
-        if self.q and suggestion_pair:
-            pass  # TODO
+        self.consolidator = Consolidator()
+        if self.q and vote_id and suggestion_pair:
+            votes_chosen = updateVoteScores(suggestion_pair, vote_id)
+            updateLearningModel(suggestion_pair, self.o)
+            scs_updated = [v.candidate for v in votes_chosen]
+            if scs_updated:
+                if suggestion_pair.subject:  # It was a POC -> OC mapping dialogue
+                    self.q = self.consolidator.resolvePOCtoOC(self.q, suggestion_pair.subject, scs_updated)
+                else:  # It was a disambiguation dialogue between OCs
+                    self.q = self.consolidator.disambiguateOCs(self.q, scs_updated)
+            # TODO Answer type consolidations
         return output, output_type
 
     def parseAndLookUp(self, what):

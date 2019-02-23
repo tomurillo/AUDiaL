@@ -4,9 +4,10 @@ from NLP.model.POC import *
 from consolidator.constants import *
 from oc.OCUtil import SemanticConceptListCompareOffset
 
+
 class Consolidator(object):
     """
-    Class responsible for automatically mapping a query's POCs into OCs
+    Class responsible for mapping a query's POCs into OCs and disambiguating OCs
     """
     def __init__(self):
         """
@@ -244,3 +245,57 @@ class Consolidator(object):
         new_start = poc.start + start_delay
         new_end = poc.end - end_delay
         return new_start, new_end
+
+    def resolvePOCtoOC(self, q, poc, ocs):
+        """
+        Updates the query object after the user has resolved a POC, mapping it to a OC
+        :param q: Query instance
+        :param poc: resolved POC instance
+        :param ocs: list<SemanticConcepts>; OCs the POC has been resolved to
+        :return: Updated query
+        """
+        try:
+            if q and poc and ocs:
+                q.pocs.remove(poc)
+                for sc in ocs:
+                    sc.verified = True
+                q.semanticConcepts.append(ocs)
+                success = True
+        except ValueError:
+            import sys
+            print('Warning: resolved POC could  not be found in query!', sys.stderr)
+        finally:
+            return q
+
+    def disambiguateOCs(self, q, ocs):
+        """
+        Perfoms the manual disambiguation between OCs after a dialogue
+        :param q: Query instance
+        :param ocs: list<SemanticConcept>; chosen OCs i.e. those that will be kept in the query
+        :return: None; updates the Query instance
+        """
+        if q and ocs:
+            new_q_scs = {}
+            for sc in ocs:
+                oe = sc.OE
+                i = 0
+                for q_sc_overlapped in q.semanticConcepts:
+                    clean_overlapped_scs = new_q_scs.get(i, set())
+                    for q_sc in q_sc_overlapped:
+                        q_oe = q_sc.OE
+                        if q_oe == oe:
+                            clean_overlapped_scs.add(q_sc)
+                    new_q_scs[i] = clean_overlapped_scs
+                    i += 1
+            disambiguated_scs = []
+            i = 0
+            for q_sc_overlapped in q.semanticConcepts:
+                clean_overlapped_scs = new_q_scs.get(i, set())
+                if clean_overlapped_scs:
+                    disambiguated_scs.append(list(clean_overlapped_scs))
+                else:
+                    disambiguated_scs.append(q_sc_overlapped)  # Keep these OCs as they are unrelated to the dialogue
+                i += 1
+            q.semanticConcepts = disambiguated_scs
+            q = self.consolidatePOCsWithOCs(q)
+            return q

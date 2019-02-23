@@ -103,6 +103,29 @@ class POC(object):
         else:
             raise ValueError('POC.from_dict: parameter must be of type dict.')
 
+    def __eq__(self, other):
+        if not isinstance(other, POC):
+            return False
+        elif self.rawText != other.rawText:
+            return False
+        elif self.start != other.start:
+            return False
+        elif self.end != other.end:
+            return False
+        elif self.head != other.head:
+            return False
+        elif self.mainSubjectPriority != other.mainSubjectPriority:
+            return False
+        elif self.tree != other.tree:
+            return False
+        elif self.annotation != other.annotation:
+            return False
+        else:
+            return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def copy(self):
         poc_copy = POC()
         if self.tree:
