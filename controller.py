@@ -75,9 +75,11 @@ class Controller(object):
         :param vote_id: (string) The ID of the chosen vote
         :return:
         """
-        output = ''
+        output = 'Your selection could not be resolved.'
         output_type = 'answer'
-        # TODO.
+        suggestion_pair = session.get('suggestion_pair')
+        if self.q and suggestion_pair:
+            pass  # TODO
         return output, output_type
 
     def parseAndLookUp(self, what):
@@ -723,14 +725,17 @@ class Controller(object):
             output += "<br/>"
         return output
 
-    def saveContextToSession(self):
+    def saveContextToSession(self, suggestion_pair=None):
         """
         Stores the current execution context into the session
+        @param suggestion_pair: A SuggestionPair instance to store, if necessary
         :return: None, session object gets updated
         """
         if self.q:
             session['user_query'] = self.q.to_dict()
             session.modified = True
+        if suggestion_pair:
+            session['suggestion_pair'] = suggestion_pair.to_dict()
 
     def clearSessionContext(self):
         """
@@ -740,6 +745,8 @@ class Controller(object):
         if 'user_query' in session:
             session.pop('user_query')
             self.q = None
+        if 'suggestion_pair' in session:
+            session.pop('suggestion_pair')
 
     def __printOutputList(self, generator, *args):
         """

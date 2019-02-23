@@ -7,6 +7,53 @@ class SuggestionPair(object):
         self.votes = []  # List of Vote
         self.subject = None  # POC instance
 
+    def to_dict(self):
+        """
+        Converts this SuggestionPair instance to an equivalent dictionary of builtin types
+        :return: dict
+        """
+        d = {}
+        if self.key:
+            d['key'] = self.key.to_dict()
+        else:
+            d['key'] = None
+        d['votes'] = [v.to_dict() for v in self.votes] if self.votes else None
+        d['subject'] = self.subject.to_dict() if self.subject else None
+        return d
+
+    def from_dict(self, d):
+        """
+        Populates this instances's attributes from the given dictionary
+        :param d:
+        :return: None; updates current instance
+        """
+        if type(d) is dict:
+            from dialog.model.Key import Key
+            from dialog.model.Vote import Vote
+            key_dict = d.get('key')
+            if key_dict:
+                key = Key()
+                key.from_dict(key_dict)
+                self.key = key
+            else:
+                self.key = None
+            votes_dict = d.get('votes', [])
+            self.votes = []
+            for v_dict in votes_dict:
+                v = Vote()
+                v.from_dict(v_dict)
+                self.votes.append(v)
+            subject_dict = d.get('subject')
+            if subject_dict:
+                from NLP.model.POC import POC
+                s = POC()
+                s.from_dict(subject_dict)
+                self.subject = s
+            else:
+                self.subject = None
+        else:
+            raise ValueError('SuggestionPair.from_dict: parameter must be of type dict.')
+
     def __eq__(self, other):
             if type(other) is not SuggestionPair:
                 return False

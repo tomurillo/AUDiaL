@@ -74,7 +74,7 @@ def retrieve_values():
         else:
             output = "Ontology not loaded!"
         if output_type == 'dialogue':
-            c.saveContextToSession()
+            c.saveContextToSession(output)
         c.clean()
         return jsonify(result=output,
                        output_type=output_type)
@@ -91,7 +91,6 @@ def vote_selected():
         output_type = 'answer'
         c = Controller(current)
         if c.isOntologyLoaded():
-            output = "No results"
             if vote_id:
                 output, output_type = c.processVoteSelection(vote_id)
             else:
@@ -99,9 +98,10 @@ def vote_selected():
         else:
             output = "Ontology not loaded!"
         if output_type == 'dialogue':
-            c.saveContextToSession()
+            c.saveContextToSession(output)
         c.clean()
-        return jsonify(result=output)
+        return jsonify(result=output,
+                       output_type=output_type)
     except Exception as e:
         session.clear()
         return jsonify(result=printException(e))

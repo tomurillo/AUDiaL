@@ -247,7 +247,15 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               vote_id: voteid,
           }, function (data) {
-              $("#query-result").empty().append(data.result);
+              if (data) {
+                  if (data.output_type === 'answer') {
+                      $("#query-result").empty().append(data.result);
+                  } else if (data.output_type === 'dialogue') {
+                      $("#query-result").html(dialog_table(data.result));
+                  } else {
+                      $("#query-result").empty().append('Your query could not be resolved.');
+                  }
+              }
           });
           return false;
       });
