@@ -62,6 +62,7 @@ class Controller(object):
         self.dialogue = DialogHandler(self.q, self.o)  # Dialog needs consolidated query
         suggestion_pair = self.dialogue.generateDialogs()
         if suggestion_pair:
+            session['suggestion_pair'] = suggestion_pair.to_dict()
             # Output dialog
             from dialog.webformat.formatter import SuggestionFormatter
             formatter = SuggestionFormatter(self.o)
@@ -725,17 +726,14 @@ class Controller(object):
             output += "<br/>"
         return output
 
-    def saveContextToSession(self, suggestion_pair=None):
+    def saveContextToSession(self):
         """
         Stores the current execution context into the session
-        @param suggestion_pair: A SuggestionPair instance to store, if necessary
         :return: None, session object gets updated
         """
         if self.q:
             session['user_query'] = self.q.to_dict()
             session.modified = True
-        if suggestion_pair:
-            session['suggestion_pair'] = suggestion_pair.to_dict()
 
     def clearSessionContext(self):
         """

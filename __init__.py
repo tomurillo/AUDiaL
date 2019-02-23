@@ -74,7 +74,7 @@ def retrieve_values():
         else:
             output = "Ontology not loaded!"
         if output_type == 'dialogue':
-            c.saveContextToSession(output)
+            c.saveContextToSession()
         c.clean()
         return jsonify(result=output,
                        output_type=output_type)
@@ -98,7 +98,7 @@ def vote_selected():
         else:
             output = "Ontology not loaded!"
         if output_type == 'dialogue':
-            c.saveContextToSession(output)
+            c.saveContextToSession()
         c.clean()
         return jsonify(result=output,
                        output_type=output_type)
