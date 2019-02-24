@@ -278,24 +278,20 @@ class Consolidator(object):
             new_q_scs = {}
             for sc in ocs:
                 oe = sc.OE
-                i = 0
-                for q_sc_overlapped in q.semanticConcepts:
+                for i, q_sc_overlapped in enumerate(q.semanticConcepts):
                     clean_overlapped_scs = new_q_scs.get(i, set())
                     for q_sc in q_sc_overlapped:
                         q_oe = q_sc.OE
                         if q_oe == oe:
                             clean_overlapped_scs.add(q_sc)
                     new_q_scs[i] = clean_overlapped_scs
-                    i += 1
             disambiguated_scs = []
-            i = 0
-            for q_sc_overlapped in q.semanticConcepts:
-                clean_overlapped_scs = new_q_scs.get(i, set())
+            for j, q_sc_overlapped in enumerate(q.semanticConcepts):
+                clean_overlapped_scs = new_q_scs.get(j, set())
                 if clean_overlapped_scs:
                     disambiguated_scs.append(list(clean_overlapped_scs))
                 else:
                     disambiguated_scs.append(q_sc_overlapped)  # Keep these OCs as they are unrelated to the dialogue
-                i += 1
             q.semanticConcepts = disambiguated_scs
             q = self.consolidatePOCsWithOCs(q)
             return q

@@ -1,4 +1,3 @@
-from NLP.model.SemanticConcept import *
 import uuid
 
 
@@ -8,7 +7,9 @@ class LearningVote(object):
         LearningVote constructor
         """
         self.id = str(uuid.uuid4())
-        self.identifier = None  # OntologyElement instance candidate
+        self.identifier = ''  # URI of OntologyElement instance candidate
+        self.triples = []  # List of triples when identifier OE is a Literal
+        self.uris = []  # List of instance URIs when necessary
         self.score = -1.0
         self.task = None
 
@@ -17,11 +18,8 @@ class LearningVote(object):
         Converts this LearningVote to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'id': self.id, 'score': self.score, 'task': self.task}
-        if self.identifier:
-            d['identifier'] = self.identifier.to_dict()
-        else:
-            d['identifier'] = None
+        d = {'id': self.id, 'score': self.score, 'task': self.task, 'identifier': self.identifier,
+             'triples': self.triples, 'uris': self.uris}
         return d
 
     def from_dict(self, d):
@@ -33,12 +31,9 @@ class LearningVote(object):
         self.id = d.get('id', '')
         self.score = d.get('score', -1.0)
         self.task = d.get('task')
-        self.identifier = None
-        candidate_dict = d.get('identifier')
-        if candidate_dict:
-            candidate = SemanticConcept()
-            candidate.from_dict(candidate_dict)
-            self.identifier = candidate
+        self.identifier = d.get('identifier', '')
+        self.triples = d.get('triples', [])
+        self.uris = d.get('uris', [])
 
     def __eq__(self, other):
             if not isinstance(other, LearningVote):
@@ -51,6 +46,10 @@ class LearningVote(object):
                 return False
             elif self.identifier != other.identifier:
                 return False
+            elif self.triples != other.triples:
+                return False
+            elif self.uris != other.uris:
+                return False
             else:
                 return True
 
@@ -58,5 +57,5 @@ class LearningVote(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.id) ^ hash(self.task) ^ hash(self.identifier) ^ hash(self.score) \
-               ^ hash((self.id, self.task, self.identifier))
+        return hash(self.id) ^ hash(self.task) ^ hash(self.identifier) ^ hash(self.score) ^ hash(tuple(self.triples)) \
+               ^ hash(tuple(self.uris)) ^ hash((self.id, self.task, self.identifier))

@@ -129,11 +129,10 @@ class DialogHandler(object):
                 for sc in sugkey.nearest_neighbors:
                     lk = Key()  # Learning Key
                     lk.text = sugkey.text
-                    lk.oe_id = getGenericElement(sc.OE, self.o)
-                    if isinstance(sc.OE, OntologyLiteralElement):
-                        lk.triples = sc.OE.triples
-                    if isinstance(sc.OE, OntologyInstanceElement) and len(sc.OE.uris) > 1:
-                        lk.instance_uris = sc.OE.uris
+                    oe = sc.OE
+                    lk.oe_id = getGenericElement(oe, self.o)
+                    if isinstance(oe, OntologyLiteralElement):
+                        lk.triples = oe.triples
                     key_list.append(lk)
             else:
                 lk = Key()

@@ -1162,11 +1162,11 @@ class UpperOntology(object):
     def contextOfLiteral(self, elementURI):
         """
         Given a literal, returns the triples where it appears in the ontology
-        :param elementURI: A full URI to an existing Literal
+        :param elementURI: Literal value
         :return: list<(subject, predicate, object)>: triples where the given literal is the object
         """
         context = []
-        for s, p, o in self.graph.triples((None, None, elementURI)):
+        for s, p, o in self.graph.triples((None, None, Literal(elementURI))):
             context.append((str(s), str(p), str(o)))
         return context
 

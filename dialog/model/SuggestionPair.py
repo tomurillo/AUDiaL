@@ -1,3 +1,8 @@
+from dialog.model.SuggestionKey import SuggestionKey
+from dialog.model.Vote import Vote
+from NLP.model.POC import POC
+
+
 class SuggestionPair(object):
     def __init__(self):
         """
@@ -28,11 +33,9 @@ class SuggestionPair(object):
         :return: None; updates current instance
         """
         if type(d) is dict:
-            from dialog.model.Key import Key
-            from dialog.model.Vote import Vote
             key_dict = d.get('key')
             if key_dict:
-                key = Key()
+                key = SuggestionKey()
                 key.from_dict(key_dict)
                 self.key = key
             else:
@@ -45,7 +48,6 @@ class SuggestionPair(object):
                 self.votes.append(v)
             subject_dict = d.get('subject')
             if subject_dict:
-                from NLP.model.POC import POC
                 s = POC()
                 s.from_dict(subject_dict)
                 self.subject = s

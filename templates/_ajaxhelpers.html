@@ -242,7 +242,27 @@
 
       // User has chosen a suggestion from the suggestions table
       $(document).on("click", "tr.suggestion-row" , function() {
-          let voteid = $(this).data("voteid");
+          vote_selected($(this).data("voteid"));
+          return false;
+      });
+      $(document).on("keyup", "tr.suggestion-row" , function(e) {
+          let key = e.keyCode;
+          if(key == 13 || key == 32) {
+             vote_selected($(this).data("voteid"));
+          }
+          return false;
+      });
+
+      $('button').keyup(function (e) {
+          if (e.keyCode == 13) {
+              $("#query-result").empty().append("Your query is being processed...");
+          }
+      });
+      $('button').mouseup(function () {
+          $("#query-result").empty().append("Your query is being processed...");
+      });
+
+      function vote_selected(voteid) {
           $.getJSON($SCRIPT_ROOT + '/_vote_selected', {
               current_graphic: $('input[name="currentGraphic"]').val(),
               vote_id: voteid,
@@ -257,17 +277,7 @@
                   }
               }
           });
-          return false;
-      });
-
-      $('button').keyup(function (e) {
-          if (e.keyCode == 13) {
-              $("#query-result").empty().append("Your query is being processed...");
-          }
-      });
-      $('button').mouseup(function () {
-          $("#query-result").empty().append("Your query is being processed...");
-      });
+      }
 
       function dialog_table(suggestion_json) {
           let table = '<div id="dialog-container" class="container-fluid">';
@@ -277,7 +287,7 @@
           table += '" related to any of the following elements? I need your help to continue:</caption><thead><tr>';
           table += '<th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th></tr></thead><tbody>';
           for (let i=0; i<suggestion_json['votes'].length; i++) {
-            table += '<tr class="suggestion-row" data-voteid="';
+            table += '<tr class="suggestion-row" tabindex="0" role="button" data-voteid="';
             table += suggestion_json['votes'][i]['id'];
             table += '"><th scope="row">';
             table += i+1;

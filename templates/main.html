@@ -4,9 +4,10 @@
              alt="{{ GRAPHICS[current][2] }}" style="width: 100%; height: auto; max-width:800px"/>
     </div>
     <hr/>
-    <div id="result-container" class="container-fluid">
+    <div id="result-container" class="container-fluid" role="dialog" aria-labelledby="query-heading"
+         aria-describedby="query-result">
 	    <div class="panel panel-primary">
-	        <div class="panel-heading">Query Result:</div>
+	        <div id="query-heading" class="panel-heading">Query Result:</div>
 	        <div class="panel-body" id="query-result" role="alert" tabindex="-1">
 	            Please enter a query below
 	        </div>

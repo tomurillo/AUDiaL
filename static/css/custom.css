@@ -22,6 +22,7 @@
     cursor: pointer;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th,
+.table-hover tbody tr:focus td, .table-hover tbody tr:focus th {
   background-color: #f7ecb5;
 }

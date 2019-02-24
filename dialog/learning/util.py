@@ -122,7 +122,7 @@ def updateVoteScores(suggestion_pair, vote_id):
     :return: list<Vote> list of chosen votes; generally only one
     """
     votes = []
-    if isinstance(suggestion_pair, SuggestionPair) and vote_id:
+    if suggestion_pair and vote_id:
         for v in suggestion_pair.votes:
             if v.id:
                 if v.id == vote_id:
@@ -140,21 +140,19 @@ def updateLearningModel(suggestion_pair, o):
     :param o: Ontology instance
     :return: None; learning model is updated
     """
-    if isinstance(suggestion_pair, SuggestionPair) and suggestion_pair.key.nearest_neighbors:
+    if suggestion_pair:
         from dialog.model.modelUtil import saveLearningModel
         model = {}
         lvotes = getLearningVotesfromVotes(suggestion_pair.votes)
         if suggestion_pair.key.nearest_neighbors:
             for sc in suggestion_pair.key.nearest_neighbors:
                 key = Key(suggestion_pair.key.text)
-                key.instance_uris = list(suggestion_pair.key.instance_uris)
-                key.triples = list(suggestion_pair.key.triples)
+                if isinstance(sc.OE, OntologyLiteralElement):
+                    key.triples = sc.OE.triples
                 key.oe_id = getGenericElement(sc.OE, o)
                 model[key] = list(lvotes)
         else:
             key = Key(suggestion_pair.key.text)
-            key.instance_uris = list(suggestion_pair.key.instance_uris)
-            key.triples = list(suggestion_pair.key.triples)
             key.oe_id = Key.NEIGHBORS_NONE
             model[key] = lvotes
         if model:
@@ -175,7 +173,11 @@ def getLearningVotesfromVotes(votes):
         if vote.candidate:
             lvote.task = vote.candidate.task
             if vote.candidate.OE:
-                lvote.identifier = vote.candidate
+                lvote.identifier = vote.candidate.OE.uri
+                if isinstance(vote.candidate.OE, OntologyLiteralElement):
+                    lvote.triples = list(vote.candidate.OE.triples)
+                if isinstance(vote.candidate.OE, OntologyInstanceElement):
+                    lvote.uris = vote.candidate.OE.uris
         lvotes.append(lvote)
     return lvotes
 
@@ -190,7 +192,17 @@ def updateVotesFromLearningVotes(lvotes, old_votes):
     for lvote in lvotes:
         for old_vote in old_votes:
             if old_vote.candidate and old_vote.candidate.OE:
-                if lvote.identifier == old_vote.candidate:
+                equal = False
+                if isinstance(old_vote.candidate.OE, OntologyLiteralElement):
+                    if lvote.triples == old_vote.candidate.OE.triples:
+                        equal = True
+                elif lvote.identifier == old_vote.candidate.OE.uri:
+                    if isinstance(old_vote.candidate.OE, OntologyInstanceElement):
+                        if lvote.uris == old_vote.candidate.OE.uris:
+                            equal = True
+                    else:
+                        equal = True
+                if equal:
                     if lvote.task is None or lvote.task == old_vote.candidate.task:
                         old_vote.vote = lvote.score
     return old_votes

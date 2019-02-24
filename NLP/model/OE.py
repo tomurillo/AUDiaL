@@ -151,7 +151,7 @@ class OntologyInstanceElement(OntologyElement):
     An ontology element underpinned by one or more ontology instances of the same classes
     """
     def __init__(self):
-        self.uris = []  # URIs of instances of the same class(s); this way they are all grouped under the same OE
+        self.uris = []  # URIs of instances of the same class(es); this way they are all grouped under the same OE
         self.classUris = []  # URIs of the Classes the instance(s) belongs to
         super(OntologyInstanceElement, self).__init__()
 
