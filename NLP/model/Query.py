@@ -1,4 +1,4 @@
-
+from NLP.model.OE import *
 
 class QuestionType(object):
     """
@@ -19,7 +19,7 @@ class Query(object):
         self.pocs = []
         self.tokens = []  # List<(string, string)>: list of (word, part-of-speech) tuples of each word in the query
         self.pt = None  # Syntax parse tree (PT) of type nltk.Tree
-        self.answerType = None
+        self.answerType = []  # List<OntologyElement>
         self.semanticConcepts = []  # list<list<SemanticConcept>>: overlapped-by-text SCs, first one overlaps the rest
         self.annotations = []  # Annotations to be looked up in the ontology; they do *not* have to be in the KB
 
@@ -43,11 +43,12 @@ class Query(object):
         Converts this Query instance to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'rawQuery': self.rawQuery, 'questionType': self.questionType, 'answerType': self.answerType}
+        d = {'rawQuery': self.rawQuery, 'questionType': self.questionType}
         if self.focus:
             d['focus'] = self.focus.to_dict()
         else:
             d['focus'] = None
+        d['answerType'] = [at.to_dict() for at in self.answerType]
         d['annotations'] = [ann.to_dict() for ann in self.annotations]
         d['pocs'] = [p.to_dict() for p in self.pocs]
         d['tokens'] = [list(t) for t in self.tokens]
@@ -69,7 +70,16 @@ class Query(object):
             from NLP.model.Annotation import Annotation
             self.rawQuery = d.get('rawQuery', '')
             self.questionType = d.get('questionType', QuestionType.VOID)
-            self.answerType = d.get('answerType')
+            answerType = d.get('answerType', [])
+            self.answerType = []
+            for at_dict in answerType:
+                if at_dict:
+                    oe_type = at_dict.get('type', 'OntologyElement')
+                    if oe_type in globals():
+                        oe_class = globals()[oe_type]
+                        oe_instance = oe_class()
+                        oe_instance.from_dict(at_dict)
+                        self.answerType.append(oe_instance)
             focus_dict = d.get('focus')
             if focus_dict:
                 focus = POC()

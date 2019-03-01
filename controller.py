@@ -93,7 +93,8 @@ class Controller(object):
                     self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)
                 else:  # It was a disambiguation dialogue between OCs
                     self.q = self.consolidator.disambiguateOCs(scs_updated)
-            # TODO Answer type consolidation
+                self.consolidator.consolidateAnswerType()
+                # TODO
         return output, output_type
 
     def parseAndLookUp(self, what):

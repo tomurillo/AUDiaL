@@ -31,14 +31,40 @@ class Consolidator(object):
     def consolidateAnswerType(self):
         """
         Finds the answer type for a Query
-        :return:
+        :return: None; updates query instance
         """
         if self.q and self.q.focus and self.q.focus.head:
+            answer_type = []
             self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
+            # Check first for match between an OC and the head of the focus
             for sc_list in self.q.semanticConcepts:
-                if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):
-                    pass
-
+                if not isinstance(sc_list[0].OE, OntologyNoneElement):
+                    if self.q.focus.head.equalsAnnotation(sc_list[0].OE.annotation):
+                        for sc in sc_list:
+                            sc.OE.main_subject = True
+                            answer_type.append(sc.OE)
+                        break
+            if not answer_type:
+                first_ocs = []
+                for sc_list in self.q.semanticConcepts:
+                    if not isinstance(sc_list[0].OE, OntologyNoneElement):
+                        for sc in sc_list:
+                            first_ocs.append(sc.OE)
+                        break
+                oc_sample = first_ocs[0] if first_ocs else None
+                if oc_sample and oc_sample.annotation:
+                    add_ocs = True
+                    if oc_sample.annotation.end <= self.q.focus.head.start_original:
+                        if isinstance(oc_sample, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)) \
+                                and oc_sample.governor:
+                            add_ocs = False
+                    elif oc_sample.annotation.start < self.q.focus.head.end_original:
+                        add_ocs = False
+                    if add_ocs:
+                        for oc in first_ocs:
+                            oc.main_subject = True
+                            answer_type.append(oc)
+            self.q.answerType = answer_type
 
     def consolidatePOCsWithOCs(self):
         """

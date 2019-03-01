@@ -35,6 +35,20 @@ class POC(object):
             self.end = ann.end
             self.end_original = ann.end
 
+    def equalsAnnotation(self, ann):
+        """
+        Return whether this POC contains the same information as the given annotation
+        @:return bool True if poc and annotation are equal, False otherwise
+        """
+        if self.rawText != ann.rawText:
+            return False
+        elif self.start_original != ann.start:
+            return False
+        elif self.end_original != ann.end:
+            return False
+        else:
+            return True
+
     def overlapsOC(self, oc):
         """
         Returns whether this POC overlaps the given Ontology Concept
