@@ -150,7 +150,7 @@ class GraphNavStanfordParser(object):
                       NX_TREE_POS_TAG]
         # First element in query matching heuristics
         for poc in query.pocs:
-            if poc.tree.label() in focus_tags and not poc in ignore_list:
+            if poc.tree.label() in focus_tags and poc not in ignore_list:
                 poc.mainSubjectPriority = self.priorityOfFocus(poc)
                 focus = poc.deepcopy()  # Focus has to be preserved after POC resolution
                 query.focus = focus
@@ -166,7 +166,8 @@ class GraphNavStanfordParser(object):
         priority = POC.MSUB_PRIORITY_MIN
         if focus and focus.rawText:
             start_tokens = ["how", "where", "when", "since", "since", "who", "list", "show", "tell"]
-            if any(focus.rawText.lower().startswith(s) for s in start_tokens):
+            focus_norm = focus.rawText.lower()
+            if any(focus_norm.startswith(s) for s in start_tokens):
                 priority = POC.MSUB_PRIORITY_MAX
         return priority
 

@@ -2,12 +2,12 @@ from dialog.model.Vote import *
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
 from NLP.model.Annotation import *
+from NLP.model.POC import *
 from dialog.config import *
 from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
 from NLP.constants import *
 from NLP.util.TreeUtil import containNodes
 from GeneralUtil import beautifyOutputString
-from dialog.model.modelUtil import *
 
 class SuggestionGenerator(object):
     """
@@ -55,7 +55,7 @@ class SuggestionGenerator(object):
                 left_over_votes_oes.append(oe)
         votes.extend(self.createVotesfromOEs(left_over_votes_oes, poc, key.text, None, skip_uris))
         if add_none:
-            none_vote = self.createNoneVote(poc.annotation)
+            none_vote = self.createNoneVote(poc)
             votes.append(none_vote)
         return votes
 
@@ -78,8 +78,8 @@ class SuggestionGenerator(object):
                 oe_uri = oe.uri
                 if oe_uri not in suggestions:
                     suggestions.append(oe_uri)
-                    if poc.annotation:
-                        oe.annotation = poc.annotation
+                    oe.annotation = Annotation()
+                    oe.annotation.populateFromPOC(poc)
                     if isinstance(oe, OntologyDatatypePropertyElement) and sc_neighbor:
                         oe.governor = sc_neighbor.OE
                     vote = self.createVote(text, oe)
@@ -104,8 +104,8 @@ class SuggestionGenerator(object):
         skip_uris = [sc.OE.print_uri() for sc in skip]
         oes = self.findGenericOEs(max, skip_uris)
         for oe in oes:
-            if poc.annotation:
-                oe.annotation = poc.annotation.copy()
+            oe.annotation = Annotation()
+            oe.annotation.populateFromPOC(poc)
             vote = self.createVote(key.text, oe)
             votes.append(vote)
             n += 1
@@ -124,7 +124,7 @@ class SuggestionGenerator(object):
             n += len(leftover_votes)
             votes.extend(leftover_votes)
         if add_none and n < max:
-            none_vote = self.createNoneVote(poc.annotation)
+            none_vote = self.createNoneVote(poc)
             votes.append(none_vote)
         return votes
 
@@ -176,16 +176,17 @@ class SuggestionGenerator(object):
             vote.vote = self.computeSimilarityScore(text, human_name)
         return vote
 
-    def createNoneVote(self, annotation=None):
+    def createNoneVote(self, poc=None):
         """
         Creates a lowest-priority Vote for an empty option
-        :param annotation: Annotation instance (optional)
+        :param poc: POC instance (optional)
         :return: Vote instance
         """
         vote = Vote()
         oe = OntologyNoneElement()
-        if isinstance(annotation, Annotation):
-            oe.annotation = annotation.copy()
+        if isinstance(poc, POC):
+            oe.annotation = Annotation()
+            oe.annotation.populateFromPOC(poc)
         sc = SemanticConcept()
         sc.OE = oe
         vote.candidate = sc

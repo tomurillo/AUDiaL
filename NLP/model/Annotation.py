@@ -16,6 +16,47 @@ class Annotation(object):
                            # and their URIs (vals)
         self.extra = {}  # Extra information e.g. classUri of instance, domain and range of property.
 
+    def equalsNonStrict(self, other):
+        """
+        Returns whether the current annotation is more or less equal to another one i.e they have the same
+        start and end offsets, and the same lowercase text. Their parse trees are ignored.
+        :param other: Annotation instance
+        :return: Boolean whether both annotations are equal to the text level
+        """
+        if type(other) is not Annotation:
+            return False
+        elif self.start != other.start:
+            return False
+        elif self.end != other.end:
+            return False
+        elif self.rawText.lower() != other.rawText.lower():
+            return False
+        else:
+            return True
+
+    def overlaps(self, other):
+        """
+        Returns whether the current annotation overlaps the given one i.e.
+        whether the other annotation is strictly contained within this
+        :param other:
+        :return:
+        """
+        overlaps = False
+        if type(other) is Annotation:
+            if other.start > self.start and other.end < self.end:
+                overlaps = True
+        return overlaps
+
+    def populateFromPOC(self, poc):
+        """
+        Updates this instance's attributes from the given POC
+        :param poc: A POC instance
+        :return: None; updates this instance
+        """
+        self.tree = poc.tree.copy(deep=True)
+        self.rawText = poc.rawText
+        self.start, self.end = poc.start_original, poc.end_original
+
     def to_dict(self):
         """
         Converts this Annotation to an equivalent dictionary (of built-in types) representation
@@ -123,34 +164,3 @@ class Annotation(object):
         return ann_copy
 
     __deepcopy__ = deepcopy
-
-    def equalsNonStrict(self, other):
-        """
-        Returns whether the current annotation is more or less equal to another one i.e they have the same
-        start and end offsets, and the same lowercase text. Their parse trees are ignored.
-        :param other: Annotation instance
-        :return: Boolean whether both annotations are equal to the text level
-        """
-        if type(other) is not Annotation:
-            return False
-        elif self.start != other.start:
-            return False
-        elif self.end != other.end:
-            return False
-        elif self.rawText.lower() != other.rawText.lower():
-            return False
-        else:
-            return True
-
-    def overlaps(self, other):
-        """
-        Returns whether the current annotation overlaps the given one i.e.
-        whether the other annotation is strictly contained within this
-        :param other:
-        :return:
-        """
-        overlaps = False
-        if type(other) is Annotation:
-            if other.start > self.start and other.end < self.end:
-                overlaps = True
-        return overlaps

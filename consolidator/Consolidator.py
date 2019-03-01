@@ -30,7 +30,7 @@ class Consolidator(object):
 
     def consolidateAnswerType(self):
         """
-        Finds the answer time for a Query
+        Finds the answer type for a Query
         :return:
         """
         if self.q and self.q.focus and self.q.focus.head:
@@ -67,11 +67,10 @@ class Consolidator(object):
                                 new_tree = removeSubTree(poc.tree, sc.OE.annotation.tree)
                                 if new_tree and isinstance(new_tree, nltk.Tree):
                                     new_poc = POC()
-                                    new_poc.annotation = poc.annotation
                                     new_poc.tree = new_tree
                                     new_poc.start_original = poc.start_original
                                     new_poc.end_original = poc.end_original
-                                    new_poc.start, new_poc.end = Consolidator.getSplitPOCOffsets(poc, new_tree.leaves())
+                                    new_poc.start, new_poc.end = getSplitPOCOffsets(poc, new_tree.leaves())
                                     new_poc.rawText = treeRawString(new_tree)
                                     new_poc.head = poc.head
                                     new_poc.modifiers = poc.modifiers
