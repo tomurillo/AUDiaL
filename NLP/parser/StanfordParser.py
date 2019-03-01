@@ -105,7 +105,6 @@ class GraphNavStanfordParser(object):
             poc_tree_clean = removeSubElementFromTree(poc_tree, DT_TREE_POS_TAG)
             # Initialize POC
             poc = POC(treeRawString(poc_tree_clean), poc_tree_clean)
-            poc.head = head
             poc.modifiers = modif
             # Compute start and end offsets of POC
             poc_token_list = poc_tree.leaves()
@@ -126,6 +125,11 @@ class GraphNavStanfordParser(object):
             poc.start_original = poc.start
             poc.end_original = poc.end
             pocs.append(poc)
+            # Update head POC
+            head.start, head.end = getSplitPOCOffsets(poc, head.tree.leaves())
+            head.start_original = head.start
+            head.end_original = head.end
+            poc.head = head
         query.pt = tree
         query.pocs = pocs
         self.findFocus(query)

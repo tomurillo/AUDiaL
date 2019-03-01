@@ -18,7 +18,6 @@ class Mapper(object):
 
         self._toIgnore = []  # Children to be ignored when the father is ignored
 
-
     def processQuestion(self, text):
         """
         Instantiates a Query object given a user's question
@@ -30,9 +29,7 @@ class Mapper(object):
             question = self.parser.parseQuery(text)
             question.questionType = self.parser.findQuestionType(question)
             question.annotations = self.tokensToAnnotations(question)
-
         return question
-
 
     def ontologyBasedLookUp(self, o, q):
         """
@@ -59,7 +56,6 @@ class Mapper(object):
         q.annotations = clean_anns
         return q
 
-
     def annotationLookUp(self, o, annotation, text_type='all'):
         """
         Search an annotation's text in the ontology.
@@ -78,7 +74,6 @@ class Mapper(object):
                 text = annotation.rawText
                 types = self.textLookUp(o, text, text_type)
         return text, types
-
 
     def annotationSynonymsLookUp(self, o, annotation, text_type='all'):
         """
@@ -107,7 +102,6 @@ class Mapper(object):
                         types.update(t)
         return list(text), list(types)
 
-
     def textLookUp(self, o, text, text_type='all'):
         """
         Search a string in the ontology
@@ -122,7 +116,6 @@ class Mapper(object):
             if not types:
                 types = False
         return types
-
 
     def tokensToAnnotations(self, query, preferLonger=False):
         """
@@ -185,7 +178,6 @@ class Mapper(object):
             return removeOverlappingAnnotations(annotations)
         else:
             return annotations
-
 
     def updateAnnotationExtras(self, ann, o):
         """
@@ -257,7 +249,6 @@ class Mapper(object):
                         ignore = self._isTokenIgnored(child)  # Keep digging until the word label is found
         return ignore
 
-
     def _isWordPairIgnored(self, ptree):
         """
         Returns whether the given token pair needs to be ignored in OC mapping.
@@ -274,7 +265,6 @@ class Mapper(object):
                 if treestr in TOKEN_IGNORE_PAIR:
                     ignore = True
         return ignore
-
 
     def _isPhraseIgnored(self, ptree):
         """
@@ -298,7 +288,6 @@ class Mapper(object):
                     ignore = True
         return ignore
 
-
     def _tokenIsPlural(self, ptree):
         """
         Checks whether a word is a plural noun
@@ -314,7 +303,6 @@ class Mapper(object):
                 if isinstance(ptree, nltk.Tree):
                     plural = self._tokenIsPlural(child)
         return plural
-
 
     def _phraseRequiresSpecialTreatment(self, ptree):
         """

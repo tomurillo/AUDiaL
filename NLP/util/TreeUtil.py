@@ -162,24 +162,30 @@ def getHeadOfNounPhrase(ptree):
     Tries to find the head of a noun phrase
     TODO: Improve it according to Collins 1999, Appendix A
     :param ptree: an nltk.Tree parse tree
-    :return: String: the inferred head of the phrase
+    :return: POC: the inferred head of the phrase
     """
+    from NLP.model.POC import POC
     noun_labels = [NN_TREE_POS_TAG, NNS_TREE_POS_TAG, NNP_TREE_POS_TAG, NNPS_TREE_POS_TAG]
-    top_trees = [ptree[i] for i in range(len(ptree)) if isinstance(ptree[i], nltk.Tree)]
+    top_trees = [child for child in ptree if isinstance(child, nltk.Tree)]
     top_nouns = [t for t in top_trees if t.label() in noun_labels]
+    head_poc = POC()
     if len(top_nouns) > 0:
-        head = top_nouns[-1][0]
+        head_poc.rawText = top_nouns[-1][0]
+        head_poc.tree = top_nouns[-1]
     else:
         top_nps = [t for t in top_trees if t.label() == NP_TREE_POS_TAG]
         if len(top_nps) > 0:
-            head = top_nps[-1][0]
+            head_poc.rawText = top_nps[-1][0]
+            head_poc.tree = top_nps[-1]
         else:
-            nouns = [p[0] for p in ptree.pos() if p[1] in noun_labels]
+            nouns = [p for p in getSubtreesAtHeight(ptree, 2) if p.label() in noun_labels]
             if len(nouns) > 0:
-                head = nouns[-1]
+                head_poc.rawText = nouns[-1][0]
+                head_poc.tree = nouns[-1]
             else:
-                head = ptree.leaves()[-1]
-    return head
+                head_poc.tree = getSubtreesAtHeight(ptree, 2)[-1]
+                head_poc.rawText = head_poc.tree[0]
+    return head_poc
 
 
 def getModifiersOfNounPhrase(ptree):
@@ -223,6 +229,7 @@ def removeSubElementFromTree(ptree, tag):
         return nltk.Tree(ptree.label(), [removeSubElementFromTree(c, tag) for c in filtered_children])
     else:
         return ptree
+
 
 def removeSubTree(ptree, subtree):
     """
@@ -280,6 +287,28 @@ def getLabeledSubTrees(ptree, label):
     """
     return list(ptree.subtrees(filter=lambda x: x.label() == label))
 
+
+def getSplitPOCOffsets(poc, new_tokens):
+    """
+    Utility function to compute the start and end offsets of a split POC
+    :param poc: Original POC instance
+    :param new_tokens: List<string>: tokens of the split POC
+    :return: (int, int) start and end offsets of the split POC
+    """
+    old_tokens = poc.tree.leaves()
+    start_delay = 0
+    end_delay = 0
+    i = 0
+    while i < len(old_tokens) and old_tokens[i] != new_tokens[-1]:
+        start_delay += 1
+        i += 1
+    i = len(old_tokens) - 1
+    while i >= 0 and old_tokens[i] != new_tokens[-1]:
+        end_delay += 1
+        i -= 1
+    new_start = poc.start + start_delay
+    new_end = poc.end - end_delay
+    return new_start, new_end
 
 def distanceBetweenAnnotations(ptree, ann1, ann2):
     """

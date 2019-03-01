@@ -13,9 +13,9 @@ class POC(object):
         """
         self.tree = tree
         self.rawText = rawText
-        self.modifiers = None
-        self.annotation = None
-        self.head = ''
+        self.modifiers = []  # List of nltk.Tree
+        self.annotation = None  # Annotation instance
+        self.head = None  # POC instance
         self.start = -1  # Start word offset in query
         self.end = -1  # End word offset in query
         self.start_original = -1  # Copy of start offset in case POC is altered
@@ -56,14 +56,11 @@ class POC(object):
         d = {'tree': str(self.tree), 'rawText': self.rawText, 'head': str(self.head), 'start': self.start,
              'end': self.end, 'start_original': self.start_original, 'end_original': self.end_original,
              'mainSubjectPriority': self.mainSubjectPriority}
-        if self.modifiers:
-            d['modifiers'] = [str(m) for m in self.modifiers]
-        else:
-            d['modifiers'] = None
         if self.annotation:
             d['annotation'] = self.annotation.to_dict()
         else:
             d['annotation'] = None
+        d['modifiers'] = [str(m) for m in self.modifiers]
         return d
 
     def from_dict(self, d):
@@ -79,7 +76,7 @@ class POC(object):
             self.tree = Tree.fromstring(tree) if tree else None
             self.rawText = d.get('rawText', '')
             modif = d.get('modifiers', [])
-            self.modifiers = [Tree.fromstring(m) for m in modif] if modif else None
+            self.modifiers = [Tree.fromstring(m) for m in modif]
             annotation_dict = d.get('annotation')
             if annotation_dict:
                 ann = Annotation()
@@ -89,10 +86,7 @@ class POC(object):
                 self.annotation = None
             head = d.get('head')
             if head:
-                try:
-                    self.head = Tree.fromstring(head)
-                except ValueError:  # head is a word (string), not a Tree instance
-                    self.head = head
+                self.head = head.from_dict()
             else:
                 self.head = None
             self.start = d.get('start', -1)
@@ -137,13 +131,11 @@ class POC(object):
         poc_copy.start_original = self.start_original
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
-        poc_copy.head = self.head
+        if self.head:
+            poc_copy.head = self.head.copy()
         if self.annotation:
             poc_copy.annotation = self.annotation.copy()
-        if self.modifiers:
-            poc_copy.modifiers = [m.copy() for m in self.modifiers]
-        else:
-            poc_copy.modifiers = None
+        poc_copy.modifiers = [m.copy() for m in self.modifiers]
         return poc_copy
 
     __copy__ = copy
@@ -159,13 +151,17 @@ class POC(object):
         poc_copy.start_original = self.start_original
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
-        poc_copy.head = self.head
+        if self.head:
+            poc_copy.head = self.head.deepcopy()
         if self.annotation:
             poc_copy.annotation = self.annotation.deepcopy()
-        if self.modifiers:
-            poc_copy.modifiers = [m.copy(deep=True) for m in self.modifiers]
-        else:
-            poc_copy.modifiers = None
+        poc_copy.modifiers = [m.copy(deep=True) for m in self.modifiers]
         return poc_copy
 
     __deepcopy__ = deepcopy
+
+    def __hash__(self):
+        return hash(self.annotation) ^ hash(self.rawText) ^ hash(self.start) ^ hash(self.end) \
+               ^ hash(self.start_original) ^ hash(self.end_original) ^ hash(self.tree) ^ hash(self.head) \
+               ^ hash(self.mainSubjectPriority) ^ hash((self.start, self.end, self.start_original, self.end_original)) \
+               ^ hash(tuple(self.modifiers))

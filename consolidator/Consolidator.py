@@ -1,6 +1,7 @@
 from NLP.util.TreeUtil import *
 from NLP.constants import *
 from NLP.model.POC import *
+from NLP.model.OE import *
 from consolidator.constants import *
 from oc.OCUtil import SemanticConceptListCompareOffset
 
@@ -27,6 +28,18 @@ class Consolidator(object):
         self.consolidatePOCsWithOCs()
         return self.q
 
+    def consolidateAnswerType(self):
+        """
+        Finds the answer time for a Query
+        :return:
+        """
+        if self.q and self.q.focus and self.q.focus.head:
+            self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
+            for sc_list in self.q.semanticConcepts:
+                if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):
+                    pass
+
+
     def consolidatePOCsWithOCs(self):
         """
         Given a question, remove those POCs which overlap with any of its OCs and update overlapped OCs with
@@ -35,7 +48,7 @@ class Consolidator(object):
         """
         pocs_clean = []
         for poc in self.q.pocs:
-            matching_ocs = self.matchingOCsOfPOC(poc, self.q.semanticConcepts)
+            matching_ocs = self.matchingOCsOfPOC(poc)
             add = True  # Add POCs not contained in any OC for future resolution
             if matching_ocs:
                 add = False
@@ -212,34 +225,11 @@ class Consolidator(object):
             newPoc = POC(newrawtext, newtree)
             newPoc.start_original = poc.start
             newPoc.end_original = poc.end
-            newPoc.start, newPoc.end = Consolidator.getSplitPOCOffsets(poc, new_tokens)
+            newPoc.start, newPoc.end = getSplitPOCOffsets(poc, new_tokens)
             newPoc.head = poc.head
             newPoc.modifiers = poc.modifiers
             newPoc.mainSubjectPriority = poc.mainSubjectPriority
         return newPoc
-
-    @staticmethod
-    def getSplitPOCOffsets(poc, new_tokens):
-        """
-        Utility function to compute the start and end offsets of a split POC
-        :param poc: Original POC instance
-        :param new_tokens: List<string>: tokens of the split POC
-        :return: (int, int) start and end offsets of the split POC
-        """
-        old_tokens = poc.tree.leaves()
-        start_delay = 0
-        end_delay = 0
-        i = 0
-        while i < len(old_tokens) and old_tokens[i] != new_tokens[-1]:
-            start_delay += 1
-            i += 1
-        i = len(old_tokens) - 1
-        while i >= 0 and old_tokens[i] != new_tokens[-1]:
-            end_delay += 1
-            i -= 1
-        new_start = poc.start + start_delay
-        new_end = poc.end - end_delay
-        return new_start, new_end
 
     def resolvePOCtoOC(self, poc, ocs):
         """
@@ -271,7 +261,7 @@ class Consolidator(object):
             new_q_scs = {}
             for sc in ocs:
                 oe = sc.OE
-                for i, q_sc_overlapped in enumerate(q.semanticConcepts):
+                for i, q_sc_overlapped in enumerate(self.q.semanticConcepts):
                     clean_overlapped_scs = new_q_scs.get(i, set())
                     for q_sc in q_sc_overlapped:
                         q_oe = q_sc.OE
@@ -279,7 +269,7 @@ class Consolidator(object):
                             clean_overlapped_scs.add(q_sc)
                     new_q_scs[i] = clean_overlapped_scs
             disambiguated_scs = []
-            for j, q_sc_overlapped in enumerate(q.semanticConcepts):
+            for j, q_sc_overlapped in enumerate(self.q.semanticConcepts):
                 clean_overlapped_scs = new_q_scs.get(j, set())
                 if clean_overlapped_scs:
                     disambiguated_scs.append(list(clean_overlapped_scs))
