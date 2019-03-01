@@ -10,7 +10,7 @@ MODEL_FILE = 'dialog/storage/votes.json'
 def loadLearningModel(deserialize=True):
     """
     Load the current learning model from a serialized file on disk
-    @:param deserialize: Whether to covert the loaded data to model classes (True; default) or keep it as a dict of
+    :param deserialize: Whether to covert the loaded data to model classes (True; default) or keep it as a dict of
     builtin types (False)
     :return: dict<Key, list<LearningVote>>
     """

@@ -81,7 +81,7 @@ class Controller(object):
         output = 'Your selection could not be resolved.'
         output_type = 'answer'
         suggestion_pair_dict = session.get('suggestion_pair')
-        self.consolidator = Consolidator()
+        self.consolidator = Consolidator(self.q)
         if self.q and vote_id and suggestion_pair_dict:
             suggestion_pair = SuggestionPair()
             suggestion_pair.from_dict(suggestion_pair_dict)
@@ -90,9 +90,9 @@ class Controller(object):
             scs_updated = [v.candidate for v in votes_chosen]
             if scs_updated:
                 if suggestion_pair.subject:  # It was a POC -> OC mapping dialogue
-                    self.q = self.consolidator.resolvePOCtoOC(self.q, suggestion_pair.subject, scs_updated)
+                    self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)
                 else:  # It was a disambiguation dialogue between OCs
-                    self.q = self.consolidator.disambiguateOCs(self.q, scs_updated)
+                    self.q = self.consolidator.disambiguateOCs(scs_updated)
             # TODO Answer type consolidation
         return output, output_type
 
@@ -115,8 +115,8 @@ class Controller(object):
         consolidation sub-steps.
         :return: void; self.q is consolidated.
         """
-        self.consolidator = Consolidator()
-        self.q = self.consolidator.consolidateQuery(self.q)
+        self.consolidator = Consolidator(self.q)
+        self.q = self.consolidator.consolidateQuery()
 
     def count(self,element):
         """
