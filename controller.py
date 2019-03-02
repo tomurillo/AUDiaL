@@ -68,18 +68,16 @@ class Controller(object):
             from dialog.webformat.formatter import SuggestionFormatter
             formatter = SuggestionFormatter(self.o)
             return formatter.suggestionPairToJSON(suggestion_pair)
-        else:
-            return False
+        return False
 
-    def processVoteSelection(self, vote_id):
+    def processVote(self, vote_id):
         """
         Processes a user selection of a suggestion from a disambiguation or mapping dialog
         :param vote_id: (string) The ID of the chosen vote
-        :return:
+        :return: A suggestion pair if the query cannot be resolved after having considered the vote; False otherwise
+        (no further dialogue needed; query instance is resolved and task needs to be performed next)
         """
         from dialog.learning.util import updateVoteScores, updateLearningModel
-        output = 'Your selection could not be resolved.'
-        output_type = 'answer'
         suggestion_pair_dict = session.get('suggestion_pair')
         self.consolidator = Consolidator(self.q)
         if self.q and vote_id and suggestion_pair_dict:
@@ -87,15 +85,49 @@ class Controller(object):
             suggestion_pair.from_dict(suggestion_pair_dict)
             votes_chosen = updateVoteScores(suggestion_pair, vote_id)
             updateLearningModel(suggestion_pair, self.o)
-            scs_updated = [v.candidate for v in votes_chosen]
+            scs_updated = [v.candidate for v in votes_chosen]  # OCs chosen by the user in dialogue
             if scs_updated:
                 if suggestion_pair.subject:  # It was a POC -> OC mapping dialogue
                     self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)
                 else:  # It was a disambiguation dialogue between OCs
                     self.q = self.consolidator.disambiguateOCs(scs_updated)
-                self.consolidator.consolidateAnswerType()
-                # TODO
-        return output, output_type
+            #  Call generateDialogs again; query may still have unresolved elements
+            self.dialogue = DialogHandler(self.q, self.o)
+            suggestion_pair_new = self.dialogue.generateDialogs()
+            if suggestion_pair_new:
+                session['suggestion_pair'] = suggestion_pair_new.to_dict()
+                # Output dialog
+                from dialog.webformat.formatter import SuggestionFormatter
+                formatter = SuggestionFormatter(self.o)
+                return formatter.suggestionPairToJSON(suggestion_pair_new)
+        return False
+
+    def fetchAnswerFromDomain(self):
+        """
+        Query a domain ontology and return answer
+        :return:
+        """
+        if self.q and self.q.ocs_consistent():
+            self.consolidator = Consolidator(self.q)
+            self.consolidator.consolidateAnswerType()  # Query is consolidated; fetch answer type first
+            scs = self.consolidator.removeDuplicatedSemanticConcepts()
+            ocs_for_query = []
+            for sc_list in scs:
+                ocs = []
+                added_ocs = []
+                for sc in sc_list:
+                    if not isinstance(sc.OE, OntologyNoneElement):
+                        if sc.OE.added:
+                            added_ocs.append(sc.OE)
+                        else:
+                            ocs.append(sc.OE)
+                for added_oc in added_ocs:
+                    for sc in sc_list:
+                        if sc.OE.annotation == added_oc.OE.annotation:
+                            sc.OE.task = added_oc.OE.task
+                if ocs:
+                    ocs_for_query.append(ocs)
+        # TODO
 
     def parseAndLookUp(self, what):
         """
@@ -112,8 +144,7 @@ class Controller(object):
 
     def consolidateQuery(self):
         """
-        Performs the consolidation step of mapping POCs to OCs, including automatic and manual
-        consolidation sub-steps.
+        Performs the automatic consolidation step of mapping POCs to OCs
         :return: void; self.q is consolidated.
         """
         self.consolidator = Consolidator(self.q)
@@ -141,6 +172,18 @@ class Controller(object):
         output_type = 'answer'
         if self.type == c.BAR_CHART:
             suggestion = self.processQuery(what)
+            if suggestion:
+                output_type = 'dialogue'
+                output = suggestion
+            else:
+                pass  # fetch answer TODO
+        return output, output_type
+
+    def processVoteSelection(self, vote_id):
+        output = 'Your selection could not be resolved.'
+        output_type = 'answer'
+        if self.type == c.BAR_CHART:
+            suggestion = self.processVote(vote_id)
             if suggestion:
                 output_type = 'dialogue'
                 output = suggestion

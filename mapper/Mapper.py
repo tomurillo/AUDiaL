@@ -200,9 +200,9 @@ class Mapper(object):
                 p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_DTPROP])
             if o_c.OTYPE_OPROP in ann.oc_type:
                 if p_name:
-                    import sys
-                    print('Dtype and object properties with same name found (%s). Priority given to object property.' %
-                          p_name, sys.stdout)
+                    from warnings import warn
+                    warn('Dtype and object properties with same name found (%s). Priority given to object property.'
+                         % p_name)
                 p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_OPROP])
             if p_name:
                 #  Add property's range and domain to Annotation

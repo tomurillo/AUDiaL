@@ -38,7 +38,7 @@ class Consolidator(object):
             self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
             # Check first for match between an OC and the head of the focus
             for sc_list in self.q.semanticConcepts:
-                if not isinstance(sc_list[0].OE, OntologyNoneElement):
+                if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):
                     if self.q.focus.head.equalsAnnotation(sc_list[0].OE.annotation):
                         for sc in sc_list:
                             sc.OE.main_subject = True
@@ -47,7 +47,7 @@ class Consolidator(object):
             if not answer_type:
                 first_ocs = []
                 for sc_list in self.q.semanticConcepts:
-                    if not isinstance(sc_list[0].OE, OntologyNoneElement):
+                    if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):
                         for sc in sc_list:
                             first_ocs.append(sc.OE)
                         break
@@ -165,6 +165,27 @@ class Consolidator(object):
                             #  No overlap --> keep SemanticConcept list
                             new_scs.append(sc_list)
             self.q.semanticConcepts = sorted(new_scs, cmp=SemanticConceptListCompareOffset)
+
+    def removeDuplicatedSemanticConcepts(self):
+        """
+        Get rid of SemanticConcepts sharing the same URI
+        :return: List<List<SemanticConcept>: updated semantic concepts without duplicated URIs
+        """
+        uris_found = []
+        clean_scs = []
+        for sc_list in self.q.semanticConcepts:
+            found = False
+            for sc in sc_list:
+                if sc.OE:
+                    uri_str = sc.OE.print_uri()
+                    if uri_str not in uris_found:
+                        uris_found.append(uri_str)
+                    else:
+                        found = True
+                        break
+            if not found:
+                clean_scs.append(sc_list)
+        return clean_scs
 
     def separatePOCswithJJ(self):
         """

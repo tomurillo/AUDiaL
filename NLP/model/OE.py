@@ -164,6 +164,16 @@ class OntologyInstanceElement(OntologyElement):
         self.classUris = []  # URIs of the Classes the instance(s) belongs to
         super(OntologyInstanceElement, self).__init__()
 
+    def print_uri(self):
+        """
+        Returns this element's URI
+        :return: string: this OE's URI (or URIs if there are several grouped instances under this OE)
+        """
+        if len(self.uris) > 1:
+            return str(self.uris)
+        else:
+            return super(OntologyInstanceElement, self).print_uri()
+
     def to_dict(self):
         """
         Converts this OntologyInstanceElement to an equivalent dictionary (of built-in types) representation

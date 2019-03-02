@@ -33,8 +33,8 @@ def loadLearningModel(deserialize=True):
             else:
                 model = model_serialized
     except Exception as e:
-        import sys
-        print('Learning model could not be loaded from path: %s: %s' % (model_path, str(e)), sys.stderr)
+        from warnings import warn
+        warn('Learning model could not be loaded from path: %s: %s' % (model_path, str(e)))
     finally:
         return model
 
@@ -62,8 +62,8 @@ def saveLearningModel(model, clear_existing=False):
                 model_dict[key_str] = vote_dict_list
             json.dump(model_dict, f)
     except Exception as e:
-        import sys
-        print('Learning model could not be stored to file %s: %s' % (model_path, str(e)), sys.stderr)
+        from warnings import warn
+        warn('Learning model could not be stored to file %s: %s' % (model_path, str(e)))
         success = False
     finally:
         return success

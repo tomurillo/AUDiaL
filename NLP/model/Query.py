@@ -21,7 +21,7 @@ class Query(object):
         self.pt = None  # Syntax parse tree (PT) of type nltk.Tree
         self.answerType = []  # List<OntologyElement>
         self.semanticConcepts = []  # list<list<SemanticConcept>>: overlapped-by-text SCs, first one overlaps the rest
-        self.annotations = []  # Annotations to be looked up in the ontology; they do *not* have to be in the KB
+        self.annotations = []  # Query substrings to be looked up in the ontology; they do *not* have to be in the KB
 
     def flattened_scs(self):
         """
@@ -34,9 +34,23 @@ class Query(object):
             if scs:
                 flat_scs.append(scs[0])
                 if len(scs) > 1:
-                    import sys
-                    print('Warning: flattening list of ambiguous SemanticConcepts!', sys.stderr)
+                    import warnings
+                    warnings.warn('Warning: flattening list of ambiguous SemanticConcepts!')
         return flat_scs
+
+    def ocs_consistent(self):
+        """
+        Check whether the OCs of the Query are consistent (all overlapping OCs are resources of the same class)
+        :return: True is OCs are consistent; False otherwise
+        """
+        consistent = True
+        for sc_list in self.semanticConcepts:
+            if len(sc_list) > 1:
+                first_type = type(sc_list[0].OE)
+                consistent = all(isinstance(sc.OE, first_type) for sc in sc_list)
+                if not consistent:
+                    break
+        return consistent
 
     def to_dict(self):
         """

@@ -80,8 +80,8 @@ def annotationToOntologyElements(annotation):
                 if 'classUri' in annotation.extra:
                     oe.classUris = annotation.extra['classUri']
                 else:
-                    import sys
-                    print('Orphan instance %s' % annotation.oc_type[ann_type], sys.stderr)
+                    from warnings import warn
+                    warn('Orphan instance %s' % annotation.oc_type[ann_type])
             elif ann_type == o_c.OTYPE_OPROP:
                 oe = OntologyObjectPropertyElement()
                 if 'domain' in annotation.extra:
