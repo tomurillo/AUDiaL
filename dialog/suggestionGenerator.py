@@ -82,6 +82,7 @@ class SuggestionGenerator(object):
                     oe.annotation.populateFromPOC(poc)
                     if isinstance(oe, OntologyDatatypePropertyElement) and sc_neighbor:
                         oe.governor = sc_neighbor.OE
+                        oe.range = self.o.rangeOfProperty(oe_uri, stripns=False)
                     vote = self.createVote(text, oe)
                     votes.append(vote)
                     votes.extend(self.createAdditionalVotes(text, oe, poc, added=False))
