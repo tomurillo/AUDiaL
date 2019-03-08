@@ -1,17 +1,19 @@
 from NLP.model.OE import *
 from NLP.model.Joker import *
 
+
 def prepareOCsForQuery(oes):
     """
     Given the ontology elements of a consolidated user query, arrange them for generation of search triples in the
     ontology
     :param oes: List<List<OntologyElement>: overlapped OntologyElements of the Query
-    :return:
+    :return: List<List<OntologyElement, Joker>: Processed OntologyElements with Joker instances added
     """
     oes = arrangeDatatypeProperties(oes)
     oes = arrangeLastProperty(oes)
     oes_with_jokers = addJokersToOEs(oes)
-    
+    return oes_with_jokers
+
 
 def addJokersToOEs(oes):
     """
@@ -20,7 +22,7 @@ def addJokersToOEs(oes):
     :return: List<List<OntologyElement>: Rearranged OntologyElements with Joker instances added
     """
     oes_with_jokers = []
-    if oes and oes[0] and oeIsProperty(oes[0][0]):
+    if oes and oes[0] and oeIsProperty(oes[0][0]): # Property at the beginning of query, add subject
         joker = Joker(['class', 'instance', 'literal'])
         oes_with_jokers.append([joker])
     for i, oe_list in enumerate(oes):
@@ -30,14 +32,17 @@ def addJokersToOEs(oes):
             prev_sample = None
             if i > 0 and oe_list[i-1]:
                 prev_sample = oe_list[i-1][0]
-            if oeIsConcept(sample) and oeIsConcept(prev_sample):
+            if oeIsConcept(sample) and oeIsConcept(prev_sample):  # Two concepts together, add property in between
                 joker = Joker(['property'])
-            elif oeIsProperty(sample) and oeIsProperty(prev_sample):
+            elif oeIsProperty(sample) and oeIsProperty(prev_sample):  # Two properties together, add concept in between
                 joker = Joker(['class', 'literal'])
             if joker:
                 oes_with_jokers.append([joker])
+            # Add unique identifier for SPARQL generation
+            for oe in oe_list:
+                oe.set_id(i)
             oes_with_jokers.append(oe_list)
-    if len(oes) > 1 and oes[-1] and oeIsProperty(oes[-1][0]):
+    if oes and oes[-1] and oeIsProperty(oes[-1][0]):  # Property at the end of query, add object
         joker = Joker(['class', 'instance', 'literal'])
         oes_with_jokers.append([joker])
     return oes_with_jokers

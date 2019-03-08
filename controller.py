@@ -1,6 +1,7 @@
 from flask import session
 from Ontovis.upper_ontology import UpperOntology
 from Ontovis.bar_chart_ontology import BarChartOntology
+from Ontovis.triple_utils import *
 from NLP.SimpleNLHandler import *
 from NLP.NLHandler import *
 from mapper.Mapper import *
@@ -127,7 +128,8 @@ class Controller(object):
                             sc.OE.task = added_oc.OE.task
                 if ocs:
                     ocs_for_query.append(ocs)
-        # TODO
+            prepared_ocs = prepareOCsForQuery(ocs_for_query)
+            # TODO
 
     def parseAndLookUp(self, what):
         """
