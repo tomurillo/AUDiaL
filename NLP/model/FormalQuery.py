@@ -1,7 +1,7 @@
 from NLP.model.OE import *
 from NLP.model.Joker import *
 from NLP.model.SemanticConcept import *
-from Ontovis.triple_utils import createSelectSetForDatatypeProperty
+from Ontovis.triple_utils import *
 
 class FormalQuery(object):
     def __init__(self):
@@ -32,10 +32,9 @@ class FormalQuery(object):
             next_sample = sc_list[i + 1][0] if i < concepts_len - 1 else None
             if isinstance(sample, Joker):
                 select_query += " ?%s" % sample.id
-                if 'property' in sample.suitable_types and isinstance(prev_sample, SemanticConcept) and \
-                        isinstance(next_sample, SemanticConcept):
-                    where_query += " { { ?%s ?%s ?%s } UNION " % (next_sample.OE.id, sample.id, prev_sample.OE.id)
-                    where_query += " { ?%s ?%s ?%s } } " % (prev_sample.OE.id, sample.id, next_sample.OE.id)
+                if 'property' in sample.suitable_types and prev_sample and next_sample:
+                    where_query += " { { ?%s ?%s ?%s } UNION " % (next_sample.id, sample.id, prev_sample.id)
+                    where_query += " { ?%s ?%s ?%s } } " % (prev_sample.id, sample.id, next_sample.id)
             elif isinstance(sample, SemanticConcept):
                 if isinstance(sample.OE, OntologyEntityElement):
                     select_query += " ?%s" % sample.id
@@ -53,13 +52,13 @@ class FormalQuery(object):
                     where_query += " FILTER REGEX(str(?%s), \"^%s$\", \"i\") . " % (sample.id, sample.OE.uri)
                     # Ensure that the previous property matches this Literal's property
                     if isinstance(prev_sample, SemanticConcept):
-                        where_query += " FILTER ( ?%s=<%s>) " % (prev_sample.OE.id, p_uri)
-                elif isinstance(sample.OE, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
+                        where_query += " FILTER ( ?%s=<%s>) " % (prev_sample.id, p_uri)
+                elif scIsProperty(sample):
                     select_query += " ?%s" % sample.id
                     if isinstance(sample.OE, OntologyDatatypePropertyElement):
-                        select_set = createSelectSetForDatatypeProperty(sample, prev_sample, next_sample)
-                        if isinstance(prev_sample, SemanticConcept) and isinstance(prev_sample.OE,
-                                                                                   OntologyLiteralElement):
+                        select_set += createSelectSetForDatatypeProperty(sample, prev_sample, next_sample)
+                        if objectIsLiteral(prev_sample):
                             sample.OE.reversed = True
+                        where_query += createWhereSectionForDatatypeProperty(sc_list, prev_sample, next_sample)
                         # TODO continue
 

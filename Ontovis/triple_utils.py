@@ -103,6 +103,17 @@ def scIsConcept(sc):
     return sc and sc.OE and isinstance(sc.OE, (OntologyEntityElement, OntologyInstanceElement, OntologyLiteralElement))
 
 
+def objectIsLiteral(sc):
+    """
+    Returns whether the given object is a Literal OE or SemanticConcept
+    :param sc: Object instance
+    :return: True if sc is a SemanticConcept instance with sc.OE a OntologyLiteralElement instance or a
+    OntologyLiteralElement instance; False otherwise
+    """
+    return (isinstance(sc, SemanticConcept) and isinstance(sc.OE, OntologyLiteralElement)) \
+        or isinstance(sc, OntologyLiteralElement)
+
+
 def createSelectSetForDatatypeProperty(sc, prev_sc, next_sc):
     """
     Generates parts of the select set of a SPARQL query when for a Datatype Property
@@ -129,4 +140,39 @@ def createSelectSetForDatatypeProperty(sc, prev_sc, next_sc):
             sparql = "select (SUM(xsd:decimal(%s) AS ?JokerElement)" % next_id
         elif sc.task == 'avg':
             sparql = "select (AVG(xsd:decimal%s) AS ?JokerElement)" % next_id
+    return sparql
+
+
+def createWhereSectionForDatatypeProperty(properties, prev_sc, next_sc):
+    """
+    Generates the where section of a SPARQL query for the given datatype property
+    :param properties: List<SemanticConcept> SemanticConcepts for a datatype property of a consolidated query
+    :param prev_sc: SemanticConcept; Previous OC in the user query or None
+    :param next_sc: SemanticConcept; Next OC in the user query or None
+    :return: string; substring of a SPARQL query where section
+    """
+    sparql = ""
+    prop = properties[0] if properties else None
+    if isinstance(prop, SemanticConcept) and isinstance(prop.OE, OntologyDatatypePropertyElement):
+        gov = prop.OE.governor
+        if isinstance(next_sc, SemanticConcept):
+            if gov and prev_sc and gov.uri == next_sc.OE.uri:
+                subj = next_sc
+                obj = prev_sc
+            elif isinstance(prev_sc, Joker) and not isinstance(next_sc.OE, OntologyLiteralElement):
+                subj = next_sc
+                obj = prev_sc
+            else:
+                subj = prev_sc
+                obj = prev_sc
+        else:
+            subj = prev_sc
+            obj = prev_sc
+        sparql += " ?%s ?%s ?%s . FILTER (" % (subj.id, prop.id, obj.id)
+        num_props = len(properties)
+        for i, p in enumerate(properties, 1):
+            sparql += " ?%s=<%s> " % (prop.id, p.uri)
+            if i < num_props:
+                sparql += " || "
+        sparql += ") . "
     return sparql
