@@ -11,8 +11,10 @@ class SemanticConcept(object):
         """
         self.OE = None  # OntologyElement instance
         self.verified = False  # Whether this OC has been manually verified in a mapping dialog
+        self.answer = False  # Whether this OC is the query's answer
         self.score = None  # Learning score
         self.task = None  # Maps this OC to an analytical task to be performed
+        self.id = ''  # Unique identifier for SPARQL generation
 
     def overlapsPOC(self, poc):
         """
@@ -25,6 +27,31 @@ class SemanticConcept(object):
             overlaps = True
         return overlaps
 
+    def set_id(self, n):
+        """
+        Sets this instance's id attribute
+        :param n: int; position of this element within a OC list
+        :return: None; updates this instance
+        """
+        sql_id = ""
+        try:
+            if isinstance(self.OE, OntologyEntityElement):
+                sql_id = 'c%d' % n
+            elif isinstance(self.OE, OntologyInstanceElement):
+                sql_id = 'i%d' % n
+            elif isinstance(self.OE, OntologyObjectPropertyElement):
+                sql_id = 'op%d' % n
+            elif isinstance(self.OE, OntologyDatatypePropertyElement):
+                sql_id = 'dp%d' % n
+            elif isinstance(self.OE, OntologyLiteralElement):
+                sql_id = 'd%d' % n
+        except ValueError:
+            from warnings import warn
+            warn("SemanticConcept ID has been set to a non-numerical value", SyntaxWarning)
+            sql_id = "e%s" % n
+        finally:
+            self.id = sql_id
+
     def to_dict(self):
         """
         Converts this SemanticConcept to an equivalent dictionary (of built-in types) representation
@@ -35,7 +62,9 @@ class SemanticConcept(object):
             d['OE'] = self.OE.to_dict()
         else:
             d['OE'] = None
+        d['id'] = self.id
         d['verified'] = self.verified
+        d['answer'] = self.answer
         d['score'] = self.score
         d['task'] = self.task
         return d
@@ -47,8 +76,10 @@ class SemanticConcept(object):
         :return: None; updates current instance
         """
         self.verified = d.get('verified', False)
+        self.answer = d.get('answer', False)
         self.score = d.get('score')
         self.task = d.get('task')
+        self.id = d.get('id', '')
         self.OE = None
         oe_dict = d.get('OE')
         if oe_dict:
@@ -63,9 +94,13 @@ class SemanticConcept(object):
             return False
         elif self.verified != other.verified:
             return False
+        elif self.answer != other.answer:
+            return False
         elif self.task != other.task:
             return False
         elif self.score != other.score:
+            return False
+        elif self.id != other.id:
             return False
         elif self.OE != other.OE:
             return False
@@ -76,7 +111,8 @@ class SemanticConcept(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.OE) ^ hash(self.verified) ^ hash(self.task) ^ hash(self.score)
+        return hash(self.OE) ^ hash(self.verified) ^ hash(self.task) ^ hash(self.score) ^ hash(self.id) \
+               ^ hash(self.answer) ^ hash((self.task, self.score)) ^ hash((self.answer, self.verified))
 
     def copy(self):
         sc_copy = SemanticConcept()
@@ -84,6 +120,8 @@ class SemanticConcept(object):
         sc_copy.verified = self.verified
         sc_copy.task = self.task
         sc_copy.score = self.score
+        sc_copy.id = self.id
+        sc_copy.answer = self.answer
         return sc_copy
 
     __copy__ = copy
@@ -94,6 +132,8 @@ class SemanticConcept(object):
         sc_copy.verified = self.verified
         sc_copy.task = self.task
         sc_copy.score = self.score
+        sc_copy.id = self.id
+        sc_copy.answer = self.answer
         return sc_copy
 
     __deepcopy__ = deepcopy

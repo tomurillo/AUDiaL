@@ -1,4 +1,5 @@
 from NLP.model.OE import *
+from NLP.model.SemanticConcept import *
 from NLP.model.Joker import *
 
 
@@ -53,7 +54,7 @@ def addJokersToOEs(scs):
 def arrangeDatatypeProperties(scs):
     """
     Rearrange Datatype Property OEs found in a query for triple generation
-    :param oes: List<List<SemanticConcept>: overlapped SemanticConcepts of the Query
+    :param scs: List<List<SemanticConcept>: overlapped SemanticConcepts of the Query
     :return: List<List<SemanticConcept>: Rearranged SemanticConcepts
     """
     oes_length = len(scs)
@@ -76,7 +77,7 @@ def arrangeDatatypeProperties(scs):
 def arrangeLastProperty(scs):
     """
     If the last OE in a query is a property, move it between subject and object OEs
-    :param oes: List<List<SemanticConcept>: overlapped SemanticConcepts of the Query
+    :param scs: List<List<SemanticConcept>: overlapped SemanticConcepts of the Query
     :return: List<List<SemanticConcept>: Rearranged SemanticConcepts
     """
     if len(scs) > 2 and scIsProperty(scs[-1][0]) and scIsConcept(scs[-2][0]) and scIsConcept(scs[-3][0]):
@@ -86,9 +87,9 @@ def arrangeLastProperty(scs):
 
 def scIsProperty(sc):
     """
-    Returns whether the given SemanticConcept's OE is a proeprty
-    :param oe: OntologyElement instance
-    :return: True if oe is a property; False otherwise
+    Returns whether the given SemanticConcept's OE is a property
+    :param sc: SemanticConcept instance
+    :return: True if OC is a property; False otherwise
     """
     return sc and sc.OE and isinstance(sc.OE, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement))
 
@@ -96,36 +97,36 @@ def scIsProperty(sc):
 def scIsConcept(sc):
     """
     Returns whether the given SemanticConcept's OE is a concept (i.e. not a property)
-    :param oe: OntologyElement instance
-    :return: True if oe is a concept; False otherwise
+    :param sc: SemanticConcept instance
+    :return: True if OC is a concept; False otherwise
     """
     return sc and sc.OE and isinstance(sc.OE, (OntologyEntityElement, OntologyInstanceElement, OntologyLiteralElement))
 
 
-def createSelectSetForDatatypeProperty(oe, prev_oe, next_oe, task):
+def createSelectSetForDatatypeProperty(sc, prev_sc, next_sc):
     """
     Generates parts of the select set of a SPARQL query when for a Datatype Property
-    :param oes: OntologyDatatypePropertyElement instance from a consolidated user query
-    :param prev_oe: OntologyElement Previous OE in the user query or None
-    :param next_oe: OntologyElement Next OE in the user query or None
-    :param task: string; an analytic task the user asked about the property (sum or average)
+    :param sc: SemanticConcept of a Datatype property instance from a consolidated user query
+    :param prev_sc: SemanticConcept Previous OC in the user query or None
+    :param next_sc: SemanticConcept Next OC in the user query or None
     :return: string; SPARQL query select set chunk
     """
     sparql = ""
-    choose_prev = False
-    if oe.governor and prev_oe and next_oe and oe.governor.uri == next_oe.uri:
-        choose_prev = True
-    elif isinstance(prev_oe, Joker) and not isinstance(next_oe, OntologyDatatypePropertyElement):
-        choose_prev = True
-    if choose_prev:
-        next_id = prev_oe.id
-        prev_oe.answer = True
-    else:
-        next_id = next_oe.id
-        next_oe.answer = True
-    if task == 'sum':
-        sparql = "select (SUM(xsd:decimal(%s) AS ?JokerElement)" % next_id
-    elif task == 'avg':
-        sparql = "select (AVG(xsd:decimal%s) AS ?JokerElement)" % next_id
+    if sc.task in ['sum', 'avg']:
+        choose_prev = False
+        if sc.OE.governor and prev_sc and isinstance(next_sc, SemanticConcept) and sc.OE.governor.uri == next_sc.OE.uri:
+            choose_prev = True
+        elif isinstance(prev_sc, Joker) and isinstance(next_sc, SemanticConcept) \
+                and not isinstance(next_sc.OE, OntologyDatatypePropertyElement):
+            choose_prev = True
+        if choose_prev:
+            next_id = prev_sc.id
+            prev_sc.answer = True
+        else:
+            next_id = next_sc.id
+            next_sc.answer = True
+        if sc.task == 'sum':
+            sparql = "select (SUM(xsd:decimal(%s) AS ?JokerElement)" % next_id
+        elif sc.task == 'avg':
+            sparql = "select (AVG(xsd:decimal%s) AS ?JokerElement)" % next_id
     return sparql
-
