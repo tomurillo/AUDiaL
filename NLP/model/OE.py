@@ -10,6 +10,7 @@ class OntologyElement(object):
         self.annotation = None  # Associated Query annotation
         self.added = False
         self.main_subject = False
+        self.answer = False
         self.id = ''  # Unique identifier for SPARQL generation
 
     def print_uri(self):
@@ -25,7 +26,7 @@ class OntologyElement(object):
         :return: dict
         """
         d = {'type': 'OntologyElement', 'uri': self.uri, 'added': self.added, 'main_subject': self.main_subject,
-             'id': self.id}
+             'id': self.id, 'answer': self.answer}
         if self.annotation:
             d['annotation'] = self.annotation.to_dict()
         else:
@@ -41,6 +42,7 @@ class OntologyElement(object):
         self.uri = d.get('uri', '')
         self.added = d.get('added', False)
         self.main_subject = d.get('main_subject', False)
+        self.answer = d.get('answer', False)
         self.id = d.get('id', '')
         ann_dict = d.get('annotation')
         if ann_dict:
@@ -81,6 +83,8 @@ class OntologyElement(object):
             return False
         elif self.added != other.added:
             return False
+        elif self.answer != other.answer:
+            return False
         elif self.id != other.id:
             return False
         elif self.annotation != other.annotation:
@@ -92,14 +96,15 @@ class OntologyElement(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.main_subject) ^ hash(self.id) \
-               ^ hash((self.added, self.main_subject)) ^ hash((self.uri, self.id))
+        return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.main_subject) ^ hash(self.answer) \
+               ^ hash(self.id) ^ hash((self.added, self.main_subject, self.answer)) ^ hash((self.uri, self.id))
 
     def copy(self):
         oe_copy = OntologyElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -112,6 +117,7 @@ class OntologyElement(object):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -159,8 +165,8 @@ class OntologyEntityElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.specificity) \
-               ^ hash(self.main_subject) ^ hash((self.added, self.main_subject)) ^ hash(self.id) \
+        return hash(self.uri) ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.specificity) ^ hash(self.answer) \
+               ^ hash(self.main_subject) ^ hash((self.added, self.main_subject, self.answer)) ^ hash(self.id) \
                ^ hash((self.uri, self.id))
 
     def copy(self):
@@ -168,6 +174,7 @@ class OntologyEntityElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -181,6 +188,7 @@ class OntologyEntityElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -245,14 +253,15 @@ class OntologyInstanceElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(tuple(self.uris)) ^ hash(self.added) \
-               ^ hash(self.annotation) ^ hash(self.main_subject) ^ hash((self.added, self.main_subject)) \
-               ^ hash(self.id) ^ hash((self.uri, self.id))
+               ^ hash(self.answer) ^ hash(self.annotation) ^ hash(self.main_subject) \
+               ^ hash((self.added, self.main_subject, self.answer)) ^ hash(self.id) ^ hash((self.uri, self.id))
 
     def copy(self):
         oe_copy = OntologyInstanceElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -267,6 +276,7 @@ class OntologyInstanceElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -333,15 +343,16 @@ class OntologyObjectPropertyElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
                ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.specificity_score) ^ hash(self.distance_score) \
+               ^ hash(self.answer) ^ hash(self.specificity_score) ^ hash(self.distance_score) \
                ^ hash((self.specificity_score, self.distance_score)) ^ hash(self.main_subject) \
-               ^ hash((self.added, self.main_subject)) ^ hash(self.id) ^ hash((self.uri, self.id))
+               ^ hash((self.added, self.main_subject, self.answer)) ^ hash(self.id) ^ hash((self.uri, self.id))
 
     def copy(self):
         oe_copy = OntologyObjectPropertyElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -358,6 +369,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -380,6 +392,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         self.specificity_score = 0
         self.distance_score = 0
         self.governor = None  # OntologyElement instance from its domain
+        self.reversed = False  # Whether subject and object are reversed
         super(OntologyDatatypePropertyElement, self).__init__()
 
     def to_dict(self):
@@ -393,6 +406,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         d['range'] = self.range
         d['specificity_score'] = self.specificity_score
         d['distance_score'] = self.distance_score
+        d['reversed'] = self.reversed
         if self.governor:
             d['governor'] = self.governor.to_dict()
         else:
@@ -410,6 +424,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         self.range = d.get('range', [])
         self.specificity_score = d.get('specificity_score', 0)
         self.distance_score = d.get('distance_score', 0)
+        self.reversed = d.get('reversed', False)
         self.governor = None
         governor_dict = d.get('governor')
         if governor_dict:
@@ -441,15 +456,17 @@ class OntologyDatatypePropertyElement(OntologyElement):
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
                ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.specificity_score) ^ hash(self.distance_score) \
+               ^ hash(self.specificity_score) ^ hash(self.distance_score) ^ hash(self.answer) ^ hash(self.reversed) \
                ^ hash((self.specificity_score, self.distance_score)) ^ hash(self.governor) ^ hash(self.main_subject) \
-               ^ hash((self.added, self.main_subject)) ^ hash(self.id) ^ hash((self.uri, self.id))
+               ^ hash((self.added, self.main_subject, self.reversed, self.answer)) ^ hash(self.id) \
+               ^ hash((self.uri, self.id))
 
     def copy(self):
         oe_copy = OntologyDatatypePropertyElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -468,6 +485,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -530,14 +548,15 @@ class OntologyLiteralElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.main_subject) ^ hash((self.added, self.main_subject)) ^ hash(self.id) \
-               ^ hash((self.uri, self.id))
+               ^ hash(self.answer) ^ hash(self.main_subject) ^ hash((self.added, self.main_subject, self.answer)) \
+               ^ hash(self.id) ^ hash((self.uri, self.id))
 
     def copy(self):
         oe_copy = OntologyLiteralElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -551,6 +570,7 @@ class OntologyLiteralElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -590,6 +610,7 @@ class OntologyNoneElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -602,6 +623,7 @@ class OntologyNoneElement(OntologyElement):
         oe_copy.added = self.added
         oe_copy.uri = self.uri
         oe_copy.main_subject = self.main_subject
+        oe_copy.answer = self.answer
         oe_copy.id = self.id
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()

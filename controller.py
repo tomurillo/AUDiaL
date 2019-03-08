@@ -119,13 +119,13 @@ class Controller(object):
                 for sc in sc_list:
                     if not isinstance(sc.OE, OntologyNoneElement):
                         if sc.OE.added:
-                            added_ocs.append(sc.OE)
+                            added_ocs.append(sc)
                         else:
-                            ocs.append(sc.OE)
+                            ocs.append(sc)
                 for added_oc in added_ocs:
                     for sc in sc_list:
                         if sc.OE.annotation == added_oc.OE.annotation:
-                            sc.OE.task = added_oc.OE.task
+                            sc.task = added_oc.task
                 if ocs:
                     ocs_for_query.append(ocs)
             prepared_ocs = prepareOCsForQuery(ocs_for_query)
