@@ -69,7 +69,9 @@ def annotationToOntologyElements(annotation):
     """
     oe_list = []
     if annotation and annotation.oc_type:
+        literal_instances = {}
         for ann_type in annotation.oc_type:
+            oe = None
             if ann_type == o_c.OTYPE_CLASS:
                 oe = OntologyEntityElement()
                 if 'class_specScore' in annotation.extra:
@@ -103,10 +105,19 @@ def annotationToOntologyElements(annotation):
                 if 'prop_distScore' in annotation.extra:
                     oe.distance_score = annotation.extra['prop_distScore']
             elif ann_type == o_c.OTYPE_LITERAL:
-                oe = OntologyLiteralElement()
-                oe.triples = annotation.extra['triples']
-            else:
-                oe = None
+                triples_of_literal = annotation.extra['triples']
+                # Group according to property
+                for s, p, o in triples_of_literal:
+                    if p in literal_instances:
+                        literal_instances[p].append(s)
+                    else:
+                        literal_instances[p] = [s]
+                for p, instances in literal_instances.iteritems():
+                    lit_oe = OntologyLiteralElement()
+                    lit_oe.triples = [(i, p, o) for i in instances]
+                    lit_oe.annotation = annotation
+                    lit_oe.uri = annotation.oc_type[ann_type]
+                    oe_list.append(lit_oe)
             if oe:
                 oe.annotation = annotation
                 oe.uri = annotation.oc_type[ann_type]

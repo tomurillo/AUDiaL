@@ -55,19 +55,24 @@ class OntologyElement(object):
         :param n: int; position of this element within a OC list
         :return: None; updates this instance
         """
-        if type(self, OntologyEntityElement):
-            sql_id = 'c' + n
-        elif type(self, OntologyInstanceElement):
-            sql_id = 'i' + n
-        elif type(self, OntologyObjectPropertyElement):
-            sql_id = "op" + n
-        elif type(self, OntologyDatatypePropertyElement):
-            sql_id = "dp" + n
-        elif type(self, OntologyLiteralElement):
-            sql_id = "d" + n
-        else:
-            sql_id = ""
-        self.id = sql_id
+        sql_id = ""
+        try:
+            if isinstance(self, OntologyEntityElement):
+                sql_id = 'c%d' % n
+            elif isinstance(self, OntologyInstanceElement):
+                sql_id = 'i%d' % n
+            elif isinstance(self, OntologyObjectPropertyElement):
+                sql_id = 'op%d' % n
+            elif isinstance(self, OntologyDatatypePropertyElement):
+                sql_id = 'dp%d' % n
+            elif isinstance(self, OntologyLiteralElement):
+                sql_id = 'd%d' % n
+        except ValueError:
+            from warnings import warn
+            warn("OntologyElement ID has been set to a non-numerical value", SyntaxWarning)
+            sql_id = "e%s" % n
+        finally:
+            self.id = sql_id
 
     def __eq__(self, other):
         if not isinstance(other, OntologyElement):
@@ -482,7 +487,8 @@ class OntologyLiteralElement(OntologyElement):
     An ontology element underpinned by an ontology literal
     """
     def __init__(self):
-        self.triples = []  # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology
+        # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology (grouped by property)
+        self.triples = []
         super(OntologyLiteralElement, self).__init__()
 
     def to_dict(self):
