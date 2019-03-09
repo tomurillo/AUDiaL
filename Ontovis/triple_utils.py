@@ -87,12 +87,20 @@ def arrangeLastProperty(scs):
 
 def scIsProperty(sc):
     """
-    Returns whether the given SemanticConcept's OE is a property
+    Returns whether the given SemanticConcept's OE is a (datatype or object) property
     :param sc: SemanticConcept instance
     :return: True if OC is a property; False otherwise
     """
-    return sc and sc.OE and isinstance(sc.OE, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement))
+    return isinstance(sc, SemanticConcept) and isinstance(sc.OE, (OntologyObjectPropertyElement,
+                                                                  OntologyDatatypePropertyElement))
 
+def scIsDatatypeProperty(sc):
+    """
+    Returns whether the given SemanticConcept's OE is a datatype property
+    :param sc: SemanticConcept instance
+    :return: True if OC is a property; False otherwise
+    """
+    return isinstance(sc, SemanticConcept) and isinstance(sc.OE, OntologyDatatypePropertyElement)
 
 def scIsConcept(sc):
     """
@@ -100,8 +108,9 @@ def scIsConcept(sc):
     :param sc: SemanticConcept instance
     :return: True if OC is a concept; False otherwise
     """
-    return sc and sc.OE and isinstance(sc.OE, (OntologyEntityElement, OntologyInstanceElement, OntologyLiteralElement))
-
+    return isinstance(sc, SemanticConcept) and isinstance(sc.OE, (OntologyEntityElement,
+                                                                  OntologyInstanceElement,
+                                                                  OntologyLiteralElement))
 
 def objectIsLiteral(sc):
     """
@@ -176,3 +185,142 @@ def createWhereSectionForDatatypeProperty(properties, prev_sc, next_sc):
                 sparql += " || "
         sparql += ") . "
     return sparql
+
+
+def createOrderSectionForDatatypeProperty(property_sc, prev_sc, next_sc):
+    """
+    Generates the result order section of a SPARQL query for the given numerical datatype property
+    :param property_sc: SemanticConcept instance for a datatype property of a consolidated query
+    :param prev_sc: SemanticConcept; Previous OC in the user query or None
+    :param next_sc: SemanticConcept; Next OC in the user query or None
+    :return: string; substring of a SPARQL query where section
+    """
+    sparql = ""
+    if scIsDatatypeProperty(property_sc) and property_sc.task in ['max', 'min']:
+        next_id = ''
+        gov = property_sc.OE.governor
+        if gov and isinstance(next_sc, SemanticConcept) and prev_sc and gov.uri == next_sc.OE.uri:
+            next_id = prev_sc.id
+            prev_sc.answer = True
+        elif next_sc:
+            next_id = next_sc.id
+            next_sc.answer = True
+        if next_id:
+            if property_sc.task == 'max':
+                sparql += " DESC("
+            else:
+                sparql += " ASC("  # Ascending is SPARQL's default ORDER BY operator
+            range = ""
+            if property_sc.OE.range:
+                range = xsdDatatypeForSparqlQuery(property_sc.OE.range[0])
+            if range:
+                sparql += "%s(" % range
+            sparql += "?%s)" % next_id
+            if range:
+                sparql += ") "
+    return sparql
+
+
+def createWhereUnionSectionForProperty(properties, prev_sc, next_sc):
+    """
+    Generates the where section of a SPARQL query for the given property occurrence using an union construct. Useful for
+    properties whose domain and range are unknown.
+    :param properties: List<SemanticConcept> SemanticConcepts for a property of the consolidated query
+    :param prev_sc: SemanticConcept; Previous OC in the user query or None
+    :param next_sc: SemanticConcept; Next OC in the user query or None
+    :return: string; substring of a SPARQL query where section
+    """
+    sparql = ""
+    if properties and prev_sc and next_sc and scIsProperty(properties[0]):
+        prop = properties[0]
+        sparql += " { { ?%s ?%s ?%s UNION ?%s ?%s ?%s }" % (next_sc.id, prop.id, prev_sc.id,
+                                                            prev_sc.id, prop.id, next_sc.id)
+        sparql += " . FILTER ("
+        num_p = len(properties)
+        for i, p in enumerate(properties, 1):
+            sparql += "?%s=<%s>" % (prop.id, p.uri)
+            if i < num_p:
+                sparql += " || "
+        sparql += ") } "
+    return sparql
+
+
+def isPropertyReversed(property_sc, prev_sc, next_sc):
+    """
+    Returns whether this property's subject and object appear in reverse order in a user query
+    :param property_sc: SemanticConcept instance of a property of a consolidated query
+    :param prev_sc: SemanticConcept; Previous OC in the user query or None
+    :param next_sc: SemanticConcept; Next OC in the user query or None
+    :return: boolean; True if the property should be reversed; False otherwise
+    """
+    reverse = False
+    if scIsProperty(property_sc):
+        prev_uris = []
+        if isinstance(prev_sc, SemanticConcept):
+            if isinstance(prev_sc.OE, OntologyInstanceElement):
+                prev_uris = prev_sc.OE.uris
+            elif isinstance(prev_sc.OE, OntologyEntityElement):
+                prev_uris = [prev_sc.OE.uri]
+        next_uris = []
+        if isinstance(next_sc, SemanticConcept):
+            if isinstance(next_sc.OE, OntologyInstanceElement):
+                next_uris = next_sc.OE.uris
+            elif isinstance(next_sc.OE, OntologyEntityElement):
+                next_uris = [next_sc.OE.uri]
+        range_congruent = True
+        domain_congruent = True
+        if property_sc.domain and not isinstance(prev_sc, Joker):
+            if not any(d in prev_uris for d in property_sc.domain) and any(d in next_uris for d in property_sc.domain):
+                domain_congruent = False
+        if property_sc.range and not isinstance(next_sc, Joker):
+            if not any(r in next_uris for r in property_sc.range) and any(r in prev_uris for r in property_sc.range):
+                range_congruent = False
+        if (not domain_congruent and not range_congruent) or (not property_sc.domain and not range_congruent) or \
+                (not property_sc.range and not domain_congruent):
+            reverse = True
+    return reverse
+
+
+def xsdDatatypeForSparqlQuery(lit_type_uri):
+    """
+    Converts a XSD datatype URI to an equivalent type string to be included in a SPARQL query
+    :param lit_type_uri: string; XSD datatype URI
+    :return: string; type URI in SPARQL form
+    """
+    from rdflib import XSD
+    ns = getNamespace(lit_type_uri)
+    lit = stripNamespace(lit_type_uri)
+    sparql = ""
+    if ns == str(XSD) or not ns:
+        sparql = "xsd:"
+        sparql += lit.lower().replace("float", "double")
+    else:
+        from warnings import warn
+        warn('XSD datatype %s contains unknown namespace %s' % (lit_type_uri, ns))
+    return sparql
+
+
+def getNamespace(uri):
+    """
+    Returns the namespace of the given URI
+    :param item: an element's URI
+    :return: The namespace part of the URI
+    """
+    ns = ''
+    if uri and '#' in uri:
+        return uri.split('#')[0]
+    return ns
+
+
+def stripNamespace(uri):
+    """
+    Returns the name of the given item without the namespace prefix
+    :param uri: an instance's URI
+    :return string: resource name without NS prefix
+    """
+    if uri:
+        if '#' in uri:
+            return uri.split('#')[1]
+        else:
+            return str(uri)
+    return uri

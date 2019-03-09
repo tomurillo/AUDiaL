@@ -84,6 +84,8 @@ def annotationToOntologyElements(annotation):
                 else:
                     from warnings import warn
                     warn('Orphan instance %s' % annotation.oc_type[ann_type])
+                if 'directClassUri' in annotation.extra:
+                    oe.classUri = annotation.extra['directClassUri']
             elif ann_type == o_c.OTYPE_OPROP:
                 oe = OntologyObjectPropertyElement()
                 if 'domain' in annotation.extra:
@@ -107,17 +109,18 @@ def annotationToOntologyElements(annotation):
             elif ann_type == o_c.OTYPE_LITERAL:
                 triples_of_literal = annotation.extra['triples']
                 # Group according to property
-                for s, p, o in triples_of_literal:
-                    if p in literal_instances:
-                        literal_instances[p].append(s)
-                    else:
-                        literal_instances[p] = [s]
-                for p, instances in literal_instances.iteritems():
-                    lit_oe = OntologyLiteralElement()
-                    lit_oe.triples = [(i, p, o) for i in instances]
-                    lit_oe.annotation = annotation
-                    lit_oe.uri = annotation.oc_type[ann_type]
-                    oe_list.append(lit_oe)
+                if triples_of_literal:
+                    for s, p, o in triples_of_literal:
+                        if p in literal_instances:
+                            literal_instances[p].append(s)
+                        else:
+                            literal_instances[p] = [s]
+                    for p, instances in literal_instances.iteritems():
+                        lit_oe = OntologyLiteralElement()
+                        lit_oe.triples = [(i, p, o) for i in instances]
+                        lit_oe.annotation = annotation
+                        lit_oe.uri = annotation.oc_type[ann_type]
+                        oe_list.append(lit_oe)
             if oe:
                 oe.annotation = annotation
                 oe.uri = annotation.oc_type[ann_type]

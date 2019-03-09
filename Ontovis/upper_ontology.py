@@ -1502,20 +1502,22 @@ class UpperOntology(object):
             subjectURI = URIRef("%s#DatatypeProperty" % c.OWL_NS)
         return (objectURI, dataPropertyURI, subjectURI) in self.graph
 
-    def stripNamespace(self, item):
+    @staticmethod
+    def stripNamespace(uri):
         """
         Returns the name of the given item without the namespace prefix
-        :param item: an instance's name, with a NS prefix appended
-        :return string: the name without the NS prefix
+        :param uri: an instance's URI
+        :return string: resource name without NS prefix
         """
-        if item:
-            if '#' in item:
-                return item.split('#')[1]
+        if uri:
+            if '#' in uri:
+                return uri.split('#')[1]
             else:
-                return str(item)
-        return item
+                return str(uri)
+        return uri
 
-    def getNamespace(self, uri):
+    @staticmethod
+    def getNamespace(uri):
         """
         Returns the namespace of the given URI
         :param item: an element's URI

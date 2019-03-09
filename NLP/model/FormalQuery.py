@@ -1,7 +1,5 @@
-from NLP.model.OE import *
-from NLP.model.Joker import *
-from NLP.model.SemanticConcept import *
 from Ontovis.triple_utils import *
+
 
 class FormalQuery(object):
     def __init__(self):
@@ -60,5 +58,43 @@ class FormalQuery(object):
                         if objectIsLiteral(prev_sample):
                             sample.OE.reversed = True
                         where_query += createWhereSectionForDatatypeProperty(sc_list, prev_sample, next_sample)
-                        # TODO continue
-
+                        order_query += createOrderSectionForDatatypeProperty(sample, prev_sample, next_sample)
+                    elif prev_sample and next_sample:
+                        sample.OE.reversed = isPropertyReversed(sample, prev_sample, next_sample)
+                        if sample.OE.reversed or objectIsLiteral(prev_sample):
+                            prev_sample, next_sample = next_sample, prev_sample
+                        where_query += createWhereUnionSectionForProperty(sc_list, prev_sample, next_sample)
+                    else:
+                        from warnings import warn
+                        warn('Property (%s) with no neighbor Semantic Concepts found:' % sample.id)
+                elif isinstance(sample.OE, OntologyInstanceElement):
+                    select_query += " ?%s" % sample.id
+                    all_uris = []
+                    for instance in sc_list:
+                        all_uris.extend(instance.OE.uris)
+                    if sample.OE.classUri:
+                        where_query += " ?%s ?typeRelation%s <%s> . " % (sample.id, sample.id, sample.OE.classUri)
+                    else:
+                        where_query += " ?%s ?typeRelation%s ?instType ." % (sample.id, sample.id)
+                    where_query += " FILTER ("
+                    uris = list(set(all_uris))
+                    n_uris = len(uris)
+                    for j, uri in enumerate(uris, 1):
+                        where_query += "?%s=<%s>" % (sample.id, uri)
+                        if j < n_uris:
+                            where_query += " || "
+                    where_query += ") ."
+        sparql = ""
+        if select_set:
+            sparql += prefix_query
+            sparql += select_set
+        elif where_query != "WHERE { " and select_query != "SELECT DISTINCT":
+            sparql += prefix_query
+            sparql += select_query
+        if sparql:
+            sparql += "%s }" % where_query
+            if order_query != " ORDER BY ":
+                sparql += order_query
+            sparql += " LIMIT 100"
+            self.sparql = sparql
+            self.semanticConcepts = concepts
