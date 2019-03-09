@@ -196,6 +196,17 @@ class Mapper(object):
                 class_uris = o.getClassOfElement(ind_uri, stripns=False)
                 if class_uris:
                     ann.extra['classUri'] = class_uris
+                    if len(class_uris) > 1:
+                        max_spec = -1
+                        dir_class_uri = ''
+                        for c_uri in class_uris:
+                            spec = o.specificityOfElement(c_uri)
+                            if spec > max_spec:
+                                max_spec = spec
+                                dir_class_uri = c_uri
+                        ann.extra['directClassUri'] = dir_class_uri
+                    else:
+                        ann.extra['directClassUri'] = class_uris[0]
             if o_c.OTYPE_DTPROP in ann.oc_type:
                 p_name = o.stripNamespace(ann.oc_type[o_c.OTYPE_DTPROP])
             if o_c.OTYPE_OPROP in ann.oc_type:

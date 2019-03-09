@@ -162,6 +162,7 @@ class OntologyInstanceElement(OntologyElement):
     def __init__(self):
         self.uris = []  # URIs of instances of the same class(es); this way they are all grouped under the same OE
         self.classUris = []  # URIs of the Classes the instance(s) belongs to
+        self.classUri = ''  # URI of the most specific class of the classes of this instance
         super(OntologyInstanceElement, self).__init__()
 
     def print_uri(self):
@@ -183,6 +184,7 @@ class OntologyInstanceElement(OntologyElement):
         d['type'] = 'OntologyInstanceElement'
         d['uris'] = self.uris
         d['classUris'] = self.classUris
+        d['classUri'] = self.classUri
         return d
 
     def from_dict(self, d):
@@ -194,9 +196,12 @@ class OntologyInstanceElement(OntologyElement):
         super(OntologyInstanceElement, self).from_dict(d)
         self.uris = d.get('uris', [])
         self.classUris = d.get('classUris', [])
+        self.classUri = d.get('classUri', '')
 
     def __eq__(self, other):
         if not isinstance(other, OntologyInstanceElement):
+            return False
+        elif self.classUri != other.classUri:
             return False
         elif set(self.classUris) != set(other.classUris):
             return False
@@ -209,14 +214,15 @@ class OntologyInstanceElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(tuple(self.classUris)) ^ hash(tuple(self.uris)) ^ hash(self.added) \
-               ^ hash(self.annotation) ^ hash(self.main_subject) \
-               ^ hash((self.added, self.main_subject))
+        return hash(self.uri) ^ hash(self.classUri) ^ hash(tuple(self.classUris)) ^ hash(tuple(self.uris)) \
+               ^ hash(self.added) ^ hash(self.annotation) ^ hash(self.main_subject) \
+               ^ hash((self.added, self.main_subject)) ^ hash((self.uri, self.classUri))
 
     def copy(self):
         oe_copy = OntologyInstanceElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
+        oe_copy.classUri = self.classUri
         oe_copy.main_subject = self.main_subject
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
@@ -230,6 +236,7 @@ class OntologyInstanceElement(OntologyElement):
         oe_copy = OntologyInstanceElement()
         oe_copy.added = self.added
         oe_copy.uri = self.uri
+        oe_copy.classUri = self.classUri
         oe_copy.main_subject = self.main_subject
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
@@ -249,6 +256,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         self.range = []  # Range of property
         self.specificity_score = 0
         self.distance_score = 0
+        self.reversed = False  # Whether subject and object for this OE are reversed in the user query
         super(OntologyObjectPropertyElement, self).__init__()
 
     def to_dict(self):
@@ -262,6 +270,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         d['range'] = self.range
         d['specificity_score'] = self.specificity_score
         d['distance_score'] = self.distance_score
+        d['reversed'] = self.reversed
         return d
 
     def from_dict(self, d):
@@ -275,6 +284,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         self.range = d.get('range', [])
         self.specificity_score = d.get('specificity_score', 0)
         self.distance_score = d.get('distance_score', 0)
+        self.reversed = d.get('reversed', False)
 
     def __eq__(self, other):
         if not isinstance(other, OntologyObjectPropertyElement):
@@ -297,8 +307,8 @@ class OntologyObjectPropertyElement(OntologyElement):
         return hash(self.uri) ^ hash(tuple(self.domain)) ^ hash(tuple(self.range)) \
                ^ hash((tuple(self.domain), tuple(self.range))) ^ hash(self.added) ^ hash(self.annotation) \
                ^ hash(self.specificity_score) ^ hash(self.distance_score) \
-               ^ hash((self.specificity_score, self.distance_score)) ^ hash(self.main_subject) \
-               ^ hash((self.added, self.main_subject))
+               ^ hash((self.specificity_score, self.distance_score)) ^ hash(self.main_subject) ^ hash(self.reversed) \
+               ^ hash((self.added, self.main_subject, self.reversed))
 
     def copy(self):
         oe_copy = OntologyObjectPropertyElement()
@@ -311,6 +321,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         oe_copy.range = self.range
         oe_copy.specificity_score = self.specificity_score
         oe_copy.distance_score = self.distance_score
+        oe_copy.reversed = self.reversed
         return oe_copy
 
     __copy__ = copy
@@ -326,6 +337,7 @@ class OntologyObjectPropertyElement(OntologyElement):
         oe_copy.range = list(self.range)
         oe_copy.specificity_score = self.specificity_score
         oe_copy.distance_score = self.distance_score
+        oe_copy.reversed = self.reversed
         return oe_copy
 
     __deepcopy__ = deepcopy
@@ -341,7 +353,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         self.specificity_score = 0
         self.distance_score = 0
         self.governor = None  # OntologyElement instance from its domain
-        self.reversed = False  # Whether subject and object are reversed
+        self.reversed = False  # Whether subject and object for this OE are reversed in the user query
         super(OntologyDatatypePropertyElement, self).__init__()
 
     def to_dict(self):
@@ -422,6 +434,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         oe_copy.range = self.range
         oe_copy.specificity_score = self.specificity_score
         oe_copy.distance_score = self.distance_score
+        oe_copy.reversed = self.reversed
         return oe_copy
 
     __copy__ = copy
@@ -439,6 +452,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         oe_copy.range = list(self.range)
         oe_copy.specificity_score = self.specificity_score
         oe_copy.distance_score = self.distance_score
+        oe_copy.reversed = self.reversed
         return oe_copy
 
     __deepcopy__ = deepcopy
