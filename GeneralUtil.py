@@ -19,6 +19,20 @@ def beautifyOutputString(name):
     return beauty
 
 
+def replaceLastCommaWithAnd(what):
+    """
+    Given a string containing a comma-separated list of elements, replace the last comma with 'and'
+    :param what: string
+    :return: string
+    """
+    processed = what
+    if what:
+        n = what.rfind(', ')
+        if n > 0:
+            processed = what[:n] + ' and ' + what[n+2:]
+    return processed
+
+
 def asWindows(unixpath):
     """
     Converts a Unix file path into its Windows equivalent

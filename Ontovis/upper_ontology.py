@@ -256,8 +256,11 @@ class UpperOntology(object):
         Execute the given SPARQL query against the ontology
         :return: list<string>: a list of literal values
         """
-        query_res = self.graph.query(sparql)
-        return [row for row in query_res]
+        res = []
+        if sparql:
+            query_res = self.graph.query(sparql)
+            res = [row for row in query_res]
+        return res
 
     def getNamespaces(self):
         """

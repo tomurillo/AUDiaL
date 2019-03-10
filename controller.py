@@ -132,7 +132,8 @@ class Controller(object):
             prepared_ocs = prepareOCsForQuery(ocs_for_query)
             formal_query = FormalQuery(self.o.getNamespaces())
             formal_query.from_concepts(prepared_ocs)  # SPARQL generation
-
+            results = self.o.executeQuery(formal_query.sparql)
+            # TODO continue
 
     def parseAndLookUp(self, what):
         """

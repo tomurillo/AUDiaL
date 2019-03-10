@@ -66,7 +66,7 @@ class SuggestionFormatter(object):
                 else:
                     label = instance_label
         elif isinstance(oe, OntologyLiteralElement):
-            label = uri
+            label = self.findVisualizationResourceLabel(oe)
         else:
             label = ", ".join(self.findLabels(uri)) if USE_LABELS else uri
         return label
@@ -92,3 +92,25 @@ class SuggestionFormatter(object):
         else:
             labels.append(beautifyOutputString(self.o.stripNamespace(uri)))
         return labels
+
+    def findVisualizationResourceLabel(self, oe):
+        """
+        Format labels of elements that may belong to the visualization ontology
+        :param oe: OntologyLiteralElement instance
+        :return: string; label to display
+        """
+        label = ''
+        if isinstance(oe, OntologyLiteralElement):
+            from const import VIS_NS
+            label = oe.uri
+            has_text_prop = '%s#%s' % (VIS_NS, self.o.SytacticDataProperty.HAS_TEXT)
+            if oe.triples:
+                if oe.triples[0][1] == has_text_prop:
+                    from GeneralUtil import replaceLastCommaWithAnd
+                    role_p = self.o.SyntacticProperty.HAS_SYNTACTIC_ROLE
+                    roles = []
+                    for triple in oe.triples:
+                        roles.extend([r.replace('_SR', '').lower() for r in self.o.getObjects(triple[0], role_p)])
+                    label += ' (text of %s in the diagram)' % ', '.join(roles)
+                    label = replaceLastCommaWithAnd(label)
+        return label

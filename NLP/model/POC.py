@@ -65,9 +65,13 @@ class POC(object):
         Converts this POC to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'tree': str(self.tree), 'rawText': self.rawText, 'head': str(self.head), 'start': self.start,
+        d = {'tree': str(self.tree), 'rawText': self.rawText, 'start': self.start,
              'end': self.end, 'start_original': self.start_original, 'end_original': self.end_original,
              'mainSubjectPriority': self.mainSubjectPriority, 'modifiers': [str(m) for m in self.modifiers]}
+        if self.head:
+            d['head'] = self.head.to_dict()
+        else:
+            d['head'] = None
         return d
 
     def from_dict(self, d):
@@ -78,15 +82,16 @@ class POC(object):
         """
         if type(d) is dict:
             from nltk import Tree
-            from NLP.model.Annotation import Annotation
             tree = d.get('tree')
             self.tree = Tree.fromstring(tree) if tree else None
             self.rawText = d.get('rawText', '')
             modif = d.get('modifiers', [])
             self.modifiers = [Tree.fromstring(m) for m in modif]
-            head = d.get('head')
-            if head:
-                self.head = head.from_dict()
+            head_dict = d.get('head')
+            if head_dict:
+                head = POC()
+                head.from_dict(head_dict)
+                self.head = head
             else:
                 self.head = None
             self.start = d.get('start', -1)
