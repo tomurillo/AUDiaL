@@ -352,7 +352,7 @@ class OntologyDatatypePropertyElement(OntologyElement):
         self.range = []  # Range of property
         self.specificity_score = 0
         self.distance_score = 0
-        self.governor = None  # OntologyElement instance from its domain
+        self.governor = None  # OntologyElement; nearest neighbor of the property in the user query
         self.reversed = False  # Whether subject and object for this OE are reversed in the user query
         super(OntologyDatatypePropertyElement, self).__init__()
 

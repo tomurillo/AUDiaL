@@ -251,6 +251,38 @@ class UpperOntology(object):
                 c = len(set(self.getInstances(normElement)))
         return c
 
+    def executeQuery(self, sparql):
+        """
+        Execute the given SPARQL query against the ontology
+        :return: list<string>: a list of literal values
+        """
+        query_res = self.graph.query(sparql)
+        return [row for row in query_res]
+
+    def getNamespaces(self):
+        """
+        Returns all namespaces in the loaded ontology
+        :return: List<tuple<string (NS prefix); string (NS URI)>>
+        """
+        from const import VIS_NS
+        vis_uri = "%s#" % VIS_NS
+        ns_with_prefixes = []
+        #  Use preferred NS prefixes instead of default ones
+        common_prefixes = {'http://www.w3.org/1999/02/22-rdf-syntax-ns#': 'rdf',
+                           'http://www.w3.org/2000/01/rdf-schema#': 'rdfs',
+                           'http://www.w3.org/2002/07/owl#': 'owl',
+                           'http://www.w3.org/XML/1998/namespace#': 'xml',
+                           'http://www.w3.org/2001/XMLSchema#': 'xsd',
+                           vis_uri: 'vis'}
+        if self.graph:
+            all_ns = [(p, str(u)) for p, u in self.graph.namespace_manager.namespaces()]
+            for p, uri in all_ns:
+                prefix = common_prefixes.get(uri)
+                if not prefix:
+                    prefix = p
+                ns_with_prefixes.append((prefix, uri))
+        return ns_with_prefixes
+
     def yieldResource(self, prop_type='all', ns='all'):
         """
         Yield a new URI of the given type each time

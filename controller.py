@@ -109,6 +109,7 @@ class Controller(object):
         :return:
         """
         if self.q and self.q.ocs_consistent():
+            from NLP.model.FormalQuery import FormalQuery
             self.consolidator = Consolidator(self.q)
             self.consolidator.consolidateAnswerType()  # Query is consolidated; fetch answer type first
             scs = self.consolidator.removeDuplicatedSemanticConcepts()
@@ -129,7 +130,9 @@ class Controller(object):
                 if ocs:
                     ocs_for_query.append(ocs)
             prepared_ocs = prepareOCsForQuery(ocs_for_query)
-            # TODO
+            formal_query = FormalQuery(self.o.getNamespaces())
+            formal_query.from_concepts(prepared_ocs)  # SPARQL generation
+
 
     def parseAndLookUp(self, what):
         """

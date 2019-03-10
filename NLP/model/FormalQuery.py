@@ -2,11 +2,16 @@ from Ontovis.triple_utils import *
 
 
 class FormalQuery(object):
-    def __init__(self):
+    def __init__(self, namespaces=None):
         """
         Formal (SPARQL, RDFLib) query constructor
+        :param namespaces: List<tuple<string; string>> with namespaces prefixes and URIs to consider
         """
-        self.semanticConcepts = []  # List<List<mixed(OntologyElement, Joker)>>
+        self.semanticConcepts = []  # List<List<mixed(SemanticConcept, Joker)>>
+        if namespaces is None:
+            self.namespaces = []
+        else:
+            self.namespaces = namespaces
         self.sparql = ""  # Formal SPARQL query
 
     def from_concepts(self, concepts):
@@ -15,8 +20,7 @@ class FormalQuery(object):
         :param concepts: List<List<mixed(SemanticConcept, Joker)>> Prepared concepts from a consolidated user query
         :return:
         """
-        from rdflib import RDF, XSD
-        prefix_query = "prefix rdf: %s\nprefix xsd: %s\n" % (str(RDF), str(XSD))
+        prefix_query = "\n".join(["prefix %s: <%s>" % (ns_prefix, ns_uri) for ns_prefix, ns_uri in self.namespaces])
         select_query = "SELECT DISTINCT"
         where_query = "WHERE { "
         order_query = " ORDER BY "
