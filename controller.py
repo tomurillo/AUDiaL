@@ -96,6 +96,7 @@ class Controller(object):
             self.dialogue = DialogHandler(self.q, self.o)
             suggestion_pair_new = self.dialogue.generateDialogs()
             if suggestion_pair_new:
+                session.pop('suggestion_pair')
                 session['suggestion_pair'] = suggestion_pair_new.to_dict()
                 # Output dialog
                 from dialog.webformat.formatter import SuggestionFormatter
