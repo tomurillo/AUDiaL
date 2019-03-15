@@ -32,8 +32,8 @@ def addJokersToOEs(scs):
             joker = None
             sample = oe_list[0]
             prev_sample = None
-            if i > 0 and oe_list[i-1]:
-                prev_sample = oe_list[i-1][0]
+            if i > 0 and scs[i-1]:
+                prev_sample = scs[i-1][0]
             if scIsConcept(sample) and scIsConcept(prev_sample):  # Two concepts together, add property in between
                 joker = Joker(['property'])
             elif scIsProperty(sample) and scIsProperty(prev_sample):  # Two properties together, add concept in between
@@ -42,7 +42,7 @@ def addJokersToOEs(scs):
                 oes_with_jokers.append([joker])
             # Add unique identifier for SPARQL generation
             for sc in oe_list:
-                sc.OE.set_id(i)
+                sc.set_id(i)
             oes_with_jokers.append(oe_list)
     if scs and scs[-1] and scIsProperty(scs[-1][0]):  # Property at the end of query, add object
         joker = Joker(['class', 'instance', 'literal'])
@@ -180,7 +180,7 @@ def createWhereSectionForDatatypeProperty(properties, prev_sc, next_sc):
         sparql += " ?%s ?%s ?%s . FILTER (" % (subj.id, prop.id, obj.id)
         num_props = len(properties)
         for i, p in enumerate(properties, 1):
-            sparql += " ?%s=<%s> " % (prop.id, p.uri)
+            sparql += " ?%s=<%s> " % (prop.id, p.OE.uri)
             if i < num_props:
                 sparql += " || "
         sparql += ") . "
@@ -238,7 +238,7 @@ def createWhereUnionSectionForProperty(properties, prev_sc, next_sc):
         sparql += " . FILTER ("
         num_p = len(properties)
         for i, p in enumerate(properties, 1):
-            sparql += "?%s=<%s>" % (prop.id, p.uri)
+            sparql += "?%s=<%s>" % (prop.id, p.OE.uri)
             if i < num_p:
                 sparql += " || "
         sparql += ") } "

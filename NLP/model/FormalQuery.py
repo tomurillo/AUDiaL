@@ -30,8 +30,8 @@ class FormalQuery(object):
             select_query += " "
             sample = sc_list[0]
             n_elements = len(sc_list)
-            prev_sample = sc_list[i - 1][0] if i > 0 else None
-            next_sample = sc_list[i + 1][0] if i < concepts_len - 1 else None
+            prev_sample = concepts[i - 1][0] if i > 0 else None
+            next_sample = concepts[i + 1][0] if i < concepts_len - 1 else None
             if isinstance(sample, Joker):
                 select_query += " ?%s" % sample.id
                 if 'property' in sample.suitable_types and prev_sample and next_sample:
@@ -76,10 +76,11 @@ class FormalQuery(object):
                     all_uris = []
                     for instance in sc_list:
                         all_uris.extend(instance.OE.uris)
+                    from rdflib import RDF
                     if sample.OE.classUri:
-                        where_query += " ?%s ?typeRelation%s <%s> . " % (sample.id, sample.id, sample.OE.classUri)
+                        where_query += " ?%s <%s> <%s> . " % (sample.id, RDF.type, sample.OE.classUri)
                     else:
-                        where_query += " ?%s ?typeRelation%s ?instType ." % (sample.id, sample.id)
+                        where_query += " ?%s <%s> ?instType ." % (sample.id, RDF.type)
                     where_query += " FILTER ("
                     uris = list(set(all_uris))
                     n_uris = len(uris)
@@ -90,13 +91,13 @@ class FormalQuery(object):
                     where_query += ") ."
         sparql = ""
         if select_set:
-            sparql += prefix_query
+            sparql += "%s\n" % prefix_query
             sparql += select_set
         elif where_query != "WHERE { " and select_query != "SELECT DISTINCT":
-            sparql += prefix_query
+            sparql += "%s\n" % prefix_query
             sparql += select_query
         if sparql:
-            sparql += "%s }" % where_query
+            sparql += "\n%s }" % where_query
             if order_query != " ORDER BY ":
                 sparql += order_query
             sparql += " LIMIT 100"
