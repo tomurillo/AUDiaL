@@ -34,6 +34,8 @@ class DialogHandler(object):
             pair = self.generateDisambiguationDialog()
         elif self.mappingRequired():
             pair = self.generateMappingDialog()
+        if pair is False:
+            pair = self.generateDialogs()  # Vote was automatically casted; no user action needed
         return pair
 
     def generateDisambiguationDialog(self):
@@ -81,8 +83,25 @@ class DialogHandler(object):
             for lkey in learning_keys:
                 l_model[lkey] = learning_votes
             saveLearningModel(l_model)
-        pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
-        return pair
+        self.resolveOCwithVotesAutomatically(pair)
+        if pair.votes:
+            return pair
+        else:
+            return False
+
+    def resolveOCwithVotesAutomatically(self, pair):
+        """
+        Check available scores of disambiguation vote; if the difference is big enough, automatically cast vote
+        :param pair: A SuggestionPair instance with candidate votes
+        :return: None; Updates the SuggestionPair instance; votes are empty if they have been automatically resolved
+        """
+        if len(pair.votes) > 1:
+            pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
+            if pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
+                from consolidator.Consolidator import Consolidator
+                consolidator = Consolidator(self.q)
+                self.q = consolidator.disambiguateOCs([pair.votes[0].candidate])
+                pair.votes = []
 
     def generateMappingDialog(self):
         """
@@ -113,8 +132,25 @@ class DialogHandler(object):
             for lkey in learning_keys:
                 l_model[lkey] = learning_votes
             saveLearningModel(l_model)
-        pair.votes.sort(key=lambda v: v.vote, reverse=True)
-        return pair
+        self.resolvePOCwithVotesAutomatically(pair)
+        if pair.votes:
+            return pair
+        else:
+            return False
+
+    def resolvePOCwithVotesAutomatically(self, pair):
+        """
+        Check available scores of mapping votes; if the difference is big enough, automatically cast vote
+        :param pair: A SuggestionPair instance with candidate votes
+        :return: None; Updates the SuggestionPair instance; votes are empty if they have been automatically resolved
+        """
+        if len(pair.votes) > 1:
+            pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
+            if pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
+                from consolidator.Consolidator import Consolidator
+                consolidator = Consolidator(self.q)
+                self.q = consolidator.resolvePOCtoOC(pair.subject, [pair.votes[0].candidate])
+                pair.votes = []
 
     def generateLearningKeys(self, sugkey):
         """

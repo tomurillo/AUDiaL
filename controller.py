@@ -185,7 +185,7 @@ class Controller(object):
                 output_type = 'dialogue'
                 output = suggestion
             else:
-                pass  # fetch answer TODO
+                self.fetchAnswerFromDomain()  # TODO improve
         return output, output_type
 
     def processVoteSelection(self, vote_id):
@@ -197,7 +197,7 @@ class Controller(object):
                 output_type = 'dialogue'
                 output = suggestion
             else:
-                pass  # fetch answer TODO
+                self.fetchAnswerFromDomain()  # TODO improve
         return output, output_type
 
     def retrieveValueSimple(self, what):

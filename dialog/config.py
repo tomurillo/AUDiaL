@@ -8,6 +8,8 @@ MAX_SUGGESTIONS = 100  # Maximum number of suggestions to display to the user at
 
 USE_LABELS = True  # Whether to return resource's labels in the dialogue instead of their URIs
 
+MIN_VOTE_DIFF_RESOLVE = 5  # Minimum difference between max. voted suggestion and the rest to automatically cast vote
+
 #  Label property URIs (besides rdfs:label) to be looked for, in order. To be shown in dialog suggestions for each element.
 LABEL_PROPS = ['http://purl.org/dc/terms/title', 'http://purl.org/dc/elements/1.1/title']
 
