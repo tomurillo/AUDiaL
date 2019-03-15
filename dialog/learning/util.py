@@ -185,7 +185,7 @@ def getLearningVotesfromVotes(votes):
 def updateVotesFromLearningVotes(lvotes, old_votes):
     """
     Update Vote instances from the given learning votes
-    :param votes: list<LearningVote>
+    :param votes: list<LearningVote> Votes loaded from the model
     :param old_votes: list<Vote>; Vote instances to update
     :return: list<Vote>; list of Votes with updated vote scores
     """

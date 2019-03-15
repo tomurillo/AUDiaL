@@ -35,7 +35,6 @@ class Consolidator(object):
         """
         if self.q and self.q.focus and self.q.focus.head:
             answer_type = []
-            self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
             # Check first for match between an OC and the head of the focus
             for sc_list in self.q.semanticConcepts:
                 if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):

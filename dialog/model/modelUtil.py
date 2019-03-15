@@ -49,11 +49,11 @@ def saveLearningModel(model, clear_existing=False):
     model_path = getLearningModelPath()
     success = True
     try:
+        if clear_existing:
+            model_dict = {}
+        else:
+            model_dict = loadLearningModel(deserialize=False)
         with open(model_path, 'w') as f:
-            if clear_existing:
-                model_dict = {}
-            else:
-                model_dict = loadLearningModel(deserialize=False)
             for key, vote_list in model.iteritems():
                 vote_dict_list = []
                 key_str = str(key)

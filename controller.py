@@ -111,6 +111,7 @@ class Controller(object):
         """
         if self.q and self.q.ocs_consistent():
             from NLP.model.FormalQuery import FormalQuery
+            self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
             self.consolidator = Consolidator(self.q)
             self.consolidator.consolidateAnswerType()  # Query is consolidated; fetch answer type first
             scs = self.consolidator.removeDuplicatedSemanticConcepts()
@@ -134,6 +135,7 @@ class Controller(object):
             formal_query = FormalQuery(self.o.getNamespaces())
             formal_query.from_concepts(prepared_ocs)  # SPARQL generation
             results = self.o.executeQuery(formal_query.sparql)
+            pass
             # TODO continue
 
     def parseAndLookUp(self, what):

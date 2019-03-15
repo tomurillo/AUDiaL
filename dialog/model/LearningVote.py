@@ -32,7 +32,9 @@ class LearningVote(object):
         self.score = d.get('score', -1.0)
         self.task = d.get('task')
         self.identifier = d.get('identifier', '')
-        self.triples = d.get('triples', [])
+
+        triples = d.get('triples', [])
+        self.triples = [tuple(t) for t in triples]
         self.uris = d.get('uris', [])
 
     def __eq__(self, other):

@@ -254,7 +254,7 @@ class UpperOntology(object):
     def executeQuery(self, sparql):
         """
         Execute the given SPARQL query against the ontology
-        :return: list<string>: a list of literal values
+        :return: list<string>: a list of result rows
         """
         res = []
         if sparql:
