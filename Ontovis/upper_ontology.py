@@ -356,7 +356,7 @@ class UpperOntology(object):
     def getInstances(self, entityName='all', stripns=True, ns=None):
         """
         Returns a list of instances of the given class
-        :param entityName: name of a class in the ontology, 'all' to get all individuals regardless of class
+        :param entityName: name or URI of a class in the ontology, 'all' to get all individuals regardless of class
         :param stripns: True to strip the namespace from the output (default), False otherwise
         :param ns: namespaces to consider (string or list), 'all' for all
         :return list<string>: a list of instance names or URIs, depending on the stripns parameter
@@ -369,7 +369,8 @@ class UpperOntology(object):
         if self.graph and entityName:
             namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
             if entityName != 'all':
-                entityURI = URIRef("%s#%s" % (ns, entityName))
+                name = self.stripNamespace(entityName)
+                entityURI = URIRef("%s#%s" % (ns, name))
                 for instance in self.graph.subjects(RDF.type, entityURI):
                     if (instance, RDF.type, namedIndividualURI) in self.graph:
                         instances.append(instance)
@@ -385,6 +386,33 @@ class UpperOntology(object):
             return [self.stripNamespace(i) for i in instances]
         else:
             return instances
+
+    def getOccurrences(self, property, stripns=True, ns=None, limit=100):
+        """
+        Returns a list of occurrences of the given property
+        :param property: name or URI of a property in the ontology
+        :param stripns: True to strip namespaces from the output (default), False otherwise
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :param limit: int; maximum number of occurrences to return
+        :return list<(string, string, string)>: a list of triples where the given property takes part
+        """
+        if not ns:
+            ns = self.getNamespace(property)
+            if not ns:
+                ns = self.VIS_NS
+        p_name = self.stripNamespace(property)
+        propertyURI = URIRef("%s#%s" % (ns, p_name))
+        triples = []
+        n = 0
+        for s, p, o in self.graph.triples((None, propertyURI, None)):
+            n += 1
+            if n > limit:
+                break
+            if stripns:
+                triples.append((self.stripNamespace(s), self.stripNamespace(p), self.stripNamespace(o)))
+            else:
+                triples.append((str(s), str(p), str(o)))
+        return triples
 
     def getLiterals(self):
         """
@@ -1170,7 +1198,7 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         exists = False
         typesFound = {}
-        if name and (type(name) is str or type(name) is unicode):
+        if name and isinstance(name, basestring):
             name = self.stripNamespace(name)
             if thing_type in ['all', 'value', 'literal']:
                 uri = self.thingOfTypeExists(name, 'literal', ns)
