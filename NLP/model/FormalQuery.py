@@ -1,4 +1,4 @@
-from Ontovis.triple_utils import *
+from oc.triple_utils import *
 
 
 class FormalQuery(object):

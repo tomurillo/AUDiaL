@@ -1,9 +1,13 @@
 import traceback
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
+from flask_session import Session
 from content_management import Content
 from controller import *
 
 app = Flask(__name__)
+SESSION_TYPE = 'filesystem'
+app.config.from_object(__name__)
+Session(app)
 app.config['DEBUG'] = True
 app.config['PROPAGATE_EXCEPTIONS'] = True
 # Bubble HTTP exceptions through the exception stack

@@ -1,6 +1,55 @@
-from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
 from NLP.model.Joker import *
+from Ontovis.upper_ontology import UpperOntology
+from GeneralUtil import beautifyOutputString
+from dialog.webformat.formatter import OutputFormatter
+
+
+def generateAnswer(at, query_result, o):
+    """
+    Creates an answer to be displayed to the user once a query has been resolved
+    :param at: List<OntologyElement> The query's Answer Type
+    :param query_result: List<ResultRow>: the results from executing the formal query
+    :param o: Ontology instance
+    :return: string
+    """
+    answer = ""
+    if isinstance(o, UpperOntology):
+        import inflect
+        p = inflect.engine()
+        formatter = OutputFormatter(o)
+        sample = at[0] if at else None
+        main_label = formatter.findOELabel(sample)
+        n_rows = len(query_result)
+        if isinstance(sample, OntologyElement):
+            if isinstance(sample, OntologyEntityElement):  # Answer type is class: list instances as answer
+                instances = o.getInstances(sample.uri, stripns=False)
+                n_rows = len(instances)
+                class_label = formatter.quickURILabel(sample.uri)
+                answer = "There %s %s" % (p.plural_verb("is", n_rows), p.no(class_label, n_rows))
+                if n_rows > 0:
+                    answer += ":"
+                for n, i in enumerate(instances, 1):
+                    answer += "\t%d: %s\n" % (n, formatter.printLabelsOfUri(i))
+            elif isinstance(sample, OntologyDatatypePropertyElement):  # AT is datatype property: list occurrences
+                prop_label = formatter.quickURILabel(sample.uri)
+                if n_rows == 0:
+                    occurrences = o.getOccurrences(sample, stripns=False)
+                    n_rows = len(occurrences)
+                    answer = "There %s %s for %s" % (p.plural_verb("is", n_rows), p.no("value", n_rows), prop_label)
+                    if n_rows > 0:
+                        answer += ":"
+                    for n, triple in enumerate(occurrences, 1):
+                        i = formatter.printLabelsOfUri(triple[0])
+                        v = formatter.quickURILabel(triple[2])
+                        answer += "\t%d: %s %s %s\n" % (n, i, prop_label, v)
+                else:
+                    for n, triple in enumerate(query_result, 1):
+                        s = formatter.quickURILabel(triple[0])
+                        p = formatter.quickURILabel(triple[1])
+                        o = formatter.quickURILabel(triple[2])
+                        answer += "\t%d: %s %s %s\n" % (n, s, p, o)
+    return answer
 
 
 def prepareOCsForQuery(scs):
@@ -173,10 +222,10 @@ def createWhereSectionForDatatypeProperty(properties, prev_sc, next_sc):
                 obj = prev_sc
             else:
                 subj = prev_sc
-                obj = prev_sc
+                obj = next_sc
         else:
             subj = prev_sc
-            obj = prev_sc
+            obj = next_sc
         sparql += " ?%s ?%s ?%s . FILTER (" % (subj.id, prop.id, obj.id)
         num_props = len(properties)
         for i, p in enumerate(properties, 1):
@@ -298,6 +347,21 @@ def xsdDatatypeForSparqlQuery(lit_type_uri):
         from warnings import warn
         warn('XSD datatype %s contains unknown namespace %s' % (lit_type_uri, ns))
     return sparql
+
+
+def getAnswerType(scs):
+    """
+    Given a consolidated query, return those SemanticConcept instances that have been marked as the AT
+    :param scs: List<List<SemanticConcept>>: a query's resolved Semantic Concepts
+    :return: List<SemanticConcept>: OCs identified as the Answer Type of this question
+    """
+    at = []
+    if scs:
+        for sc_list in scs:
+            if sc_list and sc_list[0].OE.main_subject:
+                at = sc_list
+                break
+    return at
 
 
 def getNamespace(uri):

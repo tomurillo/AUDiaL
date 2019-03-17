@@ -249,7 +249,7 @@ class Mapper(object):
                     ignore = True
                 else:
                     child = ptree[0]
-                    if type(child) is str or type(child) is unicode:
+                    if isinstance(child, basestring):
                         child_norm = quick_norm(child)
                         if label in TOKEN_IGNORE_VERB_LABELS:
                             if child_norm in TOKEN_IGNORE_VERBS:

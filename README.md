@@ -2,7 +2,7 @@
 
 (Work in progress)
 
-A Python Web application prototype of a Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams** (i.e. knowledge representation graphics). Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP processing taken from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya)
+A Web-based Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams**. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP processing and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
 
 ## System Requirements
 
@@ -14,9 +14,11 @@ A Python Web application prototype of a Natural Language Interface (**NLI**) to 
 2. Install Python libraries (on your venv terminal):
     ```
     pip install Flask
+    pip install Flask-Session
     pip install rdflib
     pip install nltk
     pip install textdistance
+    pip install inflect
     ```
 3. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
 4. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.

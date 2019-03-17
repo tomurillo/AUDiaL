@@ -253,7 +253,7 @@ def removeLeafs(ptree, leafs):
     :return: copy of ptree without any leaves of the given list
     """
     if leafs and isinstance(ptree, nltk.Tree):
-        if type(leafs) == str or type(leafs) == unicode:
+        if isinstance(leafs, basestring):
             leafs = [leafs]
         p_clean = ptree.copy(deep=True)
         preters = getSubtreesAtHeight(ptree, 2)  # Pre-terminals have exactly one leaf
@@ -429,7 +429,7 @@ def immutableCopy(ptree):
         return ptree.copy()
     elif type(ptree) is nltk.Tree:
         return nltk.ImmutableTree(ptree.label(), [immutableCopy(c) for c in ptree])
-    elif type(ptree) is str or type(ptree) is unicode:
+    elif isinstance(ptree, basestring):
         return ptree
     else:
         raise TypeError("immutableCopy: unknown type given: %s" % str(type(ptree)))
@@ -445,7 +445,7 @@ def mutableCopy(ptree):
         return nltk.Tree(ptree.label(), [mutableCopy(c) for c in ptree])
     elif type(ptree) is nltk.Tree:
         return ptree.copy()
-    elif type(ptree) is str or type(ptree) is unicode:
+    elif isinstance(ptree, basestring):
         return ptree
     else:
         raise TypeError("mutableCopy: unknown type given: %s" % str(type(ptree)))
@@ -459,7 +459,7 @@ def toParentedTree(ptree):
     """
     if type(ptree) in [nltk.Tree, nltk.ImmutableTree]:
         return nltk.ParentedTree(ptree.label(), [toParentedTree(c) for c in ptree])
-    elif type(ptree) is str or type(ptree) is unicode:
+    elif isinstance(ptree, basestring):
         return ptree
     else:
         raise TypeError("toParentedTree: unknown type given: %s" % str(type(ptree)))

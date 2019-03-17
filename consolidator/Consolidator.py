@@ -47,8 +47,7 @@ class Consolidator(object):
                 first_ocs = []
                 for sc_list in self.q.semanticConcepts:
                     if sc_list and not isinstance(sc_list[0].OE, OntologyNoneElement):
-                        for sc in sc_list:
-                            first_ocs.append(sc.OE)
+                        first_ocs = [sc.OE for sc in sc_list]
                         break
                 oc_sample = first_ocs[0] if first_ocs else None
                 if oc_sample and oc_sample.annotation:
