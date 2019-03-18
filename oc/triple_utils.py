@@ -22,8 +22,10 @@ def generateAnswer(query, formal_query, query_result, o):
         sample = query.answerType[0] if query.answerType else None
         main_label = formatter.findOELabel(sample)
         n_rows = len(query_result)
+        answered = False
         if isinstance(sample, OntologyElement):
             if isinstance(sample, OntologyEntityElement):  # Answer type is class: list instances as answer
+                answered = True
                 instances = o.getInstances(sample.uri, stripns=False)
                 n_rows = len(instances)
                 class_label = formatter.quickURILabel(sample.uri)
@@ -33,6 +35,7 @@ def generateAnswer(query, formal_query, query_result, o):
                 for n, i in enumerate(instances, 1):
                     answer += "\t%d: %s\n" % (n, formatter.printLabelsOfUri(i))
             elif isinstance(sample, OntologyDatatypePropertyElement):  # AT is datatype property: list occurrences
+                answered = True
                 prop_label = formatter.quickURILabel(sample.uri, 'datatypeProperty')
                 if n_rows == 0:
                     occurrences = o.getOccurrences(sample, stripns=False)
@@ -57,6 +60,24 @@ def generateAnswer(query, formal_query, query_result, o):
                             answer += "\t%d: %s %s %s\n" % (n, s_label, p_label, o_label)
                         else:
                             answer += "%s %s %s\n" % (s_label, p_label, o_label)
+        if not answered:
+            for n, triple in enumerate(query_result, 1):
+                n_vars = len(triple.labels)
+                if n_vars == 1:
+                    label = formatter.quickURILabel(triple[0])
+                    if n_rows > 1:
+                        answer += "\t%d: %s\n" % (n, label)
+                    else:
+                        answer += "%s\n" % label
+                elif n_vars == 3:
+                    s, p, o = rearrangeResult(triple, formal_query)
+                    s_label = formatter.quickURILabel(s)
+                    p_label = formatter.quickURILabel(p)
+                    o_label = formatter.quickURILabel(o)
+                    if n_rows > 1:
+                        answer += "\t%d: %s %s %s\n" % (n, s_label, p_label, o_label)
+                    else:
+                        answer += "%s %s %s\n" % (s_label, p_label, o_label)
     return answer
 
 

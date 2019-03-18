@@ -129,8 +129,12 @@ def nextAmbiguousOCs(q):
             ocs_next = q.semanticConcepts[0]
     else:
         min_dist = float("inf")
+        first = False
         for ocs in q.semanticConcepts:
             if len(ocs) > 1 and not overlappingOCsVerified(ocs):
+                if not first:
+                    ocs_next = ocs
+                    first = False
                 first_oc = ocs[0]
                 distance_to_focus = distanceBetweenAnnotations(q.pt, first_oc.OE.annotation, q.focus)
                 if distance_to_focus < min_dist:

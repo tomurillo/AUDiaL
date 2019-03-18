@@ -1,5 +1,5 @@
 import traceback
-from flask import Flask, render_template, jsonify, request, session
+from flask import Flask, render_template, jsonify, request
 from flask_session import Session
 from content_management import Content
 from controller import *
@@ -17,25 +17,6 @@ app.secret_key = u'l\x04\x8a\x01T\xbb\xb5P4\x88h\xc2\x02\x0c\xe7|'
 
 GRAPHICS = Content()
 
-def ontologyPath(fileName):
-    if c.CURR_ENV == 'windows':
-        path = os.path.realpath(__file__)
-        if path.endswith("pyc"):
-            path = path[:-len("__init__.pyc")]
-        else:
-            path = path[:-len("__init__.py")]
-        return path + "static\\graphics\\%s" % fileName
-    else:
-        return "/home/FlaskApp/FlaskApp/static/graphics/%s" % fileName
-
-def loadPersistentOntology(RDFpath=None, current=None):
-    """Tries to fetch a persitent ontology. If it does not find it, it loads a
-    new one from the RDF file whose path is passed"""
-    if current == 'Bar Chart':
-        o = BarChartOntology(RDFpath)
-    else:
-        o = UpperOntology(RDFpath)
-    return o
 
 @app.route('/')
 @app.route('/bar-chart-austria')
@@ -267,6 +248,18 @@ def printException(e):
     t = traceback.format_exc()
     pretty_e =  "%s\n%s" % (str(e), t)
     return pretty_e.replace("\n", "<br/>")
+
+
+def ontologyPath(fileName):
+    if c.CURR_ENV == 'windows':
+        path = os.path.realpath(__file__)
+        if path.endswith("pyc"):
+            path = path[:-len("__init__.pyc")]
+        else:
+            path = path[:-len("__init__.py")]
+        return path + "static\\graphics\\%s" % fileName
+    else:
+        return "/home/FlaskApp/FlaskApp/static/graphics/%s" % fileName
 
 
 if __name__ == '__main__':
