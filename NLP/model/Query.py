@@ -47,8 +47,8 @@ class Query(object):
         for sc_list in self.semanticConcepts:
             if len(sc_list) > 1:
                 first_type = type(sc_list[0].OE)
-                consistent = all(isinstance(sc.OE, first_type) for sc in sc_list)
-                if not consistent:
+                if not all(isinstance(sc.OE, first_type) for sc in sc_list):
+                    consistent = False
                     break
         return consistent
 

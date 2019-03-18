@@ -8,12 +8,17 @@ class OutputFormatter(object):
     """
     Utility methods for transforming Dialog suggestions and answers into JSON for Web display
     """
-    def __init__(self, ontology):
+    def __init__(self, ontology, skip_inflect=False):
         """
         OutputFormatter constructor
-
+        :param ontology: A loaded ontology instance
+        :param skip_inflect: boolean; Whether to skip loading the inflect object (used to generate NL output)
         """
         self.o = ontology
+        self.p = None
+        if not skip_inflect:
+            import inflect
+            self.p = inflect.engine()
 
     def suggestionPairToJSON(self, pair):
         """
@@ -129,10 +134,12 @@ class OutputFormatter(object):
             label = self.quickURILabel(oe.uri)
         return label
 
-    def quickURILabel(self, uri):
+    def quickURILabel(self, uri, type=None):
         """
         Create a human-readable label from an URI itself without any further ontology search
         :param uri: string
+        :param type: string; the resource type: 'instance', 'class', 'datatypeProperty', 'objectProperty', or 'literal'.
+        None if not relevant or unknown.
         :return: string; beautified URI's name
         """
         from const import VIS_NS
@@ -143,6 +150,11 @@ class OutputFormatter(object):
                 suffix = name[-3:]
                 if suffix in ['_GO', '_SR', '_GR', '_IR']:
                     name = name[:-3]
+                if type == 'datatypeProperty':
+                    first_chars = name[:4]
+                    if first_chars == 'has_':
+                        prop_obj = self.p.an(name[4:].replace('_', ' '))
+                        name = "has %s of" % prop_obj
             label = beautifyOutputString(name)
         else:
             label = "Empty"

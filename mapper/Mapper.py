@@ -1,5 +1,4 @@
 from NLP.parser.StanfordParser import *
-from NLP.model.Annotation import *
 from constants import *
 from NLP.util.TreeUtil import treeRawString
 from oc.OCUtil import *

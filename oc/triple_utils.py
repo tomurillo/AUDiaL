@@ -1,24 +1,25 @@
-from NLP.model.SemanticConcept import *
+from NLP.model.Query import Query
+from NLP.model.FormalQuery import *
 from NLP.model.Joker import *
 from Ontovis.upper_ontology import UpperOntology
-from GeneralUtil import beautifyOutputString
 from dialog.webformat.formatter import OutputFormatter
 
 
-def generateAnswer(at, query_result, o):
+def generateAnswer(query, formal_query, query_result, o):
     """
     Creates an answer to be displayed to the user once a query has been resolved
-    :param at: List<OntologyElement> The query's Answer Type
+    :param query: Resolved Query instance
+    :param formal_query: FormalQuery instance that generated the results
     :param query_result: List<ResultRow>: the results from executing the formal query
     :param o: Ontology instance
     :return: string
     """
     answer = ""
-    if isinstance(o, UpperOntology):
+    if isinstance(query, Query) and isinstance(formal_query, FormalQuery) and isinstance(o, UpperOntology):
         import inflect
         p = inflect.engine()
         formatter = OutputFormatter(o)
-        sample = at[0] if at else None
+        sample = query.answerType[0] if query.answerType else None
         main_label = formatter.findOELabel(sample)
         n_rows = len(query_result)
         if isinstance(sample, OntologyElement):
@@ -32,7 +33,7 @@ def generateAnswer(at, query_result, o):
                 for n, i in enumerate(instances, 1):
                     answer += "\t%d: %s\n" % (n, formatter.printLabelsOfUri(i))
             elif isinstance(sample, OntologyDatatypePropertyElement):  # AT is datatype property: list occurrences
-                prop_label = formatter.quickURILabel(sample.uri)
+                prop_label = formatter.quickURILabel(sample.uri, 'datatypeProperty')
                 if n_rows == 0:
                     occurrences = o.getOccurrences(sample, stripns=False)
                     n_rows = len(occurrences)
@@ -42,14 +43,37 @@ def generateAnswer(at, query_result, o):
                     for n, triple in enumerate(occurrences, 1):
                         i = formatter.printLabelsOfUri(triple[0])
                         v = formatter.quickURILabel(triple[2])
-                        answer += "\t%d: %s %s %s\n" % (n, i, prop_label, v)
+                        if n_rows > 1:
+                            answer += "\t%d: %s %s %s\n" % (n, i, prop_label, v)
+                        else:
+                            answer += "%s %s %s\n" % (i, prop_label, v)
                 else:
                     for n, triple in enumerate(query_result, 1):
-                        s = formatter.quickURILabel(triple[0])
-                        p = formatter.quickURILabel(triple[1])
-                        o = formatter.quickURILabel(triple[2])
-                        answer += "\t%d: %s %s %s\n" % (n, s, p, o)
+                        s, p, o = rearrangeResult(triple, formal_query)
+                        s_label = formatter.quickURILabel(s)
+                        p_label = formatter.quickURILabel(p, 'datatypeProperty')
+                        o_label = formatter.quickURILabel(o)
+                        if n_rows > 1:
+                            answer += "\t%d: %s %s %s\n" % (n, s_label, p_label, o_label)
+                        else:
+                            answer += "%s %s %s\n" % (s_label, p_label, o_label)
     return answer
+
+
+def rearrangeResult(triple, formal_query):
+    """
+    Rearrange the given result triple according to its member types to be output to the user
+    :param triple: ResultRow instance
+    :param formal_query: FormalQuery instance
+    :return: (string, string, string) triple with rearranged subject, property, and object
+    """
+    s, p, o = triple[0], triple[1], triple[2]
+    for v in triple.labels:
+        sc = formal_query.getSemanticConcept(v)
+        if sc and isinstance(sc[0], SemanticConcept):
+            if isinstance(sc[0].OE, OntologyDatatypePropertyElement) and sc[0].OE.reversed:
+                s, o = o, s
+    return s, p, o
 
 
 def prepareOCsForQuery(scs):
@@ -172,126 +196,15 @@ def objectIsLiteral(sc):
         or isinstance(sc, OntologyLiteralElement)
 
 
-def createSelectSetForDatatypeProperty(sc, prev_sc, next_sc):
+def objectIsInstance(sc):
     """
-    Generates parts of the select set of a SPARQL query when for a Datatype Property
-    :param sc: SemanticConcept of a Datatype property instance from a consolidated user query
-    :param prev_sc: SemanticConcept Previous OC in the user query or None
-    :param next_sc: SemanticConcept Next OC in the user query or None
-    :return: string; SPARQL query select set chunk
+    Returns whether the given object is a Instance OE or SemanticConcept
+    :param sc: Object instance
+    :return: True if sc is a SemanticConcept instance with sc.OE a OntologyInstanceElement instance or a
+    OntologyInstanceElement instance; False otherwise
     """
-    sparql = ""
-    if sc.task in ['sum', 'avg']:
-        choose_prev = False
-        if sc.OE.governor and prev_sc and isinstance(next_sc, SemanticConcept) and sc.OE.governor.uri == next_sc.OE.uri:
-            choose_prev = True
-        elif isinstance(prev_sc, Joker) and isinstance(next_sc, SemanticConcept) \
-                and not isinstance(next_sc.OE, OntologyDatatypePropertyElement):
-            choose_prev = True
-        if choose_prev:
-            next_id = prev_sc.id
-            prev_sc.answer = True
-        else:
-            next_id = next_sc.id
-            next_sc.answer = True
-        if sc.task == 'sum':
-            sparql = "select (SUM(xsd:decimal(%s) AS ?JokerElement)" % next_id
-        elif sc.task == 'avg':
-            sparql = "select (AVG(xsd:decimal%s) AS ?JokerElement)" % next_id
-    return sparql
-
-
-def createWhereSectionForDatatypeProperty(properties, prev_sc, next_sc):
-    """
-    Generates the where section of a SPARQL query for the given datatype property
-    :param properties: List<SemanticConcept> SemanticConcepts for a datatype property of a consolidated query
-    :param prev_sc: SemanticConcept; Previous OC in the user query or None
-    :param next_sc: SemanticConcept; Next OC in the user query or None
-    :return: string; substring of a SPARQL query where section
-    """
-    sparql = ""
-    prop = properties[0] if properties else None
-    if isinstance(prop, SemanticConcept) and isinstance(prop.OE, OntologyDatatypePropertyElement):
-        gov = prop.OE.governor
-        if isinstance(next_sc, SemanticConcept):
-            if gov and prev_sc and gov.uri == next_sc.OE.uri:
-                subj = next_sc
-                obj = prev_sc
-            elif isinstance(prev_sc, Joker) and not isinstance(next_sc.OE, OntologyLiteralElement):
-                subj = next_sc
-                obj = prev_sc
-            else:
-                subj = prev_sc
-                obj = next_sc
-        else:
-            subj = prev_sc
-            obj = next_sc
-        sparql += " ?%s ?%s ?%s . FILTER (" % (subj.id, prop.id, obj.id)
-        num_props = len(properties)
-        for i, p in enumerate(properties, 1):
-            sparql += " ?%s=<%s> " % (prop.id, p.OE.uri)
-            if i < num_props:
-                sparql += " || "
-        sparql += ") . "
-    return sparql
-
-
-def createOrderSectionForDatatypeProperty(property_sc, prev_sc, next_sc):
-    """
-    Generates the result order section of a SPARQL query for the given numerical datatype property
-    :param property_sc: SemanticConcept instance for a datatype property of a consolidated query
-    :param prev_sc: SemanticConcept; Previous OC in the user query or None
-    :param next_sc: SemanticConcept; Next OC in the user query or None
-    :return: string; substring of a SPARQL query where section
-    """
-    sparql = ""
-    if scIsDatatypeProperty(property_sc) and property_sc.task in ['max', 'min']:
-        next_id = ''
-        gov = property_sc.OE.governor
-        if gov and isinstance(next_sc, SemanticConcept) and prev_sc and gov.uri == next_sc.OE.uri:
-            next_id = prev_sc.id
-            prev_sc.answer = True
-        elif next_sc:
-            next_id = next_sc.id
-            next_sc.answer = True
-        if next_id:
-            if property_sc.task == 'max':
-                sparql += " DESC("
-            else:
-                sparql += " ASC("  # Ascending is SPARQL's default ORDER BY operator
-            range = ""
-            if property_sc.OE.range:
-                range = xsdDatatypeForSparqlQuery(property_sc.OE.range[0])
-            if range:
-                sparql += "%s(" % range
-            sparql += "?%s)" % next_id
-            if range:
-                sparql += ") "
-    return sparql
-
-
-def createWhereUnionSectionForProperty(properties, prev_sc, next_sc):
-    """
-    Generates the where section of a SPARQL query for the given property occurrence using an union construct. Useful for
-    properties whose domain and range are unknown.
-    :param properties: List<SemanticConcept> SemanticConcepts for a property of the consolidated query
-    :param prev_sc: SemanticConcept; Previous OC in the user query or None
-    :param next_sc: SemanticConcept; Next OC in the user query or None
-    :return: string; substring of a SPARQL query where section
-    """
-    sparql = ""
-    if properties and prev_sc and next_sc and scIsProperty(properties[0]):
-        prop = properties[0]
-        sparql += " { { ?%s ?%s ?%s UNION ?%s ?%s ?%s }" % (next_sc.id, prop.id, prev_sc.id,
-                                                            prev_sc.id, prop.id, next_sc.id)
-        sparql += " . FILTER ("
-        num_p = len(properties)
-        for i, p in enumerate(properties, 1):
-            sparql += "?%s=<%s>" % (prop.id, p.OE.uri)
-            if i < num_p:
-                sparql += " || "
-        sparql += ") } "
-    return sparql
+    return (isinstance(sc, SemanticConcept) and isinstance(sc.OE, OntologyInstanceElement)) \
+        or isinstance(sc, OntologyInstanceElement)
 
 
 def isPropertyReversed(property_sc, prev_sc, next_sc):
@@ -328,25 +241,6 @@ def isPropertyReversed(property_sc, prev_sc, next_sc):
                 (not property_sc.range and not domain_congruent):
             reverse = True
     return reverse
-
-
-def xsdDatatypeForSparqlQuery(lit_type_uri):
-    """
-    Converts a XSD datatype URI to an equivalent type string to be included in a SPARQL query
-    :param lit_type_uri: string; XSD datatype URI
-    :return: string; type URI in SPARQL form
-    """
-    from rdflib import XSD
-    ns = getNamespace(lit_type_uri)
-    lit = stripNamespace(lit_type_uri)
-    sparql = ""
-    if ns == str(XSD) or not ns:
-        sparql = "xsd:"
-        sparql += lit.lower().replace("float", "double")
-    else:
-        from warnings import warn
-        warn('XSD datatype %s contains unknown namespace %s' % (lit_type_uri, ns))
-    return sparql
 
 
 def getAnswerType(scs):

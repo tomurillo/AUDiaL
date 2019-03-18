@@ -2,7 +2,7 @@
 
 (Work in progress)
 
-A Web-based Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams**. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP processing and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
+A Web-based Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams**. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
 
 ## System Requirements
 

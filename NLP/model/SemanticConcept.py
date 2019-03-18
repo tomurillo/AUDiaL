@@ -14,7 +14,7 @@ class SemanticConcept(object):
         self.answer = False  # Whether this OC is the query's answer
         self.score = None  # Learning score
         self.task = None  # Maps this OC to an analytical task to be performed
-        self.id = ''  # Unique identifier for SPARQL generation
+        self.id = ''  # Unique identifier for SPARQL generation (variable used in SPARQL query)
 
     def overlapsPOC(self, poc):
         """

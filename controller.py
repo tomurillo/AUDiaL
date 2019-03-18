@@ -1,5 +1,4 @@
 from flask import session
-from Ontovis.upper_ontology import UpperOntology
 from Ontovis.bar_chart_ontology import BarChartOntology
 from oc.triple_utils import *
 from NLP.SimpleNLHandler import *
@@ -67,7 +66,7 @@ class Controller(object):
             session['suggestion_pair'] = suggestion_pair.to_dict()
             # Output dialog
             from dialog.webformat.formatter import OutputFormatter
-            formatter = OutputFormatter(self.o)
+            formatter = OutputFormatter(self.o, skip_inflect=True)
             return formatter.suggestionPairToJSON(suggestion_pair)
         return False
 
@@ -100,7 +99,7 @@ class Controller(object):
                 session['suggestion_pair'] = suggestion_pair_new.to_dict()
                 # Output dialog
                 from dialog.webformat.formatter import OutputFormatter
-                formatter = OutputFormatter(self.o)
+                formatter = OutputFormatter(self.o, skip_inflect=True)
                 return formatter.suggestionPairToJSON(suggestion_pair_new)
         return False
 
@@ -110,7 +109,6 @@ class Controller(object):
         :return:
         """
         if self.q and self.q.ocs_consistent():
-            from NLP.model.FormalQuery import FormalQuery
             self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
             self.consolidator = Consolidator(self.q)
             self.consolidator.consolidateAnswerType()  # Query is consolidated; fetch answer type first
@@ -135,7 +133,7 @@ class Controller(object):
             formal_query = FormalQuery(self.o.getNamespaces())
             formal_query.from_concepts(prepared_ocs)  # SPARQL generation
             results = self.o.executeQuery(formal_query.sparql)
-            answer = generateAnswer(self.q.answerType, results, self.o)
+            answer = generateAnswer(self.q, formal_query, results, self.o)
             return answer
 
     def parseAndLookUp(self, what):
