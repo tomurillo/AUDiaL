@@ -109,6 +109,7 @@ class Controller(object):
         :return:
         """
         if self.q and self.q.ocs_consistent():
+            from dialog.config import MAX_RESULTS
             self.q.semanticConcepts = sorted(self.q.semanticConcepts, cmp=SemanticConceptListCompareOffset)
             self.consolidator = Consolidator(self.q)
             self.consolidator.consolidateAnswerType()  # Query is consolidated; fetch answer type first
@@ -130,7 +131,7 @@ class Controller(object):
                 if ocs:
                     ocs_for_query.append(ocs)
             prepared_ocs = prepareOCsForQuery(ocs_for_query)
-            formal_query = FormalQuery(self.o.getNamespaces())
+            formal_query = FormalQuery(self.o.getNamespaces(), MAX_RESULTS)
             formal_query.from_concepts(prepared_ocs)  # SPARQL generation
             results = self.o.executeQuery(formal_query.sparql)
             answer = generateAnswer(self.q, formal_query, results, self.o)

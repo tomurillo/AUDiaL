@@ -3,17 +3,24 @@ from NLP.model.SemanticConcept import *
 
 
 class FormalQuery(object):
-    def __init__(self, namespaces=None):
+    def __init__(self, namespaces=None, max_results=100):
         """
         Formal (SPARQL, RDFLib) query constructor
         :param namespaces: List<tuple<string; string>> with namespaces prefixes and URIs to consider
+        :param max_results: int; maximum number of results to fetch. None for all.
         """
+        self.sparql = ""  # Formal SPARQL query
         self.semanticConcepts = []  # List<List<mixed(SemanticConcept, Joker)>>
         if namespaces is None:
             self.namespaces = []
         else:
             self.namespaces = namespaces
-        self.sparql = ""  # Formal SPARQL query
+        if max_results is None:
+            self.max_results = 0
+        elif isinstance(max_results, (int, long)) and max_results > 0:
+            self.max_results = max_results
+        else:
+            raise ValueError("FormalQuery: invalid max_results parameter %s" % max_results)
 
     def getSemanticConcept(self, sc_id):
         """
@@ -114,7 +121,8 @@ class FormalQuery(object):
             sparql += "\n%s }" % where_query
             if order_query != " ORDER BY ":
                 sparql += order_query
-            sparql += " LIMIT 100"
+            if self.max_results > 0:
+                sparql += " LIMIT %s" % self.max_results
             self.sparql = sparql
             self.semanticConcepts = concepts
 

@@ -23,11 +23,16 @@ if CURR_ENV == 'windows':
 else:
     STOREDIR = '/tmp/ontologyStore'
 
-"""Namespaces"""
+"""Commonly used Namespaces"""
 VIS_NS = "http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization"
 OWL_NS = "http://www.w3.org/2002/07/owl"
 RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns"
 RDFS_NS = "http://www.w3.org/2000/01/rdf-schema"
+XML_NS = 'http://www.w3.org/XML/1998/namespace'
+XSD_NS = 'http://www.w3.org/2001/XMLSchema'
+PURL_NS_1 = 'http://purl.org/dc/elements/1.1'
+PURL_NS_2 = 'http://purl.org/dc/terms'
+COMMON_NS = [OWL_NS, RDFS_NS, RDF_NS, XML_NS, XSD_NS, PURL_NS_1, PURL_NS_2]
 
 """Domains"""
 BAR_CHART = 'Bar Chart'

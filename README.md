@@ -1,8 +1,10 @@
-# GraphNav
+# AUDiaL
+
+**A**ccessible **U**niversal **Dia**grams through **L**anguage
+ 
+A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams in RDF. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
 
 (Work in progress)
-
-A Web-based Natural Language Interface (**NLI**) to **RDF**-based semantically-enhanced **diagrams**. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
 
 ## System Requirements
 

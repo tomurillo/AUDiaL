@@ -3,7 +3,6 @@ from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
 
-
 class OutputFormatter(object):
     """
     Utility methods for transforming Dialog suggestions and answers into JSON for Web display
@@ -15,7 +14,7 @@ class OutputFormatter(object):
         :param skip_inflect: boolean; Whether to skip loading the inflect object (used to generate NL output)
         """
         self.o = ontology
-        self.p = None
+        self.p = None  # Inflect instance for proper pluralization and conjugation of output words
         if not skip_inflect:
             import inflect
             self.p = inflect.engine()
@@ -31,6 +30,8 @@ class OutputFormatter(object):
             json_pair['text'] = pair.key.text
             json_pair['votes'] = []
             votes = pair.votes[: MAX_SUGGESTIONS]
+            if len(pair.votes) > MAX_SUGGESTIONS:
+                votes.append(pair.votes[-1])  # Append NoneVote
             for vote in votes:
                 if vote.candidate and vote.candidate.OE:
                     json_vote = {}
@@ -79,22 +80,26 @@ class OutputFormatter(object):
             label = self.printLabelsOfUri(uri)
         return label
 
-    def printLabelsOfUri(self, uri):
+    def printLabelsOfUri(self, uri, res_type=None):
         """
         Return a comma-separated list of labels found for the resource with the given URI
         :param uri: string; a resource's URI
+        :param res_type: string; the resource type: 'instance', 'class', 'datatypeProperty', 'objectProperty',
+        or 'literal'. None if not relevant or unknown.
         :return: string; print-ready labels
         """
         labels_str = uri
         if USE_LABELS:
-            labels_str = replaceLastCommaWithAnd(", ".join(self.findLabels(uri)))
+            labels_str = replaceLastCommaWithAnd(", ".join(self.findLabels(uri, res_type)))
         return labels_str
 
-    def findLabels(self, uri):
+    def findLabels(self, uri, res_type=None):
         """
         Return all available labels for the given resource in the ontology. If no label-related properties are found
         falls back to the beautified resource name
         :param uri: string; a resource URI
+        :param res_type: string; the resource type: 'instance', 'class', 'datatypeProperty', 'objectProperty',
+        or 'literal'. None if not relevant or unknown.
         :return: list<string>; found labels for the resource
         """
         labels = []
@@ -109,7 +114,7 @@ class OutputFormatter(object):
         if rdf_labels:
             labels = map(self.o.stripNamespace, rdf_labels)
         else:
-            labels.append(self.quickURILabel(uri))
+            labels.append(self.quickURILabel(uri, res_type))
         return labels
 
     def findVisualizationResourceLabel(self, oe):
@@ -118,7 +123,7 @@ class OutputFormatter(object):
         :param oe: OntologyLiteralElement instance
         :return: string; label to display
         """
-        label = ''
+        label = self.quickURILabel(oe.uri)
         if isinstance(oe, OntologyLiteralElement):
             from const import VIS_NS
             has_text_prop = '%s#%s' % (VIS_NS, self.o.SytacticDataProperty.HAS_TEXT)
@@ -130,16 +135,45 @@ class OutputFormatter(object):
                         roles.extend([r.replace('_SR', '').lower() for r in self.o.getObjects(triple[0], role_p)])
                     label += ' (text of %s in the diagram)' % ', '.join(roles)
                     label = replaceLastCommaWithAnd(label)
-        if not label and isinstance(oe, OntologyElement):  # Fallback to name in URI
-            label = self.quickURILabel(oe.uri)
         return label
 
-    def quickURILabel(self, uri, type=None):
+    def fullLabelForInstance(self, uri, oe):
+        """
+        Return the label for an instance plus extra information about classes and properties where it participates
+        :param: The instance URI currently being considered
+        :param: OntologyInstanceElement instance containing semantic information about the URI
+        :return: HTML string
+        """
+        final_label = ''
+        if uri and isinstance(oe, OntologyInstanceElement):
+            from const import COMMON_NS
+            from dialog.config import MAX_EXTRA_INFO
+            simple_label = self.quickURILabel(uri)
+            full_label = self.findOELabel(oe)
+            i = 0
+            list_markup = "<ol>"
+            for prop, obj in self.o.graph.predicate_objects(uri):
+                if self.o.getNamespace(prop) not in COMMON_NS:
+                    l_prop = self.printLabelsOfUri(prop, 'property')
+                    l_obj = self.printLabelsOfUri(obj)
+                    item_label = "%s %s %s" % (simple_label, l_prop, l_obj)
+                    list_markup += "<li>%s</li>" % item_label
+                    i += 1
+                    if i == MAX_EXTRA_INFO:
+                        break
+            list_markup += "</ol>"
+            if i > 0:
+                final_label = "<h5>%s</h5><section>%s</section>" % (full_label, list_markup)
+            else:
+                final_label = full_label
+        return final_label
+
+    def quickURILabel(self, uri, res_type=None):
         """
         Create a human-readable label from an URI itself without any further ontology search
         :param uri: string
-        :param type: string; the resource type: 'instance', 'class', 'datatypeProperty', 'objectProperty', or 'literal'.
-        None if not relevant or unknown.
+        :param res_type: string; the resource type: 'instance', 'class', 'datatypeProperty', 'objectProperty',
+        or 'literal'. None if not relevant or unknown.
         :return: string; beautified URI's name
         """
         from const import VIS_NS
@@ -150,7 +184,7 @@ class OutputFormatter(object):
                 suffix = name[-3:]
                 if suffix in ['_GO', '_SR', '_GR', '_IR']:
                     name = name[:-3]
-                if type == 'datatypeProperty':
+                if res_type in ['datatypeProperty', 'objectProperty', 'property']:
                     first_chars = name[:4]
                     if first_chars == 'has_':
                         prop_obj = self.p.an(name[4:].replace('_', ' '))
