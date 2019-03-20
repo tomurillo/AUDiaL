@@ -137,31 +137,60 @@ class OutputFormatter(object):
                     label = replaceLastCommaWithAnd(label)
         return label
 
-    def fullLabelForInstance(self, uri, oe):
+    def fullLabelForResource(self, uri, oe):
         """
-        Return the label for an instance plus extra information about classes and properties where it participates
-        :param: The instance URI currently being considered
-        :param: OntologyInstanceElement instance containing semantic information about the URI
+        Return the label for a resource plus extra information according to its type
+        :param: The resource URI currently being considered
+        :param: OntologyElement instance containing semantic information about the resource
         :return: HTML string
         """
         final_label = ''
-        if uri and isinstance(oe, OntologyInstanceElement):
+        if uri and isinstance(oe, OntologyElement):
             from const import COMMON_NS
             from dialog.config import MAX_EXTRA_INFO
-            simple_label = self.quickURILabel(uri)
-            full_label = self.findOELabel(oe)
+            if isinstance(oe, OntologyObjectPropertyElement):
+                p_type = 'objectProperty'
+            elif isinstance(oe, OntologyDatatypePropertyElement):
+                p_type = 'datatypeProperty'
+            else:
+                p_type = None
+            full_label = ''
+            simple_label = self.quickURILabel(uri, p_type)
+            generator = None
             i = 0
-            list_markup = "<ol>"
-            for prop, obj in self.o.graph.predicate_objects(uri):
-                if self.o.getNamespace(prop) not in COMMON_NS:
-                    l_prop = self.printLabelsOfUri(prop, 'property')
-                    l_obj = self.printLabelsOfUri(obj)
-                    item_label = "%s %s %s" % (simple_label, l_prop, l_obj)
-                    list_markup += "<li>%s</li>" % item_label
-                    i += 1
-                    if i == MAX_EXTRA_INFO:
-                        break
-            list_markup += "</ol>"
+            if isinstance(oe, OntologyInstanceElement):
+                generator = self.o.graph.predicate_objects(uri)
+            elif isinstance(oe, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
+                generator = self.o.graph.subject_objects(uri)
+            elif isinstance(oe, OntologyEntityElement):
+                generator = self.o.generateInstances(uri, stripns=False)
+            if generator:
+                list_markup = "<ol>"
+                for thing in generator:
+                    item_label = ''
+                    if isinstance(oe, OntologyInstanceElement):
+                        prop, obj = thing[0], thing[1]
+                        if self.o.getNamespace(prop) not in COMMON_NS:
+                            l_prop = self.printLabelsOfUri(prop, 'property')
+                            l_obj = self.printLabelsOfUri(obj)
+                            item_label = "%s %s %s" % (simple_label, l_prop, l_obj)
+                    elif isinstance(oe, (OntologyObjectPropertyElement, OntologyDatatypePropertyElement)):
+                        subj, obj = thing[0], thing[1]
+                        l_subj = self.printLabelsOfUri(subj)
+                        l_obj = self.printLabelsOfUri(obj)
+                        item_label = "%s %s %s" % (l_subj, simple_label, l_obj)
+                    elif isinstance(oe, OntologyEntityElement):
+                        item_label = self.printLabelsOfUri(thing)
+                    if item_label:
+                        list_markup += "<li>%s</li>" % item_label
+                        i += 1
+                        if i == MAX_EXTRA_INFO:
+                            break
+                list_markup += "</ol>"
+                if isinstance(oe, OntologyEntityElement):
+                    full_label = "There %s %s" % (self.p.plural_verb("is", i), self.p.no(simple_label, i).lower())
+            if not full_label:
+                full_label = self.findOELabel(oe)
             if i > 0:
                 final_label = "<h5>%s</h5><section>%s</section>" % (full_label, list_markup)
             else:
@@ -184,7 +213,7 @@ class OutputFormatter(object):
                 suffix = name[-3:]
                 if suffix in ['_GO', '_SR', '_GR', '_IR']:
                     name = name[:-3]
-                if res_type in ['datatypeProperty', 'objectProperty', 'property']:
+                if res_type in ['datatypeProperty']:
                     first_chars = name[:4]
                     if first_chars == 'has_':
                         prop_obj = self.p.an(name[4:].replace('_', ' '))

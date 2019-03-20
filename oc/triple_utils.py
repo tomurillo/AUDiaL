@@ -25,14 +25,7 @@ def generateAnswer(query, formal_query, query_result, o):
         if isinstance(sample, OntologyElement):
             if isinstance(sample, OntologyEntityElement):  # Answer type is class: list instances as answer
                 answered = True
-                instances = o.getInstances(sample.uri, stripns=False)
-                n_rows = len(instances)
-                class_label = formatter.quickURILabel(sample.uri)
-                answer = "There %s %s" % (p.plural_verb("is", n_rows), p.no(class_label, n_rows))
-                if n_rows > 0:
-                    answer += ":"
-                for n, i in enumerate(instances, 1):
-                    answer += "\t%d: %s\n" % (n, formatter.printLabelsOfUri(i))
+                answer = formatter.fullLabelForResource(sample.uri, sample)
             elif isinstance(sample, OntologyDatatypePropertyElement):  # AT is datatype property: list occurrences
                 if n_rows == 0:  # If we got rows fetch answer from them instead
                     answered = True
@@ -99,13 +92,17 @@ def rearrangeResult(triple, formal_query):
     property_second = False
     for v in triple.labels:
         if triple.labels[v] == 1:  # Variable at property position
-            sc = formal_query.getSemanticConcept(v)
-            if sc and isinstance(sc[0], SemanticConcept):
-                if isinstance(sc[0].OE, (OntologyDatatypePropertyElement, OntologyObjectPropertyElement)):
+            scs = formal_query.getSemanticConcept(v)
+            sc = scs[0] if scs else None
+            if isinstance(sc, SemanticConcept):
+                if isinstance(sc.OE, (OntologyDatatypePropertyElement, OntologyObjectPropertyElement)):
                     property_second = True
-                    p_type = 'objectProperty' if type(sc[0].OE) is OntologyObjectPropertyElement else 'datatypeProperty'
-                    if sc[0].OE.reversed:
+                    p_type = 'objectProperty' if type(sc.OE) is OntologyObjectPropertyElement else 'datatypeProperty'
+                    if sc.OE.reversed:
                         s, o = o, s
+            elif isinstance(sc, Joker):
+                if 'property' in sc.suitable_types:
+                    property_second = True
     if not property_second:
         raise SyntaxError("Property misplaced in result: (%s, %s, %s)" % (s, p, o))
     return s, p, o, p_type
@@ -135,7 +132,7 @@ def printResourceInfo(uri, triple, formal_query, formatter, o, label=None):
         if sc and isinstance(sc[0], SemanticConcept):
             oe = sc[0].OE
             if isinstance(oe, OntologyInstanceElement):
-                full_label = formatter.fullLabelForInstance(uri, oe)
+                full_label = formatter.fullLabelForResource(uri, oe)
     return full_label
 
 def varOfURI(uri, triple):

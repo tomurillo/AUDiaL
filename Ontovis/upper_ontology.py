@@ -353,12 +353,13 @@ class UpperOntology(object):
                 ns = [ns]
             return [i for i in props if self.getNamespace(i) in ns]
 
-    def getInstances(self, entityName='all', stripns=True, ns=None):
+    def getInstances(self, entityName='all', stripns=True, ns=None, limit=100):
         """
         Returns a list of instances of the given class
         :param entityName: name or URI of a class in the ontology, 'all' to get all individuals regardless of class
         :param stripns: True to strip the namespace from the output (default), False otherwise
         :param ns: namespaces to consider (string or list), 'all' for all
+        :param limit: int; maximum number of instances to return; zero for all
         :return list<string>: a list of instance names or URIs, depending on the stripns parameter
         """
         if not ns:
@@ -367,6 +368,7 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         instances = []
         if self.graph and entityName:
+            i = 0
             namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
             if entityName != 'all':
                 name = self.stripNamespace(entityName)
@@ -374,18 +376,55 @@ class UpperOntology(object):
                 for instance in self.graph.subjects(RDF.type, entityURI):
                     if (instance, RDF.type, namedIndividualURI) in self.graph:
                         instances.append(instance)
+                        i += 1
+                        if i == limit:
+                            break
             else:
-                inst = [str(i) for i in self.graph.subjects(RDF.type, namedIndividualURI)]
-                if ns != 'all':
-                    if not isinstance(ns, list):
-                        ns = [ns]
-                    instances = [i for i in inst if self.getNamespace(i) in ns]
+                if ns != 'all' and not isinstance(ns, list):
+                    ns = [ns]
                 else:
-                    instances = inst
+                    ns = None
+                for j in self.graph.subjects(RDF.type, namedIndividualURI):
+                    j_ns = self.getNamespace(j) if ns else None
+                    if not j_ns or j_ns in ns:
+                        instances.append(str(j))
+                        i += 1
+                        if i == limit:
+                            break
         if stripns:
             return [self.stripNamespace(i) for i in instances]
         else:
             return instances
+
+    def generateInstances(self, entityName='all', stripns=True, ns=None):
+        """
+        Dynamically generate instances of the given class
+        :param entityName: name or URI of a class in the ontology, 'all' to get all individuals regardless of class
+        :param stripns: True to strip the namespace from the output (default), False otherwise
+        :param ns: namespaces to consider (string or list), 'all' for all
+        :return: A generator with instance names or URIs depending on :stripns
+        """
+        if not ns:
+            ns = self.getNamespace(entityName)
+            if not ns:
+                ns = self.VIS_NS
+        if self.graph and entityName:
+            namedIndividualURI = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
+            if entityName != 'all':
+                name = self.stripNamespace(entityName)
+                entityURI = URIRef("%s#%s" % (ns, name))
+                for instance in self.graph.subjects(RDF.type, entityURI):
+                    if (instance, RDF.type, namedIndividualURI) in self.graph:
+                        yield self.stripNamespace(instance) if stripns else instance
+            else:
+                if ns != 'all' and not isinstance(ns, list):
+                    ns = [ns]
+                else:
+                    ns = None
+                for instance in self.graph.subjects(RDF.type, namedIndividualURI):
+                    j_ns = self.getNamespace(instance) if ns else None
+                    if not j_ns or j_ns in ns:
+                        yield self.stripNamespace(instance) if stripns else instance
 
     def getOccurrences(self, property, stripns=True, ns=None, limit=100):
         """
