@@ -518,20 +518,30 @@ class UpperOntology(object):
         """
         Returns the value of a functional property. An exception is raised
         if more than one (s, p, _) triples are found
-        :param s: name of the subject
-        :param p: name of the (functional) property
+        :param s: name or URI of the subject
+        :param p: name or URI of the (functional) property
         :param default: default value to use if nothing found
         :param ns: namespace, None for default visualization NS
         :param stripns: boolean; whether to remove the namespace from the results
         """
         if not ns:
-            ns = self.VIS_NS
+            ns = self.getNamespace(s)
+            if not ns:
+                ns = self.VIS_NS
+            p_ns = self.getNamespace(p)
+            if not p_ns:
+                p_ns = self.VIS_NS
+        else:
+            p_ns = ns
         val = None
         if s and p:
             subjectURI = URIRef("%s#%s" % (ns, self.stripNamespace(s)))
-            propertyURI = URIRef("%s#%s" % (ns, self.stripNamespace(p)))
+            propertyURI = URIRef("%s#%s" % (p_ns, self.stripNamespace(p)))
             val = self.graph.value(subjectURI, propertyURI, default=default)
-        return self.stripNamespace(val) if stripns else str(val)
+        if not val:
+            return ''
+        else:
+            return self.stripNamespace(str(val)) if stripns else val.toPython()
 
     def getClassOfElement(self, element, stripns=True, ns=None):
         """
@@ -919,7 +929,7 @@ class UpperOntology(object):
                 prop = getattr(self.NavigationDataProperty, p)
                 navVal = self.getValue(node, prop)
                 if navVal:
-                    props[prop] = navVal.toPython()
+                    props[prop] = navVal
         return props
 
     def getPreviousNodes(self):
@@ -1285,7 +1295,7 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         spec = self.getValue(self.stripNamespace(name), self.NavigationDataProperty.HAS_DISTANCE_SCORE,
                              default=Literal(0.0, datatype=XSD.float), ns=ns)
-        return spec.toPython()
+        return float(spec) if spec else 0.0
 
     def specificityOfElement(self, name, ns=None):
         """
@@ -1300,7 +1310,7 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         spec = self.getValue(self.stripNamespace(name), self.NavigationDataProperty.HAS_SPECIFICITY,
                              default=Literal(0.0, datatype=XSD.float), ns=ns)
-        return spec.toPython()
+        return float(spec) if spec else 0.0
 
     def specificityDistanceOfClass(self, name, ns=None):
         """
@@ -1760,14 +1770,21 @@ class UpperOntology(object):
         :return: None, updates the serialized ontology
         """
         self.addProperty(self.NavigationDataProperty.HAS_DISTANCE_SCORE, 'datatype')
+        from const import XSD_NS, XML_NS
         if not props:
             props = self.getProperties()
         for p in props:
             specs = []
             dom = self.domainOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
-            ran = self.OfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
-            specs.extend([self.specificityOfElement(self.stripNamespace(d), ns=self.getNamespace(d)) for d in dom])
-            specs.extend([self.specificityOfElement(self.stripNamespace(r), ns=self.getNamespace(r)) for r in ran])
+            ran = self.rangeOfProperty(self.stripNamespace(p), stripns=False, ns=self.getNamespace(p))
+            for d in dom:
+                d_ns = self.getNamespace(d)
+                if d_ns and d_ns not in [XML_NS, XSD_NS]:
+                    specs.append(self.specificityOfElement(self.stripNamespace(d), ns=d_ns))
+            for r in ran:
+                r_ns = self.getNamespace(r)
+                if r_ns and r_ns not in [XML_NS, XSD_NS]:
+                    specs.append(self.specificityOfElement(self.stripNamespace(r), ns=r_ns))
             avg = 0.0
             if specs:
                 avg = float(sum(specs)) / float(len(specs))
@@ -1783,7 +1800,7 @@ class UpperOntology(object):
         :return: None, updates the serialized ontology
         """
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_SPECIFICITY, None)
-        self.computeSpecificities('class')
+        self.computeSpecificities(None, 'class')
         all_props = self.getProperties()
         self.computeSpecificities(all_props, 'property')
         self.removeDataTypePropertyTriple(None, self.NavigationDataProperty.HAS_DISTANCE_SCORE, None)

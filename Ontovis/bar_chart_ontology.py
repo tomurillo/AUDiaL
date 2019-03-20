@@ -503,7 +503,7 @@ class BarChartOntology(UpperOntology):
         if axis:
             topLabel = self.getValue(axis, self.BarChartProperty.HAS_TOP_LABEL)
             bottomLabel = self.getValue(axis, self.BarChartProperty.HAS_BOTTOM_LABEL)
-        return (topLabel, bottomLabel)
+        return (str(topLabel), str(bottomLabel))
 
     def lengthOfAxis(self, axis):
         """
