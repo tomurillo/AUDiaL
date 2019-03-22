@@ -102,9 +102,7 @@ class BarChartOntology(UpperOntology):
                                                                     % lcount)
         allLabels = set(self.getLabels())
 
-
         for l, bars in lineups.iteritems():
-
             # Try to find the common label of the lineup
             labels = allLabels.copy()
             # Bar individual labels (excluding labels common to all the bars
@@ -132,7 +130,7 @@ class BarChartOntology(UpperOntology):
             if stackedMean is not None:
                 output += " Mean of stacked bars: %.2f %s<br/>" \
                             % (stackedMean, units)
-            #Navigate through stacked bars and output averages
+            # Navigate through stacked bars and output averages
             output += "This subset (%s) is further divided into:<br/>" \
                         % lbloutput
             for b in stacked:

@@ -1780,11 +1780,11 @@ class UpperOntology(object):
             for d in dom:
                 d_ns = self.getNamespace(d)
                 if d_ns and d_ns not in [XML_NS, XSD_NS]:
-                    specs.append(self.specificityOfElement(self.stripNamespace(d), ns=d_ns))
+                    specs.append(self.specificityOfElement(d, ns=d_ns))
             for r in ran:
                 r_ns = self.getNamespace(r)
                 if r_ns and r_ns not in [XML_NS, XSD_NS]:
-                    specs.append(self.specificityOfElement(self.stripNamespace(r), ns=r_ns))
+                    specs.append(self.specificityOfElement(r, ns=r_ns))
             avg = 0.0
             if specs:
                 avg = float(sum(specs)) / float(len(specs))

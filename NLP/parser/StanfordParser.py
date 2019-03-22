@@ -7,7 +7,8 @@ import os
 from GeneralUtil import asWindows
 from NLP.model.Query import *
 from NLP.model.POC import *
-from NLP.util.TreeUtil import *
+from NLP.poc.POCCreator import *
+
 
 class GraphNavStanfordParser(object):
     def __init__(self, NLquery = None, parser = 'stanford', posTagger = 'stanford'):
@@ -91,47 +92,9 @@ class GraphNavStanfordParser(object):
         clean_query = self.__normalizeQuery(user_query)
         query = Query(clean_query)
         query.tokens = self.posTree(clean_query)
-        tree = self.parseTree(clean_query)
-        query_token_list = tree.leaves()
-        p_pocs = getPocs(tree)  # Potential POCs
-        pocs = []
-        visited = []
-        for poc_tree in p_pocs:
-            # Compute head
-            head = getHeadOfNounPhrase(poc_tree)
-            # Compute modifiers
-            modif = getModifiersOfNounPhrase(poc_tree)
-            # Remove determinants (DT) from POC
-            poc_tree_clean = removeSubElementFromTree(poc_tree, DT_TREE_POS_TAG)
-            # Initialize POC
-            poc = POC(treeRawString(poc_tree_clean), poc_tree_clean)
-            poc.modifiers = modif
-            # Compute start and end offsets of POC
-            poc_token_list = poc_tree.leaves()
-            pos = positionsInList(query_token_list, poc_token_list)
-            if pos:
-                start, end = pos[visited.count(poc_token_list)]
-            else:
-                start, end = -1, -1
-            if len(poc_tree) > 1 or type(poc_tree[0]) is not nltk.Tree:
-                visited.append(poc_token_list)
-            if poc_tree == poc_tree_clean:
-                poc.start = start
-            else:  # DTs have been removed from POC
-                n_words_before = len(poc_token_list)
-                n_words_after = len(poc_tree_clean.leaves())
-                poc.start = start + n_words_before - n_words_after
-            poc.end = end
-            poc.start_original = poc.start
-            poc.end_original = poc.end
-            pocs.append(poc)
-            # Update head POC
-            head.start, head.end = getSplitPOCOffsets(poc, head.tree.leaves())
-            head.start_original = head.start
-            head.end_original = head.end
-            poc.head = head
-        query.pt = tree
-        query.pocs = pocs
+        query.pt = self.parseTree(clean_query)
+        poc_creator = POCCreator(query)
+        poc_creator.generatePOCs()
         self.findFocus(query)
         return query
 

@@ -266,6 +266,7 @@ class Mapper(object):
         :param ptree: nltk.Tree
         :return: True if the tokens must be ignored, False otherwise
         """
+        from NLP.poc.const import TOKEN_IGNORE_PAIR
         ignore = False
         if isinstance(ptree, nltk.Tree):
             if ptree in self._toIgnore:

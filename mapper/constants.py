@@ -13,7 +13,6 @@ TOKEN_IGNORE_VERBS = ["do", "does", "did", "are", "were", "is", "has", "have", "
 
 
 TOKEN_IGNORE_SP_ARTICLE = ["a", "an"]  # Articles that confuse Stanford Parser
-TOKEN_IGNORE_PAIR = ["show me", "give me", "tell me", "show us", "give us", "tell us"]
 
 TOKEN_IGNORE_PHRASE = [IN_TREE_POS_TAG]
 
