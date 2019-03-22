@@ -186,6 +186,7 @@ def addJokersToOEs(scs):
             elif scIsProperty(sample) and scIsProperty(prev_sample):  # Two properties together, add concept in between
                 joker = Joker(['class', 'literal'])
             if joker:
+                joker.set_id(i)
                 oes_with_jokers.append([joker])
             # Add unique identifier for SPARQL generation
             for sc in oe_list:
