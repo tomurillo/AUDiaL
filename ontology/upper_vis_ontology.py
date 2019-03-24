@@ -174,6 +174,7 @@ class UpperVisOntology(UpperOntology):
         class ReadingTask:
             RETRIEVE_VAL = "Retrieve_Value_Task" # bars -> attributes, values
             FILTER = "Filter_Task" # attributes, values -> bars
+            SUMMARY = "Summary_Task"  # Compute summary
         class NavigationTask:
             GOTO_FIRST = "Go_to_First_Task"
             GOTO_LAST = "Go_to_Last_Task"

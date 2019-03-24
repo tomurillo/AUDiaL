@@ -148,12 +148,15 @@ class Controller(object):
         """
         output = ''
         quick_parser = CommandParser(what)
-        task = quick_parser.queryToNavigationTask()
+        task = quick_parser.queryToTask()
         if task:
             if isinstance(self.o, BarChartOntology):
-                b = self.o.navigate([task])
-                if b[0]:
-                    output += self.__printBarDetails(b[0], skipNav=True)
+                if task == self.o.StructuralTask.ReadingTask.SUMMARY:
+                    output = self.retrieveSummary()
+                else:
+                    b = self.o.navigate([task])
+                    if b[0]:
+                        output += self.__printBarDetails(b[0], skipNav=True)
         return output
 
     def parseAndLookUp(self, what):
@@ -543,7 +546,14 @@ class Controller(object):
         ontology handler.
         @return string: A natural language summary of the graphic
         """
-        return self.o.generateSummary()
+        summary = 'Summary not available'
+        if 'summary' in session:
+            summary = session['summary']
+        else:
+            if isinstance(self.o, BarChartOntology):
+                summary = self.o.generateSummary()
+            session['summary'] = summary
+        return summary
 
     def setUserTags(self, usertags, to = 'current'):
         """
