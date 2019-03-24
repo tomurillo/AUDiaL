@@ -1,6 +1,8 @@
 from flask import session
-from Ontovis.bar_chart_ontology import BarChartOntology
+from ontology.upper_vis_ontology import UpperVisOntology
+from ontology.bar_chart_ontology import BarChartOntology
 from oc.triple_utils import *
+from NLP.parser.CommandParser import *
 from NLP.SimpleNLHandler import *
 from NLP.NLHandler import *
 from mapper.Mapper import *
@@ -35,7 +37,7 @@ class Controller(object):
         if type == c.BAR_CHART:
             self.o = BarChartOntology(RDFpath)
         else:
-            self.o = UpperOntology(RDFpath)
+            self.o = UpperVisOntology(RDFpath)
 
     def isOntologyLoaded(self):
         """
@@ -137,6 +139,23 @@ class Controller(object):
             answer = generateAnswer(self.q, formal_query, results, self.o)
             return answer
 
+    def commandLookUp(self, what):
+        """
+        Performs a first quick parse to find commonly issued commands
+        If a task is found; perform it immediately without parsing the query
+        :param what: a normalized NL query
+        :return: string; command output or None
+        """
+        output = ''
+        quick_parser = CommandParser(what)
+        task = quick_parser.queryToNavigationTask()
+        if task:
+            if isinstance(self.o, BarChartOntology):
+                b = self.o.navigate([task])
+                if b[0]:
+                    output += self.__printBarDetails(b[0], skipNav=True)
+        return output
+
     def parseAndLookUp(self, what):
         """
         Performs the query parsing and ontology lookup steps before consolidation
@@ -179,12 +198,14 @@ class Controller(object):
         output = ""
         output_type = 'answer'
         if self.type == c.BAR_CHART:
-            suggestion = self.processQuery(what)
-            if suggestion:
-                output_type = 'dialogue'
-                output = suggestion
-            else:
-                output = self.fetchAnswerFromDomain()  # TODO improve
+            output = self.commandLookUp(what)
+            if not output:
+                suggestion = self.processQuery(what)
+                if suggestion:
+                    output_type = 'dialogue'
+                    output = suggestion
+                else:
+                    output = self.fetchAnswerFromDomain()  # TODO improve
         return output, output_type
 
     def processVoteSelection(self, vote_id):

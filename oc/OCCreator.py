@@ -1,4 +1,4 @@
-import Ontovis.constants as o_c
+import ontology.constants as o_c
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
 from OCUtil import SemanticConceptListCompareOffset

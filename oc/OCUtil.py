@@ -1,4 +1,4 @@
-import Ontovis.constants as o_c
+import ontology.constants as o_c
 from NLP.util.TreeUtil import distanceBetweenAnnotations
 from NLP.model.OE import *
 

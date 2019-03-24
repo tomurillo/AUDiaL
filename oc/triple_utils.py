@@ -1,7 +1,7 @@
 from NLP.model.Query import Query
 from NLP.model.FormalQuery import *
 from NLP.model.Joker import *
-from Ontovis.upper_ontology import UpperOntology
+from ontology.upper_ontology import UpperOntology
 from dialog.webformat.formatter import OutputFormatter
 
 

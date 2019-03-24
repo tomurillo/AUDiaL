@@ -140,14 +140,14 @@ class SuggestionGenerator(object):
             skip_uris = []
         n = 0
         oes = []
-        for p_uri, p_type in self.o.yieldResource(prop_type='property'):
+        for p_uri, p_type in self.o.yieldResource(res_type='property'):
             if p_uri not in skip_uris and not self.o.getParentProperties(p_uri, ns=None, stripns=False):
                 n += 1
                 oes.append(self.createOntologyElementforURI(p_uri, p_type, check_exists=False))
                 if n >= max_elems:
                     break
         if n < max_elems:
-            for c_uri, _ in self.o.yieldResource(prop_type='class'):
+            for c_uri, _ in self.o.yieldResource(res_type='class'):
                 if c_uri not in skip_uris and not self.o.getParentClasses(c_uri, ns=None, stripns=False):
                     n += 1
                     oes.append(self.createOntologyElementforURI(c_uri, "class", check_exists=False))

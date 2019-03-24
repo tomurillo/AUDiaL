@@ -1,12 +1,18 @@
-from Ontovis.upper_ontology import UpperOntology
+from ontology.upper_vis_ontology import UpperVisOntology
 from sys import float_info
 from rdflib import XSD
 from util import *
 
 
-class BarChartOntology(UpperOntology):
-
+class BarChartOntology(UpperVisOntology):
+    """
+    Bar Chart Ontology handler; subclass of Upper Visualization Ontology for handling bar charts
+    """
     def __init__(self, RDFPath):
+        """
+        BarChartOntology constructor
+        :param RDFpath: string; path to an RDF ontology file
+        """
         super(BarChartOntology, self).__init__(RDFPath)
 
     class BarChartProperty:
@@ -63,7 +69,7 @@ class BarChartOntology(UpperOntology):
             elif action == self.StructuralTask.NavigationTask.GOTO_LOWEST:
                 b = self.__moveLowest()
             elif action == self.StructuralTask.NavigationTask.RESET:
-                b = self.__resetNavigation()
+                b = self.resetNavigation()
             elif action == self.StructuralTask.NavigationTask.SET_HOME:
                 b = self.__setCurrentAsHome()
             elif action == self.StructuralTask.NavigationTask.GOTO_HOME:
@@ -803,14 +809,14 @@ class BarChartOntology(UpperOntology):
             self.setCurrentBar(bar)
             return bar
 
-    def __resetNavigation(self):
+    def resetNavigation(self):
         """
         Reset the navigation, i.e. reset bar orders and current bar, and move
         to the first bar. Can be also used to initialize graph navigation
         predicates.
         @return string: instance name of first bar
         """
-        self._UpperOntology__resetNavigation()
+        super(BarChartOntology, self).resetNavigation()
         self.computeBarsNavOrder()
         return self.__moveFirst()
 
