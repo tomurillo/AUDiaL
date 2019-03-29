@@ -71,7 +71,7 @@ NLsortOpNeg = set(["reverse", "inverse"])
 NLArithmeticBasicOp = {'add': 'add', 'subtract' : 'sub', 'divide': 'div',
                          'multiply': 'mul', 'sum' : 'add', 'tally' : 'add',
                          'deduct': 'sub', 'sub' : 'sub', 'split' : 'div',
-                         'mult' : 'mul', 'div' : 'div', 'sum' : 'add'}
+                         'mult' : 'mul', 'div' : 'div'}
 
 """Basic Connectors of arithmetic operations"""
 NLArithmeticOpConnector = ['to', 'from', 'and', 'minus', 'plus']

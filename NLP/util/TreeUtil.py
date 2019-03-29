@@ -339,6 +339,23 @@ def treeRawString(ptree):
     return raw
 
 
+def isNumber(ptree):
+    """
+    Returns whether this tree represents a cardinal number
+    :param ptree: nltk.Tree instance
+    :return: True if ptree is a cardinal number; False otherwise
+    """
+    number = False
+    if ptree.label() == CD_TREE_POS_TAG:
+        number = True
+    elif ptree.label() == NP_TREE_POS_TAG:
+        for child in ptree:
+            if child.label() == CD_TREE_POS_TAG:
+                number = True
+                break
+    return number
+
+
 def immutableCopy(ptree):
     """
     Create an immutable copy of a Parse Tree. Needed when a PT has to be hashable, for instance to be used as a key

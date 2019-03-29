@@ -5,7 +5,7 @@ from ontology.upper_ontology import UpperOntology
 from dialog.webformat.formatter import OutputFormatter
 
 
-def generateAnswer(query, formal_query, query_result, o):
+def generateDomainAnswer(query, formal_query, query_result, o):
     """
     Creates an answer to be displayed to the user once a query has been resolved
     :param query: Resolved Query instance
@@ -331,29 +331,3 @@ def getAnswerType(scs):
                 at = sc_list
                 break
     return at
-
-
-def getNamespace(uri):
-    """
-    Returns the namespace of the given URI
-    :param item: an element's URI
-    :return: The namespace part of the URI
-    """
-    ns = ''
-    if uri and '#' in uri:
-        return uri.split('#')[0]
-    return ns
-
-
-def stripNamespace(uri):
-    """
-    Returns the name of the given item without the namespace prefix
-    :param uri: an instance's URI
-    :return string: resource name without NS prefix
-    """
-    if uri:
-        if '#' in uri:
-            return uri.split('#')[1]
-        else:
-            return str(uri)
-    return uri

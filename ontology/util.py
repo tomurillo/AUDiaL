@@ -21,6 +21,32 @@ def stringToID(what, thing_type='entity'):
     return norm_string
 
 
+def getNamespace(uri):
+    """
+    Returns the namespace of the given URI
+    :param item: an element's URI
+    :return: The namespace part of the URI
+    """
+    ns = ''
+    if uri and '#' in uri:
+        return uri.split('#')[0]
+    return ns
+
+
+def stripNamespace(uri):
+    """
+    Returns the name of the given item without the namespace prefix
+    :param uri: an instance's URI
+    :return string: resource name without NS prefix
+    """
+    if uri:
+        if '#' in uri:
+            return uri.split('#')[1]
+        else:
+            return str(uri)
+    return uri
+
+
 def isNumber(n):
     """
     Checks whether the given string is a number

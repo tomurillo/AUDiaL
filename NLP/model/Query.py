@@ -1,4 +1,5 @@
 from NLP.model.OE import *
+from NLP.model.QueryFilter import *
 
 class QuestionType(object):
     """
@@ -22,6 +23,7 @@ class Query(object):
         self.answerType = []  # List<OntologyElement>
         self.semanticConcepts = []  # list<list<SemanticConcept>>: overlapped-by-text SCs, first one overlaps the rest
         self.annotations = []  # Query substrings to be looked up in the ontology; they do *not* have to be in the KB
+        self.filters = []  # Query filter instances
 
     def flattened_scs(self):
         """
@@ -68,6 +70,7 @@ class Query(object):
         d['tokens'] = [list(t) for t in self.tokens]
         d['pt'] = str(self.pt) if self.pt else None
         d['semanticConcepts'] = []
+        d['filters'] = [f.to_dict for f in self.filters]
         for sc_list in self.semanticConcepts:
             d['semanticConcepts'].append([sc.to_dict() for sc in sc_list])
         return d
@@ -130,5 +133,15 @@ class Query(object):
                     sc.from_dict(sc_dict)
                     sc_list.append(sc)
                 self.semanticConcepts.append(sc_list)
+            filters = d.get('filters', [])
+            self.filters = []
+            for f_dict in filters:
+                if f_dict:
+                    f_type = f_dict.get('type', 'QueryFilter')
+                    if f_type in globals():
+                        f_class = globals()[f_type]
+                        f_instance = f_class()
+                        f_instance.from_dict(f_type)
+                        self.filters.append(f_instance)
         else:
             raise ValueError('Query.from_dict: parameter must be of type dict.')

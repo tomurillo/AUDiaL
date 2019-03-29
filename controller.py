@@ -5,6 +5,7 @@ from oc.triple_utils import *
 from NLP.parser.CommandParser import *
 from NLP.SimpleNLHandler import *
 from NLP.NLHandler import *
+from NLP.model.QueryFilter import *
 from mapper.Mapper import *
 from oc.OCUtil import *
 from oc.OCCreator import addSemanticConcepts
@@ -105,6 +106,46 @@ class Controller(object):
                 return formatter.suggestionPairToJSON(suggestion_pair_new)
         return False
 
+    def computeAnswer(self):
+        """
+        Given a consolidated query, generate an answer from its semantic concepts
+        :return: string; answer (or lack thereof) to the user's query
+        """
+        answer = 'Your query could not be resolved'
+        if allOCsShareNamespace(self.q.semanticConcepts, self.o.VIS_NS):
+            self.q.filters = self.getFiltersFromQuery()
+            # TODO add tasks
+            nominal_filters = []  # Labels to filter as-is
+            for f in self.q.filters:
+                if isinstance(f, QueryFilterNominal):
+                    nominal_filters.extend(f.operands)
+            if isinstance(self.o, BarChartOntology):
+                bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.FILTER, filters=nominal_filters)
+                if bars:
+                    answer = '%d bars match your query:<br/>' % len(bars)
+                    for bar in bars:
+                        answer += self.__printBarDetails(bar)
+        else:
+            answer = self.fetchAnswerFromDomain()
+        return answer
+
+    def getFiltersFromQuery(self):
+        """
+        Infer filters from a user's query
+        :return: list<QueryFilter>
+        """
+        filters = []
+        # TODO add cardinal filters and remove associated POCs
+        #  Remaining semantic concepts are considered nominal filters
+        for sc_list in self.q.semanticConcepts:
+            if sc_list:
+                sc = sc_list[0]
+                if sc and sc.OE and isinstance(sc.OE, (OntologyInstanceElement, OntologyLiteralElement)):
+                    qf = QueryFilterNominal(sc.OE.annotation)
+                    qf.operands.append(self.o.stripNamespace(sc.OE.uri))
+                    filters.append(qf)
+        return filters
+
     def fetchAnswerFromDomain(self):
         """
         Query a domain ontology and return answer
@@ -136,7 +177,7 @@ class Controller(object):
             formal_query = FormalQuery(self.o.getNamespaces(), MAX_RESULTS)
             formal_query.from_concepts(prepared_ocs)  # SPARQL generation
             results = self.o.executeQuery(formal_query.sparql)
-            answer = generateAnswer(self.q, formal_query, results, self.o)
+            answer = generateDomainAnswer(self.q, formal_query, results, self.o)
             return answer
 
     def commandLookUp(self, what):
@@ -208,7 +249,7 @@ class Controller(object):
                     output_type = 'dialogue'
                     output = suggestion
                 else:
-                    output = self.fetchAnswerFromDomain()  # TODO improve
+                    output = self.computeAnswer()
         return output, output_type
 
     def processVoteSelection(self, vote_id):
@@ -220,7 +261,7 @@ class Controller(object):
                 output_type = 'dialogue'
                 output = suggestion
             else:
-                output = self.fetchAnswerFromDomain()  # TODO improve
+                output = self.computeAnswer()
         return output, output_type
 
     def retrieveValueSimple(self, what):

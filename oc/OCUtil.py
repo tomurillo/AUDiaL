@@ -1,6 +1,6 @@
 import ontology.constants as o_c
 from NLP.util.TreeUtil import distanceBetweenAnnotations
-from NLP.model.OE import *
+from NLP.model.SemanticConcept import *
 
 
 def preConsolidateQuery(q, o):
@@ -114,6 +114,30 @@ def overlappingOCsVerified(ocs):
     :return: True if the OCs have been already verified; False otherwise
     """
     return any(oc.verified for oc in ocs)
+
+
+def allOCsShareNamespace(scs, ns=None):
+    """
+    Returns whether all the given OCs share the same namespace
+    :param scs: List<List<SemanticConcept>
+    :param ns: The namespace to consider; None to fetch the namespace from the OCs themselves
+    :return: True if all OCs share the same namespace, false otherwise
+    """
+    from ontology.util import getNamespace
+    shared = True
+    for sc_list in scs:
+        if not shared:
+            break
+        if sc_list and isinstance(sc_list[0], SemanticConcept) and sc_list[0].OE and \
+                not isinstance(sc_list[0].OE, (OntologyNoneElement, OntologyLiteralElement)):
+            for sc in sc_list:
+                oe_ns = getNamespace(sc.OE.uri)
+                if not ns:
+                    ns = oe_ns
+                elif ns != oe_ns:
+                    shared = False
+                    break
+    return shared
 
 
 def nextAmbiguousOCs(q):

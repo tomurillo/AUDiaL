@@ -69,6 +69,7 @@ class CommandParser(object):
             'smallest': UpperVisOntology.StructuralTask.NavigationTask.GOTO_LOWEST,
             'left': UpperVisOntology.StructuralTask.NavigationTask.MOVE_LEFT,
             'previous': UpperVisOntology.StructuralTask.NavigationTask.MOVE_LEFT,
+            'prev': UpperVisOntology.StructuralTask.NavigationTask.MOVE_LEFT,
             'right': UpperVisOntology.StructuralTask.NavigationTask.MOVE_RIGHT,
             'next': UpperVisOntology.StructuralTask.NavigationTask.MOVE_RIGHT,
             'following': UpperVisOntology.StructuralTask.NavigationTask.MOVE_RIGHT,

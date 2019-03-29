@@ -235,7 +235,7 @@ def xsdDatatypeForSparqlQuery(lit_type_uri):
     :return: string; type URI in SPARQL form
     """
     from rdflib import XSD
-    from oc.triple_utils import getNamespace, stripNamespace
+    from ontology.util import getNamespace, stripNamespace
     ns = getNamespace(lit_type_uri)
     lit = stripNamespace(lit_type_uri)
     sparql = ""
