@@ -1,7 +1,8 @@
 import nltk
-from NLP.constants import *
 from util.TreeUtil import mutableCopy, treeRawString
 from nltk.corpus import wordnet as wn
+from NLP.model.Query import Query
+from NLP.poc.filterCreator import *
 
 
 class NLHandler(object):
@@ -24,6 +25,17 @@ class NLHandler(object):
                 p_lem = self.lemmatizeTree(mutableCopy(ann.tree), lemma)
                 ann.lemma_tree = p_lem
         return q
+
+    def getCardinalFilters(self, query):
+        """
+        Find cardinal (comparative, superlative) filters within a query's annotations
+        :param query: Query instance with annotations
+        :return: Query instance with cardinal filters
+        """
+        if isinstance(query, Query) and query.pocs:
+            filter_creator = FilterCreator(query)
+            query.filters = filter_creator.generateFilters()
+        return query
 
     def lemmatizeTree(self, ptree, lemma):
         """

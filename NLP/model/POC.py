@@ -65,7 +65,7 @@ class POC(object):
         Converts this POC to an equivalent dictionary (of built-in types) representation
         :return: dict
         """
-        d = {'tree': str(self.tree), 'rawText': self.rawText, 'start': self.start,
+        d = {'type': 'POC','tree': str(self.tree), 'rawText': self.rawText, 'start': self.start,
              'end': self.end, 'start_original': self.start_original, 'end_original': self.end_original,
              'mainSubjectPriority': self.mainSubjectPriority, 'modifiers': [str(m) for m in self.modifiers]}
         if self.head:

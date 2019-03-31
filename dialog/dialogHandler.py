@@ -1,12 +1,10 @@
-from dialog.model.SuggestionKey import *
-from dialog.model.SuggestionPair import *
-from dialog.model.Vote import *
 from dialog.model.modelUtil import *
 from dialog.learning.util import *
 from dialog.config import *
 from dialog.suggestionGenerator import SuggestionGenerator
 from oc.OCUtil import *
 from NLP.model.POC import *
+from NLP.model.QueryFilter import *
 
 
 class DialogHandler(object):
@@ -30,13 +28,41 @@ class DialogHandler(object):
         :return: SuggestionPair instance if a dialogue is necessary; None otherwise (question can be resolved)
         """
         pair = None
-        if self.disambiguationRequired():  # Give priority to disambiguation between OCs
+        if self.filterClarificationRequired():  # Any unresolved filters left?
+            pair = self.generateFilterClarificationDialog()
+        elif self.disambiguationRequired():  # Give priority to disambiguation between OCs
             pair = self.generateDisambiguationDialog()
         elif self.mappingRequired():
             pair = self.generateMappingDialog()
         if pair is False:
             pair = self.generateDialogs()  # Vote was automatically casted; no user action needed
         return pair
+
+    def generateFilterClarificationDialog(self):
+        """
+        Generates a user dialog to add the focus to a query's filter
+        :return: SuggestionPair instance
+        """
+        key = SuggestionKey()
+        pair = SuggestionPair()
+        next_filter = nextFilter(self.q)
+        key.text = next_filter.annotation.rawText
+        pair.key = key
+        pair.filter = next_filter
+        learning_keys = self.generateLearningKeys(key)
+        sug_generator = SuggestionGenerator(self.o, force_parents=True)
+        votes = sug_generator.createFilterVotes(key, next_filter, self.q.focus, add_none=True)
+        learning_votes = self.loadLearningVotes(learning_keys)
+        if learning_votes:
+            pair.votes = updateVotesFromLearningVotes(learning_votes, votes)
+        else:
+            pair.votes = votes
+            l_model = {}
+            learning_votes = getLearningVotesfromVotes(votes)
+            for lkey in learning_keys:
+                l_model[lkey] = learning_votes
+            saveLearningModel(l_model)
+        # TODO continue
 
     def generateDisambiguationDialog(self):
         """
@@ -207,6 +233,19 @@ class DialogHandler(object):
                 vote.vote = float(sc.score)
             votes.append(vote)
         return votes
+
+    def filterClarificationRequired(self):
+        """
+        Returns whether current query filters need user input to be executed
+        :return: True if user must be prompted to clarify filter; False otherwise
+        """
+        clarification_req = False
+        for qf in self.q.filters:
+            if isinstance(qf, QueryFilterCardinal):
+                if not qf.property and not qf.result:  # Focus of the filter does not exist
+                    clarification_req = True
+                    break
+        return clarification_req
 
     def disambiguationRequired(self):
         """

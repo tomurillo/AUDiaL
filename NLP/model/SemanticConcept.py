@@ -1,5 +1,6 @@
 from NLP.model.OE import *
 
+
 class SemanticConcept(object):
     """
     Semantic Concepts are extended Ontology Concepts (OCs) belonging to a user's query i.e. elements of a query
@@ -62,6 +63,7 @@ class SemanticConcept(object):
             d['OE'] = self.OE.to_dict()
         else:
             d['OE'] = None
+        d['type'] = 'SemanticConcept'
         d['id'] = self.id
         d['verified'] = self.verified
         d['answer'] = self.answer

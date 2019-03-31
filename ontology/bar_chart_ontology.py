@@ -241,7 +241,7 @@ class BarChartOntology(UpperVisOntology):
         """
         labels = set(self.getLabelsOfElement(element))
         color = self.getValue(element, self.SyntacticProperty.HAS_COLOR)
-        if color: #TODO: retrieve filters according to other attributes
+        if color:  # TODO: retrieve filters according to other attributes
             legends = self.getLegends()
             for legend in legends:
                 legendElements = self.getLegendPairs(legend)

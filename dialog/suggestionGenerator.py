@@ -78,8 +78,11 @@ class SuggestionGenerator(object):
                 oe_uri = oe.uri
                 if oe_uri not in suggestions:
                     suggestions.append(oe_uri)
-                    oe.annotation = Annotation()
-                    oe.annotation.populateFromPOC(poc)
+                    if isinstance(poc, Annotation):
+                        oe.annotation = poc
+                    else:
+                        oe.annotation = Annotation()
+                        oe.annotation.populateFromPOC(poc)
                     if isinstance(oe, OntologyDatatypePropertyElement) and sc_neighbor:
                         oe.governor = sc_neighbor.OE
                         oe.range = self.o.rangeOfProperty(oe_uri, stripns=False)
@@ -88,11 +91,45 @@ class SuggestionGenerator(object):
                     votes.extend(self.createAdditionalVotes(text, oe, poc, added=False))
         return votes
 
+    def createFilterVotes(self, key, filter, focus, add_vis=True, add_none=True):
+        """
+        Create votes for a query filter
+        :param key: SuggestionKey instance
+        :param filter: QueryFilter instance
+        :param focus: POC instance; focus of the query
+        :param add_vis: whether to add and give higher priority to visualization properties
+        :param add_none: whether to add None votes to the output
+        :return: list<Vote>
+        """
+        votes = []
+        if isinstance(focus, POC):
+            votes.append(self.createFocusVote(focus))
+        if add_vis:
+            from const import VIS_NS
+            vis_label_uri = "%s#%s" % (VIS_NS, 'is_labeled_by')
+            vis_label_oe = self.createOntologyElementforURI(vis_label_uri, 'datatypeProperty', check_exists=False)
+            v = self.createVote(key.text, vis_label_oe)
+            if v.vote < 1:
+                v.vote = 1
+            votes.append(v)
+        votes.extend(self.createGenericVotes(key, filter.annotation, add_none=True))
+        return votes
+
+    def createFocusVote(self, poc):
+        """
+        Create a filter vote for the question's focus (i.e. the answer type)
+        :param poc: POC instance; the query's focus
+        :return: Vote instance
+        """
+        v = Vote()
+        v.candidate = poc
+        return v
+
     def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None):
         """
         Create potential votes when no neighbor OEs have been found in the user query
         :param key: SuggestionKey instance
-        :param poc: POC instance
+        :param poc: POC or Annotation instance
         :param add_none: whether to add None votes to the output
         :param max: int; maximum number of votes to generate
         :param skip: list of SemanticConcepts to skip; default None
@@ -105,8 +142,11 @@ class SuggestionGenerator(object):
         skip_uris = [sc.OE.print_uri() for sc in skip]
         oes = self.findGenericOEs(max, skip_uris)
         for oe in oes:
-            oe.annotation = Annotation()
-            oe.annotation.populateFromPOC(poc)
+            if isinstance(poc, Annotation):
+                oe.annotation = poc
+            else:
+                oe.annotation = Annotation()
+                oe.annotation.populateFromPOC(poc)
             vote = self.createVote(key.text, oe)
             votes.append(vote)
             n += 1
@@ -188,6 +228,8 @@ class SuggestionGenerator(object):
         if isinstance(poc, POC):
             oe.annotation = Annotation()
             oe.annotation.populateFromPOC(poc)
+        elif isinstance(poc, Annotation):
+            oe.annotation = poc
         sc = SemanticConcept()
         sc.OE = oe
         vote.candidate = sc
@@ -206,7 +248,7 @@ class SuggestionGenerator(object):
         suggestions = []
         if QUICK_TASKS and isinstance(oe, OntologyDatatypePropertyElement):
             jj_tags = [JJ_TREE_POS_TAG, JJR_TREE_POS_TAG, JJS_TREE_POS_TAG, VBN_TREE_POS_TAG, RBS_TREE_POS_TAG]
-            if containNodes(poc.tree, jj_tags):
+            if isinstance(poc, POC) and containNodes(poc.tree, jj_tags):
                 for task in QUICK_TASKS:
                     new_oe = oe.deepcopy()
                     new_oe.added = added

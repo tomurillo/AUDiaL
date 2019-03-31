@@ -1,4 +1,5 @@
 from NLP.model.SemanticConcept import *
+from NLP.model.POC import *
 import uuid
 
 
@@ -9,7 +10,7 @@ class Vote(object):
         """
         self.id = str(uuid.uuid4())
         self.vote = -1.0
-        self.candidate = None  # Candidate SemanticConcept instance
+        self.candidate = None  # Candidate SemanticConcept or POC instance
 
     def to_dict(self):
         """
@@ -34,7 +35,11 @@ class Vote(object):
         self.candidate = None
         candidate_dict = d.get('candidate')
         if candidate_dict:
-            candidate = SemanticConcept()
+            candidate_type = candidate_dict.get('type')
+            if candidate_type == 'POC':
+                candidate = POC()
+            else:
+                candidate = SemanticConcept()
             candidate.from_dict(candidate_dict)
             self.candidate = candidate
 

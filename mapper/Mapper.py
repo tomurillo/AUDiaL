@@ -14,7 +14,6 @@ class Mapper(object):
         Mapper class constructor
         """
         self.parser = GraphNavStanfordParser()
-
         self._toIgnore = []  # Children to be ignored when the father is ignored
 
     def processQuestion(self, text):

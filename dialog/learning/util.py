@@ -171,13 +171,16 @@ def getLearningVotesfromVotes(votes):
         lvote.id = vote.id
         lvote.score = vote.vote
         if vote.candidate:
-            lvote.task = vote.candidate.task
-            if vote.candidate.OE:
-                lvote.identifier = vote.candidate.OE.uri
-                if isinstance(vote.candidate.OE, OntologyLiteralElement):
-                    lvote.triples = list(vote.candidate.OE.triples)
-                if isinstance(vote.candidate.OE, OntologyInstanceElement):
-                    lvote.uris = vote.candidate.OE.uris
+            if isinstance(vote.candidate, SemanticConcept):
+                lvote.task = vote.candidate.task
+                if vote.candidate.OE:
+                    lvote.identifier = vote.candidate.OE.uri
+                    if isinstance(vote.candidate.OE, OntologyLiteralElement):
+                        lvote.triples = list(vote.candidate.OE.triples)
+                    if isinstance(vote.candidate.OE, OntologyInstanceElement):
+                        lvote.uris = vote.candidate.OE.uris
+            elif isinstance(vote.candidate, POC):
+                lvote.identifier = 'results'
         lvotes.append(lvote)
     return lvotes
 
@@ -191,16 +194,20 @@ def updateVotesFromLearningVotes(lvotes, old_votes):
     """
     for lvote in lvotes:
         for old_vote in old_votes:
-            if old_vote.candidate and old_vote.candidate.OE:
-                equal = False
-                if isinstance(old_vote.candidate.OE, OntologyLiteralElement):
-                    if lvote.triples == old_vote.candidate.OE.triples:
-                        equal = True
-                elif lvote.identifier == old_vote.candidate.OE.uri:
-                    if isinstance(old_vote.candidate.OE, OntologyInstanceElement):
-                        if lvote.uris == old_vote.candidate.OE.uris:
+            equal = False
+            if old_vote.candidate:
+                if isinstance(old_vote.candidate, SemanticConcept) and old_vote.candidate.OE:
+                    if isinstance(old_vote.candidate.OE, OntologyLiteralElement):
+                        if lvote.triples == old_vote.candidate.OE.triples:
                             equal = True
-                    else:
+                    elif lvote.identifier == old_vote.candidate.OE.uri:
+                        if isinstance(old_vote.candidate.OE, OntologyInstanceElement):
+                            if lvote.uris == old_vote.candidate.OE.uris:
+                                equal = True
+                        else:
+                            equal = True
+                elif isinstance(old_vote.candidate, POC):
+                    if lvote.identifier == 'results':
                         equal = True
                 if equal:
                     if lvote.task is None or lvote.task == old_vote.candidate.task:

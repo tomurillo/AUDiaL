@@ -1,6 +1,7 @@
 import ontology.constants as o_c
 from NLP.util.TreeUtil import distanceBetweenAnnotations
 from NLP.model.SemanticConcept import *
+from NLP.model.QueryFilter import QueryFilterCardinal
 
 
 def preConsolidateQuery(q, o):
@@ -132,11 +133,12 @@ def allOCsShareNamespace(scs, ns=None):
                 not isinstance(sc_list[0].OE, (OntologyNoneElement, OntologyLiteralElement)):
             for sc in sc_list:
                 oe_ns = getNamespace(sc.OE.uri)
-                if not ns:
-                    ns = oe_ns
-                elif ns != oe_ns:
-                    shared = False
-                    break
+                if oe_ns:
+                    if not ns:
+                        ns = oe_ns
+                    elif ns != oe_ns:
+                        shared = False
+                        break
     return shared
 
 
@@ -189,6 +191,22 @@ def nextPOC(q):
         if next_poc is None:
             next_poc = q.pocs[0]
     return next_poc
+
+
+def nextFilter(q):
+    """
+    Chooses which unresolved filter in the query needs to be resolved next
+    :param q: a consolidated Query instance
+    :return: QueryFilter instance
+    """
+    next_filter = None
+    if q and q.filters:
+        for qf in q.filters:
+            if isinstance(qf, QueryFilterCardinal):
+                if not qf.property and not qf.result:
+                    next_filter = qf
+                    break
+    return next_filter
 
 
 def findNearestOCsOfPOC(q, poc):

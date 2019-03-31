@@ -209,6 +209,7 @@ class Controller(object):
         """
         self.NL = NLHandler(self.mapper)
         self.q = self.NL.parseQuery(what)  # Get POCs
+        self.q = self.NL.getCardinalFilters(self.q)  # Get filters
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
         self.q = preConsolidateQuery(self.q, self.o)
         self.q = addSemanticConcepts(self.q)

@@ -220,7 +220,7 @@ def getSplitPOCOffsets(poc, new_tokens):
     start_delay = 0
     end_delay = 0
     i = 0
-    while i < len(old_tokens) and old_tokens[i] != new_tokens[-1]:
+    while i < len(old_tokens) and old_tokens[i] != new_tokens[0]:
         start_delay += 1
         i += 1
     i = len(old_tokens) - 1
