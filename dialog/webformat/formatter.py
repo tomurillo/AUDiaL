@@ -1,4 +1,4 @@
-from NLP.model.OE import *
+from NLP.model.SemanticConcept import *
 from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
@@ -31,14 +31,18 @@ class OutputFormatter(object):
             json_pair['votes'] = []
             votes = pair.votes[: MAX_SUGGESTIONS]
             if len(pair.votes) > MAX_SUGGESTIONS:
-                votes.append(pair.votes[-1])  # Append NoneVote
+                for v in pair.votes:
+                    if isinstance(v.candidate, SemanticConcept) and isinstance(v.candidate.OE, OntologyNoneElement):
+                        if v not in votes:
+                            votes.append(v)  # Append NoneVote
+                        break
             for vote in votes:
                 if vote.candidate and vote.candidate.OE:
                     json_vote = {}
                     key_label = self.findOELabel(vote.candidate.OE)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
-                    json_vote['score'] = vote.vote
+                    json_vote['score'] = "%.2f" % vote.vote
                     json_vote['task'] = vote.candidate.task
                     json_pair['votes'].append(json_vote)
         return json_pair
@@ -76,6 +80,8 @@ class OutputFormatter(object):
                     label = instance_label
         elif isinstance(oe, OntologyLiteralElement):
             label = self.findVisualizationResourceLabel(oe)
+        elif isinstance(oe, OntologyNoneElement):
+            label = "Not related to any of the suggestions"
         else:
             label = self.printLabelsOfUri(uri)
         return label
@@ -133,7 +139,7 @@ class OutputFormatter(object):
                     roles = []
                     for triple in oe.triples:
                         roles.extend([r.replace('_SR', '').lower() for r in self.o.getObjects(triple[0], role_p)])
-                    label += ' (text of %s in the diagram)' % ', '.join(roles)
+                    label += ' (text of %s in the diagram)' % ', '.join(set(roles))
                     label = replaceLastCommaWithAnd(label)
         return label
 

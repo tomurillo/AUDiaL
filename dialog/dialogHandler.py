@@ -145,9 +145,9 @@ class DialogHandler(object):
         learning_keys = self.generateLearningKeys(key)
         sug_generator = SuggestionGenerator(self.o, force_parents=True)
         if neighbor_ocs:
-            votes = sug_generator.createVotes(key, poc, add_none=True)
+            votes = sug_generator.createVotes(key, poc, add_none=True, add_text_labels=True)
         else:
-            votes = sug_generator.createGenericVotes(key, poc, add_none=True)
+            votes = sug_generator.createGenericVotes(key, poc, add_none=True, add_text_labels=True)
         learning_votes = self.loadLearningVotes(learning_keys)
         if learning_votes:
             pair.votes = updateVotesFromLearningVotes(learning_votes, votes)

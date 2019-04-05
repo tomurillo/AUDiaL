@@ -1,5 +1,4 @@
 from dialog.model.Vote import *
-from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
 from NLP.model.Annotation import *
 from NLP.model.POC import *
@@ -7,6 +6,7 @@ from dialog.config import *
 from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
 from NLP.constants import *
 from NLP.util.TreeUtil import containNodes
+from ontology.upper_vis_ontology import UpperVisOntology
 from GeneralUtil import beautifyOutputString
 
 class SuggestionGenerator(object):
@@ -24,13 +24,14 @@ class SuggestionGenerator(object):
         self.o = ontology
         self.force_parents = force_parents
 
-    def createVotes(self, key, poc, add_none, skip=None):
+    def createVotes(self, key, poc, add_none, skip=None, add_text_labels=False):
         """
         Generate learning votes for the given parameters
-        :param key: SuggestionKey instance; contains neighbor OEs
+        :param key: SuggestionKey instance; contains neighbor OEs and user text
         :param poc: POC instance; user input without a supporting ontology resource
         :param add_none: whether to add None votes to the list
         :param skip: list of SemanticConcepts to skip; default None
+        :param add_text_labels: whether add textual labels found in the diagram to the suggestions
         :return: list<Vote>: votes generated from the SuggestionKey (neighbor suggested ontology resources) and a POC
         (user input not found in the ontology)
         """
@@ -38,6 +39,8 @@ class SuggestionGenerator(object):
         if skip is None:
             skip = []
         skip_uris = [sc.OE.print_uri() for sc in skip]
+        if add_text_labels:
+            votes.extend(self.createTextVotes(key.text))
         candidates = set()
         for neighbor_sc in key.nearest_neighbors:
             neighbor_candidates = set()
@@ -58,6 +61,36 @@ class SuggestionGenerator(object):
             none_vote = self.createNoneVote(poc)
             votes.append(none_vote)
         return votes
+
+    def createTextVotes(self, key_text, limit=100):
+        """
+        Create votes from occurrences of the has_text property in the ontology
+        :param key_text: text input by the user
+        :param limit: maximum number of votes to create (default 100)
+        :return: list<Vote>
+        """
+        votes = {}  # Key: Literal string; value: Vote containing that Literal as candidate
+        if key_text and isinstance(self.o, UpperVisOntology):
+            from dialog.learning.util import PRIORITY_DIAG_LABELS
+            i = 0
+            for element, prop, text_literal in self.o.yieldTextElement():
+                if text_literal:
+                    text = str(text_literal)
+                    if text in votes:
+                        votes[text].candidate.OE.triples.append((str(element), str(prop), text))
+                    else:
+                        oe = self.createOntologyElementforURI(text, 'literal', check_exists=False)
+                        oe.triples.append((str(element), str(prop), text))
+                        v = self.createVote(key_text, oe)
+                        if PRIORITY_DIAG_LABELS and v.vote < 1:
+                            v.vote += 1
+                        votes[text] = v
+                        i += 1
+                        if i >= limit:
+                            break
+                else:
+                    break
+        return votes.values()
 
     def createVotesfromOEs(self, oe_list, poc, text, sc_neighbor=None, skip_uris=None):
         """
@@ -105,12 +138,13 @@ class SuggestionGenerator(object):
         if isinstance(focus, POC):
             votes.append(self.createFocusVote(focus))
         if add_vis:
+            from dialog.learning.config import PRIORITY_DIAG_LABELS
             from const import VIS_NS
             vis_label_uri = "%s#%s" % (VIS_NS, 'is_labeled_by')
             vis_label_oe = self.createOntologyElementforURI(vis_label_uri, 'datatypeProperty', check_exists=False)
             v = self.createVote(key.text, vis_label_oe)
-            if v.vote < 1:
-                v.vote = 1
+            if PRIORITY_DIAG_LABELS and v.vote < 1:
+                v.vote += 1
             votes.append(v)
         votes.extend(self.createGenericVotes(key, filter.annotation, add_none=True))
         return votes
@@ -125,7 +159,7 @@ class SuggestionGenerator(object):
         v.candidate = poc
         return v
 
-    def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None):
+    def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None, add_text_labels=False):
         """
         Create potential votes when no neighbor OEs have been found in the user query
         :param key: SuggestionKey instance
@@ -133,6 +167,7 @@ class SuggestionGenerator(object):
         :param add_none: whether to add None votes to the output
         :param max: int; maximum number of votes to generate
         :param skip: list of SemanticConcepts to skip; default None
+        :param add_text_labels: whether to add textual labels found in the diagram to the suggestions
         :return: list<Vote>
         """
         votes = []
@@ -140,6 +175,8 @@ class SuggestionGenerator(object):
         if skip is None:
             skip = []
         skip_uris = [sc.OE.print_uri() for sc in skip]
+        if add_text_labels:
+            votes.extend(self.createTextVotes(key.text))
         oes = self.findGenericOEs(max, skip_uris)
         for oe in oes:
             if isinstance(poc, Annotation):

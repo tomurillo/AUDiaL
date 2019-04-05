@@ -122,9 +122,11 @@ class Controller(object):
             if isinstance(self.o, BarChartOntology):
                 bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.FILTER, filters=nominal_filters)
                 if bars:
-                    answer = '%d bars match your query:<br/>' % len(bars)
+                    answer = '<h5>The following %d bars matched your query:<h5/><ul>' % len(bars)
                     for bar in bars:
                         answer += self.__printBarDetails(bar)
+                    answer += "</ul>"
+                    answer += self.__summarizeBars(bars)
         else:
             answer = self.fetchAnswerFromDomain()
         return answer
@@ -833,14 +835,13 @@ class Controller(object):
                (i.e. if the bar is the current or home bar)
         @return string: a natural-language description of the bar
         """
-        output = "Bar not found!<br/>"
+        output = '<li>'
         if bar:
             units = self.o.getChartMeasurementUnit()
             if units:
                 unitsNL = units.replace("_", " ").lower()
             else:
                 unitsNL = "(units unknown)"
-            output = ""
             barfilters = self.o.getElementFilters(bar)
             if self.o.elementHasRole(bar, self.o.SyntacticRoles.STACKED_BAR):
                 output += "Stacked bar "
@@ -861,8 +862,26 @@ class Controller(object):
                 if nf == self.o.NavigationDataProperty.HAS_USER_LABEL:
                     ul = navFilters[nf]
                     output += "User tags: %s. " % ul
-            output += "<br/>"
+        else:
+            output += "Bar not found!"
+        output += '</li>'
         return output
+
+    def __summarizeBars(self, bars):
+        """
+        Return a bar summary to be given at the beginning of an answer outputting more than one bar
+        :param bars: list<string> bar instance names
+        :return: string; short summary
+        """
+        summary = ''
+        val = 0.0
+        n = len(bars)
+        if n > 1:
+            for b in bars:
+                val += self.o.getMetricBarValue(b)
+            summary = 'Total value: %0.2f<br/>' % val
+            summary += 'Average value: %0.2f<br/>' % (val / n)
+        return summary
 
     def saveContextToSession(self):
         """

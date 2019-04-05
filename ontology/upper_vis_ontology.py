@@ -1,6 +1,6 @@
 from ontology.upper_ontology import UpperOntology
 import rdflib
-from rdflib import XSD
+from rdflib import XSD, URIRef
 from collections import defaultdict
 import const as c
 
@@ -308,6 +308,17 @@ class UpperVisOntology(UpperOntology):
             else:
                 property = self.SyntacticProperty.HAS_INFORMATIONAL_ROLE
             return self.tripleExists(element, property, role, "object", ns)
+
+    def yieldTextElement(self):
+        """
+        Yields a text literal in the object of a has_text datatype property occurrence
+        :return: (URIRef, URIRef, Literal): subject (graphic object), property (has_text), and object (text)
+        of each property occurrence
+        """
+        if self.graph:
+            propertyURI = URIRef("%s#%s" % (self.VIS_NS, self.SytacticDataProperty.HAS_TEXT))
+            for s, o in self.graph.subject_objects(propertyURI):
+                yield s, propertyURI, o
 
     def getElementsWithText(self, text):
         """
