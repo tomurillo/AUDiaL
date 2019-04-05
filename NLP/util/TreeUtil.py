@@ -339,7 +339,7 @@ def treeRawString(ptree):
     return raw
 
 
-def isNumber(ptree):
+def treeIsNumber(ptree):
     """
     Returns whether this tree represents a cardinal number
     :param ptree: nltk.Tree instance
@@ -348,7 +348,7 @@ def isNumber(ptree):
     number = False
     if ptree.label() == CD_TREE_POS_TAG:
         number = True
-    elif ptree.label() == NP_TREE_POS_TAG:
+    elif ptree.label().startswith(NP_TREE_POS_TAG):
         for child in ptree:
             if child.label() == CD_TREE_POS_TAG:
                 number = True

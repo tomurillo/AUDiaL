@@ -35,7 +35,8 @@ class QueryFilter(object):
         a_dict = d.get('annotation')
         if a_dict:
             annotation = Annotation()
-            self.annotation = annotation.from_dict(a_dict)
+            annotation.from_dict(a_dict)
+            self.annotation = annotation
         else:
             self.annotation = None
         self.pocs = []
@@ -47,7 +48,7 @@ class QueryFilter(object):
                 self.pocs.append(poc)
 
     def __eq__(self, other):
-        if type(other) is not QueryFilter:
+        if not isinstance(other, QueryFilter):
             return False
         elif other.annotation != self.annotation:
             return False
@@ -55,6 +56,9 @@ class QueryFilter(object):
             return False
         else:
             return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __hash__(self):
         return hash(self.annotation) ^ hash(tuple(self.operands)) ^ hash(tuple(self.pocs))
@@ -90,7 +94,7 @@ class QueryFilterCardinal(QueryFilter):
     Cardinal filtering of datatype property values
     """
 
-    def __init__(self, annotation, op=None):
+    def __init__(self, annotation=None, op=None):
         self.op = op  # Operator, one of CardinalFilter
         self.property = None  # SemanticConcept instance; property being filtered
         self.result = False  # Whether the filter must be applied to the result rows; only if self.property is None
@@ -135,3 +139,18 @@ class QueryFilterCardinal(QueryFilter):
             self.property.from_dict(prop_dict)
         else:
             self.property = None
+
+    def __eq__(self, other):
+        if type(other) is not QueryFilterCardinal:
+            return False
+        elif other.op != self.op:
+            return False
+        elif other.result != self.result:
+            return False
+        elif other.property != self.property:
+            return False
+        else:
+            return super(QueryFilterCardinal, self).__eq__(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)

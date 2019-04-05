@@ -1,7 +1,9 @@
 from NLP.model.SemanticConcept import *
+from NLP.model.POC import *
 from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
+
 
 class OutputFormatter(object):
     """
@@ -37,15 +39,32 @@ class OutputFormatter(object):
                             votes.append(v)  # Append NoneVote
                         break
             for vote in votes:
-                if vote.candidate and vote.candidate.OE:
+                if vote.candidate:
                     json_vote = {}
-                    key_label = self.findOELabel(vote.candidate.OE)
+                    key_label = ''
+                    task = None
+                    if isinstance(vote.candidate, SemanticConcept):
+                        key_label = self.findOELabel(vote.candidate.OE)
+                        task = vote.candidate.task
+                    elif isinstance(vote.candidate, POC):
+                        key_label = self.createFocusLabel(vote.candidate, pair.filter)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
                     json_vote['score'] = "%.2f" % vote.vote
-                    json_vote['task'] = vote.candidate.task
+                    json_vote['task'] = task
                     json_pair['votes'].append(json_vote)
         return json_pair
+
+    def createFocusLabel(self, poc, q_filter):
+        """
+        Create a label to be displayed for the question's focus
+        :param poc: POC containing the focus or its head
+        :param q_filter: QueryFilter instance being resolved
+        :return: string; label of the focus
+        """
+        label = poc.rawText
+        # TODO add info about operator and operand being used to filter focus
+        return label
 
     def findOELabel(self, oe, print_generic=True):
         """

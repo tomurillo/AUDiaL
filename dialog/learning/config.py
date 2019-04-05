@@ -2,6 +2,8 @@
 Suggestion learning configuration constants
 """
 
+LEARNING_ENABLED = True
+
 # Reward given to resources chosen by the user in a dialogue
 CHOSEN_REWARD = 1.0
 

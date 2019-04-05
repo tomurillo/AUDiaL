@@ -314,6 +314,24 @@ class Consolidator(object):
             newPoc.mainSubjectPriority = poc.mainSubjectPriority
         return newPoc
 
+    def resolveFilterSubject(self, q_filter, ocs):
+        """
+        Resolve to what element of the query a filter refers to
+        :param q_filter: QueryFilterCardinal instance being resolved
+        :param ocs: list<mixed<SemanticConcept; POC>> Property OCs or POC that was chosen as the subject of the filter
+        :return: updated Query
+        """
+        if self.q and self.q.filters:
+            new_filters = [f for f in self.q.filters if f != q_filter]
+            for oc in ocs:
+                if isinstance(oc, POC):
+                    q_filter.result = True  # Subject is the question's focus
+                else:
+                    q_filter.property = oc  # Subject is a datatype property
+            new_filters.append(q_filter)
+            self.q.filters = new_filters
+            return self.q
+
     def resolvePOCtoOC(self, poc, ocs):
         """
         Updates the query object after the user has resolved a POC, mapping it to a OC

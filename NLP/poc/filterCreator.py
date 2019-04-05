@@ -1,6 +1,7 @@
 from const import *
 from NLP.util.TreeUtil import getSubtreesAtHeight, treeRawString
 from NLP.model.QueryFilter import *
+from GeneralUtil import isNumber
 
 
 class FilterCreator(object):

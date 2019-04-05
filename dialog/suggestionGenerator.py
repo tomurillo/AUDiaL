@@ -136,7 +136,9 @@ class SuggestionGenerator(object):
         """
         votes = []
         if isinstance(focus, POC):
-            votes.append(self.createFocusVote(focus))
+            vote = self.createFocusVote(focus)
+            if vote:
+                votes.append(vote)
         if add_vis:
             from dialog.learning.config import PRIORITY_DIAG_LABELS
             from const import VIS_NS
@@ -147,6 +149,9 @@ class SuggestionGenerator(object):
                 v.vote += 1
             votes.append(v)
         votes.extend(self.createGenericVotes(key, filter.annotation, add_none=True))
+        if add_none:
+            none_vote = self.createNoneVote(focus)
+            votes.append(none_vote)
         return votes
 
     def createFocusVote(self, poc):
@@ -155,8 +160,13 @@ class SuggestionGenerator(object):
         :param poc: POC instance; the query's focus
         :return: Vote instance
         """
-        v = Vote()
-        v.candidate = poc
+        v = None
+        if isinstance(poc, POC):
+            v = Vote()
+            if isinstance(poc.head, POC):
+                v.candidate = poc.head
+            else:
+                v.candidate = poc
         return v
 
     def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None, add_text_labels=False):

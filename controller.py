@@ -5,7 +5,6 @@ from oc.triple_utils import *
 from NLP.parser.CommandParser import *
 from NLP.SimpleNLHandler import *
 from NLP.NLHandler import *
-from NLP.model.QueryFilter import *
 from mapper.Mapper import *
 from oc.OCUtil import *
 from oc.OCCreator import addSemanticConcepts
@@ -80,19 +79,25 @@ class Controller(object):
         :return: A suggestion pair if the query cannot be resolved after having considered the vote; False otherwise
         (no further dialogue needed; query instance is resolved and task needs to be performed next)
         """
-        from dialog.learning.util import updateVoteScores, updateLearningModel
+        from dialog.learning.util import updateVoteScores, updateLearningModel, LEARNING_ENABLED
         suggestion_pair_dict = session.get('suggestion_pair')
         self.consolidator = Consolidator(self.q)
         if self.q and vote_id and suggestion_pair_dict:
             suggestion_pair = SuggestionPair()
             suggestion_pair.from_dict(suggestion_pair_dict)
             votes_chosen = updateVoteScores(suggestion_pair, vote_id)
-            updateLearningModel(suggestion_pair, self.o)
+            if LEARNING_ENABLED:
+                updateLearningModel(suggestion_pair, self.o)
             scs_updated = [v.candidate for v in votes_chosen]  # OCs chosen by the user in dialogue
             if scs_updated:
-                if suggestion_pair.subject:  # It was a POC -> OC mapping dialogue
+                if suggestion_pair.subject:
+                    # It was a POC -> OC mapping dialogue
                     self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)
-                else:  # It was a disambiguation dialogue between OCs
+                elif suggestion_pair.filter:
+                    # It was a filter disambiguation
+                    self.q = self.consolidator.resolveFilterSubject(suggestion_pair.filter, scs_updated)
+                else:
+                    # It was a disambiguation dialogue between OCs
                     self.q = self.consolidator.disambiguateOCs(scs_updated)
             #  Call generateDialogs again; query may still have unresolved elements
             self.dialogue = DialogHandler(self.q, self.o)
@@ -137,7 +142,6 @@ class Controller(object):
         :return: list<QueryFilter>
         """
         filters = []
-        # TODO add cardinal filters and remove associated POCs
         #  Remaining semantic concepts are considered nominal filters
         for sc_list in self.q.semanticConcepts:
             if sc_list:

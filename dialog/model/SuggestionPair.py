@@ -58,9 +58,12 @@ class SuggestionPair(object):
                 self.subject = None
             filter_dict = d.get('filter')
             if filter_dict:
-                qf = QueryFilter()
-                qf.from_dict(filter_dict)
-                self.filter = qf
+                f_type = filter_dict.get('type', 'QueryFilter')
+                if f_type in globals():
+                    f_class = globals()[f_type]
+                    qf = f_class()
+                    qf.from_dict(filter_dict)
+                    self.filter = qf
             else:
                 self.filter = None
         else:

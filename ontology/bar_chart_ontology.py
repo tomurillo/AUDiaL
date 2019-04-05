@@ -1,7 +1,7 @@
 from ontology.upper_vis_ontology import UpperVisOntology
 from sys import float_info
 from rdflib import XSD
-from util import *
+from GeneralUtil import isNumber
 
 
 class BarChartOntology(UpperVisOntology):

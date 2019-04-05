@@ -70,10 +70,10 @@ def retrieve_values():
 
 @app.route('/_vote_selected')
 def vote_selected():
+    output_type = 'answer'
     try:
         current = request.args.get('current_graphic', '')
         vote_id = request.args.get('vote_id', '')
-        output_type = 'answer'
         c = Controller(current)
         if c.isOntologyLoaded():
             if vote_id:
@@ -89,7 +89,8 @@ def vote_selected():
                        output_type=output_type)
     except Exception as e:
         session.clear()
-        return jsonify(result=printException(e))
+        return jsonify(result=printException(e),
+                       output_type=output_type)
 
 
 @app.route('/_filter')

@@ -40,3 +40,17 @@ def asWindows(unixpath):
     :return: string; transformed input path
     """
     return unixpath.replace('/','\\')
+
+
+def isNumber(n):
+    """
+    Checks whether the given string is a number
+    :param n: The string to be checked
+    :return boolean: True if the string can be converted to a float,
+    False otherwise
+    """
+    try:
+        float(n)
+        return True
+    except ValueError:
+        return False

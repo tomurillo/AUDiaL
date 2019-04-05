@@ -28,12 +28,12 @@ class DialogHandler(object):
         :return: SuggestionPair instance if a dialogue is necessary; None otherwise (question can be resolved)
         """
         pair = None
-        if self.filterClarificationRequired():  # Any unresolved filters left?
-            pair = self.generateFilterClarificationDialog()
-        elif self.disambiguationRequired():  # Give priority to disambiguation between OCs
+        if self.disambiguationRequired():  # Give priority to disambiguation between OCs
             pair = self.generateDisambiguationDialog()
         elif self.mappingRequired():
             pair = self.generateMappingDialog()
+        elif self.filterClarificationRequired():  # Any unresolved filters left?
+            pair = self.generateFilterClarificationDialog()
         if pair is False:
             pair = self.generateDialogs()  # Vote was automatically casted; no user action needed
         return pair
@@ -57,12 +57,16 @@ class DialogHandler(object):
             pair.votes = updateVotesFromLearningVotes(learning_votes, votes)
         else:
             pair.votes = votes
-            l_model = {}
-            learning_votes = getLearningVotesfromVotes(votes)
-            for lkey in learning_keys:
-                l_model[lkey] = learning_votes
-            saveLearningModel(l_model)
-        # TODO continue
+            if LEARNING_ENABLED:
+                l_model = {}
+                learning_votes = getLearningVotesfromVotes(votes)
+                for lkey in learning_keys:
+                    l_model[lkey] = learning_votes
+                saveLearningModel(l_model)
+        if pair.votes:
+            return pair
+        else:
+            return False
 
     def generateDisambiguationDialog(self):
         """
@@ -104,11 +108,12 @@ class DialogHandler(object):
             pair.votes = updateVotesFromLearningVotes(learning_votes, suggestion_votes)
         else:
             pair.votes = suggestion_votes
-            l_model = {}
-            learning_votes = getLearningVotesfromVotes(suggestion_votes)
-            for lkey in learning_keys:
-                l_model[lkey] = learning_votes
-            saveLearningModel(l_model)
+            if LEARNING_ENABLED:
+                l_model = {}
+                learning_votes = getLearningVotesfromVotes(suggestion_votes)
+                for lkey in learning_keys:
+                    l_model[lkey] = learning_votes
+                saveLearningModel(l_model)
         self.resolveOCwithVotesAutomatically(pair)
         if pair.votes:
             return pair
@@ -153,11 +158,12 @@ class DialogHandler(object):
             pair.votes = updateVotesFromLearningVotes(learning_votes, votes)
         else:
             pair.votes = votes
-            l_model = {}
-            learning_votes = getLearningVotesfromVotes(votes)
-            for lkey in learning_keys:
-                l_model[lkey] = learning_votes
-            saveLearningModel(l_model)
+            if LEARNING_ENABLED:
+                l_model = {}
+                learning_votes = getLearningVotesfromVotes(votes)
+                for lkey in learning_keys:
+                    l_model[lkey] = learning_votes
+                saveLearningModel(l_model)
         self.resolvePOCwithVotesAutomatically(pair)
         if pair.votes:
             return pair
@@ -210,11 +216,12 @@ class DialogHandler(object):
         :return: list<LearningVote>
         """
         votes = []
-        model = loadLearningModel()
-        if model:
-            for k in learning_keys:
-                key_votes = model.get(k, [])
-                votes.extend(key_votes)
+        if LEARNING_ENABLED:
+            model = loadLearningModel()
+            if model:
+                for k in learning_keys:
+                    key_votes = model.get(k, [])
+                    votes.extend(key_votes)
         return votes
 
     def generateInitialVotes(self, sc_list):

@@ -45,17 +45,3 @@ def stripNamespace(uri):
         else:
             return str(uri)
     return uri
-
-
-def isNumber(n):
-    """
-    Checks whether the given string is a number
-    :param n: The string to be checked
-    :return boolean: True if the string can be converted to a float,
-    False otherwise
-    """
-    try:
-        float(n)
-        return True
-    except ValueError:
-        return False

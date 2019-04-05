@@ -70,7 +70,7 @@ class Query(object):
         d['tokens'] = [list(t) for t in self.tokens]
         d['pt'] = str(self.pt) if self.pt else None
         d['semanticConcepts'] = []
-        d['filters'] = [f.to_dict for f in self.filters]
+        d['filters'] = [f.to_dict() for f in self.filters]
         for sc_list in self.semanticConcepts:
             d['semanticConcepts'].append([sc.to_dict() for sc in sc_list])
         return d
@@ -141,7 +141,7 @@ class Query(object):
                     if f_type in globals():
                         f_class = globals()[f_type]
                         f_instance = f_class()
-                        f_instance.from_dict(f_type)
+                        f_instance.from_dict(f_dict)
                         self.filters.append(f_instance)
         else:
             raise ValueError('Query.from_dict: parameter must be of type dict.')
