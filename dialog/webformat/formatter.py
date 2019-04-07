@@ -1,5 +1,5 @@
-from NLP.model.SemanticConcept import *
-from NLP.model.POC import *
+from NLP.model.QueryFilter import *
+from NLP.model.OE import *
 from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
@@ -62,8 +62,53 @@ class OutputFormatter(object):
         :param q_filter: QueryFilter instance being resolved
         :return: string; label of the focus
         """
-        label = poc.rawText
-        # TODO add info about operator and operand being used to filter focus
+        if isinstance(q_filter, QueryFilterCardinal):
+            label = self.operatorLabel(poc.rawText, q_filter.op, q_filter.operands)
+        else:
+            label = poc.rawText
+        return label
+
+    def operatorLabel(self, subject, operand, operator):
+        """
+        Converts a QueryFilterCardinal to a NL label
+        :param subject: string; the thing being compared
+        :param operand: list<string>; numbers or literals to compare against
+        :param operator: string; one of QueryFilterCardinal.CardinalFilter
+        :return: string; NL representation of the operator
+        """
+        label = subject
+        op_label = ''
+        add_be = True
+        add_not = False
+        if operator == QueryFilterCardinal.CardinalFilter.EQ:
+            op_label = 'equal'
+            add_be = False
+        elif operator == QueryFilterCardinal.CardinalFilter.NEQ:
+            op_label = 'equal to'
+            add_not = True
+        elif operator == QueryFilterCardinal.CardinalFilter.GT:
+            op_label = 'greater than'
+        elif operator == QueryFilterCardinal.CardinalFilter.LT:
+            op_label = 'less than'
+        elif operator == QueryFilterCardinal.CardinalFilter.GEQ:
+            op_label = 'at least'
+        elif operator == QueryFilterCardinal.CardinalFilter.LEQ:
+            op_label = 'at most'
+        if add_be:
+            if self.p.singular_noun(label) is False:
+                label += " are"
+            else:
+                label += " is"
+            if add_not:
+                label += "n't"
+        else:
+            if self.p.singular_noun(label) is False:
+                label += " equal"
+            else:
+                label += "equals"
+        if add_be:
+            label += " %s" % op_label
+        label += " %s" % ', '.join(operand)
         return label
 
     def findOELabel(self, oe, print_generic=True):

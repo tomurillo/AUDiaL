@@ -68,7 +68,7 @@ class Controller(object):
             session['suggestion_pair'] = suggestion_pair.to_dict()
             # Output dialog
             from dialog.webformat.formatter import OutputFormatter
-            formatter = OutputFormatter(self.o, skip_inflect=True)
+            formatter = OutputFormatter(self.o)
             return formatter.suggestionPairToJSON(suggestion_pair)
         return False
 
@@ -107,7 +107,7 @@ class Controller(object):
                 session['suggestion_pair'] = suggestion_pair_new.to_dict()
                 # Output dialog
                 from dialog.webformat.formatter import OutputFormatter
-                formatter = OutputFormatter(self.o, skip_inflect=True)
+                formatter = OutputFormatter(self.o)
                 return formatter.suggestionPairToJSON(suggestion_pair_new)
         return False
 
