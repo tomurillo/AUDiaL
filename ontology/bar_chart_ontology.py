@@ -628,6 +628,7 @@ class BarChartOntology(UpperVisOntology):
             bars = self.__filterBarsWithFilters(pos_labels, negate=False, barset=bars)
         if neg_labels:
             bars = self.__filterBarsWithFilters(neg_labels, negate=True, barset=bars)
+        to_remove = set()
         if bars:
             for f in cardinal_f_result:
                 for o in f.operands:
@@ -635,7 +636,6 @@ class BarChartOntology(UpperVisOntology):
                                                      negate=f.negate, barset=bars)
                     if not bars:
                         break
-            to_remove = set()
             for b in bars:
                 bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
                 for f in cardinal_f_label:
