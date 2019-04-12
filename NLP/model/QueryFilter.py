@@ -9,6 +9,7 @@ class QueryFilter(object):
     """
     def __init__(self, annotation=None):
         self.annotation = annotation  # Query annotation
+        self.negate = False  # Whether to negate the result i.e., return elements not meeting filter criteria
         self.operands = []  # List of operands e.g. datatype property value or instance names
         self.pocs = []  # List of POCs found within the filter's annotation
 
@@ -17,7 +18,7 @@ class QueryFilter(object):
         Converts this QueryFilter to an equivalent dictionary of builtins
         :return: dict
         """
-        d = {'type': 'QueryFilter', 'operands': self.operands}
+        d = {'type': 'QueryFilter', 'operands': self.operands, 'negate': self.negate}
         if self.annotation:
             d['annotation'] = self.annotation.to_dict()
         else:
@@ -32,6 +33,7 @@ class QueryFilter(object):
         :return: None; updates current instance
         """
         self.operands = d.get('operands', [])
+        self.negate = d.get('negate', False)
         a_dict = d.get('annotation')
         if a_dict:
             annotation = Annotation()
@@ -50,6 +52,8 @@ class QueryFilter(object):
     def __eq__(self, other):
         if not isinstance(other, QueryFilter):
             return False
+        if self.negate != other.negate:
+            return False
         elif other.annotation != self.annotation:
             return False
         elif set(other.operands) != set(self.operands):
@@ -61,7 +65,7 @@ class QueryFilter(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.annotation) ^ hash(tuple(self.operands)) ^ hash(tuple(self.pocs))
+        return hash(self.annotation) ^ hash(self.negate) ^ hash(tuple(self.operands)) ^ hash(tuple(self.pocs))
 
 
 class QueryFilterNominal(QueryFilter):
@@ -111,6 +115,28 @@ class QueryFilterCardinal(QueryFilter):
         LT = "less_than"
         LEQ = "less_equal_than"
         SIM = 'similar_to'
+
+    def opToPython(self):
+        """
+        Returns the Python equivalent of this QueryFilter's operator
+        :return: string; string operator representation such as '<' or '='
+        """
+        op = None
+        if self.op == self.CardinalFilter.EQ:
+            op = '='
+        elif self.op == self.CardinalFilter.NEQ:
+            op = '!='
+        elif self.op == self.CardinalFilter.GT:
+            op = '>'
+        elif self.op == self.CardinalFilter.GEQ:
+            op = '>='
+        elif self.op == self.CardinalFilter.LT:
+            op = '<'
+        elif self.op == self.CardinalFilter.LEQ:
+            op = '<='
+        elif self.op == self.CardinalFilter.SIM:
+            op = '~='
+        return op
 
     def to_dict(self):
         """

@@ -34,17 +34,23 @@ class Annotation(object):
         else:
             return True
 
-    def overlaps(self, other):
+    def overlaps(self, other, strict=True):
         """
         Returns whether the current annotation overlaps the given one i.e.
-        whether the other annotation is strictly contained within this
-        :param other:
+        whether the other annotation contained within this
+        :param other: the other Annotation instance
+        :param strict: whether the containment has to be strict (fully contained) or not (beginning and/or end
+        offsets can match)
         :return:
         """
         overlaps = False
         if type(other) is Annotation:
-            if other.start > self.start and other.end < self.end:
-                overlaps = True
+            if strict:
+                if other.start > self.start and other.end < self.end:
+                    overlaps = True
+            else:
+                if other.start >= self.start and other.end <= self.end:
+                    overlaps = True
         return overlaps
 
     def populateFromPOC(self, poc):

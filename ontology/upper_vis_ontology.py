@@ -172,8 +172,9 @@ class UpperVisOntology(UpperOntology):
         """
         STRUCTURAL_TASK = "Structural_Task"
         class ReadingTask:
-            RETRIEVE_VAL = "Retrieve_Value_Task" # bars -> attributes, values
-            FILTER = "Filter_Task" # attributes, values -> bars
+            RETRIEVE_VAL = "Retrieve_Value_Task"  # bars -> attributes, values
+            FILTER = "Filter_Task"  # attributes, values -> bars
+            APPLY_QFILTER = "Apply_Query_Filter_Task"  # list<QueryFilter> -> bars
             SUMMARY = "Summary_Task"  # Compute summary
         class NavigationTask:
             GOTO_FIRST = "Go_to_First_Task"

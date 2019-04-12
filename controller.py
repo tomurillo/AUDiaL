@@ -118,27 +118,23 @@ class Controller(object):
         """
         answer = 'Your query could not be resolved'
         if allOCsShareNamespace(self.q.semanticConcepts, self.o.VIS_NS):
-            self.q.filters = self.getFiltersFromQuery()
-            # TODO add tasks
-            nominal_filters = []  # Labels to filter as-is
-            for f in self.q.filters:
-                if isinstance(f, QueryFilterNominal):
-                    nominal_filters.extend(f.operands)
+            self.q.filters.extend(self.getFiltersFromQuery())
             if isinstance(self.o, BarChartOntology):
-                bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.FILTER, filters=nominal_filters)
+                bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.APPLY_QFILTER, filters=self.q.filters)
                 if bars:
-                    answer = '<h5>The following %d bars matched your query:<h5/><ul>' % len(bars)
+                    answer = '<h5>The following %d bars matched your query:</h5><ul>' % len(bars)
                     for bar in bars:
                         answer += self.__printBarDetails(bar)
                     answer += "</ul>"
                     answer += self.__summarizeBars(bars)
+            # TODO add tasks
         else:
             answer = self.fetchAnswerFromDomain()
         return answer
 
     def getFiltersFromQuery(self):
         """
-        Infer filters from a user's query
+        Infer remaining filters from a user's query
         :return: list<QueryFilter>
         """
         filters = []

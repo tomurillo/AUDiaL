@@ -42,6 +42,25 @@ def asWindows(unixpath):
     return unixpath.replace('/','\\')
 
 
+def stringOpToPython(string_op, negate=False):
+    """
+    Converts a string representation of an operator to its Python equivalent
+    :param string_op: an operator e.g. '>', '<', '=', '>=', '<='
+    :return: an equivalent operator function
+    """
+    import operator
+    op = None
+    ops = {'>': operator.gt, '<': operator.lt, '=': operator.eq
+        , '<=': operator.le, '>=': operator.ge, '!=': operator.ne}
+    negops = {'<=': operator.gt, '>=': operator.lt, '!=': operator.eq
+        , '>': operator.le, '<': operator.ge, '=': operator.ne}
+    if string_op in ops:
+        if negate:
+            op = negops[string_op]
+        else:
+            op = ops[string_op]
+    return op
+
 def isNumber(n):
     """
     Checks whether the given string is a number

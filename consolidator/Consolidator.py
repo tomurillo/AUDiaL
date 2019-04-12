@@ -26,6 +26,7 @@ class Consolidator(object):
         self.q.pocs = self.removeUselessTokens(pocs_no_jj)
         self.cleanSemanticConcepts()
         self.consolidatePOCsWithOCs()
+        self.removedContainerFilters()
         return self.q
 
     def consolidateAnswerType(self):
@@ -114,7 +115,6 @@ class Consolidator(object):
                 overlapping_filters.append(qf)
         return overlapping_filters
 
-
     def matchingOCsOfPOC(self, poc):
         """
         Returns which of the query's Semantic Concepts match the given POC (i.e. they have the same start and
@@ -162,24 +162,46 @@ class Consolidator(object):
         :return: None; updates Query attribute
         """
         focus = self.q.focus
-        if self.q.semanticConcepts and focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
+        if self.q.semanticConcepts:
             new_scs = []
             for sc_list in self.q.semanticConcepts:
-                add = False
+                add = True
+                skip = False
                 if sc_list:
                     first_sc = sc_list[0]
                     if first_sc and first_sc.OE and first_sc.OE.annotation:
                         ann = first_sc.OE.annotation
                         for qf in self.q.filters:
-                            if ann.start < qf.annotation.start or ann.end > qf.annotation.end:
-                                add = True
+                            if qf.annotation.overlaps(ann, strict=False):
+                                add = False
+                                skip = True
                                 break
-                        if ann.start != focus.start or ann.end != focus.end:
-                            #  No overlap --> keep SemanticConcept list
-                            add = True
+                        if not skip and focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
+                            if ann.start == focus.start and ann.end == focus.end:
+                                #  overlap --> remove SemanticConcept list
+                                add = False
                 if add:
                     new_scs.append(sc_list)
             self.q.semanticConcepts = sorted(new_scs, cmp=SemanticConceptListCompareOffset)
+
+    def removedContainerFilters(self):
+        """
+        Keeps only the bottommost filters as found in the query parse tree
+        :return: None; updates Query attribute
+        """
+        to_remove = set()
+        for i, f in enumerate(self.q.filters):
+            j = i + 1
+            while j < len(self.q.filters):
+                ann1 = f.annotation
+                ann2 = self.q.filters[j].annotation
+                if ann1.overlaps(ann2, strict=False):
+                    to_remove.add(f)
+                elif ann2.overlaps(ann1, strict=False):
+                    to_remove.add(self.q.filters[j])
+                j += 1
+        new_filters = [f for f in self.q.filters if f not in to_remove]
+        self.q.filters = new_filters
 
     def removeDuplicatedSemanticConcepts(self):
         """

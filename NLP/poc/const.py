@@ -9,11 +9,15 @@ FILTER_COMP_LABELS = [JJR_TREE_POS_TAG, RBR_TREE_POS_TAG, JJ_TREE_POS_TAG, IN_TR
 
 FILTER_SUP_LABELS = [JJS_TREE_POS_TAG, RBS_TREE_POS_TAG]
 
-FILTER_OPERAND_LABELS = [CD_TREE_POS_TAG, NNP_TREE_POS_TAG, NNPS_TREE_POS_TAG, NN_TREE_POS_TAG, NNS_TREE_POS_TAG]
+FILTER_OPERAND_LABELS = [CD_TREE_POS_TAG, NNS_TREE_POS_TAG, NNP_TREE_POS_TAG, NNPS_TREE_POS_TAG, NN_TREE_POS_TAG,
+                         VBN_TREE_POS_TAG, JJ_TREE_POS_TAG]
 
-FILTER_GT_TOKENS = ['more', 'higher', 'greater', 'bigger', 'larger', 'over', 'exceeding']
+# Stanford parser sometimes considers numbers VBN or JJ (?)
+FILTER_NUMBER_LABELS = [CD_TREE_POS_TAG, VBN_TREE_POS_TAG, JJ_TREE_POS_TAG]
 
-FILTER_LT_TOKENS = ['lower', 'less', 'smaller', 'below']
+FILTER_GT_TOKENS = ['more', 'higher', 'greater', 'bigger', 'larger', 'over', 'exceeding', 'after']
+
+FILTER_LT_TOKENS = ['lower', 'less', 'smaller', 'below', 'before']
 
 FILTER_EQ_TOKENS = ['same', 'equal', 'identical', 'exactly']
 

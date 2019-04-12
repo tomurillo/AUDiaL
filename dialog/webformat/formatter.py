@@ -7,7 +7,7 @@ from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
 
 class OutputFormatter(object):
     """
-    Utility methods for transforming Dialog suggestions and answers into JSON for Web display
+    Utility methods for transforming Dialog suggestions and answers for their display to the user
     """
     def __init__(self, ontology, skip_inflect=False):
         """
@@ -63,7 +63,7 @@ class OutputFormatter(object):
         :return: string; label of the focus
         """
         if isinstance(q_filter, QueryFilterCardinal):
-            label = self.operatorLabel(poc.rawText, q_filter.op, q_filter.operands)
+            label = self.operatorLabel(poc.rawText, q_filter.operands, q_filter.op)
         else:
             label = poc.rawText
         return label

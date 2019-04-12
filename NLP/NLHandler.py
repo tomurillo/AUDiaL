@@ -34,7 +34,7 @@ class NLHandler(object):
         """
         if isinstance(query, Query) and query.pocs:
             filter_creator = FilterCreator(query)
-            query.filters = filter_creator.generateFilters()
+            query.filters = filter_creator.generateCardinalFilters()
         return query
 
     def lemmatizeTree(self, ptree, lemma):

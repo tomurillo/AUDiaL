@@ -110,7 +110,7 @@ class GraphNavStanfordParser(object):
         ignore_list.append(Tree(NP_TREE_POS_TAG, [Tree(DT_TREE_POS_TAG, ['the']), Tree(NN_TREE_POS_TAG, ['number'])]))
         ignore_list.append(Tree(NP_TREE_POS_TAG, [Tree(DT_TREE_POS_TAG, ['the']), Tree(NN_TREE_POS_TAG, ['amount'])]))
         focus_tags = [NP_TREE_POS_TAG, NN_TREE_POS_TAG, NNP_TREE_POS_TAG, NNS_TREE_POS_TAG, NNPS_TREE_POS_TAG,
-                      NX_TREE_POS_TAG]
+                      NX_TREE_POS_TAG, WHNP_TREE_POS_TAG]
         # First element in query matching heuristics
         for poc in query.pocs:
             if poc.tree.label() in focus_tags and poc not in ignore_list:

@@ -1,7 +1,8 @@
 from ontology.upper_vis_ontology import UpperVisOntology
+from NLP.model.QueryFilter import QueryFilterCardinal, QueryFilterNominal
 from sys import float_info
 from rdflib import XSD
-from GeneralUtil import isNumber
+from GeneralUtil import isNumber, stringOpToPython
 
 
 class BarChartOntology(UpperVisOntology):
@@ -210,17 +211,12 @@ class BarChartOntology(UpperVisOntology):
         @return: a set of bar instance names
         """
         barset = self.__filterBarsWithFilters(filters, negate, barset)
-        import operator
-        ops = { '>' : operator.gt, '<' : operator.lt, '=' : operator.eq
-               , '<=' : operator.le, '>=' : operator.ge, '!=' : operator.ne }
-        negops = { '<=' : operator.gt, '>=' : operator.lt, '!=' : operator.eq
-                  , '>' : operator.le, '<' : operator.ge, '=' : operator.ne }
-        if operand is not None and op in ops:
+        op = stringOpToPython(op, negate)
+        if operand is not None and op:
             filtered = set()
             for bar in barset:
                 l = self.getMetricBarValue(bar)
-                if ((negate and negops[op](l, float(operand))) or
-                    (not negate and ops[op](l, float(operand)))):
+                if op(l, float(operand)):
                     filtered.add(bar)
             return filtered
         elif operand is None:
@@ -579,7 +575,10 @@ class BarChartOntology(UpperVisOntology):
         @kwargs: the named parameters required by the task
         @return: The output of the given task, usually a bar subset
         """
-        if task == self.StructuralTask.ReadingTask.FILTER:
+        if task == self.StructuralTask.ReadingTask.APPLY_QFILTER:
+            filters = kwargs['filters'] if 'filters' in kwargs else None
+            return self.filterBars(filters)
+        elif task == self.StructuralTask.ReadingTask.FILTER:
             filters = kwargs['filters'] if 'filters' in kwargs else None
             operator = kwargs['operator'] if 'operator' in kwargs else None
             operand = kwargs['operand'] if 'operand' in kwargs else None
@@ -597,6 +596,55 @@ class BarChartOntology(UpperVisOntology):
             barset = kwargs['barset'] if 'barset' in kwargs else []
             info = self.computeExtreme(ops, barset)
             return info
+
+    def filterBars(self, query_filters):
+        """
+        Filter chart bars according to the given QueryFilter instances
+        :param query_filters: list<QueryFilter>
+        :return: list<string> bar instance URIs
+        """
+        labels = {}  # {Textual label: negate}
+        cardinal_f_result = []  # Cardinal Filters applied to result
+        cardinal_f_label = []  # Cardinal Filters applied to labels
+        for f in query_filters:
+            if isinstance(f, QueryFilterNominal):
+                for o in f.operands:
+                    labels[o] = f.negate
+            elif isinstance(f, QueryFilterCardinal):
+                if f.result:
+                    cardinal_f_result.append(f)
+                elif f.property and f.property.OE.uri == "%s#%s" % (self.VIS_NS, self.SyntacticProperty.IS_LABELED_BY):
+                    cardinal_f_label.append(f)
+        # Apply nominal filters first
+        pos_labels = []
+        neg_labels = []
+        for l, n in labels.iteritems():
+            if n:
+                neg_labels.append(l)
+            else:
+                pos_labels.append(l)
+        bars = set(self.getMetricBars() + self.getStackedBars())
+        if pos_labels:
+            bars = self.__filterBarsWithFilters(pos_labels, negate=False, barset=bars)
+        if neg_labels:
+            bars = self.__filterBarsWithFilters(neg_labels, negate=True, barset=bars)
+        if bars:
+            for f in cardinal_f_result:
+                for o in f.operands:
+                    bars = self.filterBarsWithValues(filters=None, op=f.opToPython(), operand=o,
+                                                     negate=f.negate, barset=bars)
+                    if not bars:
+                        break
+            to_remove = set()
+            for b in bars:
+                bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
+                for f in cardinal_f_label:
+                    op = stringOpToPython(f.opToPython(), f.negate)
+                    for b_f in bar_filters:
+                        for o in f.operands:
+                            if not op(b_f, o):
+                                to_remove.add(b)
+        return list(bars - to_remove)
 
     def computeExtreme(self, ops, bars):
         """

@@ -1,3 +1,5 @@
+from NLP.util.TreeUtil import immutableCopy
+
 class POC(object):
     """
     Potential Ontology Concept (POC) class
@@ -161,6 +163,6 @@ class POC(object):
 
     def __hash__(self):
         return hash(self.rawText) ^ hash(self.start) ^ hash(self.end) \
-               ^ hash(self.start_original) ^ hash(self.end_original) ^ hash(self.tree) ^ hash(self.head) \
+               ^ hash(self.start_original) ^ hash(self.end_original) ^ hash(immutableCopy(self.tree)) ^ hash(self.head) \
                ^ hash(self.mainSubjectPriority) ^ hash((self.start, self.end, self.start_original, self.end_original)) \
-               ^ hash(tuple(self.modifiers))
+               ^ hash(tuple([immutableCopy(m) for m in self.modifiers]))

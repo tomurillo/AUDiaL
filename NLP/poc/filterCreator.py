@@ -15,9 +15,9 @@ class FilterCreator(object):
         """
         self.q = query
 
-    def generateFilters(self):
+    def generateCardinalFilters(self):
         """
-        Add filters to the Query
+        Add cardinal filter instances to the Query
         :return: list<QueryFilter> with found cardinal filters
         """
         filters = []
@@ -34,7 +34,9 @@ class FilterCreator(object):
                         if parsed_op:
                             qf_operators.append(parsed_op)
                     elif pt.label() in FILTER_OPERAND_LABELS:
-                        operand = treeRawString(pt)
+                        raw_text = treeRawString(pt)
+                        if pt.label() not in FILTER_NUMBER_LABELS or isNumber(raw_text):
+                            operand = raw_text
                     elif pt.label() in FILTER_CONJ_LABELS:
                         or_conj = True
                 if qf_operators and operand:

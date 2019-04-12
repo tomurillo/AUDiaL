@@ -65,7 +65,7 @@ def retrieve_values():
                        output_type=output_type)
     except Exception as e:
         session.clear()
-        return jsonify(result=printException(e))
+        return jsonify(result=printException(e), output_type='answer')
 
 
 @app.route('/_vote_selected')
