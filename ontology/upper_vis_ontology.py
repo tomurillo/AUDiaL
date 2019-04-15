@@ -165,6 +165,7 @@ class UpperVisOntology(UpperOntology):
                 DIAGONAL_LEFT_ORIENTATION = "Diagonal_Left_Orientation"
                 DIAGONAL_RIGHT_ORIENTATION = "Diagonal_Right_Orientation"
 
+    VISUALIZATION_TASK = 'Visualization_Task'
     class StructuralTask:
         """
         Enum-like class containing classes defining structural (i.e. objective)
@@ -176,6 +177,10 @@ class UpperVisOntology(UpperOntology):
             FILTER = "Filter_Task"  # attributes, values -> bars
             APPLY_QFILTER = "Apply_Query_Filter_Task"  # list<QueryFilter> -> bars
             SUMMARY = "Summary_Task"  # Compute summary
+        class DerivedValueTask:
+            AVERAGE = 'Compute_Average_Task'
+            MODE = 'Compute_Mode_Task'
+            COUNT = 'Count_Task'
         class NavigationTask:
             GOTO_FIRST = "Go_to_First_Task"
             GOTO_LAST = "Go_to_Last_Task"
@@ -216,6 +221,7 @@ class UpperVisOntology(UpperOntology):
         HAS_RESULT_SPOKEN = "task_has_spoken_result"
         HAS_ORDER = "hasOrder"
         IS_INTENTION = "task_is_intention"
+        HAS_VERBALIZATION = "task_has_verbalization"
 
     SYNT_ENTS = []  # Syntactic Entities Array i.e. ['GRAPHIC_OBJECT', ... ]
     SYNT_ROLES = []  # Syntactic Roles Array i.e. ['AXIS', 'CONTAINER', ... ]
@@ -650,6 +656,37 @@ class UpperVisOntology(UpperOntology):
         """
         return self.StructuralTask.STRUCTURAL_TASK in \
                                                 self.getClassOfElement(task)
+
+    def getTaskVerbalizations(self, tasks='all', ns=None):
+        """
+        Return a list of task verbalizations (keywords that may appear in the user query when referring to the task)
+        :param task: list<string>: Task instance names, 'all' to consider all instances
+        :return: dict<string; list<string>: {task: list of verbalizations for task}
+        """
+        verbs = {}
+        if not isinstance(tasks, list):
+            if tasks == 'all':
+                task = '%s#%s' % (self.VIS_NS, self.VISUALIZATION_TASK)
+                tasks = self.getSubclasses(task, self.VIS_NS)
+            elif isinstance(tasks, basestring):
+                tasks = [tasks]
+            else:
+                return verbs
+        task_instances = []
+        subclasses = []
+        for t in tasks:
+            subclasses.extend(self.getSubclasses(t, ns))
+            task_instances.extend(self.getInstances(t))
+        for sc in subclasses:
+            task_instances.extend(self.getInstances(sc))
+        for t in task_instances:
+            if t in verbs:
+                verbs[t].extend(self.getObjects(t, self.TaskProperty.HAS_VERBALIZATION))
+            else:
+                t_v = self.getObjects(t, self.TaskProperty.HAS_VERBALIZATION)
+                if t_v:
+                    verbs[t] = t_v
+        return verbs
 
     def getTaskQuery(self, task):
         """

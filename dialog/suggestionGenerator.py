@@ -24,7 +24,7 @@ class SuggestionGenerator(object):
         self.o = ontology
         self.force_parents = force_parents
 
-    def createVotes(self, key, poc, add_none, skip=None, add_text_labels=False):
+    def createVotes(self, key, poc, add_none, skip=None, add_text_labels=False, skip_non_tasks=False):
         """
         Generate learning votes for the given parameters
         :param key: SuggestionKey instance; contains neighbor OEs and user text
@@ -32,6 +32,7 @@ class SuggestionGenerator(object):
         :param add_none: whether to add None votes to the list
         :param skip: list of SemanticConcepts to skip; default None
         :param add_text_labels: whether add textual labels found in the diagram to the suggestions
+        :param skip_non_tasks: whether to skip votes not related to visualization tasks
         :return: list<Vote>: votes generated from the SuggestionKey (neighbor suggested ontology resources) and a POC
         (user input not found in the ontology)
         """
@@ -39,24 +40,26 @@ class SuggestionGenerator(object):
         if skip is None:
             skip = []
         skip_uris = [sc.OE.print_uri() for sc in skip]
-        if add_text_labels:
+        if add_text_labels and not skip_non_tasks:
             votes.extend(self.createTextVotes(key.text))
-        candidates = set()
-        for neighbor_sc in key.nearest_neighbors:
-            neighbor_candidates = set()
-            sc_candidates = self.findCandidateElements(neighbor_sc)
-            candidates.update(sc_candidates)
-            neighbor_candidates.update(sc_candidates)
-            votes.extend(self.createVotesfromOEs(sc_candidates, poc, key.text, neighbor_sc, skip_uris))
-            if neighbor_sc.OE not in neighbor_candidates:
-                votes.extend(self.createAdditionalVotes(key.text, neighbor_sc.OE, poc, added=True))
-        left_over_votes_oes = []
-        left_over_oes = self.findLeftOverOEs()
-        for oe in left_over_oes:
-            if oe not in candidates:
-                candidates.add(oe)
-                left_over_votes_oes.append(oe)
-        votes.extend(self.createVotesfromOEs(left_over_votes_oes, poc, key.text, None, skip_uris))
+        votes.extend(self.createTaskVotes(key.text))
+        if not skip_non_tasks:
+            candidates = set()
+            for neighbor_sc in key.nearest_neighbors:
+                neighbor_candidates = set()
+                sc_candidates = self.findCandidateElements(neighbor_sc)
+                candidates.update(sc_candidates)
+                neighbor_candidates.update(sc_candidates)
+                votes.extend(self.createVotesfromOEs(sc_candidates, poc, key.text, neighbor_sc, skip_uris))
+                if neighbor_sc.OE not in neighbor_candidates:
+                    votes.extend(self.createAdditionalVotes(key.text, neighbor_sc.OE, poc, added=True))
+            left_over_votes_oes = []
+            left_over_oes = self.findLeftOverOEs()
+            for oe in left_over_oes:
+                if oe not in candidates:
+                    candidates.add(oe)
+                    left_over_votes_oes.append(oe)
+            votes.extend(self.createVotesfromOEs(left_over_votes_oes, poc, key.text, None, skip_uris))
         if add_none:
             none_vote = self.createNoneVote(poc)
             votes.append(none_vote)
@@ -91,6 +94,30 @@ class SuggestionGenerator(object):
                 else:
                     break
         return votes.values()
+
+    def createTaskVotes(self, key_text):
+        """
+        Create votes from visualization task instances
+        :param key_text: text input by the user
+        :return: list<Vote>
+        """
+        votes = []
+        tasks = self.o.getTaskVerbalizations()
+        for t, verbs in tasks.iteritems():
+            best_sim = -1
+            for v in verbs:
+                sim = self.computeSimilarityScore(key_text, v)
+                if sim > best_sim:
+                    best_sim = sim
+            vote = Vote()
+            t_uri = "%s#%s" % (self.o.VIS_NS, t)
+            sc = SemanticConcept()
+            sc.OE = self.createOntologyElementforURI(t_uri, 'instance', check_exists=False)
+            sc.task = t
+            vote.candidate = sc
+            vote.vote = best_sim
+            votes.append(vote)
+        return votes
 
     def createVotesfromOEs(self, oe_list, poc, text, sc_neighbor=None, skip_uris=None):
         """
@@ -169,7 +196,8 @@ class SuggestionGenerator(object):
                 v.candidate = poc
         return v
 
-    def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None, add_text_labels=False):
+    def createGenericVotes(self, key, poc, add_none=True, max=10000, skip=None, add_text_labels=False,
+                           skip_non_tasks=False):
         """
         Create potential votes when no neighbor OEs have been found in the user query
         :param key: SuggestionKey instance
@@ -178,6 +206,7 @@ class SuggestionGenerator(object):
         :param max: int; maximum number of votes to generate
         :param skip: list of SemanticConcepts to skip; default None
         :param add_text_labels: whether to add textual labels found in the diagram to the suggestions
+        :param skip_non_tasks: whether to skip votes not related to visualization tasks
         :return: list<Vote>
         """
         votes = []
@@ -185,33 +214,40 @@ class SuggestionGenerator(object):
         if skip is None:
             skip = []
         skip_uris = [sc.OE.print_uri() for sc in skip]
-        if add_text_labels:
-            votes.extend(self.createTextVotes(key.text))
-        oes = self.findGenericOEs(max, skip_uris)
-        for oe in oes:
-            if isinstance(poc, Annotation):
-                oe.annotation = poc
-            else:
-                oe.annotation = Annotation()
-                oe.annotation.populateFromPOC(poc)
-            vote = self.createVote(key.text, oe)
-            votes.append(vote)
-            n += 1
-            n_left = max - n
-            if n_left > 0:
-                all_additional_votes = self.createAdditionalVotes(key.text, oe, poc, added=False)
-                additional_votes = all_additional_votes[:n_left]
-                votes.extend(additional_votes)
-                n += len(additional_votes)
-                if n >= max:
-                    break
+        if add_text_labels and not skip_non_tasks:
+            text_votes = self.createTextVotes(key.text)
+            votes.extend(text_votes)
+            n += len(text_votes)
         if n < max:
+            task_votes = self.createTaskVotes(key.text)
+            votes.extend(task_votes)
+            n += len(task_votes)
+        if n < max and not skip_non_tasks:
+            oes = self.findGenericOEs(max, skip_uris)
+            for oe in oes:
+                if isinstance(poc, Annotation):
+                    oe.annotation = poc
+                else:
+                    oe.annotation = Annotation()
+                    oe.annotation.populateFromPOC(poc)
+                vote = self.createVote(key.text, oe)
+                votes.append(vote)
+                n += 1
+                n_left = max - n
+                if n_left > 0:
+                    all_additional_votes = self.createAdditionalVotes(key.text, oe, poc, added=False)
+                    additional_votes = all_additional_votes[:n_left]
+                    votes.extend(additional_votes)
+                    n += len(additional_votes)
+                    if n >= max:
+                        break
+        if n < max and not skip_non_tasks:
             n_left = max - n
             all_leftover_votes = self.createVotesfromOEs(self.findLeftOverOEs(), poc, key.text, None, skip_uris)
             leftover_votes = all_leftover_votes[:n_left]
             n += len(leftover_votes)
             votes.extend(leftover_votes)
-        if add_none and n < max:
+        if add_none:
             none_vote = self.createNoneVote(poc)
             votes.append(none_vote)
         return votes

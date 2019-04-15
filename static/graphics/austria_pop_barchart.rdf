@@ -359,6 +359,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#task_has_verbalization -->
+
+    <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#task_has_verbalization">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </DatatypeProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -417,6 +426,14 @@
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Color_Named_VA">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Area-Fill_VA"/>
         <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Comparison_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Comparison_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
     </Class>
     
 
@@ -482,6 +499,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correspondence -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correspondence">
@@ -501,6 +526,14 @@
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Dependent_Variable">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Variable"/>
         <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Independent_Variable"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
     </Class>
     
 
@@ -526,6 +559,14 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distorted_Metric_Axis_GS">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Axis_GS"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
     </Class>
     
 
@@ -748,6 +789,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Navigation_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Navigation_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Object_Anchoring -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Object_Anchoring">
@@ -843,6 +892,14 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Proportional_Repetition_GR">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Lineup_GR"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
     </Class>
     
 
@@ -985,6 +1042,12 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Written_Text_GR -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Written_Text_GR">
@@ -1001,6 +1064,14 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Apply_Query_Filter_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Apply_Query_Filter_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
+    </NamedIndividual>
     
 
 
@@ -1574,6 +1645,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Average_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Average_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">average</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mean</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Mode_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Mode_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">middle</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mode</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Concave_Curve_Shape -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Concave_Curve_Shape">
@@ -1594,6 +1685,16 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Convex_Curve_Shape">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Count_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Count_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">count</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ns1:task_has_verbalization>
     </NamedIndividual>
     
 
@@ -1642,6 +1743,14 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Female">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Filter_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Filter_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
     </NamedIndividual>
     
 
@@ -1942,6 +2051,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Value_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Value_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Salzburg -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Salzburg">
@@ -2014,6 +2131,14 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Styria">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
     </NamedIndividual>
     
 
@@ -3878,6 +4003,7 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Chart_Domain"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Data"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
         </members>
     </rdf:Description>
     <rdf:Description>
@@ -3890,6 +4016,17 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Linking_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_By_Separator_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Superimposition_GR"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Comparison_Task"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Navigation_Task"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
         </members>
     </rdf:Description>
     <rdf:Description>
@@ -3979,6 +4116,24 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Written_Text_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Yellow"/>
         </distinctMembers>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointProperties"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#LocationPoint"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasSVGElement"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasXCoordinate"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasYCoordinate"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_area"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_color"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_length"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_orientation"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_population"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_text"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#locationPointX"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#locationPointY"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#task_has_verbalization"/>
+        </members>
     </rdf:Description>
 </rdf:RDF>
 
