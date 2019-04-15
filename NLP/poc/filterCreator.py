@@ -28,17 +28,27 @@ class FilterCreator(object):
                 qf_operator_combined = None
                 operand = None
                 or_conj = False
-                for pt in preters:
+                pos_start, pos_end = len(preters) - 1, 0
+                for i, pt in enumerate(preters):
+                    match = False
                     if pt.label() in FILTER_COMP_LABELS:
                         parsed_op = self.parseOperator(pt)
                         if parsed_op:
                             qf_operators.append(parsed_op)
+                            match = True
                     elif pt.label() in FILTER_OPERAND_LABELS:
                         raw_text = treeRawString(pt)
                         if pt.label() not in FILTER_NUMBER_LABELS or isNumber(raw_text):
                             operand = raw_text
+                            match = True
                     elif pt.label() in FILTER_CONJ_LABELS:
                         or_conj = True
+                        match = True
+                    if match:
+                        if i < pos_start:
+                            pos_start = i
+                        if i > pos_end:
+                            pos_end = i
                 if qf_operators and operand:
                     if or_conj and QueryFilterCardinal.CardinalFilter.EQ in qf_operators:
                         if QueryFilterCardinal.CardinalFilter.GT in qf_operators:
@@ -50,6 +60,7 @@ class FilterCreator(object):
                     if qf_operator_combined:
                         qfilter = QueryFilterCardinal(ann, qf_operator_combined)
                         qfilter.operands.append(operand)
+                        qfilter.start, qfilter.end = ann.start + pos_start, ann.start + pos_end
                         filters.append(qfilter)
         return filters
 
@@ -70,5 +81,4 @@ class FilterCreator(object):
             elif operator in FILTER_EQ_TOKENS:
                 qf_operator = QueryFilterCardinal.CardinalFilter.EQ
         return qf_operator
-
 

@@ -24,9 +24,9 @@ class Consolidator(object):
         """
         pocs_no_jj = self.separatePOCswithJJ()
         self.q.pocs = self.removeUselessTokens(pocs_no_jj)
+        self.removedContainerFilters()
         self.cleanSemanticConcepts()
         self.consolidatePOCsWithOCs()
-        self.removedContainerFilters()
         return self.q
 
     def consolidateAnswerType(self):

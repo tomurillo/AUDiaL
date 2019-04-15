@@ -38,16 +38,26 @@ class OutputFormatter(object):
                         if v not in votes:
                             votes.append(v)  # Append NoneVote
                         break
+            if pair.filter:
+                filter_task = self.operatorLabel(pair.filter.operands, pair.filter.op)
             for vote in votes:
                 if vote.candidate:
                     json_vote = {}
                     key_label = ''
                     task = None
-                    if isinstance(vote.candidate, SemanticConcept):
+                    if pair.filter:
+                        add_task = True
+                        if isinstance(vote.candidate, POC):
+                            key_label = self.createFocusLabel(vote.candidate, pair.filter)
+                        else:
+                            key_label = self.createFilterLabel(vote.candidate, pair.filter)
+                            if isinstance(vote.candidate.OE, OntologyNoneElement):
+                                add_task = False
+                        if add_task:
+                            task = filter_task
+                    elif isinstance(vote.candidate, SemanticConcept):
                         key_label = self.findOELabel(vote.candidate.OE)
                         task = vote.candidate.task
-                    elif isinstance(vote.candidate, POC):
-                        key_label = self.createFocusLabel(vote.candidate, pair.filter)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
                     json_vote['score'] = "%.2f" % vote.vote
@@ -63,29 +73,44 @@ class OutputFormatter(object):
         :return: string; label of the focus
         """
         if isinstance(q_filter, QueryFilterCardinal):
-            label = self.operatorLabel(poc.rawText, q_filter.operands, q_filter.op)
+            label = "Query result: '%s'" % poc.rawText
         else:
             label = poc.rawText
         return label
 
-    def operatorLabel(self, subject, operand, operator):
+    def createFilterLabel(self, prop_oc, q_filter):
         """
-        Converts a QueryFilterCardinal to a NL label
-        :param subject: string; the thing being compared
+        Create a label to de displayed for a query filter that may be applied to a property
+        :param prop_oc: SemanticConcept instance of the property
+        :param q_filter: QueryFilter instance being resolved
+        :return: string; label to be displayed in disambiguation dialogue
+        """
+        label = '(not found)'
+        if isinstance(q_filter, QueryFilterCardinal) and isinstance(prop_oc, SemanticConcept):
+            oc = prop_oc.OE
+            if isinstance(oc, OntologyDatatypePropertyElement):
+                from const import VIS_NS
+                vis_label_uri = "%s#%s" % (VIS_NS, 'is_labeled_by')
+                if oc.uri == vis_label_uri:
+                    label = "Diagram Labels"
+                else:
+                    label = self.findOELabel(oc)
+            else:
+                label = self.findOELabel(oc)
+        return label
+
+    def operatorLabel(self, operand, operator):
+        """
+        Converts a QueryFilterCardinal task to a NL label
         :param operand: list<string>; numbers or literals to compare against
         :param operator: string; one of QueryFilterCardinal.CardinalFilter
         :return: string; NL representation of the operator
         """
-        label = subject
-        op_label = ''
-        add_be = True
-        add_not = False
+        label = 'return those'
         if operator == QueryFilterCardinal.CardinalFilter.EQ:
-            op_label = 'equal'
-            add_be = False
-        elif operator == QueryFilterCardinal.CardinalFilter.NEQ:
             op_label = 'equal to'
-            add_not = True
+        elif operator == QueryFilterCardinal.CardinalFilter.NEQ:
+            op_label = 'not equal to'
         elif operator == QueryFilterCardinal.CardinalFilter.GT:
             op_label = 'greater than'
         elif operator == QueryFilterCardinal.CardinalFilter.LT:
@@ -94,20 +119,9 @@ class OutputFormatter(object):
             op_label = 'at least'
         elif operator == QueryFilterCardinal.CardinalFilter.LEQ:
             op_label = 'at most'
-        if add_be:
-            if self.p.singular_noun(label) is False:
-                label += " are"
-            else:
-                label += " is"
-            if add_not:
-                label += "n't"
         else:
-            if self.p.singular_noun(label) is False:
-                label += " equal"
-            else:
-                label += "equals"
-        if add_be:
-            label += " %s" % op_label
+            op_label = 'equal'
+        label += " %s" % op_label
         label += " %s" % ', '.join(operand)
         return label
 

@@ -12,13 +12,16 @@ class QueryFilter(object):
         self.negate = False  # Whether to negate the result i.e., return elements not meeting filter criteria
         self.operands = []  # List of operands e.g. datatype property value or instance names
         self.pocs = []  # List of POCs found within the filter's annotation
+        self.start = -1  # Start offset of actual filter (may be contained within its annotation)
+        self.end = -1  # End offset of actual filter
 
     def to_dict(self):
         """
         Converts this QueryFilter to an equivalent dictionary of builtins
         :return: dict
         """
-        d = {'type': 'QueryFilter', 'operands': self.operands, 'negate': self.negate}
+        d = {'type': 'QueryFilter', 'operands': self.operands, 'negate': self.negate, 'start': self.start,
+             'end': self.end}
         if self.annotation:
             d['annotation'] = self.annotation.to_dict()
         else:
@@ -34,6 +37,8 @@ class QueryFilter(object):
         """
         self.operands = d.get('operands', [])
         self.negate = d.get('negate', False)
+        self.start = d.get('start', -1)
+        self.end = d.get('end', -1)
         a_dict = d.get('annotation')
         if a_dict:
             annotation = Annotation()
@@ -54,6 +59,10 @@ class QueryFilter(object):
             return False
         if self.negate != other.negate:
             return False
+        elif self.start != other.start:
+            return False
+        elif self.end != other.end:
+            return False
         elif other.annotation != self.annotation:
             return False
         elif set(other.operands) != set(self.operands):
@@ -65,7 +74,8 @@ class QueryFilter(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.annotation) ^ hash(self.negate) ^ hash(tuple(self.operands)) ^ hash(tuple(self.pocs))
+        return hash(self.annotation) ^ hash(self.negate) ^ hash(tuple(self.operands)) ^ hash(tuple(self.pocs)) \
+               ^ hash(self.start) ^ hash(self.end) ^ hash((self.start, self.end))
 
 
 class QueryFilterNominal(QueryFilter):

@@ -638,12 +638,13 @@ class BarChartOntology(UpperVisOntology):
                         break
             for b in bars:
                 bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
-                for f in cardinal_f_label:
-                    op = stringOpToPython(f.opToPython(), f.negate)
-                    for b_f in bar_filters:
-                        for o in f.operands:
-                            if not op(b_f, o):
-                                to_remove.add(b)
+                if bar_filters:
+                    for f in cardinal_f_label:
+                        op = stringOpToPython(f.opToPython(), f.negate)
+                        for b_f in bar_filters:
+                            for o in f.operands:
+                                if not op(b_f, o):
+                                    to_remove.add(b)
         return list(bars - to_remove)
 
     def computeExtreme(self, ops, bars):

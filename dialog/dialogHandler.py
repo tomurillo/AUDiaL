@@ -50,7 +50,7 @@ class DialogHandler(object):
         pair.key = key
         pair.filter = next_filter
         learning_keys = self.generateLearningKeys(key)
-        sug_generator = SuggestionGenerator(self.o, force_parents=True)
+        sug_generator = SuggestionGenerator(self.o, force_parents=False)
         votes = sug_generator.createFilterVotes(key, next_filter, self.q.focus, add_none=True)
         learning_votes = self.loadLearningVotes(learning_keys)
         if learning_votes:

@@ -124,11 +124,11 @@ class SuggestionGenerator(object):
                     votes.extend(self.createAdditionalVotes(text, oe, poc, added=False))
         return votes
 
-    def createFilterVotes(self, key, filter, focus, add_vis=True, add_none=True):
+    def createFilterVotes(self, key, filter_instance, focus, add_vis=True, add_none=True):
         """
         Create votes for a query filter
         :param key: SuggestionKey instance
-        :param filter: QueryFilter instance
+        :param filter_instance: QueryFilter instance
         :param focus: POC instance; focus of the query
         :param add_vis: whether to add and give higher priority to visualization properties
         :param add_none: whether to add None votes to the output
@@ -148,7 +148,7 @@ class SuggestionGenerator(object):
             if PRIORITY_DIAG_LABELS and v.vote < 1:
                 v.vote += 1
             votes.append(v)
-        votes.extend(self.createGenericVotes(key, filter.annotation, add_none=True))
+        votes.extend(self.createGenericVotes(key, filter_instance.annotation, add_none=False))
         if add_none:
             none_vote = self.createNoneVote(focus)
             votes.append(none_vote)
