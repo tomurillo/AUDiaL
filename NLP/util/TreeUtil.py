@@ -146,7 +146,7 @@ def removeSubElementFromTree(ptree, tag):
     :return: nltk.Tree
     """
     if isinstance(ptree, nltk.Tree):
-        filtered_children = [ct for ct in ptree if type(ct) is not nltk.Tree or ct.label() != tag]
+        filtered_children = [ct for ct in ptree if not isinstance(ct, nltk.Tree) or ct.label() != tag]
         return nltk.Tree(ptree.label(), [removeSubElementFromTree(c, tag) for c in filtered_children])
     else:
         return ptree
@@ -160,7 +160,7 @@ def removeSubTree(ptree, subtree):
     :return: copy of ptree without any instances of subtree
     """
     if isinstance(ptree, nltk.Tree):
-        filtered_children = [ct for ct in ptree if type(ct) is not nltk.Tree or ct != subtree]
+        filtered_children = [ct for ct in ptree if not isinstance(ct, nltk.Tree) or ct != subtree]
         return nltk.Tree(ptree.label(), [removeSubTree(c, subtree) for c in filtered_children])
     else:
         return ptree

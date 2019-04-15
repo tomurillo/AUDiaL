@@ -92,13 +92,13 @@ class Consolidator(object):
                             add = False
                             break
                         elif poc.overlapsOC(sc):
-                            sc.OE.annotation.tree = poc.tree
                             if i == 0:
                                 #  Create new POC without the contained OC
                                 new_poc = self.createSubPOC(poc, sc.OE.annotation.tree)
                                 if new_poc:
                                     pocs_clean.append(new_poc)
                                     add = False
+                            sc.OE.annotation.tree = immutableCopy(poc.tree)
             if add:
                 pocs_clean.append(poc)
         self.q.pocs = pocs_clean
@@ -292,7 +292,7 @@ class Consolidator(object):
         :return: POC instance
         """
         new_poc = None
-        new_tree = removeSubTree(poc.tree, sub_tree)
+        new_tree = removeSubTree(poc.tree, mutableCopy(sub_tree))
         if new_tree and isinstance(new_tree, nltk.Tree):
             new_poc = POC()
             new_poc.start_original = poc.start_original

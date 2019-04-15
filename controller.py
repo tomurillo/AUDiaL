@@ -1,5 +1,4 @@
 from flask import session
-from ontology.upper_vis_ontology import UpperVisOntology
 from ontology.bar_chart_ontology import BarChartOntology
 from oc.triple_utils import *
 from NLP.parser.CommandParser import *
