@@ -394,6 +394,8 @@ class Consolidator(object):
                 self.q.pocs.remove(poc)
                 for sc in ocs:
                     sc.verified = True
+                    if sc.task and sc.answer:
+                        self.q.task = sc
                 self.q.semanticConcepts.append(ocs)
         except ValueError:
             import sys

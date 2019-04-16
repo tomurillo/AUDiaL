@@ -114,6 +114,7 @@ class SuggestionGenerator(object):
             sc = SemanticConcept()
             sc.OE = self.createOntologyElementforURI(t_uri, 'instance', check_exists=False)
             sc.task = t
+            sc.answer = True
             vote.candidate = sc
             vote.vote = best_sim
             votes.append(vote)
