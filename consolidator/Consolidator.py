@@ -157,8 +157,11 @@ class Consolidator(object):
 
     def cleanSemanticConcepts(self):
         """
-        Given an populated Query instance, remove those OCs that overlap its focus if it has maximum priority
-        and sort the resulting OCs. Also remove those Literal OCs contained in a query filter.
+        Given an populated Query instance, perform the following actions:
+        1. remove those OCs that overlap its focus if it has maximum priority
+        2. remove those Literal OCs contained in a query filter
+        3. mark those Literal OCs found to be a task verbalization
+        4. sort the resulting OCs
         :return: None; updates Query attribute
         """
         focus = self.q.focus
@@ -176,13 +179,38 @@ class Consolidator(object):
                                 add = False
                                 skip = True
                                 break
-                        if not skip and focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
-                            if ann.start == focus.start and ann.end == focus.end:
-                                #  overlap --> remove SemanticConcept list
-                                add = False
+                        if not skip:
+                            if focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
+                                if ann.start == focus.start and ann.end == focus.end:
+                                    #  match --> remove SemanticConcept list
+                                    add = False
+                            else:
+                                task = self.semanticConceptIsTask(first_sc)
+                                if task:
+                                    if not self.q.task:
+                                        first_sc.task = task
+                                        first_sc.answer = True
+                                        self.q.task = first_sc
+                                    else:
+                                        from warnings import warn
+                                        warn('Two tasks (%s and %s) found in query!' % (self.q.task.uri, task))
                 if add:
                     new_scs.append(sc_list)
             self.q.semanticConcepts = sorted(new_scs, cmp=SemanticConceptListCompareOffset)
+
+    def semanticConceptIsTask(self, sc):
+        """
+        Discovers whether the given semantic concept is an analytic task to be performed and adds it to the query
+        :param sc: SemanticConcept instance
+        :return: string; Task URI if found; False otherwise
+        """
+        task = False
+        if isinstance(sc.OE, OntologyLiteralElement):
+            for s, p, o in sc.OE.triples:
+                if p.endswith("task_has_verbalization"):
+                    task = s
+                    break
+        return task
 
     def removedContainerFilters(self):
         """

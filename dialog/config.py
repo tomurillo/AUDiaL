@@ -28,6 +28,7 @@ Weights of each criteria when computing suggestion votes (must sum up to 1):
 VOTE_CRITERIA_WEIGHTS = [0.45, 0.15, 0.4]
 
 """
-List of numerical tasks that will be included in suggestions for Datatype properties
+List of numerical tasks that will be included in suggestions for Datatype properties. Values are labels to be shown
+to the user in the dialogue
 """
-QUICK_TASKS = ['max', 'min', 'sum', 'avg']
+QUICK_TASKS = {'max': 'Calculate maximum', 'min': 'Calculate minimum', 'sum': 'Sum values up', 'avg': 'Compute average'}

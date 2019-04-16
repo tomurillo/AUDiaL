@@ -16,6 +16,7 @@ class Query(object):
         """
         self.rawQuery = rawQuery
         self.questionType = QuestionType.VOID
+        self.task = None  # SemanticConcept instance (analytical task to perform on result; if any)
         self.focus = None  # POC instance
         self.pocs = []
         self.tokens = []  # List<(string, string)>: list of (word, part-of-speech) tuples of each word in the query
@@ -64,6 +65,10 @@ class Query(object):
             d['focus'] = self.focus.to_dict()
         else:
             d['focus'] = None
+        if self.task:
+            d['task'] = self.task.to_dict()
+        else:
+            d['task'] = None
         d['answerType'] = [at.to_dict() for at in self.answerType]
         d['annotations'] = [ann.to_dict() for ann in self.annotations]
         d['pocs'] = [p.to_dict() for p in self.pocs]
@@ -124,6 +129,12 @@ class Query(object):
                 self.pt = Tree.fromstring(pt)
             else:
                 self.pt = None
+            self.task = None
+            task_dict = d.get('task')
+            if task_dict:
+                task_sc = SemanticConcept()
+                task_sc.from_dict(task_dict)
+                self.task = task_sc
             scs = d.get('semanticConcepts', [])
             self.semanticConcepts = []
             for sc_dict_list in scs:

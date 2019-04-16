@@ -121,12 +121,16 @@ class Controller(object):
             if isinstance(self.o, BarChartOntology):
                 bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.APPLY_QFILTER, filters=self.q.filters)
                 if bars:
-                    answer = '<h5>The following %d bars matched your query:</h5><ul>' % len(bars)
+                    if self.q.task:
+                        answer = self.o.applyAnalyticalTask(self.q.task, bars)
+                        answer += '<h5>The following %d bars have been considered:</h5><ul>' % len(bars)
+                    else:
+                        answer = '<h5>The following %d bars matched your query:</h5><ul>' % len(bars)
                     for bar in bars:
                         answer += self.__printBarDetails(bar)
                     answer += "</ul>"
-                    answer += self.__summarizeBars(bars)
-            # TODO add tasks
+                    if not self.q.task:
+                        answer += self.__summarizeBars(bars)
         else:
             answer = self.fetchAnswerFromDomain()
         return answer
@@ -137,14 +141,15 @@ class Controller(object):
         :return: list<QueryFilter>
         """
         filters = []
-        #  Remaining semantic concepts are considered nominal filters
+        #  Remaining semantic concepts are considered nominal filters unless they underpin a task
         for sc_list in self.q.semanticConcepts:
             if sc_list:
                 sc = sc_list[0]
                 if sc and sc.OE and isinstance(sc.OE, (OntologyInstanceElement, OntologyLiteralElement)):
-                    qf = QueryFilterNominal(sc.OE.annotation)
-                    qf.operands.append(self.o.stripNamespace(sc.OE.uri))
-                    filters.append(qf)
+                    if not sc.answer or not sc.task:
+                        qf = QueryFilterNominal(sc.OE.annotation)
+                        qf.operands.append(self.o.stripNamespace(sc.OE.uri))
+                        filters.append(qf)
         return filters
 
     def fetchAnswerFromDomain(self):

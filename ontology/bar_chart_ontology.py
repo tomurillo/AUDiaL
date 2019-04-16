@@ -560,12 +560,30 @@ class BarChartOntology(UpperVisOntology):
     def getBarLineups(self):
         """
         Returns bar instance names grouped by their lineups
-        @return dict<string, list<string>> Keys are lineup instance names,
-        values are lists of bar instance names belonging to the lineup
+        @return dict<string, list<string>> Keys are lineup instance names, values are lists of bar instance names
+        belonging to the lineup
         """
-        return self.elementsInRelation(self.O2OGraphicRelation.ORDERED_LINEUP,
-                                       [self.SyntacticRoles.METRIC_BAR,
-                                            self.SyntacticRoles.STACKED_BAR])
+        return self.elementsInRelation(self.O2OGraphicRelation.ORDERED_LINEUP, [self.SyntacticRoles.METRIC_BAR,
+                                                                                self.SyntacticRoles.STACKED_BAR])
+
+    def applyAnalyticalTask(self, task_sc, bars):
+        """
+        Apply an analytical task to the given bars
+        :param task_sc: SemanticConcept instance with the task
+        :param bars: list<string> bars to which the task will be applied
+        :return: string; answer in NL
+        """
+        answer = ''
+        task = self.stripNamespace(task_sc.task)
+        if task == self.StructuralTask.DerivedValueTask.AVERAGE:
+            avg = self.computeDerived('avg', bars)
+            units = self.getChartMeasurementUnit()
+            answer = 'Average is %.2f' % float(avg)
+            if units:
+                answer += ' %s' % units
+        if answer:
+            answer += '<br/>'
+        return answer
 
     def applyLowLevelTask(self, task, **kwargs):
         """
@@ -636,15 +654,16 @@ class BarChartOntology(UpperVisOntology):
                                                      negate=f.negate, barset=bars)
                     if not bars:
                         break
-            for b in bars:
-                bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
-                if bar_filters:
-                    for f in cardinal_f_label:
-                        op = stringOpToPython(f.opToPython(), f.negate)
-                        for b_f in bar_filters:
-                            for o in f.operands:
-                                if not op(b_f, o):
-                                    to_remove.add(b)
+            if cardinal_f_label:
+                for b in bars:
+                    bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
+                    if bar_filters:
+                        for f in cardinal_f_label:
+                            op = stringOpToPython(f.opToPython(), f.negate)
+                            for b_f in bar_filters:
+                                for o in f.operands:
+                                    if not op(b_f, o):
+                                        to_remove.add(b)
         return list(bars - to_remove)
 
     def computeExtreme(self, ops, bars):
@@ -686,7 +705,7 @@ class BarChartOntology(UpperVisOntology):
         @return float: the result of the derived operation
         """
         derived = None
-        totalVal = 0
+        totalVal = 0.0
         countbars = 0
         countSimple = 0
         maxVal = float_info.min
@@ -703,7 +722,7 @@ class BarChartOntology(UpperVisOntology):
                     minVal = barVal
         if op == 'avg':
             if countbars > 0:
-                derived = totalVal / countbars
+                derived = totalVal / float(countbars)
         return derived
 
     def computeBarsNavOrder(self):

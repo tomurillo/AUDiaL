@@ -654,8 +654,23 @@ class UpperVisOntology(UpperOntology):
         :param task: a task instance name
         :return boolean: True if the task is a low-level task, False otherwise
         """
-        return self.StructuralTask.STRUCTURAL_TASK in \
-                                                self.getClassOfElement(task)
+        return self.StructuralTask.STRUCTURAL_TASK in self.getClassOfElement(task)
+
+    def getTaskOfVerbalization(self, verb, stripns=True):
+        """
+        Given a potential task verbalization, return its class
+        :param verb: string; verbalization of a task
+        :param stripns: boolean; whether to remove the namespace from the results
+        :return: string: Task name; None if no task found
+        """
+        task = None
+        verb_p = "%s#%s" % (self.VIS_NS, self.TaskProperty.HAS_VERBALIZATION)
+        triples = self.contextOfLiteral(verb.lower(), dtype=XSD.string)
+        for s, p, o in triples:
+            if p == verb_p:
+                task = self.stripNamespace(s) if stripns else s
+                break
+        return task
 
     def getTaskVerbalizations(self, tasks='all', ns=None):
         """

@@ -57,7 +57,7 @@ class OutputFormatter(object):
                             task = filter_task
                     elif isinstance(vote.candidate, SemanticConcept):
                         key_label = self.findOELabel(vote.candidate.OE)
-                        task = vote.candidate.task
+                        task = self.findTaskLabel(vote.candidate.task)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
                     json_vote['score'] = "%.2f" % vote.vote
@@ -125,6 +125,20 @@ class OutputFormatter(object):
         label += " %s" % ', '.join(operand)
         return label
 
+    def findTaskLabel(self, task):
+        """
+        Returns a label to be displayed for an analytic task
+        :param task: string; a task URI or a quick task string (such as 'max', 'min', 'sum', 'avg')
+        :return: string; label to be shown in dialogue
+        """
+        from dialog.config import QUICK_TASKS
+        label = ''
+        if task in QUICK_TASKS:
+            label = QUICK_TASKS[task]
+        elif task and task[-5:] == '_Task':  # Task is visualization task ontology resource URI
+            label = self.quickURILabel(task[:-5])
+        return label
+
     def findOELabel(self, oe, print_generic=True):
         """
         Finds the label to be displayed for a given OC
@@ -155,7 +169,11 @@ class OutputFormatter(object):
                 if class_labels:
                     label = "%s (%s)" % (instance_label, ", ".join(class_labels))
                 else:
-                    label = instance_label
+                    if self.o.getNamespace(uri) == self.o.VIS_NS and uri[-5:] == "_Task":
+                        #  Instance is analytical task to be performed on query result
+                        label = "Apply task to result"
+                    else:
+                        label = instance_label
         elif isinstance(oe, OntologyLiteralElement):
             label = self.findVisualizationResourceLabel(oe)
         elif isinstance(oe, OntologyNoneElement):
@@ -297,7 +315,9 @@ class OutputFormatter(object):
                 suffix = name[-3:]
                 if suffix in ['_GO', '_SR', '_GR', '_IR']:
                     name = name[:-3]
-                if res_type in ['datatypeProperty']:
+                elif name[-5:] == '_Task':
+                    name = name[:-5]
+                elif res_type == 'datatypeProperty':
                     first_chars = name[:4]
                     if first_chars == 'has_':
                         prop_obj = self.p.an(name[4:].replace('_', ' '))

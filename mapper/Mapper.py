@@ -229,6 +229,8 @@ class Mapper(object):
                 literal_uri = ann.oc_type[o_c.OTYPE_LITERAL]
                 #  Add Literal's context (triples where it appears)
                 triples = o.contextOfLiteral(literal_uri)
+                if not triples:
+                    triples = o.contextOfLiteral(literal_uri)
                 ann.extra['triples'] = triples
 
     def _isTokenIgnored(self, ptree):

@@ -585,15 +585,19 @@ class UpperOntology(object):
                     typesFound[o_c.OTYPE_DTPROP] = uri
         return typesFound
 
-    def contextOfLiteral(self, elementURI):
+    def contextOfLiteral(self, elementURI, dtype=None):
         """
         Given a literal, returns the triples where it appears in the ontology
         :param elementURI: Literal value
+        :param dtype: An XSD datatype of the Literal; None for default
         :return: list<(subject, predicate, object)>: triples where the given literal is the object
         """
         context = []
-        for s, p, o in self.graph.triples((None, None, Literal(elementURI))):
+        for s, p, o in self.graph.triples((None, None, Literal(elementURI, datatype=dtype))):
             context.append((str(s), str(p), str(o)))
+        if not context and dtype is None:
+            for s, p, o in self.graph.triples((None, None, Literal(elementURI, datatype=XSD.string))):
+                context.append((str(s), str(p), str(o)))
         return context
 
     def distanceScoreOfProperty(self, name, ns=None):
@@ -1001,14 +1005,20 @@ class UpperOntology(object):
                 ns = self.VIS_NS
         name = self.stripNamespace(name)
         if subjectType == 'literal':
-            elementURI = Literal(name.replace(' ', '_'))
-            exists = (None, None, elementURI) in self.graph
+            name_clean = name.replace(' ', '_')
+            elementURI = Literal(name_clean)
+            elementURI_str = Literal(name_clean, datatype=XSD.string)
+            exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
             if not exists:
-                elementURI = Literal(name.lower().replace(' ', '_'))
-                exists = (None, None, elementURI) in self.graph
+                name_clean = name_clean.lower()
+                elementURI = Literal(name_clean)
+                elementURI_str = Literal(name_clean, datatype=XSD.string)
+                exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
             if not exists:
-                elementURI = Literal(stringToID(name, subjectType))
-                exists = (None, None, elementURI) in self.graph
+                name_clean = stringToID(name, subjectType)
+                elementURI = Literal(name_clean)
+                elementURI_str = Literal(name_clean, datatype=XSD.string)
+                exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
         else:
             if subjectType == 'individual':
                 o_uri = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))
