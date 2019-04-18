@@ -574,11 +574,26 @@ class BarChartOntology(UpperVisOntology):
         :return: string; answer in NL
         """
         answer = ''
+        add_units = True
         task = self.stripNamespace(task_sc.task)
         if task == self.StructuralTask.DerivedValueTask.AVERAGE:
             avg = self.computeDerived('avg', bars)
+            if avg is not None:
+                answer = 'The average is %.2f' % float(avg)
+        elif task == self.StructuralTask.DerivedValueTask.MEDIAN:
+            median = self.computeDerived('median', bars)
+            if median is not None:
+                answer = 'The median is %.2f' % float(median)
+        elif task == self.StructuralTask.DerivedValueTask.MODE:
+            mode = self.computeDerived('mode', bars)
+            if mode is not None:
+                answer = 'The most common bar value is %.2f' % float(mode)
+        elif task == self.StructuralTask.DerivedValueTask.COUNT:
+            add_units = False
+            c = self.computeDerived('count', bars)
+            answer = '%d bars match your query.' % c
+        if answer and add_units:
             units = self.getChartMeasurementUnit()
-            answer = 'Average is %.2f' % float(avg)
             if units:
                 answer += ' %s' % units
         if answer:
@@ -699,30 +714,45 @@ class BarChartOntology(UpperVisOntology):
     def computeDerived(self, op, bars):
         """
         Returns the result of a derived value operation on a set of bars
-        @param string op: the name of the operation to perform
+        @param string op: the name of the operation to perform (avg, median, mode, count)
         @param iterable<string> bars: the bars whose values to take into
         account
         @return float: the result of the derived operation
         """
+        from collections import defaultdict
         derived = None
         totalVal = 0.0
         countbars = 0
-        countSimple = 0
         maxVal = float_info.min
         minVal = float_info.max
-        minSimple = float_info.max
+        bar_vals = []
+        val_occurrences = defaultdict(int)
         for bar in bars:
             barVal = self.getMetricBarValue(bar)
+            val_occurrences[barVal] += 1
+            bar_vals.append(barVal)
+            totalVal += barVal
+            countbars += 1
+            if barVal > maxVal:
+                maxVal = barVal
+            if barVal < minVal:
+                minVal = barVal
+        if countbars <= 0:
+            derived = None
+        else:
             if op == 'avg':
-                totalVal += barVal
-                countbars += 1
-                if barVal > maxVal:
-                    maxVal = barVal
-                if barVal < minVal:
-                    minVal = barVal
-        if op == 'avg':
-            if countbars > 0:
                 derived = totalVal / float(countbars)
+            elif op == 'median':
+                vals_sorted = sorted(bar_vals)
+                i = countbars / 2
+                if countbars % 2 == 0:
+                    derived = (vals_sorted[i] + vals_sorted[i-1]) / 2.0
+                else:
+                    derived = vals_sorted[i]
+            elif op == 'mode':
+                derived = max(val_occurrences, key=val_occurrences.get)
+            elif op == 'count':
+                derived = countbars
         return derived
 
     def computeBarsNavOrder(self):

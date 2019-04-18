@@ -3,7 +3,7 @@ from dialog.learning.util import *
 from dialog.config import *
 from dialog.suggestionGenerator import SuggestionGenerator
 from oc.OCUtil import *
-from NLP.model.POC import *
+from NLP.constants import VB_TREE_POS_TAG
 from NLP.model.QueryFilter import *
 
 
@@ -30,7 +30,7 @@ class DialogHandler(object):
         pair = None
         if self.disambiguationRequired():  # Give priority to disambiguation between OCs
             pair = self.generateDisambiguationDialog()
-        elif self.mappingRequired():
+        elif self.mappingRequired():  # Any POCs left? They need to be mapped to OCs
             pair = self.generateMappingDialog()
         elif self.filterClarificationRequired():  # Any unresolved filters left?
             pair = self.generateFilterClarificationDialog()
@@ -94,10 +94,13 @@ class DialogHandler(object):
             poc = POC()
             poc.populateFromAnnotation(sc_first.OE.annotation.copy())
             poc_votes = []
+            skip_others = poc.tree.label().startswith(VB_TREE_POS_TAG)
             if neighbor_ocs:
-                poc_votes.extend(sug_generator.createVotes(key, poc, add_none=False, skip=next_ocs))
+                poc_votes.extend(sug_generator.createVotes(key, poc, add_none=False, skip=next_ocs,
+                                                           skip_non_tasks=skip_others))
             else:
-                poc_votes.extend(sug_generator.createGenericVotes(key, poc, add_none=False, skip=next_ocs))
+                poc_votes.extend(sug_generator.createGenericVotes(key, poc, add_none=False, skip=next_ocs,
+                                                                  skip_non_tasks=skip_others))
             candidate_oes = []
             for poc_vote in poc_votes:
                 if poc_vote.candidate not in next_ocs and not isinstance(poc_vote.candidate.OE, OntologyNoneElement):
@@ -149,10 +152,12 @@ class DialogHandler(object):
         pair.subject = poc
         learning_keys = self.generateLearningKeys(key)
         sug_generator = SuggestionGenerator(self.o, force_parents=True)
+        skip_others = poc.tree.label().startswith(VB_TREE_POS_TAG)  # Tree label is VB; cast task votes only
         if neighbor_ocs:
-            votes = sug_generator.createVotes(key, poc, add_none=True, add_text_labels=True)
+            votes = sug_generator.createVotes(key, poc, add_none=True, add_text_labels=True, skip_non_tasks=skip_others)
         else:
-            votes = sug_generator.createGenericVotes(key, poc, add_none=True, add_text_labels=True)
+            votes = sug_generator.createGenericVotes(key, poc, add_none=True, add_text_labels=True,
+                                                     skip_non_tasks=skip_others)
         learning_votes = self.loadLearningVotes(learning_keys)
         if learning_votes:
             pair.votes = updateVotesFromLearningVotes(learning_votes, votes)

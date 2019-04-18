@@ -4,7 +4,7 @@ from NLP.model.OE import *
 class SemanticConcept(object):
     """
     Semantic Concepts are extended Ontology Concepts (OCs) belonging to a user's query i.e. elements of a query
-    that appear in a supporting ontology.
+    that appear in a supporting ontology with extra information required for the query's resolution.
     """
     def __init__(self):
         """

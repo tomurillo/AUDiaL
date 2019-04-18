@@ -263,7 +263,7 @@ class Consolidator(object):
         adj_tags = [JJ_TREE_POS_TAG, VBN_TREE_POS_TAG, VBG_TREE_POS_TAG, RBS_TREE_POS_TAG, ADJP_TREE_POS_TAG,
                     JJR_TREE_POS_TAG, JJS_TREE_POS_TAG]
         for poc in self.q.pocs:
-            others = set()
+            others = []
             adjs = []
             poc_preters = [immutableCopy(t) for t in getSubtreesAtHeight(poc.tree, 2)]
             if len(poc_preters) > 1:
@@ -271,9 +271,9 @@ class Consolidator(object):
                     if preter.label() in adj_tags:
                         adjs.append(preter)
                     else:
-                        others.add(preter)
+                        others.append(preter)
             else:
-                others.add(poc_preters[0])
+                others.append(poc_preters[0])
             if others:
                 newpoc = self.updateSplitPOC(poc, [mutableCopy(t) for t in others], poc.tree.label())
                 newpocs.append(newpoc)
@@ -399,7 +399,7 @@ class Consolidator(object):
                 self.q.semanticConcepts.append(ocs)
         except ValueError:
             import sys
-            print('Warning: resolved POC could  not be found in query!', sys.stderr)
+            print('Warning: resolved POC could not be found in query!', sys.stderr)
         finally:
             return self.q
 

@@ -231,12 +231,13 @@ def findNearestOCsOfPOC(q, poc):
     return neighbors
 
 
-def findNearestOCsInQuery(q, overlapped_ocs):
+def findNearestOCsInQuery(q, overlapped_ocs, include_none=False):
     """
     Given a list of overlapped OCs, finds the nearest ones in the given query, where the distance between OCs
     is given by the distance of the paths between the parse tree roots.
     :param q: A consolidated Query instance
     :param overlapped_ocs: list<SemanticConcept> with overlapping OCs, where the first OC overlaps the rest
+    :param include_none: whether to include OntologyNoneElement instances in the results (default False)
     :return: list<SemanticConcept> nearest OCs
     """
     nearest = []
@@ -246,7 +247,7 @@ def findNearestOCsInQuery(q, overlapped_ocs):
         for ocs in q.semanticConcepts:
             if ocs != overlapped_ocs:
                 for oc in ocs:
-                    if type(oc.OE) is not OntologyNoneElement:
+                    if type(oc.OE) is not OntologyNoneElement or include_none:
                         dist = distanceBetweenAnnotations(q.pt, first_oc.OE.annotation, oc.OE.annotation)
                         if dist < min_dist:
                             nearest = [oc]

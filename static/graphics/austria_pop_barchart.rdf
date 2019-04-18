@@ -888,6 +888,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Proportional_Division_GR -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Proportional_Division_GR">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Containment_GR"/>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Proportional_Repetition_GR -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Proportional_Repetition_GR">
@@ -1655,12 +1663,22 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Median_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Median_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">median</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">middle</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Mode_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Mode_Task">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">middle</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mode</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">most common</ns1:task_has_verbalization>
     </NamedIndividual>
     
 
