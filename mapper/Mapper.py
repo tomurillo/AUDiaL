@@ -45,11 +45,11 @@ class Mapper(object):
                 ann.oc_type = types_found
                 ann.text = text
             else:
-                syns, types_found = self.annotationSynonymsLookUp(o, ann)
+                types_found = self.annotationSynonymsLookUp(o, ann)
                 if types_found:
                     ann.inOntology = True
                     ann.oc_type = types_found
-                    ann.text = syns[0]  # Ignore other synonyms for now
+                    ann.text = types_found[types_found.keys()[0]]  # Ignore other synonyms for now
             self.updateAnnotationExtras(ann, o)
         q.annotations = clean_anns
         return q
@@ -79,26 +79,23 @@ class Mapper(object):
         :param o: UpperOntology (or subclass) instance
         :param annotation: An NLP.Annotation instance
         :param text_type: What to search for: 'individual', 'class', 'property', 'value', or 'all' (default)
-        :return: tuple (list, list): the found texts, types of OC found; or False if none were found
+        :return: dict(string, string) with found entity types (keys) and uris (vals)
         """
-        text = set()
-        types = set()
+        oc_types = {}
         if annotation and o:
             if annotation.stem:  # Look up lemmatized words first
                 syn = synonymsOfTree(annotation.lemma_tree)
                 for s in syn:
-                    t = self.textLookUp(o, s, text_type)
-                    if t:
-                        text.update(s)
-                        types.update(t)
-            if not types:  # Lemmatization not required or nothing found so far
+                    oc_types = self.textLookUp(o, s, text_type)
+                    if oc_types:
+                        break
+            if not oc_types:  # Lemmatization not required or nothing found so far
                 syn = synonymsOfTree(annotation.tree)
                 for s in syn:
-                    t = self.textLookUp(o, s, text_type)
-                    if t:
-                        text.update(s)
-                        types.update(t)
-        return list(text), list(types)
+                    oc_types = self.textLookUp(o, s, text_type)
+                    if oc_types:
+                        break
+        return oc_types
 
     def textLookUp(self, o, text, text_type='all'):
         """

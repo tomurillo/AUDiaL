@@ -198,6 +198,8 @@ class UpperVisOntology(UpperOntology):
         class ComparisonTask:
             COMPUTE_DERIVED_VAL = "Compute_Derived_Value_Task"
             FIND_EXTREMUM = "Find_Extremum_Task"
+            FIND_MAXIMUM = 'Find_Maximum_Task'
+            FIND_MINIMUM = 'Find_Minimum_Task'
             RANGE = "Determine_Range_Task"
             SORT = "Sort_Task"
         class CorrelationTask:
@@ -783,6 +785,23 @@ class UpperVisOntology(UpperOntology):
         """
         p = self.TaskProperty.IS_INTENTION
         return self.getSubjects(p, True, 'datatype', XSD.boolean)
+
+    def taskNeedsSumamry(self, task):
+        """
+        Returns whether a summary of the task should be output after computing it
+        :param task: A SemanticConcept instance of an analytical task
+        :return: True if summary ought to be added after task answer, false otherwise
+        """
+        summary = False
+        if task:
+            req_sum = [self.StructuralTask.DerivedValueTask.AVERAGE,
+                       self.StructuralTask.DerivedValueTask.MEDIAN,
+                       self.StructuralTask.DerivedValueTask.MODE,
+                       self.StructuralTask.DerivedValueTask.COUNT]
+            task_name = self.stripNamespace(task.task)
+            if task_name in req_sum:
+                summary = True
+        return summary
 
     def getCoordinate(self, element, coor="x"):
         """

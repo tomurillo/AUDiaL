@@ -9,18 +9,21 @@ from NLP.util.TreeUtil import containNodes
 from ontology.upper_vis_ontology import UpperVisOntology
 from GeneralUtil import beautifyOutputString
 
+
 class SuggestionGenerator(object):
     """
     Dialogue Suggestions generator
     """
 
-    def __init__(self, ontology, force_parents=True):
+    def __init__(self, query, ontology, force_parents=True):
         """
         SuggestionGenerator constructor.
+        :param query: Consolidated Query instance
         :param ontology: An instantiated ontology
         :param force_parents: whether parent classes/properties should be considered for the suggestions
         :return: None
         """
+        self.q = query
         self.o = ontology
         self.force_parents = force_parents
 
@@ -102,22 +105,23 @@ class SuggestionGenerator(object):
         :return: list<Vote>
         """
         votes = []
-        tasks = self.o.getTaskVerbalizations()
-        for t, verbs in tasks.iteritems():
-            best_sim = -1
-            for v in verbs:
-                sim = self.computeSimilarityScore(key_text, v)
-                if sim > best_sim:
-                    best_sim = sim
-            vote = Vote()
-            t_uri = "%s#%s" % (self.o.VIS_NS, t)
-            sc = SemanticConcept()
-            sc.OE = self.createOntologyElementforURI(t_uri, 'instance', check_exists=False)
-            sc.task = t
-            sc.answer = True
-            vote.candidate = sc
-            vote.vote = best_sim
-            votes.append(vote)
+        if not self.q.task:  # If task has already been found there is no need to cast task votes
+            tasks = self.o.getTaskVerbalizations()
+            for t, verbs in tasks.iteritems():
+                best_sim = -1
+                for v in verbs:
+                    sim = self.computeSimilarityScore(key_text, v)
+                    if sim > best_sim:
+                        best_sim = sim
+                vote = Vote()
+                t_uri = "%s#%s" % (self.o.VIS_NS, t)
+                sc = SemanticConcept()
+                sc.OE = self.createOntologyElementforURI(t_uri, 'instance', check_exists=False)
+                sc.task = t
+                sc.answer = True
+                vote.candidate = sc
+                vote.vote = best_sim
+                votes.append(vote)
         return votes
 
     def createVotesfromOEs(self, oe_list, poc, text, sc_neighbor=None, skip_uris=None):

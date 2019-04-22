@@ -61,6 +61,16 @@ def stringOpToPython(string_op, negate=False):
             op = ops[string_op]
     return op
 
+
+def numberToOrdinal(n):
+    """
+    Return the ordinal equivalent of the given number
+    :param n: int; a number
+    :return: string; ordinal representation of n e.g. "1st", "2nd", etc.
+    """
+    return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
+
+
 def isNumber(n):
     """
     Checks whether the given string is a number

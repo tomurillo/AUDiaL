@@ -46,8 +46,6 @@ class Vote(object):
     def __eq__(self, other):
         if not isinstance(other, Vote):
             return False
-        elif self.id != other.id:
-            return False
         elif self.vote != other.vote:
             return False
         elif self.candidate != other.candidate:
@@ -59,4 +57,4 @@ class Vote(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.id) ^ hash(self.vote) ^ hash(self.candidate)
+        return hash(self.vote) ^ hash(self.candidate)

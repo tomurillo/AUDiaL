@@ -411,8 +411,11 @@ class Consolidator(object):
         :return: updated Query
         """
         if self.q and ocs:
+            chosen_task = False
             new_q_scs = {}
             for sc in ocs:
+                if sc.task and sc.answer:
+                    chosen_task = True
                 oe = sc.OE
                 for i, q_sc_overlapped in enumerate(self.q.semanticConcepts):
                     clean_overlapped_scs = new_q_scs.get(i, set())
@@ -426,8 +429,15 @@ class Consolidator(object):
                 clean_overlapped_scs = new_q_scs.get(j, set())
                 if clean_overlapped_scs:
                     disambiguated_scs.append(list(clean_overlapped_scs))
+                    if not chosen_task:
+                        for q_sc in q_sc_overlapped:
+                            if q_sc.answer and q_sc.task and self.q.task == q_sc:
+                                self.q.task = None
+                                break
                 else:
                     disambiguated_scs.append(q_sc_overlapped)  # Keep these OCs as they are unrelated to the dialogue
+            if chosen_task:
+                self.q.task = ocs[0]
             self.q.semanticConcepts = disambiguated_scs
             self.consolidatePOCsWithOCs()
             return self.q

@@ -121,13 +121,22 @@ class Controller(object):
             if isinstance(self.o, BarChartOntology):
                 bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.APPLY_QFILTER, filters=self.q.filters)
                 if bars:
+                    n = len(bars)
+                    n_str = " %d" % n if n > 1 else ''
+                    pl_str = 's' if n > 1 else ''
+                    v_str = 'have' if n > 1 else 'has'
+                    add_summary = False
                     if self.q.task:
                         answer = self.o.applyAnalyticalTask(self.q.task, bars)
-                        answer += '<h5>The following %d bars have been considered:</h5><ul>' % len(bars)
+                        if self.o.taskNeedsSumamry(self.q.task):
+                            add_summary = True
+                            answer += '<h5>The following%s bar%s %s been considered:</h5><ul>' % (n_str, pl_str, v_str)
                     else:
-                        answer = '<h5>The following %d bars matched your query:</h5><ul>' % len(bars)
-                    for bar in bars:
-                        answer += self.__printBarDetails(bar)
+                        add_summary = True
+                        answer = '<h5>The following%s bar%s matched your query:</h5><ul>' % (n_str, pl_str)
+                    if add_summary:
+                        for bar in bars:
+                            answer += self.__printBarDetails(bar)
                     answer += "</ul>"
                     if not self.q.task:
                         answer += self.__summarizeBars(bars)

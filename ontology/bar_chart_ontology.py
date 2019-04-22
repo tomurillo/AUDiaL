@@ -2,7 +2,7 @@ from ontology.upper_vis_ontology import UpperVisOntology
 from NLP.model.QueryFilter import QueryFilterCardinal, QueryFilterNominal
 from sys import float_info
 from rdflib import XSD
-from GeneralUtil import isNumber, stringOpToPython
+from GeneralUtil import isNumber, stringOpToPython, numberToOrdinal, replaceLastCommaWithAnd
 
 
 class BarChartOntology(UpperVisOntology):
@@ -135,11 +135,9 @@ class BarChartOntology(UpperVisOntology):
             else:
                 output += " All bars:<br/>"
             if stackedMean is not None:
-                output += " Mean of stacked bars: %.2f %s<br/>" \
-                            % (stackedMean, units)
+                output += " Mean of stacked bars: %.2f %s<br/>" % (stackedMean, units)
             # Navigate through stacked bars and output averages
-            output += "This subset (%s) is further divided into:<br/>" \
-                        % lbloutput
+            output += "This subset (%s) is further divided into:<br/>" % lbloutput
             for b in stacked:
                 specificLblTxt = [self.getText(l) for l in specificLabels[b]]
                 output += ",".join(specificLblTxt) + "<br/>"
@@ -224,14 +222,28 @@ class BarChartOntology(UpperVisOntology):
         else:
             raise Exception("Filter: operator '%s' not supported" % op)
 
-    def getElementFilters(self, element, returnText = True):
+    def getElementFiltersString(self, element):
+        """
+        Returns a textual representation of the given element's filters
+        :param element: the name of a metric bar instance
+        :return: string
+        """
+        filters = self.getElementFilters(element)
+        if filters:
+            labels = ", ".join(sorted([f for f in filters if f], key=str.lower))
+            text = "(labels: %s)" % replaceLastCommaWithAnd(labels)
+        else:
+            text = '(no labels found)'
+        return text
+
+    def getElementFilters(self, element, returnText=True):
         """
         Retrieves the filters that apply to an element given by its labels,
         color and other attributes
-        @param element: the name of a metric bar instance
-        @param returnText: whether to return the text of the labels (True) or
+        :param element: the name of a metric bar instance
+        :param returnText: whether to return the text of the labels (True) or
         the instance names of the label elements (False)
-        @return set<sting>: a list of the texts of those labels that apply
+        :return: set<sting>: a list of the texts of those labels that apply
         to the bar if returText is True, or a list of label instance names
         otherwise
         """
@@ -251,8 +263,7 @@ class BarChartOntology(UpperVisOntology):
                                             label)
                         labels.add(label)
         if returnText:
-             # Discard NoneType and ""
-            return set([self.getText(l) for l in labels if l])
+            return set([self.getText(l) for l in labels if l])  # Discard NoneType and ""
         else:
             return set([l for l in labels if l])
 
@@ -345,7 +356,6 @@ class BarChartOntology(UpperVisOntology):
             bottomval = float(self.getText(bottoml)) if bottoml else 0
             topval = float(self.getText(topl))
             value = bottomval + ((topval * length) / axisLength)
-
         return value
 
     def lengthOfElement(self, element):
@@ -575,6 +585,12 @@ class BarChartOntology(UpperVisOntology):
         """
         answer = ''
         add_units = True
+        units = self.getChartMeasurementUnit()
+        if units:
+            units_answer = ' %s' % units
+        else:
+            units_answer = ''
+        add_labels_bar = None  # If only one bar is fetched add its labels to output
         task = self.stripNamespace(task_sc.task)
         if task == self.StructuralTask.DerivedValueTask.AVERAGE:
             avg = self.computeDerived('avg', bars)
@@ -592,11 +608,44 @@ class BarChartOntology(UpperVisOntology):
             add_units = False
             c = self.computeDerived('count', bars)
             answer = '%d bars match your query.' % c
-        if answer and add_units:
-            units = self.getChartMeasurementUnit()
-            if units:
-                answer += ' %s' % units
+        elif task == self.StructuralTask.ComparisonTask.FIND_MAXIMUM:
+            res = self.computeExtreme('max', bars)
+            if res and 'max' in res:
+                add_labels_bar, value = res['max']
+                answer = "The maximum value is : %.2f" % value
+        elif task == self.StructuralTask.ComparisonTask.FIND_MINIMUM:
+            res = self.computeExtreme('min', bars)
+            if res and 'min' in res:
+                add_labels_bar, value = res['min']
+                answer = "The mininum value is : %.2f" % value
+        elif task in [self.StructuralTask.ComparisonTask.FIND_EXTREMUM, self.StructuralTask.ComparisonTask.RANGE]:
+            res = self.computeExtreme(['max', 'min'], bars)
+            add_units = False
+            if task == self.StructuralTask.ComparisonTask.RANGE and 'range' in res:
+                _, r = res['range']
+                answer = 'Range of bars is: %.2f' % r
+                answer += units_answer
+                answer += '. It has the following extreme values:<br/>'
+            if res and 'min' in res:
+                bar, value = res['min']
+                answer += "Minimum value: %.2f" % value
+                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
+                    answer += units_answer
+                answer += " %s<br/>" % self.getElementFiltersString(bar)
+            if res and 'max' in res:
+                bar, value = res['max']
+                answer += "Maximum value : %.2f" % value
+                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
+                    answer += units_answer
+                answer += " %s" % self.getElementFiltersString(bar)
+        elif task == self.StructuralTask.ComparisonTask.SORT:
+            answer = self.computeSort(bars)
+            add_units = False
         if answer:
+            if add_units and units:
+                answer += units_answer
+            if add_labels_bar:
+                answer += " %s" % self.getElementFiltersString(add_labels_bar)
             answer += '<br/>'
         return answer
 
@@ -754,6 +803,39 @@ class BarChartOntology(UpperVisOntology):
             elif op == 'count':
                 derived = countbars
         return derived
+
+    def computeSort(self, bars, descending=True):
+        """
+        Returns the result of a sort analytical task
+        :param iterable<string> bars: bars to take into account
+        :param descending: boolean: whether to return the bars in descending (default) or descending order
+        :return: string; task answer
+        """
+        import operator
+        answer = ''
+        bar_vals = {}
+        for b in bars:
+            val = self.getMetricBarValue(b)
+            if val:
+                bar_vals[b] = val
+        answer += "<h5>Sorted %d bars :</h5>" % len(bar_vals)
+        sorted_b = sorted(bar_vals.items(), key=operator.itemgetter(1), reverse=descending)
+        if sorted_b:
+            units = self.getChartMeasurementUnit()
+            if units:
+                units_answer = ' %s' % units
+            else:
+                units_answer = ''
+            i = 0
+            answer += '<section><ul>'
+            for b, v in sorted_b:
+                i += 1
+                answer += "<li>%s bar %s: %s%s</li>" % (numberToOrdinal(i), self.getElementFiltersString(b), v,
+                                                        units_answer)
+            answer += '</ul></section>'
+        else:
+            answer = 'No bars found'
+        return answer
 
     def computeBarsNavOrder(self):
         """

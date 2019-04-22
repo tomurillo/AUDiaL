@@ -50,7 +50,7 @@ class DialogHandler(object):
         pair.key = key
         pair.filter = next_filter
         learning_keys = self.generateLearningKeys(key)
-        sug_generator = SuggestionGenerator(self.o, force_parents=False)
+        sug_generator = SuggestionGenerator(self.q, self.o, force_parents=False)
         votes = sug_generator.createFilterVotes(key, next_filter, self.q.focus, add_none=True)
         learning_votes = self.loadLearningVotes(learning_keys)
         if learning_votes:
@@ -90,7 +90,7 @@ class DialogHandler(object):
         suggestion_votes = self.generateInitialVotes(next_ocs)
         if FORCE_DIALOG and sc_first:
             #  Find additional votes by creating a new POC from the OE
-            sug_generator = SuggestionGenerator(self.o, force_parents=True)
+            sug_generator = SuggestionGenerator(self.q, self.o, force_parents=True)
             poc = POC()
             poc.populateFromAnnotation(sc_first.OE.annotation.copy())
             poc_votes = []
@@ -151,7 +151,7 @@ class DialogHandler(object):
         pair.key = key
         pair.subject = poc
         learning_keys = self.generateLearningKeys(key)
-        sug_generator = SuggestionGenerator(self.o, force_parents=True)
+        sug_generator = SuggestionGenerator(self.q, self.o, force_parents=True)
         skip_others = poc.tree.label().startswith(VB_TREE_POS_TAG)  # Tree label is VB; cast task votes only
         if neighbor_ocs:
             votes = sug_generator.createVotes(key, poc, add_none=True, add_text_labels=True, skip_non_tasks=skip_others)
