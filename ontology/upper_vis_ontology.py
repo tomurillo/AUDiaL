@@ -179,6 +179,7 @@ class UpperVisOntology(UpperOntology):
             SUMMARY = "Summary_Task"  # Compute summary
         class DerivedValueTask:
             AVERAGE = 'Compute_Average_Task'
+            SUM = 'Compute_Sum_Task'
             MEDIAN = 'Compute_Median_Task'
             MODE = 'Compute_Mode_Task'
             COUNT = 'Count_Task'

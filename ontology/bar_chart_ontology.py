@@ -604,6 +604,10 @@ class BarChartOntology(UpperVisOntology):
             mode = self.computeDerived('mode', bars)
             if mode is not None:
                 answer = 'The most common bar value is %.2f' % float(mode)
+        elif task == self.StructuralTask.DerivedValueTask.SUM:
+            s = self.computeDerived('sum', bars)
+            if s is not None:
+                answer = 'The sum of these bars is %.2f' % float(s)
         elif task == self.StructuralTask.DerivedValueTask.COUNT:
             add_units = False
             c = self.computeDerived('count', bars)
@@ -802,6 +806,8 @@ class BarChartOntology(UpperVisOntology):
                 derived = max(val_occurrences, key=val_occurrences.get)
             elif op == 'count':
                 derived = countbars
+            elif op == 'sum':
+                derived = totalVal
         return derived
 
     def computeSort(self, bars, descending=True):
