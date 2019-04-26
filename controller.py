@@ -127,8 +127,8 @@ class Controller(object):
                     v_str = 'have' if n > 1 else 'has'
                     add_summary = False
                     if self.q.task:
-                        answer = self.o.applyAnalyticalTask(self.q.task, bars)
-                        if self.o.taskNeedsSumamry(self.q.task):
+                        answer, success = self.o.applyAnalyticalTask(self.q.task, bars)
+                        if success and self.o.taskNeedsSumamry(self.q.task):
                             add_summary = True
                             answer += '<h5>The following%s bar%s %s been considered:</h5><ul>' % (n_str, pl_str, v_str)
                     else:
@@ -136,7 +136,7 @@ class Controller(object):
                         answer = '<h5>The following%s bar%s matched your query:</h5><ul>' % (n_str, pl_str)
                     if add_summary:
                         for bar in bars:
-                            answer += self.__printBarDetails(bar)
+                            answer += self.o.printBarDetails(bar)
                     answer += "</ul>"
                     if not self.q.task:
                         answer += self.__summarizeBars(bars)
@@ -212,7 +212,7 @@ class Controller(object):
                 else:
                     b = self.o.navigate([task])
                     if b[0]:
-                        output += self.__printBarDetails(b[0], skipNav=True)
+                        output += self.o.printBarDetails(b[0], skipNav=True)
         return output
 
     def parseAndLookUp(self, what):
@@ -306,7 +306,7 @@ class Controller(object):
                                                 filters = filtersInQuery,
                                                 negate = negate)
                 for bar in bars:
-                    output += self.__printBarDetails(bar)
+                    output += self.o.printBarDetails(bar)
         return output
 
     def retrieveNumeric(self, what):
@@ -336,7 +336,7 @@ class Controller(object):
                                                 operand = operand,
                                                 negate = negate)
             for bar in bars:
-                output += self.__printBarDetails(bar)
+                output += self.o.printBarDetails(bar)
             if len(bars) == 1:
                 outNumeric = self.o.getMetricBarValue(bars.pop())
         return output, outNumeric
@@ -435,7 +435,7 @@ class Controller(object):
                         else:
                             output += "Error: No operator found."
                         if cont:
-                            output += self.__printBarDetails(bar)
+                            output += self.o.printBarDetails(bar)
                             barVal = self.o.getMetricBarValue(bar)
                             if stacked:
                                 outputNumeric = (barVal, None)
@@ -494,12 +494,12 @@ class Controller(object):
                         value = None
                         if op == 'max' or op == 'range':
                             bar, value = infoStacked['max']
-                            tags = self.__printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)
                             output += "%s: Stacked bars maximum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'min' or op == 'range':
                             bar, value = infoStacked['min']
-                            tags = self.__printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)
                             output += "%s: Stacked bars minimum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'range':
@@ -512,12 +512,12 @@ class Controller(object):
                         value = None
                         if op == 'max' or op == 'range':
                             bar, value = infoSimple['max']
-                            tags = self.__printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)
                             output += "%s: Metric bars maximum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'min' or op == 'range':
                             bar, value = infoSimple['min']
-                            tags = self.__printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)
                             output += "%s: Metric bars minimum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'range':
@@ -651,88 +651,88 @@ class Controller(object):
         b = None
         output = ""
         if action == 'where':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.WHERE])
-            if b[0]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.WHERE])
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Current Bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += " No current bar available!. Please reset the " \
                             "navigation.<br/>"
         elif action == 'next':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_RIGHT])
-            if b[0]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_RIGHT])
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to next bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "No next bar.<br/>"
         elif action == 'previous':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_LEFT])
-            if b[0]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_LEFT])
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to previous bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "No previous bar.<br/>"
         elif action == 'first':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_FIRST])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to fist bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "No first bar available.<br/>"
         elif action == 'last':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LAST])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to last bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "No last bar available.<br/>"
         elif action == 'highest':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HIGHEST])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to bar with highest value: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "Highest bar could not be found.<br/>"
         elif action == 'lowest':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LOWEST])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to bar with lowest value: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "Lowest bar could not be found.<br/>"
         elif action == 'up':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_UP])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved one level up: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "You can not go up. Try going next, back or down.<br/>"
         elif action == 'down':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_DOWN])
-            if b[0]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_DOWN])
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved one level down: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "You can not go down. Try going next, back or up.<br/>"
 
         elif action == 'sethome':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.SET_HOME])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Current Bar selected as home node.<br/>"
             else:
                 output += "The current bar can not be chosen as home node.<br/>"
         elif action == 'gotohome':
             b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HOME])
-            if b[0]:
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Moved to Home Node: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "No home node found.<br/>"
         elif action == 'reset':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])
-            if b[0]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])
+            if b[0] and isinstance(self.o, BarChartOntology):
                 output += "Navigation has been reset. Current bar: "
-                output += self.__printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[0], skipNav=True)
             else:
                 output += "Error while resetting.<br/>"
         return output
@@ -833,52 +833,6 @@ class Controller(object):
                          negate = negate,
                          barset = bars)
         return barsq
-
-    def __printBarDetails(self, bar, skipNav = False):
-        """
-        Print a natural-language description of a bar's information, including:
-            - Whether it is a simple (metric) or a stacked bar
-            - Its textual labels
-            - Its value according to the size in relation to the metric axis
-            - Its units according to the chart's metric axis
-            - Its current user navigation properties, if skipNav is set to False
-            - Its user-defined labels
-        @param bar (string): a bar instance name
-        @param skipNav (boolean): whether to skip user navigation information
-               (i.e. if the bar is the current or home bar)
-        @return string: a natural-language description of the bar
-        """
-        output = '<li>'
-        if bar:
-            units = self.o.getChartMeasurementUnit()
-            if units:
-                unitsNL = units.replace("_", " ").lower()
-            else:
-                unitsNL = "(units unknown)"
-            barfilters = self.o.getElementFilters(bar)
-            if self.o.elementHasRole(bar, self.o.SyntacticRoles.STACKED_BAR):
-                output += "Stacked bar "
-            else:
-                output += "Simple bar "
-            if len(barfilters) > 0:
-                output += ' with labels: '
-                output += ', '.join(str(v) for v in sorted(barfilters) if v)
-            size = self.o.getMetricBarValue(bar)
-            output += " (%0.2f %s). " % (size, unitsNL)
-            navFilters = self.o.getNavigationProperties(bar)
-            for nf in navFilters:
-                if not skipNav:
-                    if nf == self.o.NavigationDataProperty.IS_CURRENT:
-                        output += "This is the current bar. "
-                    elif nf == self.o.NavigationDataProperty.IS_HOME_NODE:
-                        output += "This is the home bar. "
-                if nf == self.o.NavigationDataProperty.HAS_USER_LABEL:
-                    ul = navFilters[nf]
-                    output += "User tags: %s. " % ul
-        else:
-            output += "Bar not found!"
-        output += '</li>'
-        return output
 
     def __summarizeBars(self, bars):
         """

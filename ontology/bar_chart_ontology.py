@@ -350,7 +350,6 @@ class BarChartOntology(UpperVisOntology):
                 raise Exception("Axis not correctly labeled: top label not found.")
         else:
             raise Exception("Axis not found in chart.")
-
         length = self.lengthOfElement(metricBar)
         if axisLength > 0 and length > 0:
             bottomval = float(self.getText(bottoml)) if bottoml else 0
@@ -581,9 +580,10 @@ class BarChartOntology(UpperVisOntology):
         Apply an analytical task to the given bars
         :param task_sc: SemanticConcept instance with the task
         :param bars: list<string> bars to which the task will be applied
-        :return: string; answer in NL
+        :return: (string, boolean); answer in NL and whether the task could be computed
         """
         answer = ''
+        success = True
         add_units = True
         units = self.getChartMeasurementUnit()
         if units:
@@ -646,7 +646,10 @@ class BarChartOntology(UpperVisOntology):
             answer = self.computeSort(bars)
             add_units = False
         elif task == self.StructuralTask.DistributionTask.CHARACTERIZE_DISTRIBUTION:
-            answer = self.computeDistribution(bars)
+            answer, success = self.computeDistribution(bars)
+            add_units = False
+        elif task == self.StructuralTask.CorrelationTask.CLUSTER:
+            answer, success = self.computeClustering(bars)
             add_units = False
         if answer:
             if add_units and units:
@@ -654,7 +657,7 @@ class BarChartOntology(UpperVisOntology):
             if add_labels_bar:
                 answer += " %s" % self.getElementFiltersString(add_labels_bar)
             answer += '<br/>'
-        return answer
+        return answer, success
 
     def applyLowLevelTask(self, task, **kwargs):
         """
@@ -841,6 +844,17 @@ class BarChartOntology(UpperVisOntology):
             sorted_b = [bars_nav[v] for v in sorted(bars_nav)]
         return sorted_b
 
+    def getBarValues(self, bars):
+        """
+        Return the values of the given bar graphic objects
+        :param bars: list<string> bars to consider
+        :return: dict<string; float>: keys are bar ids, values are bar values
+        """
+        vals = {}
+        for bar in bars:
+            vals[bar] = self.getMetricBarValue(bar)
+        return vals
+
     def computeSort(self, bars, descending=True):
         """
         Returns the result of a sort analytical task
@@ -871,22 +885,66 @@ class BarChartOntology(UpperVisOntology):
     def computeDistribution(self, bars):
         """
         Returns the result of a distribution characterization task on a set of bars
-        @param iterable<string> bars: the bars whose values to take into
-        @return string: task answer
+        @param iterable<string> bars: the bars whose values to take into account
+        @return (string, boolean): task answer, and whether the task could be resolved
         """
-        from stats.DataAnalyzer import DataAnalyzer
+        success = False
         answer = 'The answer could not be computed'
-        if bars:
-            sorted_b = self.sortBarsAccordingToNavigation(bars)
-            if sorted_b:
-                dist, params = DataAnalyzer.dist_best_fit([self.getMetricBarValue(b) for b in sorted_b])
-                if dist:
-                    d_label = DataAnalyzer.dist_to_string(dist, params)
-                    answer = 'The data for these bars most likely follows a %s' %d_label
-                else:
-                    answer = 'The distribution could not be characterized'
-        return answer
+        try:
+            from stats.DataAnalyzer import DataAnalyzer
+            if bars:
+                bar_vals = self.getBarValues(bars)
+                if bar_vals:
+                    analyzer = DataAnalyzer(bar_vals)
+                    dist, params = analyzer.dist_best_fit()
+                    if dist:
+                        d_label = analyzer.dist_to_string(dist, params)
+                        answer = 'The data for these bars best fits a %s' % d_label
+                        success = True
+                    else:
+                        answer = 'The distribution could not be characterized'
+        except ImportError:
+            answer = 'Task (characterize distribution) not supported!'
+        finally:
+            return answer, success
 
+    def computeClustering(self, bars):
+        """
+        Returns the result of a clustering task on a set of bars according to their values
+        @param iterable<string> bars: the bars whose values to take into account
+        @return (string, boolean): task answer, and whether the task could be resolved
+        """
+        success = False
+        answer = 'The answer could not be computed'
+        try:
+            from stats.DataAnalyzer import DataAnalyzer
+            if bars:
+                bar_vals = self.getBarValues(bars)
+                if bar_vals:
+                    analyzer = DataAnalyzer(bar_vals)
+                    clusters, outliers = analyzer.find_clusters()
+                    n_clusters = len(clusters)
+                    if n_clusters > 1:
+                        units = self.getChartMeasurementUnit()
+                        if units:
+                            units_label = units.replace("_", " ").lower()
+                        else:
+                            units_label = ''
+                        answer = "<h5>Found %d possible bar groupings:</h5>" % n_clusters
+                        answer += '<section><ul>'
+                        for i, c in enumerate(clusters, 1):
+                            answer += "<li><strong>%s cluster:</strong><ul>" % (numberToOrdinal(i))
+                            for bar in c:
+                                answer += self.printBarDetails(bar, skipNav=True, units=units_label)
+                            answer += "</ul></li>"
+                        answer += '</ul></section>'
+                        success = True
+                    else:
+                        answer = 'The bars of the chart could not be grouped!'
+        except ImportError:
+            answer = 'Task (clustering) not supported!'
+        finally:
+            return answer, success
 
     def computeBarsNavOrder(self):
         """
@@ -971,7 +1029,7 @@ class BarChartOntology(UpperVisOntology):
                 if f == self.NavigationEntity.HOME_NODE:
                      barset &= set(self.getHomeNodes())
                 elif f == self.NavigationEntity.CURRENT_NODE:
-                    barset &= set([self.getCurrentBar()])
+                    barset &= set(self.getCurrentBar())
                 elif f == self.NavigationEntity.LAST_NODE:
                     barset &= set(self.getPreviousNodes())
                 else:
@@ -1229,6 +1287,56 @@ class BarChartOntology(UpperVisOntology):
         if not ulbls:
             ulbls = "<No Tags>"
         return ulbls
+
+    def printBarDetails(self, bar, skipNav=False, units=None):
+        """
+        Print a natural-language description of a bar's information, including:
+            - Whether it is a simple (metric) or a stacked bar
+            - Its textual labels
+            - Its value according to the size in relation to the metric axis
+            - Its units according to the chart's metric axis
+            - Its current user navigation properties, if skipNav is set to False
+            - Its user-defined labels
+        :param bar: string; a bar instance name
+        :param skipNav: boolean; whether to skip user navigation information
+               (i.e. if the bar is the current or home bar)
+        :param units: string; units to print after each bar. None to infer from ontology
+        :return string: a natural-language description of the bar
+        """
+        output = '<li>'
+        if bar:
+            if units is not None:
+                unitsNL = units
+            else:
+                units = self.getChartMeasurementUnit()
+                if units:
+                    unitsNL = units.replace("_", " ").lower()
+                else:
+                    unitsNL = "(units unknown)"
+            barfilters = self.getElementFilters(bar)
+            if self.elementHasRole(bar, self.SyntacticRoles.STACKED_BAR):
+                output += "Stacked bar "
+            else:
+                output += "Simple bar "
+            if len(barfilters) > 0:
+                output += ' with labels: '
+                output += ', '.join(str(v) for v in sorted(barfilters) if v)
+            size = self.getMetricBarValue(bar)
+            output += " (%0.2f %s). " % (size, unitsNL)
+            navFilters = self.getNavigationProperties(bar)
+            for nf in navFilters:
+                if not skipNav:
+                    if nf == self.NavigationDataProperty.IS_CURRENT:
+                        output += "This is the current bar. "
+                    elif nf == self.NavigationDataProperty.IS_HOME_NODE:
+                        output += "This is the home bar. "
+                if nf == self.NavigationDataProperty.HAS_USER_LABEL:
+                    ul = navFilters[nf]
+                    output += "User tags: %s. " % ul
+        else:
+            output += "Bar not found!"
+        output += '</li>'
+        return output
 
     def __printLabels(self, element):
         """

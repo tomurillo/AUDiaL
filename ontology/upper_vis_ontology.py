@@ -507,6 +507,14 @@ class UpperVisOntology(UpperOntology):
                     props[prop] = navVal
         return props
 
+    def navigate(self, actions):
+        """
+        Default navigation method. Needs to be overridden by a specialized ontology handler.
+        :param actions: a list of actions to be taken
+        :return: list<string> a list of objects that have the navigation focus
+        """
+        return []
+
     def getPreviousNodes(self):
         """
         Return the instance name of the previously visited graphic elements

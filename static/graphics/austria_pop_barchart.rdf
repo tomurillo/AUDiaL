@@ -1652,6 +1652,17 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Cluster_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Cluster_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cluster</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">group</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Clustering_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Clustering_GR"/>
@@ -1737,6 +1748,14 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Convex_Curve_Shape">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlate_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlate_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task"/>
     </NamedIndividual>
     
 
@@ -4001,6 +4020,7 @@
         <ns1:hasSVGElement>text4239-7-8</ns1:hasSVGElement>
         <ns1:hasXCoordinate>222.531</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>454.412</ns1:hasYCoordinate>
+        <ns1:has_text>Lower Austria</ns1:has_text>
     </NamedIndividual>
     
 
@@ -4070,6 +4090,7 @@
         <ns1:hasSVGElement>text4239-7-8-9</ns1:hasSVGElement>
         <ns1:hasXCoordinate>290.052</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>454.522</ns1:hasYCoordinate>
+        <ns1:has_text>Upper Austria</ns1:has_text>
     </NamedIndividual>
     
 
