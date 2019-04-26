@@ -645,6 +645,9 @@ class BarChartOntology(UpperVisOntology):
         elif task == self.StructuralTask.ComparisonTask.SORT:
             answer = self.computeSort(bars)
             add_units = False
+        elif task == self.StructuralTask.DistributionTask.CHARACTERIZE_DISTRIBUTION:
+            answer = self.computeDistribution(bars)
+            add_units = False
         if answer:
             if add_units and units:
                 answer += units_answer
@@ -810,6 +813,34 @@ class BarChartOntology(UpperVisOntology):
                 derived = totalVal
         return derived
 
+    def sortBars(self, bars, descending=True):
+        """
+        Sorts the given bars in the given order according to their values
+        :param iterable<string> bars: bars to take into account
+        :param descending: boolean: whether to return the bars in descending (default) or descending order
+        :return: dict(string, float): Sorted bars and their values
+        """
+        import operator
+        bar_vals = {}
+        for b in bars:
+            val = self.getMetricBarValue(b)
+            if val:
+                bar_vals[b] = val
+        sorted_b = sorted(bar_vals.items(), key=operator.itemgetter(1), reverse=descending)
+        return sorted_b
+
+    def sortBarsAccordingToNavigation(self, bars):
+        """
+        Returns the given bars as sorted in the order given by their navigation
+        :param bars: list<string> bars to consider
+        :return: list<string> sorted bars
+        """
+        sorted_b = []
+        bars_nav = self.getBarsOrders(bars)
+        if bars_nav:
+            sorted_b = [bars_nav[v] for v in sorted(bars_nav)]
+        return sorted_b
+
     def computeSort(self, bars, descending=True):
         """
         Returns the result of a sort analytical task
@@ -817,16 +848,10 @@ class BarChartOntology(UpperVisOntology):
         :param descending: boolean: whether to return the bars in descending (default) or descending order
         :return: string; task answer
         """
-        import operator
         answer = ''
-        bar_vals = {}
-        for b in bars:
-            val = self.getMetricBarValue(b)
-            if val:
-                bar_vals[b] = val
-        answer += "<h5>Sorted %d bars :</h5>" % len(bar_vals)
-        sorted_b = sorted(bar_vals.items(), key=operator.itemgetter(1), reverse=descending)
+        sorted_b = self.sortBars(bars, descending)
         if sorted_b:
+            answer += "<h5>Sorted %d bars :</h5>" % len(sorted_b)
             units = self.getChartMeasurementUnit()
             if units:
                 units_answer = ' %s' % units
@@ -843,6 +868,26 @@ class BarChartOntology(UpperVisOntology):
             answer = 'No bars found'
         return answer
 
+    def computeDistribution(self, bars):
+        """
+        Returns the result of a distribution characterization task on a set of bars
+        @param iterable<string> bars: the bars whose values to take into
+        @return string: task answer
+        """
+        from stats.DataAnalyzer import DataAnalyzer
+        answer = 'The answer could not be computed'
+        if bars:
+            sorted_b = self.sortBarsAccordingToNavigation(bars)
+            if sorted_b:
+                dist, params = DataAnalyzer.dist_best_fit([self.getMetricBarValue(b) for b in sorted_b])
+                if dist:
+                    d_label = DataAnalyzer.dist_to_string(dist, params)
+                    answer = 'The data for these bars most likely follows a %s' %d_label
+                else:
+                    answer = 'The distribution could not be characterized'
+        return answer
+
+
     def computeBarsNavOrder(self):
         """
         Initializes the datatype properties specifying navigation bar order
@@ -853,7 +898,7 @@ class BarChartOntology(UpperVisOntology):
         metric = self.getMetricBars()
         metricAxis = self.getMetricAxis()
         o = self.getOrientation(metricAxis)
-        #Coordinate to order bars is the opposite of metric axis orientation
+        #  Coordinate to order bars is the opposite of metric axis orientation
         if o == self.VisualAttribute.Spatial.Orientation.VERTICAL_ORIENTATION:
             coorMod = 1
             coorProp = self.SytacticDataProperty.HAS_X_COOR
@@ -871,7 +916,7 @@ class BarChartOntology(UpperVisOntology):
             checkChildren = False
             for b in metric:
                 barsCoors[b] = self.getValue(b, coorProp) * coorMod
-        #List of sorted bars from smaller to higher coordinate
+        #  List of sorted bars from smaller to higher coordinate
         barsSorted = sorted(barsCoors, key=lambda k: float(barsCoors[k]))
         currentSet = False
         n = 0
