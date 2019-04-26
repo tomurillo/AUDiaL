@@ -13,7 +13,7 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
 
 ## Install (Windows)
 1. Set the `JAVA_HOME` environment to `C:\Program Files\Java\jdk1.X.X_XXX` or similar
-2. Install Python libraries (on your venv terminal):
+2. Install required Python modules (on your venv terminal):
     ```
     pip install Flask
     pip install Flask-Session
@@ -22,11 +22,16 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
     pip install textdistance
     pip install inflect
     ```
-3. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
-4. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.
-5. Download the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml#Download) (tested with version 3.9.1).
-4. Unzip the contents of step 5 such that `stanford-parser-X.X.X-models.jar` is under `/NLP/lib/parsers/stanford-parser-full`.
-7. Add the Wordnet corpus to NLTK:
+3. Optionally, you may also install the following modules for data analysis tasks:
+    ```
+    pip install scipy
+    pip install scikit-learn
+    ```
+4. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
+5. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.
+6. Download the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml#Download) (tested with version 3.9.1).
+7. Unzip the contents of step 5 such that `stanford-parser-X.X.X-models.jar` is under `/NLP/lib/parsers/stanford-parser-full`.
+8. Add the Wordnet corpus to NLTK:
     ```
     python
     > import nltk
