@@ -24,7 +24,7 @@ class BarChartOntology(UpperVisOntology):
     def getStackedBars(self):
         """
         Returns the stacked bars in the chart
-        @return: A lits of stacked bar instance names
+        @return: A list of stacked bar instance names
         """
         return self.getElementsWithRole(self.SyntacticRoles.STACKED_BAR)
 
@@ -45,14 +45,12 @@ class BarChartOntology(UpperVisOntology):
             'set-home': set current bar as home node
         @param bars: a list of bar instances to take into account; None for all
         @return A list of the bars that have been navigated, in order. N.B. some
-        of the results might be None when no result is available and should
-        be handled properly.
+        of the results might be None when no result is available.
         """
         outputbars = []
         for action in actions:
-            b = None
             if action == self.StructuralTask.NavigationTask.WHERE:
-                b = self.getCurrentBar()
+                b = [self.getCurrentBar()]
             elif action == self.StructuralTask.NavigationTask.MOVE_RIGHT:
                 b = self.__moveNext()
             elif action == self.StructuralTask.NavigationTask.MOVE_LEFT:
@@ -77,7 +75,7 @@ class BarChartOntology(UpperVisOntology):
                 b = self.__goToHome()
             else:
                 raise Exception("Action '%s' not supported!" % action)
-            outputbars.append(b)
+            outputbars.extend(b)
         return outputbars
 
     def generateSummary(self):
@@ -257,10 +255,8 @@ class BarChartOntology(UpperVisOntology):
                     elementColor = self.getValue(subelement,
                                          self.SyntacticProperty.HAS_COLOR)
                     if elementColor == color:
-                        """Add label from legend to the bar"""
-                        self.addObjectPropertyTriple(subelement,
-                                            self.SyntacticProperty.IS_LABELED_BY,
-                                            label)
+                        # Add label from legend to the bar
+                        self.addObjectPropertyTriple(subelement, self.SyntacticProperty.IS_LABELED_BY, label)
                         labels.add(label)
         if returnText:
             return set([self.getText(l) for l in labels if l])  # Discard NoneType and ""
@@ -401,8 +397,8 @@ class BarChartOntology(UpperVisOntology):
     def getMetricBarsOfStacked(self, bar):
         """
         Returns the metric sub-bars that make up a given stacked bar
-        @param bar: the name of a stacked bar instance
-        @return list<string>: a list of metric bar instances
+        :param bar: the name of a stacked bar instance
+        :return list<string>: a list of metric bar instances
         """
         subElements = []
         elementsWithSVG = []
@@ -413,6 +409,21 @@ class BarChartOntology(UpperVisOntology):
             if self.elementHasRole(e, self.SyntacticRoles.METRIC_BAR):
                 subElements.append(e)
         return subElements
+
+    def getStackedBarOfMetric(self, bar):
+        """
+        Returns the parent stacked bar of the given metric bar, if it exists
+        :param bar: string; name of a metric bar instance
+        :return: string; name of the parent stacked bar instance; None if not found
+        """
+        parent = None
+        if self.elementHasRole(bar, self.SyntacticRoles.METRIC_BAR):
+            containers = self.getContainerElements(bar)
+            for e in containers:
+                if self.elementHasRole(e, self.SyntacticRoles.STACKED_BAR):
+                    parent = e
+                    break
+        return parent
 
     def getChartMeasurementUnit(self):
         """
@@ -574,6 +585,38 @@ class BarChartOntology(UpperVisOntology):
         """
         return self.elementsInRelation(self.O2OGraphicRelation.ORDERED_LINEUP, [self.SyntacticRoles.METRIC_BAR,
                                                                                 self.SyntacticRoles.STACKED_BAR])
+
+    def pathBetweenBars(self, bar_start=None, bar_end=None, bars=None):
+        """
+        Return the bars that have to be visited between two bars, following their navigational order
+        :param bar_start: bar instance name where the path begins; None to start from the beginning
+        :param bar_end: bar instance name where the path ends; None to end in the last bar
+        :param bars: bars to consider; None for all
+        :return: list<string> list of bar instances from bar_start to bar_end
+        """
+        if bars is None:
+            bars = self.getBars()
+        orderedBars = self.getBarsOrders(bars)
+        ordered_path = []
+        if orderedBars:
+            start_found = bar_start is None
+            reverse = False
+            for t in sorted(orderedBars.items(), key=orderedBars.get):
+                if t[1]:
+                    if not start_found:
+                        if t[1] == bar_start:
+                            start_found = True
+                        elif t[1] == bar_end:
+                            reverse = True
+                            start_found = True
+                            bar_end = bar_start
+                    if start_found:
+                        ordered_path.append(t[1])
+                        if t[1] == bar_end:
+                            break
+            if reverse:
+                ordered_path = ordered_path[::-1]
+        return ordered_path
 
     def applyAnalyticalTask(self, task_sc, bars):
         """
@@ -935,8 +978,13 @@ class BarChartOntology(UpperVisOntology):
                         for i, c in enumerate(clusters, 1):
                             answer += "<li><strong>%s cluster:</strong><ul>" % (numberToOrdinal(i))
                             for bar in c:
-                                answer += self.printBarDetails(bar, skipNav=True, units=units_label)
+                                answer += '<li>%s</li>' % self.printBarDetails(bar, skipNav=True, units=units_label)
                             answer += "</ul></li>"
+                        answer += '</ul></section>'
+                        answer += "<h5>The remaining bars do not belong to any group:</h5>"
+                        answer += '<section><ul>'
+                        for bar in outliers:
+                            answer += '<li>%s</li>' % self.printBarDetails(bar, skipNav=True, units=units_label)
                         answer += '</ul></section>'
                         success = True
                     else:
@@ -1051,7 +1099,7 @@ class BarChartOntology(UpperVisOntology):
     def getCurrentBar(self):
         """
         Return the instance name of the currently selected bar
-        @return string: instance name of current bar in the ontology
+        :return string: instance name of current bar in the ontology
         """
         current = self.getCurrentNodes()
         if len(current) > 1:
@@ -1078,25 +1126,24 @@ class BarChartOntology(UpperVisOntology):
         properties from the ontology
         @return string: instance name of new home node (current bar)
         """
-        cur = self.getCurrentBar()
+        cur = [self.getCurrentBar()]
         if cur:
-            self.setHomeNodes([cur])
+            self.setHomeNodes(cur)
         return cur
 
     def __goToHome(self):
         """
         Sets the current bar as the one having the IS_HOME_NODE property as True
-        @return string: the name of the new current bar (home node)
+        :return list<string>: single-item list with the name of the new current bar (home node)
         """
         h = self.getHomeNodes()
         if len(h) > 1:
             raise Exception("More than one home node selected!")
         elif len(h) == 0:
-            return None
+            return [None]
         else:
-            bar = h[0]
-            self.setCurrentBar(bar)
-            return bar
+            self.setCurrentBar(h[0])
+            return h
 
     def resetNavigation(self):
         """
@@ -1109,111 +1156,123 @@ class BarChartOntology(UpperVisOntology):
         self.computeBarsNavOrder()
         return self.__moveFirst()
 
-    def __moveFirst(self):
+    def __getFirst(self):
         """
-        Set the first stacked bar contained as the current one. If the are none,
-        set the first metric bar
-        @return string: instance name of first bar
+        Return the first bar of the chart
+        :return string: instance name of first bar
         """
-        next = None
+        first = None
         bars = self.getStackedBars()
         if len(bars) == 0:
             bars = None
         orderedBars = self.getBarsOrders(bars)
         if len(orderedBars) > 0:
             minOrder = min(orderedBars, key=int)
-            next = orderedBars[minOrder]
+            first = orderedBars[minOrder]
+        elif bars:
+            first = bars[0]  # Fallback to any bar
+            from warnings import warn
+            warn('getFirst: bars are not ordered, random bar fetched.')
+        return first
+
+    def __moveFirst(self):
+        """
+        Set the first stacked bar contained as the current one. If the are none,
+        set the first metric bar
+        :return list<string>: list containing the instance name of first bar or None
+        """
+        next = self.__getFirst()
+        if next:
             self.setCurrentBar(next)
-        return next
+        return [next]
 
     def __moveLast(self):
         """
-        Set the last stacked bar contained as the current one. If the are none,
-        set the last metric bar
-        @return string: instance name of last bar
+        Set the last stacked bar as the current one. If the are none, set the last metric bar
+        :return list<string>: instance names of all bars from the current one until the last bar
         """
-        next = None
-        bars = self.getStackedBars()
-        if len(bars) == 0:
-            bars = None
-        orderedBars = self.getBarsOrders(bars)
-        if len(orderedBars) > 0:
-            maxOrder = max(orderedBars, key=int)
-            next = orderedBars[maxOrder]
-            self.setCurrentBar(next)
-        return next
+        ordered_path = []
+        current = self.getCurrentBar()
+        if not current:
+            current = self.__getFirst()
+        if current:
+            bars = self.getStackedBars()
+            if bars:
+                if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
+                    current = self.getStackedBarOfMetric(current)
+            ordered_path = self.pathBetweenBars(bar_start=current, bar_end=None, bars=bars)
+            next = ordered_path[-1] if ordered_path else None
+            if next:
+                self.setCurrentBar(next)
+        return ordered_path
 
     def __moveDown(self):
         """
-        Set the first metric bar contained in the current stacked bar as
-        the current one, if possible
-        @return string: instance name of next bar
+        Set the first metric bar contained in the current stacked bar as the current one, if possible
+        :return list<string>: instance names of the current and child bars
         """
-        next = None
+        path_bars = []
         candidates = []
         current = self.getCurrentBar()
-        if self.elementHasRole(current, self.SyntacticRoles.STACKED_BAR):
-            children = self.getConstituentElements(current)
-            for e in children:
-                if self.elementHasRole(e, self.SyntacticRoles.METRIC_BAR):
-                    candidates.append(e)
-            ordered = self.getBarsOrders(candidates)
-            minOrder = min(ordered, key=int)
-            next = ordered[minOrder]
-            self.setCurrentBar(next)
-        return next
+        if current:
+            path_bars.append(current)
+            if self.elementHasRole(current, self.SyntacticRoles.STACKED_BAR):
+                children = self.getConstituentElements(current)
+                for e in children:
+                    if self.elementHasRole(e, self.SyntacticRoles.METRIC_BAR):
+                        candidates.append(e)
+                ordered = self.getBarsOrders(candidates)
+                minOrder = min(ordered, key=int)
+                next = ordered[minOrder]
+                self.setCurrentBar(next)
+                path_bars.append(next)
+        return path_bars
 
     def __moveUp(self):
         """
-        Set the stacked bar the current one belongs to as the current bar, if
-        possible
-        @return string: instance name of next bar
+        Set the stacked bar the current one belongs to as the current bar, if possible
+        :return list<string>: instance names of the current and parent bars
         """
-        next = None
+        path_bars = []
         current = self.getCurrentBar()
-        if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
-            containers = self.getContainerElements(current)
-            for e in containers:
-                if self.elementHasRole(e, self.SyntacticRoles.STACKED_BAR):
-                    next = e
-                    self.setCurrentBar(e)
-                    break
-        return next
+        if current:
+            path_bars.append(current)
+            if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
+                parent = self.getStackedBarOfMetric(current)
+                if parent:
+                    self.setCurrentBar(parent)
+                    path_bars.append(parent)
+        return path_bars
 
-    def __moveNext(self, bars = None):
+    def __moveNext(self, bars=None):
         """
         Set the next bar as the current one, as given by their order properties
-        @param bars: bar instance names to take into account; None for all
-        indexed by their ordinal values
-        @return string: instance name of next bar with respect to the current
-        one
+        :param bars: bar instance names to take into account; None for all indexed by their ordinal values
+        :return list<string>: instance names of the current and next bars
         """
         return self.__horizontalStep(bars, 1)
 
-    def __movePrev(self, bars = None):
+    def __movePrev(self, bars=None):
         """
-        Set the previous bar as the current one, as given by their order
-        properties
-        @param bars: bar instance names to take into account; None for all
-        @return string: instance name of previous bar with respect to the
-        current one
+        Set the previous bar as the current one, as given by their order properties
+        :param bars: bar instance names to take into account; None for all
+        :return list<string>: instance names of the current and previous bars
         """
         return self.__horizontalStep(bars, -1)
 
-    def __horizontalStep(self, bars = None, n = 1):
+    def __horizontalStep(self, bars=None, n=1):
         """
-        Set the next bar as the n-th next or previous one, as given by the bars'
-        order property
-        @param bars: bar instance names to take into account; None for all
-        @param int n: number of steps. If n is negative, steps are taken
+        Set the next bar as the n-th next or previous one, as given by the bars' order property
+        :param bars: bar instance names to take into account; None for all
+        :param n: int; number of steps. If n is negative, steps are taken
         to the left (previous bars), otherwise to the right
-        @return string: instance name of the next bar with respect to the
-        current one after taking n horizontal steps in either direction
+        :return list<string>: instance names of all bars from the current one until the goal bar after having taken
+        n steps in the given direction
         """
-        next = None
-        barsOrder = self.getBarsOrders(bars)
+        current = self.getCurrentBar()
+        path_bars = [current]
         if n != 0:
-            current = self.getCurrentBar()
+            barsOrder = self.getBarsOrders(bars)
             v = self.getValue(current, self.NavigationDataProperty.HAS_ORDER)
             if v:
                 curr_n = int(v)
@@ -1226,39 +1285,54 @@ class BarChartOntology(UpperVisOntology):
             else:
                 stop_i = min(barsOrder, key=int)
             found = False
-            c = 0 # bar counter to skip the previous n-1 bars
+            c = 0  # bar counter to skip the previous n-1 bars
             while not found:
                 i += 1 if n > 0 else -1
                 if i in barsOrder:
                     next = barsOrder[i]
                     next_role = self.getRolesOfElement(next)
-                    if (self.SyntacticRoles.METRIC_BAR in curr_role or
-                        (self.SyntacticRoles.STACKED_BAR in curr_role and
-                        self.SyntacticRoles.STACKED_BAR in next_role)):
-                            c = c + 1
-                            if c == abs(n):
-                                found = True
-                                self.setCurrentBar(next)
+                    mbr = self.SyntacticRoles.METRIC_BAR
+                    sbr = self.SyntacticRoles.STACKED_BAR
+                    if (mbr in curr_role and mbr in next_role) or (sbr in curr_role and sbr in next_role):
+                        c = c + 1
+                        path_bars.append(next)
+                        if c == abs(n):
+                            found = True
+                            self.setCurrentBar(next)
                 if (n > 0 and i > stop_i) or (n < 0 and i < stop_i):
-                    next = None
                     found = True
-        return next
+        return path_bars
+
+    def __moveExtreme(self, op, bars=None):
+        """
+        Set the bar with the given extreme value as the current one
+        :param op: string; 'max' or 'min' to consider the bar with the highest or lowest value, respectively.
+        :param bars: set of bars to take into account
+        :return: list<string>: instance names of all bars from the current one until the highest bar
+        """
+        path_bars = []
+        if op in ['max', 'min']:
+            current = self.getCurrentBar()
+            if not current:
+                current = self.__getFirst()
+            if current:
+                if bars is None:
+                    bars = self.getStackedBars()
+                    if not bars:
+                        bars = self.getBars()
+                extremes = self.computeExtreme(op, bars)
+                max_bar, _ = extremes[op]
+                self.setCurrentBar(max_bar)
+                path_bars = self.pathBetweenBars(current, max_bar, bars)
+        return path_bars
 
     def __moveHighest(self, bars=None):
         """
         Set the bar with the highest value as the current one
         @param bars: set of bars to take into account
-        @return string: instance name of the next bar
+        :return list<string>: instance names of all bars from the current one until the highest bar
         """
-        barName = None
-        if bars is None:
-            bars = self.getStackedBars()
-            if not bars:
-                bars = self.getBars()
-        extremes = self.computeExtreme('max', bars)
-        (barName, barVal) = extremes['max']
-        self.setCurrentBar(barName)
-        return barName
+        return self.__moveExtreme('max', bars)
 
     def __moveLowest(self, bars=None):
         """
@@ -1266,15 +1340,7 @@ class BarChartOntology(UpperVisOntology):
         @param bars: set of bars to take into account
         @return string: instance name of the next bar
         """
-        barName = None
-        if bars is None:
-            bars = self.getStackedBars()
-            if not bars:
-                bars = self.getBars()
-        extremes = self.computeExtreme('min', bars)
-        (barName, barVal) = extremes['min']
-        self.setCurrentBar(barName)
-        return barName
+        return self.__moveExtreme('min', bars)
 
     def getCurrentBarUserTags(self):
         """
@@ -1303,7 +1369,7 @@ class BarChartOntology(UpperVisOntology):
         :param units: string; units to print after each bar. None to infer from ontology
         :return string: a natural-language description of the bar
         """
-        output = '<li>'
+        output = ''
         if bar:
             if units is not None:
                 unitsNL = units
@@ -1335,7 +1401,6 @@ class BarChartOntology(UpperVisOntology):
                     output += "User tags: %s. " % ul
         else:
             output += "Bar not found!"
-        output += '</li>'
         return output
 
     def __printLabels(self, element):

@@ -136,7 +136,7 @@ class Controller(object):
                         answer = '<h5>The following%s bar%s matched your query:</h5><ul>' % (n_str, pl_str)
                     if add_summary:
                         for bar in bars:
-                            answer += self.o.printBarDetails(bar)
+                            answer += '<li>%s</li>' % self.o.printBarDetails(bar)
                     answer += "</ul>"
                     if not self.q.task:
                         answer += self.__summarizeBars(bars)
@@ -210,9 +210,7 @@ class Controller(object):
                 if task == self.o.StructuralTask.ReadingTask.SUMMARY:
                     output = self.retrieveSummary()
                 else:
-                    b = self.o.navigate([task])
-                    if b[0]:
-                        output += self.o.printBarDetails(b[0], skipNav=True)
+                    output = self.navigate(task)
         return output
 
     def parseAndLookUp(self, what):
@@ -645,94 +643,94 @@ class Controller(object):
     def navigate(self, action):
         """
         Performs an atomic navigation action on the graphic
-        @param string: the action to perform (where, next, previous...)
-        @return string: a natural language description of the action's result
+        :param string: the action to perform (where, next, previous...). May also be a formal task instance name.
+        :return string: a natural language description of the action's result
         """
-        b = None
         output = ""
-        if action == 'where':
+        if action in ['where', self.o.StructuralTask.NavigationTask.WHERE]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.WHERE])
-            if b[0] and isinstance(self.o, BarChartOntology):
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Current Bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += " No current bar available!. Please reset the " \
                             "navigation.<br/>"
-        elif action == 'next':
+        elif action in ['next', self.o.StructuralTask.NavigationTask.MOVE_RIGHT]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_RIGHT])
-            if b[0] and isinstance(self.o, BarChartOntology):
+            if len(b) > 1 and b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to next bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "No next bar.<br/>"
-        elif action == 'previous':
+        elif action in ['previous', self.o.StructuralTask.NavigationTask.MOVE_LEFT]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_LEFT])
-            if b[0] and isinstance(self.o, BarChartOntology):
+            if len(b) > 1 and b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to previous bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "No previous bar.<br/>"
-        elif action == 'first':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_FIRST])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['first', self.o.StructuralTask.NavigationTask.GOTO_FIRST]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_FIRST])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to fist bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "No first bar available.<br/>"
-        elif action == 'last':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LAST])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['last', self.o.StructuralTask.NavigationTask.GOTO_LAST]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LAST])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to last bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "No last bar available.<br/>"
-        elif action == 'highest':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HIGHEST])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['highest', self.o.StructuralTask.NavigationTask.GOTO_HIGHEST]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HIGHEST])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to bar with highest value: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "Highest bar could not be found.<br/>"
-        elif action == 'lowest':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LOWEST])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['lowest', self.o.StructuralTask.NavigationTask.GOTO_LOWEST]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LOWEST])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to bar with lowest value: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "Lowest bar could not be found.<br/>"
-        elif action == 'up':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_UP])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['up', self.o.StructuralTask.NavigationTask.MOVE_UP]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_UP])
+            if len(b) > 1 and b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved one level up: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
-                output += "You can not go up. Try going next, back or down.<br/>"
-        elif action == 'down':
+                output += "You can not go up, you are in a stacked bar. Try going to the previous or next stacked bar, "
+                output += "or visiting this bar's children by going one level down.<br/>"
+        elif action in ['down', self.o.StructuralTask.NavigationTask.MOVE_DOWN]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_DOWN])
-            if b[0] and isinstance(self.o, BarChartOntology):
+            if len(b) > 1 and b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved one level down: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
-                output += "You can not go down. Try going next, back or up.<br/>"
-
-        elif action == 'sethome':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.SET_HOME])
-            if b[0] and isinstance(self.o, BarChartOntology):
+                output += "You can not go up, you are in a child bar already. Try going to the previous or next bar, "
+                output += "or visiting this bar's parent stacked bar by going one level up.<br/>"
+        elif action in ['sethome', self.o.StructuralTask.NavigationTask.SET_HOME]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.SET_HOME])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Current Bar selected as home node.<br/>"
             else:
                 output += "The current bar can not be chosen as home node.<br/>"
-        elif action == 'gotohome':
-            b =  self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HOME])
-            if b[0] and isinstance(self.o, BarChartOntology):
+        elif action in ['gotohome', self.o.StructuralTask.NavigationTask.GOTO_HOME]:
+            b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HOME])
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Moved to Home Node: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "No home node found.<br/>"
-        elif action == 'reset':
+        elif action in ['reset', self.o.StructuralTask.NavigationTask.RESET]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])
-            if b[0] and isinstance(self.o, BarChartOntology):
+            if b[-1] and isinstance(self.o, BarChartOntology):
                 output += "Navigation has been reset. Current bar: "
-                output += self.o.printBarDetails(b[0], skipNav=True)
+                output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "Error while resetting.<br/>"
         return output
