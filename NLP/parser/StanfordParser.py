@@ -1,33 +1,51 @@
 import const as c
 from nltk.tag.stanford import StanfordPOSTagger
 from nltk.parse.stanford import StanfordParser
+from nltk.parse import CoreNLPParser
 from nltk.internals import find_jars_within_path
 from nltk import Tree
 import os
 from GeneralUtil import asWindows
 from NLP.model.Query import *
-from NLP.model.POC import *
 from NLP.poc.POCCreator import *
 
 
 class GraphNavStanfordParser(object):
-    def __init__(self, NLquery = None, parser = 'stanford', posTagger = 'stanford'):
-        self.rawQuery = "" # Unprocessed query
-        self.normalizedFullQuery = "" # Normalized query
-        self.PT = None # POS Tagger
-        self.parser = None # Grammar parser
+    def __init__(self, NLquery=None, parser='stanford', posTagger='stanford'):
+        """
+        Instantiate a POS tagger and NL parser.
+        :param NLquery: string; input NL query (optional)
+        :param parser: parser to be loaded. Either 'stanford' (local library) or 'stanford_web' (web service)
+        :param posTagger: POS-tagger to be loaded. Either 'stanford' (local library) or 'stanford_web' (web service)
+        """
+        self.rawQuery = ""  # Unprocessed query
+        self.normalizedFullQuery = ""  # Normalized query
+        self.PT = None  # POS Tagger
+        self.parser = None  # Grammar parser
         if NLquery:
-            """ Query as given by the user """
             self.rawQuery = NLquery
-            """ User query after basic normalization """
             self.normalizedFullQuery = self.__normalizeQuery(NLquery)
         else:
             self.rawQuery = None
             self.normalizedFullQuery = None
-        if posTagger == 'stanford':
-            self.PT = self._loadStanfordPOSTagger()
-        if parser == 'stanford':
-            self.parser = self._loadStanfordParser()
+        try:
+            if posTagger == 'stanford':
+                self.PT = self._loadStanfordPOSTagger()
+            elif posTagger == 'stanford_web':
+                self.PT = CoreNLPParser(url=self.__serviceEndpointWithAuth(), tagtype='pos')
+            # No else; PT will default to nltk's default pos-tagger
+
+            if parser == 'stanford':
+                self.parser = self._loadStanfordParser()
+            elif parser == 'stanford_web':
+                self.parser = CoreNLPParser(url=self.__serviceEndpointWithAuth())
+            else:
+                raise ValueError('GraphNavStanfordParser: unknown parser %s' % parser)
+        except ImportError as e:
+            if str(e).startswith('cannot import name STANFORD'):
+                raise ImportError(
+                    ('No config file for web parser found in /NLP/parser. ' 
+                     'Please edit and rename config-default.py to config.py'))
 
     def posTree(self, q):
         """
@@ -226,3 +244,18 @@ class GraphNavStanfordParser(object):
         parser = StanfordParser(model_path=modelfile)
         parser._classpath = tuple(find_jars_within_path(stanfdir))
         return parser
+
+    def __serviceEndpointWithAuth(self):
+        """
+        Add access credentials to the NLP service URL and return it
+        :return: string; Stanford NLP service endpoint URL with added user/password information
+        """
+        from config import STANFORD_WEB_ENDPOINT, STANFORD_WEB_USER, STANFORD_WEB_PWD, STANFORD_WEB_PROTOCOL
+        if STANFORD_WEB_USER and STANFORD_WEB_PWD:
+            url = STANFORD_WEB_PROTOCOL + "://" + STANFORD_WEB_USER + ":" + STANFORD_WEB_PWD + "@" + \
+                  STANFORD_WEB_ENDPOINT
+        else:
+            url = STANFORD_WEB_PROTOCOL + "://" + STANFORD_WEB_ENDPOINT
+        if not url.endswith('/'):
+            url += '/'
+        return url

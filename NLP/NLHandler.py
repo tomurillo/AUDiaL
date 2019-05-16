@@ -1,5 +1,5 @@
 import nltk
-from util.TreeUtil import mutableCopy, treeRawString
+from util.TreeUtil import mutableCopy
 from nltk.corpus import wordnet as wn
 from NLP.model.Query import Query
 from NLP.poc.filterCreator import *

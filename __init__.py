@@ -3,17 +3,17 @@ from flask import Flask, render_template, jsonify, request
 from flask_session import Session
 from content_management import Content
 from controller import *
+from config import FLASK_SECRET_KEY, FLASK_BUBBLE_EXCEPTIONS, FLASK_DEBUG
 
 app = Flask(__name__)
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
-app.config['DEBUG'] = True
-app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['DEBUG'] = FLASK_DEBUG
+app.config['PROPAGATE_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
 # Bubble HTTP exceptions through the exception stack
-app.config['TRAP_HTTP_EXCEPTIONS'] = True
-# Keep this secret in production environments!
-app.secret_key = u'l\x04\x8a\x01T\xbb\xb5P4\x88h\xc2\x02\x0c\xe7|'
+app.config['TRAP_HTTP_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
+app.secret_key = FLASK_SECRET_KEY
 
 GRAPHICS = Content()
 

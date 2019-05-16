@@ -19,6 +19,7 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
     pip install Flask-Session
     pip install rdflib
     pip install nltk
+    pip install requests
     pip install textdistance
     pip install inflect
     ```
@@ -37,6 +38,11 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
     > import nltk
     > nltk.download('wordnet')
     ```
+    
+Steps 4-7 are only required you want to run the Stanford Parser and POS-tagger locally. It is recommended to use the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) API instead. AUDiaL can be configured to use either option:
+
+- **Local NLP**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford'`.
+- **CoreNLP API**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford_web'`. In the NLP parser config file (`/NLP/parser/config.py`) set the corresponding values for each configuration constant. An example file can be found under `/NLP/parser/config-default.py`
 
 ## Usage
 - Run locally:

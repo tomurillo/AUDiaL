@@ -9,11 +9,13 @@ class Mapper(object):
     """
     Prepares a user's query tokens to be mapped to OCs
     """
-    def __init__(self):
+    def __init__(self, parser='stanford', tagger='stanford'):
         """
         Mapper class constructor
+        :param parser: string; which NL parserto use: 'stanford' (default), or 'stanford_web'
+        :param parser: tagger; which POS tagger to use: 'stanford' (default), or 'stanford_web'
         """
-        self.parser = GraphNavStanfordParser()
+        self.parser = GraphNavStanfordParser(parser=parser, posTagger=tagger)
         self._toIgnore = []  # Children to be ignored when the father is ignored
 
     def processQuestion(self, text):

@@ -10,6 +10,7 @@ from oc.OCCreator import addSemanticConcepts
 from consolidator.Consolidator import *
 from dialog.dialogHandler import DialogHandler
 from dialog.model.SuggestionPair import SuggestionPair
+from config import NLP_PARSER, NLP_POS_TAGGER
 
 
 class Controller(object):
@@ -29,8 +30,8 @@ class Controller(object):
         else:
             self.q = None
         self.o = None  # Ontology
-        self.NL = SimpleNLHandler()  # Natural Language handler
-        self.mapper = Mapper()
+        self.NL = SimpleNLHandler()  # Default Natural Language handler if mapper not used
+        self.mapper = Mapper(parser=NLP_PARSER, tagger=NLP_POS_TAGGER)
         self.consolidator = None
         self.dialogue = None  # Dialogue controller
         if type == c.BAR_CHART:
