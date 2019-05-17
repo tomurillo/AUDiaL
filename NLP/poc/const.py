@@ -15,9 +15,13 @@ FILTER_OPERAND_LABELS = [CD_TREE_POS_TAG, NNS_TREE_POS_TAG, NNP_TREE_POS_TAG, NN
 # Stanford parser sometimes considers numbers VBN or JJ (?)
 FILTER_NUMBER_LABELS = [CD_TREE_POS_TAG, VBN_TREE_POS_TAG, JJ_TREE_POS_TAG]
 
-FILTER_GT_TOKENS = ['more', 'higher', 'greater', 'bigger', 'larger', 'over', 'exceeding', 'after']
+FILTER_GT_THAN_TOKENS = ['more', 'higher', 'greater', 'bigger', 'larger']  # Operators requiring 'than'
 
-FILTER_LT_TOKENS = ['lower', 'less', 'smaller', 'below', 'before']
+FILTER_GT_TOKENS = ['over', 'exceeding', 'after']
+
+FILTER_LT_THAN_TOKENS = ['lower', 'less', 'smaller']
+
+FILTER_LT_TOKENS = ['below', 'before']
 
 FILTER_EQ_TOKENS = ['same', 'equal', 'identical', 'exactly']
 

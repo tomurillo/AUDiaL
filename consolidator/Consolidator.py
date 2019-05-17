@@ -24,7 +24,7 @@ class Consolidator(object):
         """
         pocs_no_jj = self.separatePOCswithJJ()
         self.q.pocs = self.removeUselessTokens(pocs_no_jj)
-        self.removedContainerFilters()
+        self.consolidateFilters()
         self.cleanSemanticConcepts()
         self.consolidatePOCsWithOCs()
         return self.q
@@ -212,9 +212,10 @@ class Consolidator(object):
                     break
         return task
 
-    def removedContainerFilters(self):
+    def consolidateFilters(self):
         """
-        Keeps only the bottommost filters as found in the query parse tree
+        Automatic consolidation of query filters:
+        Remove filters containing other filters within their annotations
         :return: None; updates Query attribute
         """
         to_remove = set()

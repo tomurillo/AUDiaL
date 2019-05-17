@@ -129,7 +129,7 @@ class Controller(object):
                     add_summary = False
                     if self.q.task:
                         answer, success = self.o.applyAnalyticalTask(self.q.task, bars)
-                        if success and self.o.taskNeedsSumamry(self.q.task):
+                        if success and self.o.taskNeedsSummary(self.q.task):
                             add_summary = True
                             answer += '<h5>The following%s bar%s %s been considered:</h5><ul>' % (n_str, pl_str, v_str)
                     else:

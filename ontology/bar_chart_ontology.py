@@ -1085,7 +1085,7 @@ class BarChartOntology(UpperVisOntology):
                 if navFilter:
                     labelsSet.remove(f)
             for bar in barset:
-                barFilters = self.getElementFilters(bar)
+                barFilters = [self.normalizeItem(f) for f in self.getElementFilters(bar)]
                 if labelsSet.issubset(barFilters):
                     if not negate:
                         barsOut.add(bar)

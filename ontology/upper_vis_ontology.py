@@ -795,7 +795,7 @@ class UpperVisOntology(UpperOntology):
         p = self.TaskProperty.IS_INTENTION
         return self.getSubjects(p, True, 'datatype', XSD.boolean)
 
-    def taskNeedsSumamry(self, task):
+    def taskNeedsSummary(self, task):
         """
         Returns whether a summary of the task should be output after computing it
         :param task: A SemanticConcept instance of an analytical task

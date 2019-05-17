@@ -32,7 +32,7 @@ class FilterCreator(object):
                 for i, pt in enumerate(preters):
                     match = False
                     if pt.label() in FILTER_COMP_LABELS:
-                        parsed_op = self.parseOperator(pt)
+                        parsed_op = self.parseOperator(pt, ann.tree)
                         if parsed_op:
                             qf_operators.append(parsed_op)
                             match = True
@@ -64,10 +64,11 @@ class FilterCreator(object):
                         filters.append(qfilter)
         return filters
 
-    def parseOperator(self, pt):
+    def parseOperator(self, pt, clause_tree):
         """
         Parse a NL operator to a QueryFilterCardinal operand
         :param pt: pre-terminal nltk.Tree parse tree
+        :param clause_tree: nltk.Tree instance; parse tree of the full clause where the operator is contained
         :return: string; one of QueryFilterCardinal.CardinalFilter
         """
         qf_operator = None
@@ -80,5 +81,11 @@ class FilterCreator(object):
                 qf_operator = QueryFilterCardinal.CardinalFilter.LT
             elif operator in FILTER_EQ_TOKENS:
                 qf_operator = QueryFilterCardinal.CardinalFilter.EQ
+            elif operator in FILTER_GT_THAN_TOKENS or operator in FILTER_LT_THAN_TOKENS:
+                clause = treeRawString(clause_tree).strip().lower()
+                if " than " in clause:
+                    if operator in FILTER_GT_THAN_TOKENS:
+                        qf_operator = QueryFilterCardinal.CardinalFilter.GT
+                    else:
+                        qf_operator = QueryFilterCardinal.CardinalFilter.LT
         return qf_operator
-
