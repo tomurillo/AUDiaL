@@ -3,6 +3,7 @@ from NLP.model.OE import *
 from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd
+from ontology.bar_chart_ontology import BarChartOntology
 
 
 class OutputFormatter(object):
@@ -73,7 +74,12 @@ class OutputFormatter(object):
         :return: string; label of the focus
         """
         if isinstance(q_filter, QueryFilterCardinal):
-            label = "Query result: '%s'" % poc.rawText
+            units = ''
+            if isinstance(self.o, BarChartOntology):
+                units = self.o.getChartMeasurementUnit()
+            if not units:
+                units = poc.rawText
+            label = "Query result: '%s'" % units
         else:
             label = poc.rawText
         return label
