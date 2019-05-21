@@ -1354,6 +1354,88 @@ class BarChartOntology(UpperVisOntology):
             ulbls = "<No Tags>"
         return ulbls
 
+    def barPoints(self, bars):
+        """
+        Return the topmost point of each given bar as given by their coordinates
+        :param bars: list<string>; bar instances to consider
+        :return: list<(float, float)>: x and y coordinates of points in the 2D plane; y starts from top of canvas
+        """
+        points = []
+        for b in bars:
+            x, y = self.getCoordinate(b, 'x'), self.getCoordinate(b, 'y')  # Coordinates at bar center
+            top_y = y - self.lengthOfElement(b) / 2.0  # y coordinate at top of the bar
+            points.append((x, top_y))
+        return points
+
+    def printPath(self, bars, skipNav=False, units=None):
+        """
+        Prints information about a navigational path between the given bars
+        :param bars: list<string>: a list of bars that have been navigated in the given order
+        :param skipNav: boolean; whether to skip user navigation information
+        :param units: string; units to print after each bar. None to infer from ontology
+        :return: string; path information in NL
+        """
+        path = ''
+        add_units = True
+        if units is None:
+            chart_units = self.getChartMeasurementUnit()
+            if chart_units:
+                units = chart_units.replace("_", " ").lower()
+            else:
+                units = "(units unknown)"
+                add_units = False
+        points = self.barPoints(bars)
+        n_bars = len(bars)
+        if n_bars > 0:
+            path = self.printBarDetails(bars[-1], skipNav, units)
+        if n_bars > 1:
+            path += "<br/>"
+            val_diff, rel_diff = self.compareBars(bars[-1], bars[0])
+            v = abs(val_diff)
+            r = abs(rel_diff)
+            u = "%s " % units if add_units else ''
+            if val_diff > 0:
+                cmp_str = "higher"
+            else:
+                cmp_str = "lower"
+            if n_bars == 2 and abs(rel_diff) <= 2.0:
+                path += "It has a similar value to the previously visited bar."
+            else:
+                trend = self.straightSlopeLabel(points)
+                if n_bars == 2:
+                    path += "There is a %s between this bar and the previously visited one" % trend
+                    path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
+                else:
+                    path += "There are %d bars between this bar and the previously visited one. " % (n_bars - 2)
+                    path += "These bars follow a %s<br/>" % trend
+                    path += "The current bar has a value %.2f %s(%.2f%%) %s than the previously visited one." % \
+                            (v, u, r, cmp_str)
+        return path
+
+    def compareBars(self, bar_focus, bar_other):
+        """
+        Compare the given bars
+        :param bar_focus: string; bar instance being compared
+        :param bar_other: string; bar instance to compare against the main bar
+        :return: (float, float: Absolute difference and relative difference (%) between the bars' values
+        """
+        focus_val = self.getMetricBarValue(bar_focus)
+        other_val = self.getMetricBarValue(bar_other)
+        val_diff = focus_val - other_val
+        rel_diff = (1 - focus_val / other_val) * 100
+        return val_diff, rel_diff
+
+    def printCompareBars(self, bar_focus, bar_other, units):
+        """
+        Compare the given bars and return the result in NL
+        :param bar_focus: string; bar instance being compared
+        :param bar_other: string; bar instance to compare against the main bar
+        :param units: string; units of what the bars represent
+        :return: string
+        """
+        val_diff, rel_diff = self.compareBars(bar_focus, bar_other)
+        # TODO continue
+
     def printBarDetails(self, bar, skipNav=False, units=None):
         """
         Print a natural-language description of a bar's information, including:

@@ -850,6 +850,99 @@ class UpperVisOntology(UpperOntology):
                 category = self.SyntacticEntity.SYNTACTIC_ROLE
         return category
 
+    def slopeBetweenPoints(self, p1, p2):
+        """
+        Returns the slope of the line segment defined by the given points in the 2D plane
+        :param p1: (float, float); x, y coordinates of the first point
+        :param p2: (float, float); x, y coordinates of the second point
+        :return: float: slope between points, in degrees
+        """
+        import math
+        return -math.degrees(math.atan((float(p1[1]) - p2[1])/(float(p1[0]) - p2[0])))
+
+    def lineIsMonotonic(self, slope_list, tol=5.0):
+        """
+        Returns whether a line, given by the slopes of its segments, is monotonic with the given tolerance
+        :param slope_list: list<float>: slopes (in degrees) of the segments between line's constituent points
+        :param tol: float; degree from which a slope is not considered to be flat. Default 5.
+        :return: True if the line is monotonically increasing or decreasing; False otherwise
+        """
+        monotonic = True
+        if len(slope_list) > 2:
+            for i, d in enumerate(slope_list[1:], 1):
+                prev = slope_list[i - 1]
+                if d * prev < 0 and (abs(d) > tol or abs(prev) > tol):
+                    monotonic = False
+                    break
+        return monotonic
+
+    def straightSlopeLabel(self, points):
+        """
+        Given a number of data points, returns a label for the slope of the line segments between them
+        :param points: list<(float, float)>: x and y coordinates of points in the 2D place
+        :return: slope expressed in natural language e.g. 'increasing', 'decreasing', 'accelerating', etc.
+        """
+        label = ''
+        n_points = len(points)
+        if n_points == 2:
+            deg = self.slopeBetweenPoints(*points)
+            increase = deg > -0.01
+            slope = abs(deg)
+            if slope < 2:
+                label = 'flat'
+            elif slope < 5:
+                label = 'almost flat'
+            elif slope < 15:
+                label = 'slow'
+            elif slope < 30:
+                label = 'moderate'
+            elif slope < 45:
+                label = 'sharp'
+            elif slope < 75:
+                label = 'very steep'
+            else:
+                label = 'extremely steep'
+            if slope > 5:
+                label += ' increase' if increase else ' decrease'
+            else:
+                label += ' course'
+        elif n_points == 3 or n_points == 4:
+            degs = [self.slopeBetweenPoints(a, b) for a, b in zip(points, points[1:])]
+            if self.lineIsMonotonic(degs):
+                if all(d >= 15 for d in degs):
+                    label = 'accelerating '
+                elif all(d <= -15 for d in degs):
+                    label = 'decelerating '
+                label += self.straightSlopeLabel([points[0], points[-1]])
+            else:
+                first_slope = self.straightSlopeLabel([points[0], points[1]])
+                second_slope = self.straightSlopeLabel([points[1], points[2]])
+                label = "%s followed by a %s" % (first_slope, second_slope)
+                if n_points == 4:
+                    label += " followed by a %s" % (self.straightSlopeLabel([points[2], points[3]]))
+        elif n_points > 4:
+            degs = [self.slopeBetweenPoints(a, b) for a, b in zip(points, points[1:])]
+            change = False
+            monotonic = True
+            i = 2
+            start = 0
+            while i < len(points):
+                if change:
+                    label += " followed by a "
+                if self.lineIsMonotonic(degs[i-2:i], 30.0):  # Greater tolerance in order to print less information
+                    change = False
+                else:  # Important slope change detected; add to label
+                    end = i - 1
+                    mid = ((end - start) / 2) + 1
+                    label += self.straightSlopeLabel([points[start], points[mid], points[end]])
+                    start = end
+                    change = True
+                    monotonic = False
+                i += 1
+            if monotonic:  # Whole segment is monotonic; print one label only
+                label += self.straightSlopeLabel([points[0], points[-1]])
+        return label
+
     def normalizeItem(self, item, type='entity'):
         """
         Normalizes the name of a given Entity or Property.
