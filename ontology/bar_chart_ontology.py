@@ -1181,10 +1181,20 @@ class BarChartOntology(UpperVisOntology):
         set the first metric bar
         :return list<string>: list containing the instance name of first bar or None
         """
+        ordered_path = []
         next = self.__getFirst()
         if next:
+            current = self.getCurrentBar()
+            if current:
+                bars = self.getStackedBars()
+                if bars:
+                    if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
+                        current = self.getStackedBarOfMetric(current)
+                ordered_path = self.pathBetweenBars(bar_start=current, bar_end=next, bars=bars)
+            else:
+                ordered_path = [next]
             self.setCurrentBar(next)
-        return [next]
+        return ordered_path
 
     def __moveLast(self):
         """
@@ -1406,8 +1416,12 @@ class BarChartOntology(UpperVisOntology):
                     path += "There is a %s between this bar and the previously visited one" % trend
                     path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
                 else:
-                    path += "There are %d bars between this bar and the previously visited one. " % (n_bars - 2)
-                    path += "These bars follow a %s<br/>" % trend
+                    n_between = n_bars - 2
+                    n_verb = 'are' if n_between > 1 else 'is'
+                    n_pl = 's' if n_between > 1 else ''
+                    path += "There %s %d bar%s between this bar and the previously visited one. " % (n_verb, n_between,
+                                                                                                     n_pl)
+                    path += "The bars follow a %s<br/>" % trend
                     path += "The current bar has a value %.2f %s(%.2f%%) %s than the previously visited one." % \
                             (v, u, r, cmp_str)
         return path
@@ -1424,17 +1438,6 @@ class BarChartOntology(UpperVisOntology):
         val_diff = focus_val - other_val
         rel_diff = (1 - focus_val / other_val) * 100
         return val_diff, rel_diff
-
-    def printCompareBars(self, bar_focus, bar_other, units):
-        """
-        Compare the given bars and return the result in NL
-        :param bar_focus: string; bar instance being compared
-        :param bar_other: string; bar instance to compare against the main bar
-        :param units: string; units of what the bars represent
-        :return: string
-        """
-        val_diff, rel_diff = self.compareBars(bar_focus, bar_other)
-        # TODO continue
 
     def printBarDetails(self, bar, skipNav=False, units=None):
         """

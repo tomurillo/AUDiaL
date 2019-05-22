@@ -868,7 +868,7 @@ class UpperVisOntology(UpperOntology):
         :return: True if the line is monotonically increasing or decreasing; False otherwise
         """
         monotonic = True
-        if len(slope_list) > 2:
+        if len(slope_list) > 1:
             for i, d in enumerate(slope_list[1:], 1):
                 prev = slope_list[i - 1]
                 if d * prev < 0 and (abs(d) > tol or abs(prev) > tol):
@@ -886,7 +886,7 @@ class UpperVisOntology(UpperOntology):
         n_points = len(points)
         if n_points == 2:
             deg = self.slopeBetweenPoints(*points)
-            increase = deg > -0.01
+            increase = points[0][1] >= points[1][1]
             slope = abs(deg)
             if slope < 2:
                 label = 'flat'
@@ -922,26 +922,49 @@ class UpperVisOntology(UpperOntology):
                     label += " followed by a %s" % (self.straightSlopeLabel([points[2], points[3]]))
         elif n_points > 4:
             degs = [self.slopeBetweenPoints(a, b) for a, b in zip(points, points[1:])]
-            change = False
-            monotonic = True
-            i = 2
+            trend_changes = self.significantTrendChange(degs, max_n=10, tol=30.0)
             start = 0
-            while i < len(points):
-                if change:
-                    label += " followed by a "
-                if self.lineIsMonotonic(degs[i-2:i], 30.0):  # Greater tolerance in order to print less information
-                    change = False
-                else:  # Important slope change detected; add to label
-                    end = i - 1
-                    mid = ((end - start) / 2) + 1
-                    label += self.straightSlopeLabel([points[start], points[mid], points[end]])
-                    start = end
-                    change = True
-                    monotonic = False
-                i += 1
-            if monotonic:  # Whole segment is monotonic; print one label only
-                label += self.straightSlopeLabel([points[0], points[-1]])
+            for i in trend_changes:
+                if start > 0:
+                    label += ' followed by a '
+                label += self.straightSlopeLabel([points[start], points[i]])
+                start = i
+            if trend_changes:
+                label += ' followed by a '
+            label += self.straightSlopeLabel([points[start], points[-1]])
         return label
+
+    def significantTrendChange(self, degrees, max_n=10, tol=5.0):
+        """
+        Given a line divided into segments, choose which changes in the line's trend are significant enough to be
+        displayed to the user
+        :param degrees: list<float>: slopes (in degrees) of the segments between line's constituent points
+        :param max_n: int; maximum number of trend changes to display, as % of the total line segments
+        :param tol: float; tolerance in degrees below which the line is considered flat
+        :return: list<int> indexes of the significant trend changes
+        """
+        trend_changes = []
+        diffs = [0.0]
+        n_slopes = len(degrees)
+        if n_slopes > 1:
+            n = max(1, max_n * n_slopes / 100)
+            for i, di in enumerate(degrees):
+                j = i + 1
+                if j < n_slopes:
+                    dj = degrees[j]
+                    if self.lineIsMonotonic([di, dj], tol):
+                        diffs.append(0.0)
+                    else:
+                        diffs.append(abs(di - dj))
+            threshold = sorted(diffs)[-n]
+            c = 0
+            for k, d in enumerate(diffs):
+                if d >= threshold and d >= tol:
+                    trend_changes.append(k)
+                    c += 1
+                    if c == n:
+                        break
+        return trend_changes
 
     def normalizeItem(self, item, type='entity'):
         """
