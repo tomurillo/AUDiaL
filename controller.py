@@ -649,6 +649,9 @@ class Controller(object):
         """
         output = ""
         node_name = "node"
+        b = None
+        moved = True
+        compare_home = True
         if isinstance(self.o, BarChartOntology):
             node_name = "bar"
         if action in ['where', self.o.StructuralTask.NavigationTask.WHERE]:
@@ -658,21 +661,23 @@ class Controller(object):
                 if isinstance(self.o, BarChartOntology):
                     output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
-                output += " No current %s available!. Please reset the navigation.<br/>" % node_name
+                output += " No current %s available!. Please reset the navigation." % node_name
+                moved = False
         elif action in ['next', self.o.StructuralTask.NavigationTask.MOVE_RIGHT]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_RIGHT])
             if len(b) > 1:
                 output += "Moved to next %s: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "No next %s.<br/>" % node_name
+                output += "No next %s." % node_name
+                moved = False
         elif action in ['previous', self.o.StructuralTask.NavigationTask.MOVE_LEFT]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_LEFT])
             if len(b) > 1:
                 output += "Moved to previous %s: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "No previous %s.<br/>" % node_name
+                output += "No previous %s." % node_name
         elif action in ['first', self.o.StructuralTask.NavigationTask.GOTO_FIRST]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_FIRST])
             if b[-1]:
@@ -680,66 +685,82 @@ class Controller(object):
                 output += self.o.printPath(b, skipNav=True)
             else:
                 output += "No first %s available.<br/>" % node_name
+                moved = False
         elif action in ['last', self.o.StructuralTask.NavigationTask.GOTO_LAST]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LAST])
             if b[-1]:
                 output += "Moved to last %s: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "No last %s available.<br/>" % node_name
+                output += "No last %s available." % node_name
+                moved = False
         elif action in ['highest', self.o.StructuralTask.NavigationTask.GOTO_HIGHEST]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HIGHEST])
             if b[-1]:
                 output += "Moved to %s with highest value: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "Highest %s could not be found.<br/>" % node_name
+                output += "Highest %s could not be found." % node_name
+                moved = False
         elif action in ['lowest', self.o.StructuralTask.NavigationTask.GOTO_LOWEST]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_LOWEST])
             if b[-1]:
                 output += "Moved to %s with lowest value: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "Lowest %s could not be found.<br/>" % node_name
+                output += "Lowest %s could not be found." % node_name
+                moved = False
         elif action in ['up', self.o.StructuralTask.NavigationTask.MOVE_UP]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_UP])
             if len(b) > 1 and b[-1]:
                 output += "Moved one level up: "
-                output += self.o.printPath(b, skipNav=True)
+                output += self.o.printPath(b, skipNav=True, skipTrend=True)
             else:
                 output += "You can not go up, you are in a stacked bar. "
                 output += "Try going to the previous or next stacked bar, "
-                output += "or visiting this bar's children by going one level down.<br/>"
+                output += "or visiting this bar's children by going one level down."
+                moved = False
         elif action in ['down', self.o.StructuralTask.NavigationTask.MOVE_DOWN]:
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_DOWN])
             if len(b) > 1 and b[-1]:
                 output += "Moved one level down: "
-                output += self.o.printPath(b, skipNav=True)
+                output += self.o.printPath(b, skipNav=True, skipTrend=True)
             else:
                 output += "You can not go up, you are in a child bar already. "
                 output += "Try going to the previous or next bar, "
-                output += "or visiting this bar's parent stacked bar by going one level up.<br/>"
+                output += "or visiting this bar's parent stacked bar by going one level up."
+                moved = False
         elif action in ['sethome', self.o.StructuralTask.NavigationTask.SET_HOME]:
+            moved = False
+            compare_home = False
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.SET_HOME])
             if b[-1]:
-                output += "Current %s selected as home node.<br/>" % node_name
+                output += "Current %s selected as home node." % node_name
             else:
                 output += "The current %s can not be chosen as home node.<br/>" % node_name
         elif action in ['gotohome', self.o.StructuralTask.NavigationTask.GOTO_HOME]:
+            compare_home = False
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.GOTO_HOME])
             if b[-1]:
                 output += "Moved to Home %s: " % node_name
                 output += self.o.printPath(b, skipNav=True)
             else:
-                output += "No home %s found.<br/>" % node_name
+                output += "No home %s found." % node_name
+                moved = False
         elif action in ['reset', self.o.StructuralTask.NavigationTask.RESET]:
+            moved = False
+            compare_home = False
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])
             if b[-1]:
                 output += "Navigation has been reset. Current %s: " % node_name
                 if isinstance(self.o, BarChartOntology):
                     output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
-                output += "Error while resetting.<br/>"
+                output += "Error while resetting."
+        if moved and b:
+            output += "<br/>"
+            if compare_home:
+                output += self.o.printCompareToHome(b[-1])
         return output
 
     def executeTask(self, task):

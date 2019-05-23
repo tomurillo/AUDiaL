@@ -21,13 +21,6 @@ class BarChartOntology(UpperVisOntology):
         HAS_TOP_LABEL = "has_top_label"
         HAS_BOTTOM_LABEL = "has_bottom_label"
 
-    def getStackedBars(self):
-        """
-        Returns the stacked bars in the chart
-        @return: A list of stacked bar instance names
-        """
-        return self.getElementsWithRole(self.SyntacticRoles.STACKED_BAR)
-
     def navigate(self, actions, bars = None):
         """
         Performs a navigation action in the bar chart.
@@ -193,6 +186,13 @@ class BarChartOntology(UpperVisOntology):
         @return: A list of metric bar instance names
         """
         return self.getElementsWithRole(self.SyntacticRoles.METRIC_BAR)
+
+    def getStackedBars(self):
+        """
+        Returns the stacked bars in the chart
+        @return: A list of stacked bar instance names
+        """
+        return self.getElementsWithRole(self.SyntacticRoles.STACKED_BAR)
 
     def filterBarsWithValues(self, filters = None, op = None, operand = None,
                             negate = False, barset = None):
@@ -1429,11 +1429,14 @@ class BarChartOntology(UpperVisOntology):
             points.append((x, top_y))
         return points
 
-    def printPath(self, bars, skipNav=False, units=None):
+    def printPath(self, bars, skipNav=False, skipTrend=False, target='prev', units=None):
         """
         Prints information about a navigational path between the given bars
         :param bars: list<string>: a list of bars that have been navigated in the given order
         :param skipNav: boolean; whether to skip user navigation information
+        :param skipNav: boolean; whether to trend information of the path between bars
+        :param target: string; what the current bar is being compared against: the previously visited bar ('prev'),
+        or the home bar ('home')
         :param units: string; units to print after each bar. None to infer from ontology
         :return: string; path information in NL
         """
@@ -1444,7 +1447,6 @@ class BarChartOntology(UpperVisOntology):
             if chart_units:
                 units = chart_units.replace("_", " ").lower()
             else:
-                units = "(units unknown)"
                 add_units = False
         points = self.barPoints(bars)
         n_bars = len(bars)
@@ -1452,6 +1454,12 @@ class BarChartOntology(UpperVisOntology):
             path = self.printBarDetails(bars[-1], skipNav, units)
         if n_bars > 1:
             path += "<br/>"
+            if target == 'prev':
+                t_str = 'the previously visited bar'
+            elif target == 'home':
+                t_str = 'the home bar'
+            else:
+                t_str = 'the other bar'
             val_diff, rel_diff = self.compareBars(bars[-1], bars[0])
             v = abs(val_diff)
             r = abs(rel_diff)
@@ -1461,21 +1469,26 @@ class BarChartOntology(UpperVisOntology):
             else:
                 cmp_str = "lower"
             if n_bars == 2 and abs(rel_diff) <= 2.0:
-                path += "It has a similar value to the previously visited bar."
+                path += "It has a similar value to %s." % t_str
             else:
-                trend = self.straightSlopeLabel(points)
                 if n_bars == 2:
-                    path += "There is a %s between this bar and the previously visited one" % trend
-                    path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
+                    if skipTrend:
+                        path += "This bar's value is %.2f %s(%.2f%%) %s than %s." % (v, u, r, cmp_str, t_str)
+                    else:
+                        trend = self.straightSlopeLabel(points)
+                        path += "There is a %s between this bar and %s" % (trend, t_str)
+                        path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
                 else:
                     n_between = n_bars - 2
                     n_verb = 'are' if n_between > 1 else 'is'
                     n_pl = 's' if n_between > 1 else ''
-                    path += "There %s %d bar%s between this bar and the previously visited one. " % (n_verb, n_between,
-                                                                                                     n_pl)
-                    path += "The bars follow a %s<br/>" % trend
-                    path += "Compared to the previously visited one, the current bar has a value %.2f %s(%.2f%%) %s." \
-                            % (v, u, r, cmp_str)
+                    path += "There %s %d bar%s between this bar and %s. " % (n_verb, n_between, n_pl, t_str)
+                    if not skipTrend:
+                        trend = self.straightSlopeLabel(points)
+                        path += "The bars follow a %s" % trend
+                    path += "<br/>"
+                    path += "Compared to %s, the current bar has a value %.2f %s(%.2f%%) %s." % (t_str, v, u, r,
+                                                                                                 cmp_str)
         return path
 
     def compareBars(self, bar_focus, bar_other):
@@ -1490,6 +1503,52 @@ class BarChartOntology(UpperVisOntology):
         val_diff = focus_val - other_val
         rel_diff = (1 - focus_val / other_val) * 100
         return val_diff, rel_diff
+
+    def printCompareBars(self, bar_focus, bar_other, target='prev', units=None):
+        """
+        Print a comparison between the values of the given bars
+        :param bar_focus: string; bar instance being compared
+        :param bar_other: string; bar instance to compare against the main bar
+        :param target: string; what the current bar is being compared against: the previously visited bar ('prev'),
+        or the home bar ('home')
+        :param units: string; units to print after each bar. None to infer from ontology
+        :return: string; natural-language comparison between the bars
+        """
+        val_diff, rel_diff = self.compareBars(bar_focus, bar_other)
+        add_units = True
+        if units is None:
+            chart_units = self.getChartMeasurementUnit()
+            if chart_units:
+                units = chart_units.replace("_", " ").lower()
+            else:
+                add_units = False
+        if target == 'prev':
+            t_str = 'the previously visited bar'
+        elif target == 'home':
+            t_str = 'the home bar'
+        else:
+            t_str = 'the other bar'
+        v = abs(val_diff)
+        r = abs(rel_diff)
+        u = "%s " % units if add_units else ''
+        if val_diff > 0:
+            cmp_str = "higher"
+        else:
+            cmp_str = "lower"
+        path = "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
+        return path
+
+    def printCompareToHome(self, bar):
+        """
+        Prints a comparison between the given bar and the home bar, if any
+        :param bar: string; bar instance
+        :return: string; natural language comparison between the bars
+        """
+        out = ''
+        home = self.getHomeNodes()
+        if len(home) == 1:
+            out = self.printCompareBars(bar, home[0], 'home')
+        return out
 
     def printBarDetails(self, bar, skipNav=False, units=None):
         """
