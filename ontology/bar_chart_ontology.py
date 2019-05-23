@@ -1142,8 +1142,7 @@ class BarChartOntology(UpperVisOntology):
         elif len(h) == 0:
             return [None]
         else:
-            self.setCurrentBar(h[0])
-            return h
+            return self.__moveToBar(h[0], default_curr_first=False)
 
     def resetNavigation(self):
         """
@@ -1156,24 +1155,46 @@ class BarChartOntology(UpperVisOntology):
         self.computeBarsNavOrder()
         return self.__moveFirst()
 
+    def __getExtremeNavBar(self, pos='first', bars=None):
+        """
+        Return the first or last bar of the chart
+        :param pos: string; 'first' or 'last'
+        :param bars; list<string> bar instance names to consider; None for all
+        :return string: instance name of first or last bar
+        """
+        b = None
+        if bars is None:
+            stacked_bars = self.getStackedBars()
+            if len(stacked_bars) == 0:
+                bars = None  # None defaults to all bars in getBarsOrders
+            else:
+                bars = stacked_bars
+        orderedBars = self.getBarsOrders(bars)
+        if len(orderedBars) > 0:
+            if pos == 'first':
+                i = min(orderedBars, key=int)
+            else:
+                i = max(orderedBars, key=int)
+            b = orderedBars[i]
+        elif bars:
+            b = bars[0]  # Fallback to any bar
+            from warnings import warn
+            warn('getExtremeNavBar: bars are not ordered, random bar fetched.')
+        return b
+
     def __getFirst(self):
         """
         Return the first bar of the chart
         :return string: instance name of first bar
         """
-        first = None
-        bars = self.getStackedBars()
-        if len(bars) == 0:
-            bars = None
-        orderedBars = self.getBarsOrders(bars)
-        if len(orderedBars) > 0:
-            minOrder = min(orderedBars, key=int)
-            first = orderedBars[minOrder]
-        elif bars:
-            first = bars[0]  # Fallback to any bar
-            from warnings import warn
-            warn('getFirst: bars are not ordered, random bar fetched.')
-        return first
+        return self.__getExtremeNavBar('first')
+
+    def __getLast(self):
+        """
+        Return the last bar of the chart
+        :return string: instance name of last bar
+        """
+        return self.__getExtremeNavBar('last')
 
     def __moveFirst(self):
         """
@@ -1182,18 +1203,9 @@ class BarChartOntology(UpperVisOntology):
         :return list<string>: list containing the instance name of first bar or None
         """
         ordered_path = []
-        next = self.__getFirst()
-        if next:
-            current = self.getCurrentBar()
-            if current:
-                bars = self.getStackedBars()
-                if bars:
-                    if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
-                        current = self.getStackedBarOfMetric(current)
-                ordered_path = self.pathBetweenBars(bar_start=current, bar_end=next, bars=bars)
-            else:
-                ordered_path = [next]
-            self.setCurrentBar(next)
+        first = self.__getFirst()
+        if first:
+            ordered_path = self.__moveToBar(first, bars=None, default_curr_first=False)
         return ordered_path
 
     def __moveLast(self):
@@ -1202,18 +1214,58 @@ class BarChartOntology(UpperVisOntology):
         :return list<string>: instance names of all bars from the current one until the last bar
         """
         ordered_path = []
+        next = self.__getLast()
+        if next:
+            ordered_path = self.__moveToBar(next)
+        return ordered_path
+
+    def __moveToBar(self, bar, bars=None, default_curr_first=True):
+        """
+        Set the given bar as the current one and return the path from the current bar to it.
+        :param bar: string; bar instance name the user is moving to
+        :param bars: list<string>; bars to consider, None to infer automatically
+        :param prior_stacked: boolean; whether to prioritize stacked bar instances if they exist
+        :param default_curr_first: boolean; whether to use first bar as current bar if it does not exist
+        :return: list<string>: instance names of all bars from the current one until the given bar
+        """
+        ordered_path = []
         current = self.getCurrentBar()
-        if not current:
+        bar_role = None
+        if self.elementHasRole(bar, self.SyntacticRoles.STACKED_BAR):
+            bar_role = self.SyntacticRoles.STACKED_BAR
+        elif self.elementHasRole(bar, self.SyntacticRoles.METRIC_BAR):
+            bar_role = self.SyntacticRoles.METRIC_BAR
+        next = None
+        if not current and default_curr_first:
             current = self.__getFirst()
         if current:
-            bars = self.getStackedBars()
-            if bars:
-                if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
-                    current = self.getStackedBarOfMetric(current)
-            ordered_path = self.pathBetweenBars(bar_start=current, bar_end=None, bars=bars)
-            next = ordered_path[-1] if ordered_path else None
-            if next:
-                self.setCurrentBar(next)
+            cur_role = None
+            if self.elementHasRole(cur_role, self.SyntacticRoles.STACKED_BAR):
+                cur_role = self.SyntacticRoles.STACKED_BAR
+            elif self.elementHasRole(cur_role, self.SyntacticRoles.METRIC_BAR):
+                cur_role = self.SyntacticRoles.METRIC_BAR
+            cont = True
+            use_stacked = False
+            if bar_role == self.SyntacticRoles.STACKED_BAR:
+                use_stacked = True
+            elif cur_role == self.SyntacticRoles.STACKED_BAR:
+                cont = False
+            if cont:
+                if use_stacked:
+                    all_bars = self.getStackedBars()
+                else:
+                    all_bars = self.getMetricBars()
+                if bars:
+                    nav_bars = list(set(bars) & set(all_bars))
+                else:
+                    nav_bars = all_bars
+                ordered_path = self.pathBetweenBars(bar_start=current, bar_end=bar, bars=nav_bars)
+                next = ordered_path[-1] if ordered_path else None
+        if not ordered_path and bar:
+            next = bar
+            ordered_path.append(next)
+        if next:
+            self.setCurrentBar(next)
         return ordered_path
 
     def __moveDown(self):
@@ -1422,8 +1474,8 @@ class BarChartOntology(UpperVisOntology):
                     path += "There %s %d bar%s between this bar and the previously visited one. " % (n_verb, n_between,
                                                                                                      n_pl)
                     path += "The bars follow a %s<br/>" % trend
-                    path += "The current bar has a value %.2f %s(%.2f%%) %s than the previously visited one." % \
-                            (v, u, r, cmp_str)
+                    path += "Compared to the previously visited one, the current bar has a value %.2f %s(%.2f%%) %s." \
+                            % (v, u, r, cmp_str)
         return path
 
     def compareBars(self, bar_focus, bar_other):
