@@ -178,6 +178,7 @@ class UpperVisOntology(UpperOntology):
             APPLY_QFILTER = "Apply_Query_Filter_Task"  # list<QueryFilter> -> bars
             SUMMARY = "Summary_Task"  # Compute summary
         class DerivedValueTask:
+            COMPARE = 'Compare_Task'  # Compare current with others
             AVERAGE = 'Compute_Average_Task'
             SUM = 'Compute_Sum_Task'
             MEDIAN = 'Compute_Median_Task'
@@ -243,6 +244,21 @@ class UpperVisOntology(UpperOntology):
             else:
                 cnt = len(set(self.getInstances(normElement)))
         return cnt
+
+    def getChartTitle(self):
+        """
+        Returns the title of the whole chart
+        @return sting: The title (or titles concatenated with commas), None
+        if not found
+        """
+        chart = self.getInstances(self.PrimaryGraphicRepresentation.STATISTICAL_CHART)
+        if chart:
+            # A chart is labeled by its title
+            lbls = set(self.getLabelsOfElement(chart[0]))
+            titles = ", ".join([self.getText(l) for l in lbls if l])
+            if titles:
+                return titles
+        return None
 
     def getConstituentElements(self, element):
         """

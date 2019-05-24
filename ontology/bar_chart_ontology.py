@@ -157,22 +157,6 @@ class BarChartOntology(UpperVisOntology):
         output += "End of summary.<br/>"
         return output
 
-    def getChartTitle(self):
-        """
-        Returns the title of the whole chart
-        @return sting: The title (or titles concatenated with commas), None
-        if not found
-        """
-        chart = self.getInstances(
-                          self.PrimaryGraphicRepresentation.STATISTICAL_CHART)
-        if chart:
-            # A chart is labeled by its title
-            lbls = set(self.getLabelsOfElement(chart[0]))
-            titles = ", ".join([self.getText(l) for l in lbls if l])
-            if titles:
-                return titles
-        return None
-
     def getBars(self):
         """
         Returns all bars in the chart, both metric and stacked
@@ -220,18 +204,25 @@ class BarChartOntology(UpperVisOntology):
         else:
             raise Exception("Filter: operator '%s' not supported" % op)
 
-    def getElementFiltersString(self, element):
+    def getElementFiltersString(self, element, add_brackets=True):
         """
         Returns a textual representation of the given element's filters
         :param element: the name of a metric bar instance
-        :return: string
+        :param add_brackets: whether to add (labels: ...) to the output (True) or just return the filters (False)
+        :return: string; comma-separated list of filters for the element e.g. (labels: label_1, label_2)
         """
         filters = self.getElementFilters(element)
         if filters:
             labels = ", ".join(sorted([f for f in filters if f], key=str.lower))
-            text = "(labels: %s)" % replaceLastCommaWithAnd(labels)
+            if add_brackets:
+                text = "(labels: %s)" % replaceLastCommaWithAnd(labels)
+            else:
+                text = replaceLastCommaWithAnd(labels)
         else:
-            text = '(no labels found)'
+            if add_brackets:
+                text = '(no labels found)'
+            else:
+                text = ''
         return text
 
     def getElementFilters(self, element, returnText=True):
@@ -635,6 +626,9 @@ class BarChartOntology(UpperVisOntology):
             units_answer = ''
         add_labels_bar = None  # If only one bar is fetched add its labels to output
         task = self.stripNamespace(task_sc.task)
+        if task == self.StructuralTask.DerivedValueTask.COMPARE:
+            answer, success = self.computeCompare(bars)
+            add_units = False
         if task == self.StructuralTask.DerivedValueTask.AVERAGE:
             avg = self.computeDerived('avg', bars)
             if avg is not None:
@@ -859,6 +853,62 @@ class BarChartOntology(UpperVisOntology):
                 derived = totalVal
         return derived
 
+    def computeCompare(self, bars):
+        """
+        Compares the current and home bar, if any, with the given bars.
+        :param bars: list<string>; bars to take into account
+        :return: (string, boolean): NL answer of the task and whether the task could be completed
+        """
+        answer = ''
+        success = False
+        if bars:
+            units = ''
+            chart_units = self.getChartMeasurementUnit()
+            if chart_units:
+                units = "%s " % chart_units.replace("_", " ").lower()
+            to_compare = []
+            current = self.getCurrentBar()
+            if current:
+                to_compare.append('current')
+            home = self.getHomeNodes()
+            if home:
+                to_compare.append('home')
+            if to_compare:
+                ordered_bars = self.sortBarsAccordingToNavigation(bars)
+                for c_label in to_compare:
+                    if c_label == 'current':
+                        curr_filters = self.getElementFiltersString(current)
+                    elif c_label == 'home':
+                        curr_filters = self.getElementFiltersString(home[0])
+                    else:
+                        break
+                    answer += '<h5>%s bar %s\'s value is:</h5>' % (c_label.capitalize(), curr_filters)
+                    answer += '<section><ul>'
+                    for b in ordered_bars:
+                        if c_label == 'current':
+                            if b == current:
+                                continue
+                            val_diff, rel_diff = self.compareBars(current, b)
+                        elif c_label == 'home':
+                            if b == home[0]:
+                                continue
+                            val_diff, rel_diff = self.compareBars(home[0], b)
+                        else:
+                            val_diff, rel_diff = None, None
+                        labels = self.getElementFiltersString(b, add_brackets=False)
+                        if val_diff is not None:
+                            if abs(rel_diff) >= 5:
+                                cmp = 'more' if val_diff > 0 else 'less'
+                                answer += '<li>%s: %s %s%s (%.2f%%)</li>' % (labels, abs(val_diff), units, cmp,
+                                                                             rel_diff)
+                            elif abs(rel_diff) >= 2:
+                                answer += "<li>%s: almost the same</li>" % labels
+                            else:
+                                answer += "<li>%s: the same</li>" % labels
+                            success = True
+                    answer += '</ul></section>'
+        return answer, success
+
     def sortBars(self, bars, descending=True):
         """
         Sorts the given bars in the given order according to their values
@@ -885,6 +935,12 @@ class BarChartOntology(UpperVisOntology):
         bars_nav = self.getBarsOrders(bars)
         if bars_nav:
             sorted_b = [bars_nav[v] for v in sorted(bars_nav)]
+        else:  # Default sort: stacked bar followed by its metric bars
+            for b in bars:
+                if self.elementHasRole(b, self.SyntacticRoles.STACKED_BAR):
+                    sorted_b.append(b)
+                    sorted_b.extend(self.getMetricBarsOfStacked(b))
+            sorted_b.extend([b for b in bars if b not in sorted_b])  # Add leftover bars
         return sorted_b
 
     def getBarValues(self, bars):
@@ -1487,8 +1543,7 @@ class BarChartOntology(UpperVisOntology):
                         trend = self.straightSlopeLabel(points)
                         path += "The bars follow a %s" % trend
                     path += "<br/>"
-                    path += "Compared to %s, the current bar has a value %.2f %s(%.2f%%) %s." % (t_str, v, u, r,
-                                                                                                 cmp_str)
+                    path += "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
         return path
 
     def compareBars(self, bar_focus, bar_other):
@@ -1500,8 +1555,11 @@ class BarChartOntology(UpperVisOntology):
         """
         focus_val = self.getMetricBarValue(bar_focus)
         other_val = self.getMetricBarValue(bar_other)
-        val_diff = focus_val - other_val
-        rel_diff = (1 - focus_val / other_val) * 100
+        if focus_val is not None and other_val is not None:
+            val_diff = focus_val - other_val
+            rel_diff = -(1 - focus_val / other_val) * 100
+        else:
+            val_diff, rel_diff = None, None
         return val_diff, rel_diff
 
     def printCompareBars(self, bar_focus, bar_other, target='prev', units=None):

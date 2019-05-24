@@ -1669,6 +1669,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compare_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compare_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Comparison_Task"/>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">compare</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Composite_Metric_Space_GS -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Composite_Metric_Space_GS"/>

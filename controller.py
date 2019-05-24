@@ -636,9 +636,7 @@ class Controller(object):
             if len(barlist) > 0:
                 self.o.setUserLabels(barlist, usertags)
                 plural = "s" if len(barlist) > 0 else ""
-                output = "Information added to %s bar%s: '%s'.<br/>" % (to,
-                                                                      plural,
-                                                                      usertags)
+                output = "Information added to %s bar%s: '%s'.<br/>" % (to, plural, usertags)
         return output
 
     def navigate(self, action):
@@ -760,7 +758,9 @@ class Controller(object):
         if moved and b:
             output += "<br/>"
             if compare_home:
-                output += self.o.printCompareToHome(b[-1])
+                home_bars = self.o.getHomeNodes()
+                if home_bars and b[-1] not in home_bars:
+                    output += self.o.printCompareToHome(b[-1])
         return output
 
     def executeTask(self, task):
