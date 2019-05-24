@@ -21,7 +21,7 @@ class BarChartOntology(UpperVisOntology):
         HAS_TOP_LABEL = "has_top_label"
         HAS_BOTTOM_LABEL = "has_bottom_label"
 
-    def navigate(self, actions, bars = None):
+    def navigate(self, actions, bars=None):
         """
         Performs a navigation action in the bar chart.
         @param actions: a list of the following actions, to be done in order:
@@ -629,7 +629,11 @@ class BarChartOntology(UpperVisOntology):
         if task == self.StructuralTask.DerivedValueTask.COMPARE:
             answer, success = self.computeCompare(bars)
             add_units = False
-        if task == self.StructuralTask.DerivedValueTask.AVERAGE:
+        elif task == self.StructuralTask.NavigationTask.JUMP:
+            answer = self.computeJumpToBar(bars)
+            success = bool(answer)
+            add_units = False
+        elif task == self.StructuralTask.DerivedValueTask.AVERAGE:
             avg = self.computeDerived('avg', bars)
             if avg is not None:
                 answer = 'The average is %.2f' % float(avg)
@@ -1175,6 +1179,37 @@ class BarChartOntology(UpperVisOntology):
         @param newCurrent: the instance name of the new current bar
         """
         self.setCurrentNodes([newCurrent])
+
+    def computeJumpToBar(self, bar):
+        """
+        Jumps to the given bar, if possible, and returns a NL description of the way
+        :param bar; string (bar instance name) or list of bar instance names.
+        :return: string; description of the jump. None if action cannot be taken.
+        """
+        output = None
+        if isinstance(bar, list):
+            if len(bar) > 1:  # If there is only one stacked bar in the list, jump to it
+                goto_bar = None
+                for b in bar:
+                    if self.elementHasRole(b, self.SyntacticRoles.STACKED_BAR):
+                        if goto_bar:  # Second stacked bar found -> jump not possible
+                            goto_bar = None
+                            break
+                        else:
+                            goto_bar = b
+                if goto_bar:
+                    bar = goto_bar
+                else:
+                    return 'You cannot jump to more than one bar at the same time! Your query has returned %d bars' \
+                           % len(bar)
+            elif bar:
+                bar = bar[0]
+        if isinstance(bar, basestring):
+            path = self.__moveToBar(bar, default_curr_first=False)
+            if path:
+                output = 'Jumped to: '
+                output += self.printPath(path, skipNav=True)
+        return output
 
     def __setCurrentAsHome(self):
         """

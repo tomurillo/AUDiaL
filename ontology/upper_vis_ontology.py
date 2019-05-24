@@ -189,6 +189,7 @@ class UpperVisOntology(UpperOntology):
             GOTO_LAST = "Go_to_Last_Task"
             GOTO_HIGHEST = "Go_to_Highest_Task"
             GOTO_LOWEST = "Go_to_Lowest_Task"
+            JUMP = 'Jump_Task'
             MOVE_LEFT = "Move_Left_Task"
             MOVE_RIGHT = "Move_Right_Task"
             MOVE_UP = "Move_Up_Task"
