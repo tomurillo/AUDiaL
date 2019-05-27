@@ -1331,14 +1331,16 @@ class BarChartOntology(UpperVisOntology):
             current = self.__getFirst()
         if current:
             cur_role = None
-            if self.elementHasRole(cur_role, self.SyntacticRoles.STACKED_BAR):
+            if self.elementHasRole(current, self.SyntacticRoles.STACKED_BAR):
                 cur_role = self.SyntacticRoles.STACKED_BAR
-            elif self.elementHasRole(cur_role, self.SyntacticRoles.METRIC_BAR):
+            elif self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR):
                 cur_role = self.SyntacticRoles.METRIC_BAR
             cont = True
             use_stacked = False
             if bar_role == self.SyntacticRoles.STACKED_BAR:
                 use_stacked = True
+                if cur_role == self.SyntacticRoles.METRIC_BAR:
+                    current = self.getStackedBarOfMetric(current)
             elif cur_role == self.SyntacticRoles.STACKED_BAR:
                 cont = False
             if cont:
@@ -1476,6 +1478,9 @@ class BarChartOntology(UpperVisOntology):
                 extremes = self.computeExtreme(op, bars)
                 max_bar, _ = extremes[op]
                 self.setCurrentBar(max_bar)
+                if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR) and \
+                        self.elementHasRole(max_bar, self.SyntacticRoles.STACKED_BAR):
+                    current = self.getStackedBarOfMetric(current)
                 path_bars = self.pathBetweenBars(current, max_bar, bars)
         return path_bars
 
@@ -1520,12 +1525,11 @@ class BarChartOntology(UpperVisOntology):
             points.append((x, top_y))
         return points
 
-    def printPath(self, bars, skipNav=False, skipTrend=False, target='prev', units=None):
+    def printPath(self, bars, skipNav=False, target='prev', units=None):
         """
         Prints information about a navigational path between the given bars
         :param bars: list<string>: a list of bars that have been navigated in the given order
         :param skipNav: boolean; whether to skip user navigation information
-        :param skipNav: boolean; whether to trend information of the path between bars
         :param target: string; what the current bar is being compared against: the previously visited bar ('prev'),
         or the home bar ('home')
         :param units: string; units to print after each bar. None to infer from ontology
@@ -1559,27 +1563,44 @@ class BarChartOntology(UpperVisOntology):
                 cmp_str = "higher"
             else:
                 cmp_str = "lower"
+            show_trend = self.trendIsMeaningful(bars)
             if n_bars == 2 and abs(rel_diff) <= 2.0:
                 path += "It has a similar value to %s." % t_str
             else:
                 if n_bars == 2:
-                    if skipTrend:
-                        path += "This bar's value is %.2f %s(%.2f%%) %s than %s." % (v, u, r, cmp_str, t_str)
-                    else:
+                    if show_trend:
                         trend = self.straightSlopeLabel(points)
                         path += "There is a %s between this bar and %s" % (trend, t_str)
                         path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
+                    else:
+                        path += "This bar's value is %.2f %s(%.2f%%) %s than %s." % (v, u, r, cmp_str, t_str)
                 else:
                     n_between = n_bars - 2
                     n_verb = 'are' if n_between > 1 else 'is'
                     n_pl = 's' if n_between > 1 else ''
-                    path += "There %s %d bar%s between this bar and %s. " % (n_verb, n_between, n_pl, t_str)
-                    if not skipTrend:
+                    if show_trend:
+                        path += "There %s %d bar%s between this bar and %s. " % (n_verb, n_between, n_pl, t_str)
                         trend = self.straightSlopeLabel(points)
                         path += "The bars follow a %s" % trend
-                    path += "<br/>"
+                        path += "<br/>"
                     path += "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
         return path
+
+    def trendIsMeaningful(self, path):
+        """
+        Returns whether the trend on a given path between bars should be displayed
+        :param path: list<string>; a sorted list of bar instance names specifying a path from path[0] to path [-1]
+        :return: boolean; whether the trend information of the path is meaningful and should be given to the user
+        """
+        show_trend = False
+        if len(path) > 1:
+            if self.getElementsWithRole(self.SyntacticRoles.STACKED_BAR):
+                if self.elementHasRole(path[-1], self.SyntacticRoles.STACKED_BAR) and \
+                        self.elementHasRole(path[0], self.SyntacticRoles.STACKED_BAR):
+                    show_trend = True
+            else:
+                show_trend = True  # No stacked bars in the diagram
+        return show_trend
 
     def compareBars(self, bar_focus, bar_other):
         """

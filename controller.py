@@ -712,7 +712,7 @@ class Controller(object):
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_UP])
             if len(b) > 1 and b[-1]:
                 output += "Moved one level up: "
-                output += self.o.printPath(b, skipNav=True, skipTrend=True)
+                output += self.o.printPath(b, skipNav=True)
             else:
                 output += "You can not go up, you are in a stacked bar. "
                 output += "Try going to the previous or next stacked bar, "
@@ -722,7 +722,7 @@ class Controller(object):
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.MOVE_DOWN])
             if len(b) > 1 and b[-1]:
                 output += "Moved one level down: "
-                output += self.o.printPath(b, skipNav=True, skipTrend=True)
+                output += self.o.printPath(b, skipNav=True)
             else:
                 output += "You can not go up, you are in a child bar already. "
                 output += "Try going to the previous or next bar, "
