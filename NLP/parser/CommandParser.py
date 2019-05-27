@@ -85,6 +85,8 @@ class CommandParser(object):
             'position': UpperVisOntology.StructuralTask.NavigationTask.WHERE,
             'wai': UpperVisOntology.StructuralTask.NavigationTask.WHERE,
             'home': UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,
+            'goto home' : UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,
+            'go to home': UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,
             'favorite': UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,
             'favourite': UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,
             'main': UpperVisOntology.StructuralTask.NavigationTask.GOTO_HOME,

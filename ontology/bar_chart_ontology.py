@@ -21,6 +21,100 @@ class BarChartOntology(UpperVisOntology):
         HAS_TOP_LABEL = "has_top_label"
         HAS_BOTTOM_LABEL = "has_bottom_label"
 
+    def applyAnalyticalTask(self, task_sc, bars):
+        """
+        Apply an analytical task to the given bars
+        :param task_sc: SemanticConcept instance with the task
+        :param bars: list<string> bars to which the task will be applied
+        :return: (string, boolean); answer in NL and whether the task could be computed
+        """
+        answer = ''
+        success = True
+        add_units = True
+        numeric_result = None
+        units = self.getChartMeasurementUnit()
+        if units:
+            units_answer = ' %s' % units
+        else:
+            units_answer = ''
+        add_labels_bar = None  # If only one bar is fetched add its labels to output
+        task = self.stripNamespace(task_sc.task)
+        if task == self.StructuralTask.DerivedValueTask.COMPARE:
+            answer, success = self.computeCompare(bars)
+            add_units = False
+        elif task == self.StructuralTask.NavigationTask.JUMP:
+            answer = self.computeJumpToBar(bars)
+            success = bool(answer)
+            add_units = False
+        elif task == self.StructuralTask.DerivedValueTask.AVERAGE:
+            numeric_result = self.computeDerived('avg', bars)
+            if numeric_result is not None:
+                answer = 'The average is %.2f' % float(numeric_result)
+        elif task == self.StructuralTask.DerivedValueTask.MEDIAN:
+            numeric_result = self.computeDerived('median', bars)
+            if numeric_result is not None:
+                answer = 'The median is %.2f' % float(numeric_result)
+        elif task == self.StructuralTask.DerivedValueTask.MODE:
+            numeric_result = self.computeDerived('mode', bars)
+            if numeric_result is not None:
+                answer = 'The most common bar value is %.2f' % float(numeric_result)
+        elif task == self.StructuralTask.DerivedValueTask.SUM:
+            s = self.computeDerived('sum', bars)
+            if s is not None:
+                answer = 'The sum of these bars is %.2f' % float(s)
+        elif task == self.StructuralTask.DerivedValueTask.COUNT:
+            add_units = False
+            c = self.computeDerived('count', bars)
+            answer = '%d bars match your query.' % c
+        elif task == self.StructuralTask.ComparisonTask.FIND_MAXIMUM:
+            res = self.computeExtreme('max', bars)
+            if res and 'max' in res:
+                add_labels_bar, numeric_result = res['max']
+                answer = "The maximum value is : %.2f" % numeric_result
+        elif task == self.StructuralTask.ComparisonTask.FIND_MINIMUM:
+            res = self.computeExtreme('min', bars)
+            if res and 'min' in res:
+                add_labels_bar, numeric_result = res['min']
+                answer = "The mininum value is : %.2f" % numeric_result
+        elif task in [self.StructuralTask.ComparisonTask.FIND_EXTREMUM, self.StructuralTask.ComparisonTask.RANGE]:
+            res = self.computeExtreme(['max', 'min'], bars)
+            add_units = False
+            if task == self.StructuralTask.ComparisonTask.RANGE and 'range' in res:
+                _, r = res['range']
+                answer = 'Range of bars is: %.2f' % r
+                answer += units_answer
+                answer += '. It has the following extreme values:<br/>'
+            if res and 'min' in res:
+                bar, value = res['min']
+                answer += "Minimum value: %.2f" % value
+                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
+                    answer += units_answer
+                answer += " %s<br/>" % self.getElementFiltersString(bar)
+            if res and 'max' in res:
+                bar, value = res['max']
+                answer += "Maximum value : %.2f" % value
+                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
+                    answer += units_answer
+                answer += " %s" % self.getElementFiltersString(bar)
+        elif task == self.StructuralTask.ComparisonTask.SORT:
+            answer = self.computeSort(bars)
+            add_units = False
+        elif task == self.StructuralTask.DistributionTask.CHARACTERIZE_DISTRIBUTION:
+            answer, success = self.computeDistribution(bars)
+            add_units = False
+        elif task == self.StructuralTask.CorrelationTask.CLUSTER:
+            answer, success = self.computeClustering(bars)
+            add_units = False
+        if answer:
+            if add_units and units:
+                answer += units_answer
+            if add_labels_bar:
+                answer += " %s" % self.getElementFiltersString(add_labels_bar)
+            answer += '<br/>'
+            if numeric_result is not None:
+                answer += "Result is %s<br/>" % self.printCompareValToHome(numeric_result)
+        return answer, success
+
     def navigate(self, actions, bars=None):
         """
         Performs a navigation action in the bar chart.
@@ -75,7 +169,6 @@ class BarChartOntology(UpperVisOntology):
         """
         Outputs a text summary of the contents of the chart
         """
-
         output = "This is a bar chart. "
 
         title = self.getChartTitle()
@@ -609,97 +702,6 @@ class BarChartOntology(UpperVisOntology):
                 ordered_path = ordered_path[::-1]
         return ordered_path
 
-    def applyAnalyticalTask(self, task_sc, bars):
-        """
-        Apply an analytical task to the given bars
-        :param task_sc: SemanticConcept instance with the task
-        :param bars: list<string> bars to which the task will be applied
-        :return: (string, boolean); answer in NL and whether the task could be computed
-        """
-        answer = ''
-        success = True
-        add_units = True
-        units = self.getChartMeasurementUnit()
-        if units:
-            units_answer = ' %s' % units
-        else:
-            units_answer = ''
-        add_labels_bar = None  # If only one bar is fetched add its labels to output
-        task = self.stripNamespace(task_sc.task)
-        if task == self.StructuralTask.DerivedValueTask.COMPARE:
-            answer, success = self.computeCompare(bars)
-            add_units = False
-        elif task == self.StructuralTask.NavigationTask.JUMP:
-            answer = self.computeJumpToBar(bars)
-            success = bool(answer)
-            add_units = False
-        elif task == self.StructuralTask.DerivedValueTask.AVERAGE:
-            avg = self.computeDerived('avg', bars)
-            if avg is not None:
-                answer = 'The average is %.2f' % float(avg)
-        elif task == self.StructuralTask.DerivedValueTask.MEDIAN:
-            median = self.computeDerived('median', bars)
-            if median is not None:
-                answer = 'The median is %.2f' % float(median)
-        elif task == self.StructuralTask.DerivedValueTask.MODE:
-            mode = self.computeDerived('mode', bars)
-            if mode is not None:
-                answer = 'The most common bar value is %.2f' % float(mode)
-        elif task == self.StructuralTask.DerivedValueTask.SUM:
-            s = self.computeDerived('sum', bars)
-            if s is not None:
-                answer = 'The sum of these bars is %.2f' % float(s)
-        elif task == self.StructuralTask.DerivedValueTask.COUNT:
-            add_units = False
-            c = self.computeDerived('count', bars)
-            answer = '%d bars match your query.' % c
-        elif task == self.StructuralTask.ComparisonTask.FIND_MAXIMUM:
-            res = self.computeExtreme('max', bars)
-            if res and 'max' in res:
-                add_labels_bar, value = res['max']
-                answer = "The maximum value is : %.2f" % value
-        elif task == self.StructuralTask.ComparisonTask.FIND_MINIMUM:
-            res = self.computeExtreme('min', bars)
-            if res and 'min' in res:
-                add_labels_bar, value = res['min']
-                answer = "The mininum value is : %.2f" % value
-        elif task in [self.StructuralTask.ComparisonTask.FIND_EXTREMUM, self.StructuralTask.ComparisonTask.RANGE]:
-            res = self.computeExtreme(['max', 'min'], bars)
-            add_units = False
-            if task == self.StructuralTask.ComparisonTask.RANGE and 'range' in res:
-                _, r = res['range']
-                answer = 'Range of bars is: %.2f' % r
-                answer += units_answer
-                answer += '. It has the following extreme values:<br/>'
-            if res and 'min' in res:
-                bar, value = res['min']
-                answer += "Minimum value: %.2f" % value
-                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
-                    answer += units_answer
-                answer += " %s<br/>" % self.getElementFiltersString(bar)
-            if res and 'max' in res:
-                bar, value = res['max']
-                answer += "Maximum value : %.2f" % value
-                if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
-                    answer += units_answer
-                answer += " %s" % self.getElementFiltersString(bar)
-        elif task == self.StructuralTask.ComparisonTask.SORT:
-            answer = self.computeSort(bars)
-            add_units = False
-        elif task == self.StructuralTask.DistributionTask.CHARACTERIZE_DISTRIBUTION:
-            answer, success = self.computeDistribution(bars)
-            add_units = False
-        elif task == self.StructuralTask.CorrelationTask.CLUSTER:
-            answer, success = self.computeClustering(bars)
-            add_units = False
-        if answer:
-            if add_units and units:
-                answer += units_answer
-            if add_labels_bar:
-                answer += " %s" % self.getElementFiltersString(add_labels_bar)
-            answer += '<br/>'
-        return answer, success
-
     def applyLowLevelTask(self, task, **kwargs):
         """
         Applies a low level-task from the Chart Task Ontology on the current
@@ -1105,16 +1107,8 @@ class BarChartOntology(UpperVisOntology):
         @param n: and integer specifying the order of the bar in the graph
         """
         if bar and n:
-            self.removeDataTypePropertyTriple(
-                                              bar,
-                                              self.NavigationDataProperty.HAS_ORDER
-                                              )
-            self.addDataTypePropertyTriple(
-                               bar,
-                               self.NavigationDataProperty.HAS_ORDER,
-                               n,
-                               XSD.int
-                               )
+            self.removeDataTypePropertyTriple(bar, self.NavigationDataProperty.HAS_ORDER)
+            self.addDataTypePropertyTriple(bar, self.NavigationDataProperty.HAS_ORDER, n, XSD.int)
 
     def __filterBarsWithFilters(self, filters, negate = False, barset = None):
         """
@@ -1207,7 +1201,9 @@ class BarChartOntology(UpperVisOntology):
         if isinstance(bar, basestring):
             path = self.__moveToBar(bar, default_curr_first=False)
             if path:
-                output = 'Jumped to: '
+                output = 'Jumped from '
+                output += self.printBarDetails(path[0])
+                output += '<br/>to: '
                 output += self.printPath(path, skipNav=True)
         return output
 
@@ -1500,6 +1496,25 @@ class BarChartOntology(UpperVisOntology):
         """
         return self.__moveExtreme('min', bars)
 
+    def filterBarsForTask(self, bars, task_sc):
+        """
+        Filter the given bars; in some tasks, if there are stacked bars among them return only the stacked bars
+        :param bars: list<string>: bar instance names
+        :param task_sc: SemanticConcept; analytical task instance
+        :return: list<string> filtered bars
+        """
+        task = self.stripNamespace(task_sc.task)
+        tasks_prior_stacked = [self.StructuralTask.DerivedValueTask.AVERAGE,
+                               self.StructuralTask.DerivedValueTask.MODE,
+                               self.StructuralTask.DerivedValueTask.MEDIAN,
+                               self.StructuralTask.DerivedValueTask.SUM,
+                               self.StructuralTask.DerivedValueTask.COUNT,
+                               self.StructuralTask.CorrelationTask.CLUSTER]
+        filtered_bars = []
+        if task in tasks_prior_stacked:
+            filtered_bars = [b for b in bars if self.elementHasRole(b, self.SyntacticRoles.STACKED_BAR)]
+        return filtered_bars if filtered_bars else bars
+
     def getCurrentBarUserTags(self):
         """
         Fetches the user-defined tags of the current bar
@@ -1609,14 +1624,47 @@ class BarChartOntology(UpperVisOntology):
         :param bar_other: string; bar instance to compare against the main bar
         :return: (float, float: Absolute difference and relative difference (%) between the bars' values
         """
-        focus_val = self.getMetricBarValue(bar_focus)
         other_val = self.getMetricBarValue(bar_other)
-        if focus_val is not None and other_val is not None:
-            val_diff = focus_val - other_val
-            rel_diff = -(1 - focus_val / other_val) * 100
-        else:
-            val_diff, rel_diff = None, None
+        return self.compareBarToVal(bar_focus, other_val)
+
+    def compareBarToVal(self, bar, val):
+        """
+        Compare the given bar to the given value
+        :param bar: string; bar instance being compared
+        :param val: float; numeric value to compare the bar's value against
+        :return: (float, float: Absolute difference and relative difference (%) between the bar and the value
+        """
+        val_diff, rel_diff = None, None
+        if val is not None and bar:
+            bar_val = self.getMetricBarValue(bar)
+            if bar_val is not None:
+                val_diff = bar_val - val
+                rel_diff = -(1 - bar_val / val) * 100
         return val_diff, rel_diff
+
+    def printCompareValToHome(self, val):
+        """
+        Compares the given value to the value of the home bar and prints it
+        :param val: float; a numeric value; usually the result of a derived task
+        :return: string; natural-language comparison between the given value and the home bar
+        """
+        label = ''
+        home_nodes = self.getHomeNodes()
+        if len(home_nodes) == 1 and val is not None:
+            home = home_nodes[0]
+            home_val = self.getMetricBarValue(home)
+            if home_val is not None:
+                rel_diff = -(1 - val / home_val) * 100
+                cmp_str = ''
+                if abs(rel_diff) < 5:
+                    label = 'almost the same to home bar\'s value'
+                elif rel_diff < 0:
+                    cmp_str = 'smaller'
+                else:
+                    cmp_str = 'bigger'
+                if cmp_str:
+                    label = '%.2f%% %s than the home bar\'s value' % (abs(rel_diff), cmp_str)
+        return label
 
     def printCompareBars(self, bar_focus, bar_other, target='prev', units=None):
         """
@@ -1649,8 +1697,8 @@ class BarChartOntology(UpperVisOntology):
             cmp_str = "higher"
         else:
             cmp_str = "lower"
-        path = "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
-        return path
+        label = "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
+        return label
 
     def printCompareToHome(self, bar):
         """

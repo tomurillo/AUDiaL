@@ -122,6 +122,8 @@ class Controller(object):
             if isinstance(self.o, BarChartOntology):
                 bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.APPLY_QFILTER, filters=self.q.filters)
                 if bars:
+                    if self.q.task:
+                        bars = self.o.filterBarsForTask(bars, self.q.task)
                     n = len(bars)
                     n_str = " %d" % n if n > 1 else ''
                     pl_str = 's' if n > 1 else ''
