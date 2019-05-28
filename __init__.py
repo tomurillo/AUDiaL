@@ -93,27 +93,6 @@ def vote_selected():
                        output_type=output_type)
 
 
-@app.route('/_filter')
-def query_filter():
-    try:
-        current = request.args.get('current_graphic', '')
-        filter = request.args.get('to_filter', '')
-        c = Controller(current)
-        c.clearSessionContext()
-        if c.isOntologyLoaded():
-            output = "No results"
-            if filter:
-                output, _ = c.retrieveNumeric(filter)
-            else:
-                output = "No filter input"
-        else:
-            output = "Ontology not loaded!"
-        c.clean()
-        return jsonify(result=output)
-    except Exception as e:
-        session.clear()
-        return jsonify(result=printException(e))
-
 @app.route('/_derived_value')
 def query_derived_value():
     try:

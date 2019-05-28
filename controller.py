@@ -773,9 +773,7 @@ class Controller(object):
         """
         taskTypes = self.o.getClassOfElement(task)
         q = self.o.getTaskQuery(task)
-        out = None
         outNumeric = None
-        addres = False
         # Low-level task
         if self.o.StructuralTask.ReadingTask.FILTER in taskTypes:
             out, outNumeric = self.retrieveNumeric(q)

@@ -10,16 +10,16 @@
     padding: 10px 0 10px 10px;
 }
 
+#submit-retrieve {
+    margin-top: 10px;
+}
+
 #intention-buttons {
 	margin: 0 10px 10px 10px;
 }
 
 #suggestions-table caption {
     caption-side: top;
-}
-
-#suggestions-table tr {
-    cursor: pointer;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th,

@@ -22,6 +22,7 @@
                       $("#query-result").empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
                         $("#query-result").html(dialog_table(data.result));
+                        $("#dialog-caption").focus();
                   } else {
                       $("#query-result").empty().append('Your query could not be resolved.');
                   }
@@ -241,24 +242,17 @@
       });
 
       // User has chosen a suggestion from the suggestions table
-      $(document).on("click", "tr.suggestion-row" , function() {
+      $(document).on("click", ".suggestion-button" , function() {
+          $(this).closest("tbody").find(".suggestion-button").each(function() {
+                $(this).html('Voting...');
+                $(this).prop('disabled', true);
+          });
           vote_selected($(this).data("voteid"));
           return false;
       });
-      $(document).on("keyup", "tr.suggestion-row" , function(e) {
-          let key = e.keyCode;
-          if(key == 13 || key == 32) {
-             vote_selected($(this).data("voteid"));
-          }
-          return false;
-      });
 
-      $('button').keyup(function (e) {
-          if (e.keyCode == 13) {
-              $("#query-result").empty().append("Your query is being processed...");
-          }
-      });
-      $('button').mouseup(function () {
+
+      $('button.clr-result').click(function () {
           $("#query-result").empty().append("Your query is being processed...");
       });
 
@@ -272,6 +266,7 @@
                       $("#query-result").empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
                       $("#query-result").html(dialog_table(data.result));
+                      $("#dialog-caption").focus();
                   } else {
                       $("#query-result").empty().append('Your query could not be resolved.');
                   }
@@ -282,14 +277,13 @@
       function dialog_table(suggestion_json) {
           let table = '<div id="dialog-container" class="container-fluid">';
           table += '<table id="suggestions-table" class="table table-striped table-hover" style="width: 100%">';
-          table += '<caption>Is "';
+          table += '<caption id="dialog-caption">Is "';
           table += suggestion_json['text'];
           table += '" related to any of the following elements? I need your help to continue:</caption><thead><tr>';
-          table += '<th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th></tr></thead><tbody>';
+          table += '<th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th>';
+          table += '<th scope="col">Select</th></tr></thead><tbody>';
           for (let i=0; i<suggestion_json['votes'].length; i++) {
-            table += '<tr class="suggestion-row" tabindex="0" role="button" data-voteid="';
-            table += suggestion_json['votes'][i]['id'];
-            table += '"><th scope="row">';
+            table += '<tr class="suggestion-row"><th scope="row">';
             table += i+1;
             table += '</th><td>';
             if (suggestion_json['votes'][i]['task']) {
@@ -306,7 +300,11 @@
             } else {
                 table += 'None of the previous elements';
             }
-            table += '</td></tr>';
+            table += '</td>';
+            table += '<td><button type="button" class="btn suggestion-button" data-voteid="';
+            table += suggestion_json['votes'][i]['id'];
+            table += '">Select</button></td>';
+            table += '</tr>';
           }
           table += '</tbody>';
           table += '</table>';

@@ -17,98 +17,26 @@
 <div id="navigation-container" class="container-fluid">
         <ul id="navtabs" class="nav nav-pills" role="tablist">
             <li role="presentation" class="active">
-                <a href="#count" aria-controls="Retrieve Value" role="tab" data-toggle="tab">Retrieve Value</a></li>
+                <a href="#dialog" aria-controls="Dialogue" role="tab" data-toggle="tab">Dialogue</a></li>
             <li role="presentation">
-                <a href="#filter" aria-controls="filter" role="tab" data-toggle="tab">Filter</a></li>
-            <li role="presentation">
-                <a href="#statistics" aria-controls="statistics" role="tab" data-toggle="tab">Statistics</a></li>
+                <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Navigation</a></li>
             <li role="presentation">
                 <a href="#intention" aria-controls="intention" role="tab" data-toggle="tab">Intention</a></li>
-            <li role="presentation">
-                <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active query-box" id="count">
-              <div class="form-inline">
-				  <div class="form-group">
-				    <p class="form-control-static">Number of</p>
-				  </div>
-				  <div class="form-group">
-				    <label for="inputCount" class="sr-only">Number of:</label>
-				    <input type="text" class="form-control" name="inputCount" 
-				        id="inputCount" placeholder="e.g. Stacked Bar">
-				  </div>
-			 </div>
+            <div role="tabpanel" class="tab-pane active query-box" id="dialog">
 			 <div class="form-inline">
                   <div class="form-group">
-                    <p class="form-control-static">Retrieve</p>
+                    <p class="form-control-static">Retrieve: </p>
                   </div>
                   <div class="form-group">
                     <label for="inputRetrieve" class="sr-only">Retrieve:</label>
                     <input type="text" class="form-control" name="inputRetrieve" 
-                        id="inputRetrieve" placeholder="e.g. Male Vienna 2014">
+                        id="inputRetrieve" placeholder="e.g. What is the average population of Vienna?">
                   </div>
              </div>
              <input type="hidden" id="currentGraphic" name="currentGraphic" value="{{ current }}">
-			 <button id="submit-retrieve" class="btn btn-default">Submit Query</button>
-            </div>
-            <div role="tabpanel" class="tab-pane query-box" id="filter">
-              <div class="form-inline">
-                  <div class="form-group">
-                    <p class="form-control-static">Filter</p>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputFilter" class="sr-only">Filter:</label>
-                    <input type="text" class="form-control" name="inputFilter" 
-                        id="inputFilter" placeholder="e.g. number of people higher than 10000">
-                  </div>
-             </div>
-             <input type="hidden" id="currentGraphic" name="currentGraphic" value="{{ current }}">
-             <button id="submit-filter" class="btn btn-default">Submit Query</button>
-            </div>
-            <div role="tabpanel" class="tab-pane query-box" id="statistics">
-              <div class="form-inline">
-                  <div class="form-group">
-                    <p class="form-control-static">Derived Value</p>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputDerivedVal" class="sr-only">Compute:</label>
-                    <input type="text" class="form-control" name="inputDerivedVal" 
-                        id="inputDerivedVal" placeholder="e.g. mean of male in Vienna">
-                  </div>
-             </div>
-             <div class="form-inline">
-                  <div class="form-group">
-                    <p class="form-control-static">Find Extreme</p>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputExtreme" class="sr-only">Find extreme:</label>
-                    <input type="text" class="form-control" name="inputExtreme" 
-                        id="inputExtreme" placeholder="e.g. highest male in Vienna">
-                  </div>
-             </div>
-             <div class="form-inline">
-                  <div class="form-group">
-                    <p class="form-control-static">Sort</p>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputSort" class="sr-only">Sort:</label>
-                    <input type="text" class="form-control" name="inputSort" 
-                        id="inputSort" placeholder="e.g. sort Male">
-                  </div>
-             </div>
-             <div class="form-inline">
-                  <div class="form-group">
-                    <p class="form-control-static">Range</p>
-                  </div>
-                  <div class="form-group">
-                    <label for="inputRange" class="sr-only">Range of attribute:</label>
-                    <input type="text" class="form-control" name="inputRange" 
-                        id="inputRange" placeholder="e.g. range of Female">
-                  </div>
-             </div>
-             <input type="hidden" id="currentGraphic" name="currentGraphic" value="{{ current }}">
-             <button id="submit-derivedValue" class="btn btn-default">Submit Query</button>
+			 <button id="submit-retrieve" class="btn btn-default clr-result">Submit Query</button>
             </div>
             
             <div role="tabpanel" class="tab-pane query-box" id="intention">
@@ -119,11 +47,11 @@
                 </div>
                 <div id="intention-buttons">
 	                <div class="btn-group" role="group" aria-label="author intention buttons">
-	                   <button id="submit-intention" class="btn btn-info">Fetch Intention</button>
+	                   <button id="submit-intention" class="btn btn-info clr-result">Fetch Intention</button>
 	                   <label for="submit-calc-intention" class="sr-only">
                        Execute the intention task queries if they have not been executed yet or the graphic has changed.
                        </label>
-                       <button id="submit-calc-intention" class="btn btn-link">Recompute Intention</button>
+                       <button id="submit-calc-intention" class="btn btn-link clr-result">Recompute Intention</button>
 	                </div>
                 </div>
               </div>
@@ -135,7 +63,7 @@
                   <div class="col-xs-4 col-md-3 text-center">
                   <h4 class="text-center text-info">Overview</h4>
 	              <div class="btn-group-vertical" role="group" aria-label="Navigation-Overview">
-	                <button id="submit-overview" class="btn btn-default">Overview</button>
+	                <button id="submit-overview" class="btn btn-default clr-result">Overview</button>
 	              </div>
 	              <h4 class="text-center text-info">Add Tags</h4>
                   <div class="row">
@@ -151,29 +79,29 @@
                     </div>
                     <div class="col-md-2">
 	                    <input type="hidden" id="currentGraphic" name="currentGraphic" value="{{ current }}">
-	                    <button id="submit-curBarTags" class="btn btn-default">Edit</button>
+	                    <button id="submit-curBarTags" class="btn btn-default clr-result">Edit</button>
                     </div>
                   </div>
 	              </div>
 	              <div class="col-xs-4 col-md-3 text-center">
 	              <h4 class="text-center text-info">Basic Navigation</h4>
 	              <div class="btn-group-vertical" role="group" aria-label="Basic Navigation Links">
-		              <button id="submit-where" class="btn btn-default">Where am I?</button>
-		              <button id="submit-set-home" class="btn btn-default">Set as Home Node</button>
-		              <button id="submit-next" class="btn btn-default">Go to Next Bar</button>
-		              <button id="submit-previous" class="btn btn-default">Go to Previous Bar</button>
-		              <button id="submit-up" class="btn btn-default">Go one Level Up</button>
-		              <button id="submit-down" class="btn btn-default">Go one Level Down</button>
-		              <button id="submit-nav-reset" class="btn btn-default">Reset Navigation</button>
+		              <button id="submit-where" class="btn btn-default clr-result">Where am I?</button>
+		              <button id="submit-set-home" class="btn btn-default clr-result">Set as Home Node</button>
+		              <button id="submit-next" class="btn btn-default clr-result">Go to Next Bar</button>
+		              <button id="submit-previous" class="btn btn-default clr-result">Go to Previous Bar</button>
+		              <button id="submit-up" class="btn btn-default clr-result">Go one Level Up</button>
+		              <button id="submit-down" class="btn btn-default clr-result">Go one Level Down</button>
+		              <button id="submit-nav-reset" class="btn btn-default clr-result">Reset Navigation</button>
 	              </div></div>
 	              <div class="col-xs-4 col-md-3 text-center">
                   <h4 class="text-center text-info">Quick Jumps</h4>
 	              <div class="btn-group-vertical" role="group" aria-label="Quick Navigation Links">
-		              <button id="submit-first" class="btn btn-default">Go to First Bar</button>
-		              <button id="submit-last" class="btn btn-default">Go to Last Bar</button>
-		              <button id="submit-highest" class="btn btn-default">Go to Highest Value Bar</button>
-		              <button id="submit-lowest" class="btn btn-default">Go to Lowest Value Bar</button>
-		              <button id="submit-gotohome" class="btn btn-default">Go to Home Node</button>
+		              <button id="submit-first" class="btn btn-default clr-result">Go to First Bar</button>
+		              <button id="submit-last" class="btn btn-default clr-result">Go to Last Bar</button>
+		              <button id="submit-highest" class="btn btn-default clr-result">Go to Highest Value Bar</button>
+		              <button id="submit-lowest" class="btn btn-default clr-result">Go to Lowest Value Bar</button>
+		              <button id="submit-gotohome" class="btn btn-default clr-result">Go to Home Node</button>
 	              </div></div>
 	              <div class="col-xs-4 col-md-3"></div>
               </div>
