@@ -1202,7 +1202,7 @@ class BarChartOntology(UpperVisOntology):
             path = self.__moveToBar(bar, default_curr_first=False)
             if path:
                 output = 'Jumped from '
-                output += self.printBarDetails(path[0])
+                output += self.printBarDetails(path[0], skipNav=True)
                 output += '<br/>to: '
                 output += self.printPath(path, skipNav=True)
         return output
@@ -1351,6 +1351,8 @@ class BarChartOntology(UpperVisOntology):
                 ordered_path = self.pathBetweenBars(bar_start=current, bar_end=bar, bars=nav_bars)
                 next = ordered_path[-1] if ordered_path else None
         if not ordered_path and bar:
+            if current:
+                ordered_path.append(current)
             next = bar
             ordered_path.append(next)
         if next:
@@ -1752,8 +1754,8 @@ class BarChartOntology(UpperVisOntology):
                 if not skipNav:
                     if nf == self.NavigationDataProperty.IS_CURRENT:
                         output += "This is the current bar. "
-                    elif nf == self.NavigationDataProperty.IS_HOME_NODE:
-                        output += "This is the home bar. "
+                if nf == self.NavigationDataProperty.IS_HOME_NODE:
+                    output += "This is the home bar. "
                 if nf == self.NavigationDataProperty.HAS_USER_LABEL:
                     ul = navFilters[nf]
                     output += "User tags: %s. " % ul

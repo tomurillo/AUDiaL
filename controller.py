@@ -138,7 +138,8 @@ class Controller(object):
                         add_summary = True
                         answer = '<h5>The following%s bar%s matched your query:</h5><ul>' % (n_str, pl_str)
                     if add_summary:
-                        for bar in bars:
+                        sorted_bars = self.o.sortBarsAccordingToNavigation(bars)
+                        for bar in sorted_bars:
                             answer += '<li>%s</li>' % self.o.printBarDetails(bar)
                     answer += "</ul>"
                     if not self.q.task:
