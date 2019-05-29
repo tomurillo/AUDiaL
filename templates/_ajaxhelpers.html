@@ -21,8 +21,10 @@
                   if (data.output_type === 'answer') {
                       $("#query-result").empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
-                        $("#query-result").html(dialog_table(data.result));
-                        $("#dialog-caption").focus();
+                      $("#query-result").empty().append(dialog_caption(data.result));
+                      let table = dialog_table(data.result);
+                      $(table).insertAfter("#query-result");
+                      $("#query-result").focus();
                   } else {
                       $("#query-result").empty().append('Your query could not be resolved.');
                   }
@@ -243,6 +245,7 @@
 
       // User has chosen a suggestion from the suggestions table
       $(document).on("click", ".suggestion-button" , function() {
+          $("#query-result").empty().append(dialog_wait(true));
           $(this).closest("tbody").find(".suggestion-button").each(function() {
                 $(this).html('Voting...');
                 $(this).prop('disabled', true);
@@ -251,9 +254,8 @@
           return false;
       });
 
-
       $('button.clr-result').click(function () {
-          $("#query-result").empty().append("Your query is being processed...");
+          $("#query-result").empty().append(dialog_wait(false));
       });
 
       function vote_selected(voteid) {
@@ -262,11 +264,14 @@
               vote_id: voteid,
           }, function (data) {
               if (data) {
+                  $("#suggestions-table").remove();
                   if (data.output_type === 'answer') {
                       $("#query-result").empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
-                      $("#query-result").html(dialog_table(data.result));
-                      $("#dialog-caption").focus();
+                      $("#query-result").empty().append(dialog_caption(data.result));
+                      let table = dialog_table(data.result);
+                      $(table).insertAfter("#query-result");
+                      $("#query-result").focus();
                   } else {
                       $("#query-result").empty().append('Your query could not be resolved.');
                   }
@@ -274,13 +279,25 @@
           });
       }
 
+      function dialog_wait(voting) {
+          if (voting) {
+              return 'Your vote is being processed. Please wait...';
+          }
+          else {
+              return 'Your query is being processed. Please wait...';
+          }
+      }
+
+      function dialog_caption(suggestion_json) {
+          let caption = ' I need your help to continue. Is \'';
+          caption += suggestion_json['text'];
+          caption += '\' related to any of the following elements?. Please select one of the suggestions below:';
+          return caption
+      }
+
       function dialog_table(suggestion_json) {
-          let table = '<div id="dialog-container" class="container-fluid">';
-          table += '<table id="suggestions-table" class="table table-striped table-hover" style="width: 100%">';
-          table += '<caption id="dialog-caption">Is "';
-          table += suggestion_json['text'];
-          table += '" related to any of the following elements? I need your help to continue:</caption><thead><tr>';
-          table += '<th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th>';
+          let table = '<table id="suggestions-table" class="table table-striped table-hover" style="width: 100%">';
+          table += '<thead><tr><th scope="col">#</th><th scope="col">Function</th><th scope="col">Resource</th>';
           table += '<th scope="col">Select</th></tr></thead><tbody>';
           for (let i=0; i<suggestion_json['votes'].length; i++) {
             table += '<tr class="suggestion-row"><th scope="row">';
@@ -308,7 +325,6 @@
           }
           table += '</tbody>';
           table += '</table>';
-          table += '</div>';
           return table
       }
   });
