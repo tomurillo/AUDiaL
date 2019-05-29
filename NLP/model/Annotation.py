@@ -59,7 +59,8 @@ class Annotation(object):
         :param poc: A POC instance
         :return: None; updates this instance
         """
-        self.tree = poc.tree.copy(deep=True)
+        from NLP.util.TreeUtil import immutableCopy
+        self.tree = immutableCopy(poc.tree)
         self.rawText = poc.rawText
         self.start, self.end = poc.start_original, poc.end_original
 

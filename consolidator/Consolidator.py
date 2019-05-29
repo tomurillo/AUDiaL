@@ -395,6 +395,9 @@ class Consolidator(object):
                 self.q.pocs.remove(poc)
                 for sc in ocs:
                     sc.verified = True
+                    sc_ann = Annotation()
+                    sc_ann.populateFromPOC(poc)
+                    sc.OE.annotation = sc_ann
                     if sc.task and sc.answer:
                         self.q.task = sc
                 self.q.semanticConcepts.append(ocs)
