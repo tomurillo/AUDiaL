@@ -1,3 +1,4 @@
+from flask import session
 from ontology.upper_ontology import UpperOntology
 import rdflib
 from rdflib import XSD, URIRef
@@ -508,12 +509,11 @@ class UpperVisOntology(UpperOntology):
     def getNavigationProperties(self, node):
         """
         Returns the navigation properties of a given node and their current
-        values. If the property has a boolean range, it returns only those
-        with objects set to True.
+        values.
         :param node: the instance name of a graphic object
         :return dict<string, mixed>: key is the property name, value is the
         object of the (node, p, value) triple of the ontology converted to
-        its Python type
+        its Python type. Data is actually fetched from the user session, not the ontology.
         """
         props = {}
         if node:
@@ -522,6 +522,14 @@ class UpperVisOntology(UpperOntology):
                 navVal = self.getValue(node, prop)
                 if navVal:
                     props[prop] = navVal
+            #  Fetch non-persisted properties from user session
+            if self.isCurrent(node):
+                props[self.NavigationDataProperty.IS_CURRENT] = True
+            if self.isHomeNode(node):
+                props[self.NavigationDataProperty.IS_HOME_NODE] = True
+            user_tags = self.getUserLabels(node)
+            if user_tags:
+                props[self.NavigationDataProperty.HAS_USER_LABEL] = user_tags
         return props
 
     def navigate(self, actions):
@@ -535,11 +543,9 @@ class UpperVisOntology(UpperOntology):
     def getPreviousNodes(self):
         """
         Return the instance name of the previously visited graphic elements
-        :return list<string>: instance name of previous graphic objects in the
-        ontology according to the IS_PREVIOUS_VISITED datatype property
+        :return list<string>: instance name of previous graphic objects in the current session
         """
-        pPrev = self.NavigationDataProperty.IS_PREVIOUS_VISITED
-        return self.getNavigationNodes(pPrev)
+        return session.get('prev_nodes', [])
 
     def isPrevious(self, node):
         """
@@ -557,10 +563,9 @@ class UpperVisOntology(UpperOntology):
     def getCurrentNodes(self):
         """
         Return the instance name of the currently selected graphic elements
-        :return list<string>: instance name of current graphic objects in the
-        ontology according to the IS_CURRENT datatype property
+        :return list<string>: instance name of current graphic objects in current session.
         """
-        return self.getNavigationNodes(self.NavigationDataProperty.IS_CURRENT)
+        return session.get('current_nodes', [])
 
     def isCurrent(self, node):
         """
@@ -581,22 +586,18 @@ class UpperVisOntology(UpperOntology):
         elements as the previous visited ones
         :param elms iterable: the new current element instance names
         """
-        pCurr = self.NavigationDataProperty.IS_CURRENT
-        oldCurrent = self.getNavigationNodes(pCurr)
-        if oldCurrent:
-            self.setNavigationNodes(
-                                self.NavigationDataProperty.IS_PREVIOUS_VISITED,
-                                oldCurrent)
-        self.setNavigationNodes(pCurr, elms)
+        prev_nodes = session.get('current_nodes', [])
+        if prev_nodes:
+            session['prev_nodes'] = prev_nodes
+        session['current_nodes'] = elms
 
     def getHomeNodes(self):
         """
         Return the instance name of the currently chosen graphic elements as
         home nodes
-        :return list<string>: instance names of home node graphic objects in the
-        ontology according to the IS_HOME_NODE datatype property
+        :return list<string>: instance names of home nodes in the current session.
         """
-        return self.getNavigationNodes(self.NavigationDataProperty.IS_HOME_NODE)
+        return session.get('home_nodes', [])
 
     def isHomeNode(self, node):
         """
@@ -615,7 +616,7 @@ class UpperVisOntology(UpperOntology):
         Set the given elements as the current home nodes
         :param elms iterable: the new home node element instance names
         """
-        self.setNavigationNodes(self.NavigationDataProperty.IS_HOME_NODE, elms)
+        session['home_nodes'] = elms
 
     def getNavigationNodes(self, p):
         """
@@ -652,13 +653,12 @@ class UpperVisOntology(UpperOntology):
         """
         Returns the user-defined tags for the given element
         :param element: an instance name
-        :return string: the user-defined information for the element, an empty
-        string if not found
+        :return string: the user-defined information for the element, an empty string if not found
         """
         ul = ""
         if element:
-            ul = self.getValue(element,
-                               self.NavigationDataProperty.HAS_USER_LABEL)
+            labels = session.get('user_labels', {})
+            ul = labels.get(element, "")
         return ul
 
     def setUserLabels(self, elements, userTags):
@@ -670,12 +670,12 @@ class UpperVisOntology(UpperOntology):
         string will be copied to all elements.
         """
         if elements and userTags:
+            labels = session.get('user_labels', {})
             if not isinstance(elements, list):
                 elements = [elements]
-            p = self.NavigationDataProperty.HAS_USER_LABEL
             for e in elements:
-                self.removeDataTypePropertyTriple(e, p)
-                self.addDataTypePropertyTriple(e, p, userTags)
+                labels[e] = userTags
+            session['user_labels'] = labels
 
     def isLowLevelTask(self, task):
         """

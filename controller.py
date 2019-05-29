@@ -749,6 +749,7 @@ class Controller(object):
                 output += "No home %s found." % node_name
                 moved = False
         elif action in ['reset', self.o.StructuralTask.NavigationTask.RESET]:
+            session.clear()
             moved = False
             compare_home = False
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])
@@ -762,7 +763,7 @@ class Controller(object):
             output += "<br/>"
             if compare_home:
                 home_bars = self.o.getHomeNodes()
-                if home_bars and b[-1] not in home_bars:
+                if home_bars and b[-1] not in home_bars and b[0] not in home_bars:
                     output += self.o.printCompareToHome(b[-1])
         return output
 
