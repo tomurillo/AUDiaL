@@ -156,7 +156,7 @@ class QueryFilterCardinal(QueryFilter):
         :return: boolean; True if current instance overlaps the given one; False otherwise
         """
         return isinstance(other, QueryFilterCardinal) and other.op == self.CardinalFilter.EQ \
-            and self.operands == other.operands and self.op in [self.CardinalFilter.GEQ or self.CardinalFilter.LEQ]
+            and self.operands == other.operands and self.op in [self.CardinalFilter.GEQ, self.CardinalFilter.LEQ]
 
     def opToPython(self):
         """
