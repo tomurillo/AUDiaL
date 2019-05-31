@@ -2,6 +2,7 @@ import ontology.constants as o_c
 from NLP.util.TreeUtil import distanceBetweenAnnotations
 from NLP.model.SemanticConcept import *
 from NLP.model.QueryFilter import QueryFilterCardinal
+from ontology.bar_chart_ontology import BarChartOntology
 
 
 def preConsolidateQuery(q, o):

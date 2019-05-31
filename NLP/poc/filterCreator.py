@@ -33,14 +33,17 @@ class FilterCreator(object):
                     match = False
                     if pt.label() in FILTER_COMP_LABELS:
                         parsed_op = self.parseOperator(pt, ann.tree)
-                        if parsed_op:
+                        if parsed_op and not operand:
                             qf_operators.append(parsed_op)
                             match = True
                     elif pt.label() in FILTER_OPERAND_LABELS:
                         raw_text = treeRawString(pt)
-                        if pt.label() not in FILTER_NUMBER_LABELS or isNumber(raw_text):
+                        #  Operand must come after operator
+                        if qf_operators and not operand and (pt.label() not in FILTER_NUMBER_LABELS or
+                                                             isNumber(raw_text)):
                             operand = raw_text
                             match = True
+                            pos_end = i
                     elif pt.label() in FILTER_CONJ_LABELS:
                         or_conj = True
                         match = True
@@ -61,6 +64,7 @@ class FilterCreator(object):
                         qfilter = QueryFilterCardinal(ann, qf_operator_combined)
                         qfilter.operands.append(operand)
                         qfilter.start, qfilter.end = ann.start + pos_start, ann.start + pos_end
+                        qfilter.text = ' '.join([treeRawString(t) for t in preters[pos_start: pos_end + 1]])
                         filters.append(qfilter)
         return filters
 
@@ -83,9 +87,28 @@ class FilterCreator(object):
                 qf_operator = QueryFilterCardinal.CardinalFilter.EQ
             elif operator in FILTER_GT_THAN_TOKENS or operator in FILTER_LT_THAN_TOKENS:
                 clause = treeRawString(clause_tree).strip().lower()
-                if " than " in clause:
+                than_idx = find_substrings(clause, ' than ')
+                o_i = clause.find(operator) + len(operator)
+                if any(i == o_i for i in than_idx):
                     if operator in FILTER_GT_THAN_TOKENS:
                         qf_operator = QueryFilterCardinal.CardinalFilter.GT
                     else:
                         qf_operator = QueryFilterCardinal.CardinalFilter.LT
         return qf_operator
+
+
+def find_substrings(main_str, sub_str):
+    """
+    Return the indices of all occurrences of sub_str in main_str
+    :param main_str: string; haystack string where to search for
+    :param sub_str: string; needle substring to search for
+    :return: list<int> indices where sub_str appears in main_str
+    """
+    start = 0
+    matches = []
+    while True:
+        start = main_str.find(sub_str, start)
+        if start == -1:
+            return matches
+        matches.append(start)
+        start += len(sub_str)

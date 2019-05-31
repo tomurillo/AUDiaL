@@ -180,7 +180,6 @@ class SuggestionGenerator(object):
             if PRIORITY_DIAG_LABELS and v.vote < 1:
                 v.vote += 1
             votes.append(v)
-        votes.extend(self.createGenericVotes(key, filter_instance.annotation, add_none=False))
         if add_none:
             none_vote = self.createNoneVote(focus)
             votes.append(none_vote)

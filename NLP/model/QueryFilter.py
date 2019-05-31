@@ -9,11 +9,30 @@ class QueryFilter(object):
     """
     def __init__(self, annotation=None):
         self.annotation = annotation  # Query annotation
+        self.text = ''  # Query substring matching the filter
         self.negate = False  # Whether to negate the result i.e., return elements not meeting filter criteria
         self.operands = []  # List of operands e.g. datatype property value or instance names
         self.pocs = []  # List of POCs found within the filter's annotation
         self.start = -1  # Start offset of actual filter (may be contained within its annotation)
         self.end = -1  # End offset of actual filter
+
+    def overlaps(self, other, strict=True):
+        """
+        Returns whether the current instance overlaps the given annotation or filter
+        :param other: Annotation or QueryFilter instance being compared
+        :param strict: whether the containment has to be strict (fully contained) or not (beginning and/or end
+        offsets can match)
+        :return: boolean; True if current instance overlaps the given one; False otherwise
+        """
+        overlaps = False
+        if isinstance(other, (Annotation, QueryFilter)):
+            if strict:
+                if other.start > self.start and other.end < self.end:
+                    overlaps = True
+            else:
+                if other.start >= self.start and other.end <= self.end:
+                    overlaps = True
+        return overlaps
 
     def to_dict(self):
         """
@@ -21,7 +40,7 @@ class QueryFilter(object):
         :return: dict
         """
         d = {'type': 'QueryFilter', 'operands': self.operands, 'negate': self.negate, 'start': self.start,
-             'end': self.end}
+             'end': self.end, 'text': self.text}
         if self.annotation:
             d['annotation'] = self.annotation.to_dict()
         else:
@@ -35,6 +54,7 @@ class QueryFilter(object):
         :param d:
         :return: None; updates current instance
         """
+        self.text = d.get('text', [])
         self.operands = d.get('operands', [])
         self.negate = d.get('negate', False)
         self.start = d.get('start', -1)
@@ -62,6 +82,8 @@ class QueryFilter(object):
         elif self.start != other.start:
             return False
         elif self.end != other.end:
+            return False
+        elif self.text != other.text:
             return False
         elif other.annotation != self.annotation:
             return False
@@ -125,6 +147,16 @@ class QueryFilterCardinal(QueryFilter):
         LT = "less_than"
         LEQ = "less_equal_than"
         SIM = 'similar_to'
+
+    def overlapsByOperator(self, other):
+        """
+        Returns whether the operator of the current instance overlaps the operator of the given filter. For example,
+        the GEQ (>=) operator overlaps the EQ (=) operator.
+        :param other: QueryFilter instance being compared
+        :return: boolean; True if current instance overlaps the given one; False otherwise
+        """
+        return isinstance(other, QueryFilterCardinal) and other.op == self.CardinalFilter.EQ \
+            and self.operands == other.operands and self.op in [self.CardinalFilter.GEQ or self.CardinalFilter.LEQ]
 
     def opToPython(self):
         """

@@ -1,5 +1,7 @@
-from NLP.model.QueryFilter import *
+from NLP.model.QueryFilter import QueryFilterCardinal
+from NLP.model.POC import POC
 from NLP.model.OE import *
+from NLP.model.SemanticConcept import SemanticConcept
 from dialog.model.SuggestionPair import SuggestionPair
 from dialog.config import USE_LABELS, LABEL_PROPS, MAX_SUGGESTIONS
 from GeneralUtil import beautifyOutputString, replaceLastCommaWithAnd

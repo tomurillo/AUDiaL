@@ -1,5 +1,4 @@
 from flask import session
-from ontology.bar_chart_ontology import BarChartOntology
 from oc.triple_utils import *
 from NLP.parser.CommandParser import *
 from NLP.SimpleNLHandler import *
@@ -67,7 +66,6 @@ class Controller(object):
         if suggestion_pair:
             session['suggestion_pair'] = suggestion_pair.to_dict()
             # Output dialog
-            from dialog.webformat.formatter import OutputFormatter
             formatter = OutputFormatter(self.o, skip_inflect=True)
             return formatter.suggestionPairToJSON(suggestion_pair)
         return False
@@ -106,7 +104,6 @@ class Controller(object):
                 session.pop('suggestion_pair')
                 session['suggestion_pair'] = suggestion_pair_new.to_dict()
                 # Output dialog
-                from dialog.webformat.formatter import OutputFormatter
                 formatter = OutputFormatter(self.o, skip_inflect=True)
                 return formatter.suggestionPairToJSON(suggestion_pair_new)
         return False
@@ -144,6 +141,8 @@ class Controller(object):
                     answer += "</ul>"
                     if not self.q.task:
                         answer += self.__summarizeBars(bars)
+                else:
+                    answer = 'No bars match your query.'
         else:
             answer = self.fetchAnswerFromDomain()
         return answer

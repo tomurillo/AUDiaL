@@ -1019,6 +1019,16 @@ class UpperOntology(object):
                 elementURI = Literal(name_clean)
                 elementURI_str = Literal(name_clean, datatype=XSD.string)
                 exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
+            if not exists:
+                name_clean = name_clean.replace('_', ' ')
+                elementURI = Literal(name_clean)
+                elementURI_str = Literal(name_clean, datatype=XSD.string)
+                exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
+            if not exists:
+                name_clean = name_clean.lower()
+                elementURI = Literal(name_clean)
+                elementURI_str = Literal(name_clean, datatype=XSD.string)
+                exists = (None, None, elementURI) in self.graph or (None, None, elementURI_str) in self.graph
         else:
             if subjectType == 'individual':
                 o_uri = URIRef("%s#%s" % (c.OWL_NS, "NamedIndividual"))

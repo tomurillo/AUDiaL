@@ -8,7 +8,7 @@ MAX_RESULTS = 100  # Maximum number of result rows to display to the user
 
 MAX_EXTRA_INFO = 10  # Maximum number of extra related resources per resource (e.g. instances of class) to display
 
-MAX_SUGGESTIONS = 25  # Maximum number of suggestions to display to the user at once in a dialogue
+MAX_SUGGESTIONS = 20  # Maximum number of suggestions to display to the user at once in a dialogue
 
 USE_LABELS = True  # Whether to return resource's labels in the dialogue instead of their URIs
 

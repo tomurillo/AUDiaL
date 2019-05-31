@@ -2,6 +2,7 @@ from NLP.util.TreeUtil import *
 from NLP.constants import *
 from NLP.model.POC import *
 from NLP.model.OE import *
+from NLP.model.QueryFilter import QueryFilterCardinal
 from consolidator.constants import *
 from oc.OCUtil import SemanticConceptListCompareOffset
 
@@ -175,7 +176,7 @@ class Consolidator(object):
                     if first_sc and first_sc.OE and first_sc.OE.annotation:
                         ann = first_sc.OE.annotation
                         for qf in self.q.filters:
-                            if qf.annotation.overlaps(ann, strict=False):
+                            if qf.overlaps(ann, strict=False):
                                 add = False
                                 skip = True
                                 break
@@ -215,19 +216,27 @@ class Consolidator(object):
     def consolidateFilters(self):
         """
         Automatic consolidation of query filters:
-        Remove filters containing other filters within their annotations
+        Remove filters containing other filters
         :return: None; updates Query attribute
         """
         to_remove = set()
-        for i, f in enumerate(self.q.filters):
+        for i, f1 in enumerate(self.q.filters):
             j = i + 1
             while j < len(self.q.filters):
-                ann1 = f.annotation
-                ann2 = self.q.filters[j].annotation
-                if ann1.overlaps(ann2, strict=False):
-                    to_remove.add(f)
-                elif ann2.overlaps(ann1, strict=False):
-                    to_remove.add(self.q.filters[j])
+                f2 = self.q.filters[j]
+                cont = True
+                if isinstance(f1, QueryFilterCardinal) and isinstance(f2, QueryFilterCardinal):
+                    if f1.overlapsByOperator(f2):
+                        to_remove.add(f2)
+                        cont = False
+                    elif f2.overlapsByOperator(f1):
+                        to_remove.add(f1)
+                        cont = False
+                if cont:
+                    if f1.overlaps(f2, strict=False):
+                        to_remove.add(f1)
+                    elif f2.overlaps(f1, strict=False):
+                        to_remove.add(f2)
                 j += 1
         new_filters = [f for f in self.q.filters if f not in to_remove]
         self.q.filters = new_filters

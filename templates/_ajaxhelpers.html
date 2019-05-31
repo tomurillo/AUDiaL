@@ -12,6 +12,7 @@
   $(function() {
 
       $('button#submit-retrieve').bind('click', function () {
+          $("#suggestions-table").empty();
           $.getJSON($SCRIPT_ROOT + '/_retrieve_values', {
               current_graphic: $('input[name="currentGraphic"]').val(),
               to_count: $('input[name="inputCount"]').val(),

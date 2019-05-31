@@ -38,22 +38,22 @@ class LearningVote(object):
         self.uris = d.get('uris', [])
 
     def __eq__(self, other):
-            if not isinstance(other, LearningVote):
-                return False
-            elif self.id != other.id:
-                return False
-            elif self.score != other.score:
-                return False
-            elif self.task != other.task:
-                return False
-            elif self.identifier != other.identifier:
-                return False
-            elif self.triples != other.triples:
-                return False
-            elif self.uris != other.uris:
-                return False
-            else:
-                return True
+        if not isinstance(other, LearningVote):
+            return False
+        elif self.id != other.id:
+            return False
+        elif self.score != other.score:
+            return False
+        elif self.task != other.task:
+            return False
+        elif self.identifier != other.identifier:
+            return False
+        elif self.triples != other.triples:
+            return False
+        elif self.uris != other.uris:
+            return False
+        else:
+            return True
 
     def __ne__(self, other):
         return not self.__eq__(other)

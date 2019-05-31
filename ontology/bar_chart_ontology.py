@@ -112,7 +112,9 @@ class BarChartOntology(UpperVisOntology):
                 answer += " %s" % self.getElementFiltersString(add_labels_bar)
             answer += '<br/>'
             if numeric_result is not None:
-                answer += "Result is %s<br/>" % self.printCompareValToHome(numeric_result)
+                cmp_home = self.printCompareValToHome(numeric_result)
+                if cmp_home:
+                    answer += "%s<br/>" % cmp_home
         return answer, success
 
     def navigate(self, actions, bars=None):
@@ -945,7 +947,7 @@ class BarChartOntology(UpperVisOntology):
             for b in bars:
                 if self.elementHasRole(b, self.SyntacticRoles.STACKED_BAR):
                     sorted_b.append(b)
-                    sorted_b.extend(self.getMetricBarsOfStacked(b))
+                    sorted_b.extend([m for m in self.getMetricBarsOfStacked(b) if m in bars])
             sorted_b.extend([b for b in bars if b not in sorted_b])  # Add leftover bars
         return sorted_b
 
@@ -1656,16 +1658,17 @@ class BarChartOntology(UpperVisOntology):
             home = home_nodes[0]
             home_val = self.getMetricBarValue(home)
             if home_val is not None:
+                label = 'The result is '
                 rel_diff = -(1 - val / home_val) * 100
                 cmp_str = ''
                 if abs(rel_diff) < 5:
-                    label = 'almost the same to home bar\'s value'
+                    label += 'almost the same to home bar\'s value'
                 elif rel_diff < 0:
                     cmp_str = 'smaller'
                 else:
                     cmp_str = 'bigger'
                 if cmp_str:
-                    label = '%.2f%% %s than the home bar\'s value' % (abs(rel_diff), cmp_str)
+                    label += '%.2f%% %s than the home bar\'s value' % (abs(rel_diff), cmp_str)
         return label
 
     def printCompareBars(self, bar_focus, bar_other, target='prev', units=None):

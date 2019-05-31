@@ -46,7 +46,7 @@ class DialogHandler(object):
         key = SuggestionKey()
         pair = SuggestionPair()
         next_filter = nextFilter(self.q)
-        key.text = next_filter.annotation.rawText
+        key.text = next_filter.text
         pair.key = key
         pair.filter = next_filter
         learning_keys = self.generateLearningKeys(key)
