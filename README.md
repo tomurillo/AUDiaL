@@ -12,8 +12,8 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
 - Java JDK (1.8+)
 
 ## Install (Windows)
-1. Set the `JAVA_HOME` environment to `C:\Program Files\Java\jdk1.X.X_XXX` or similar
-2. Install required Python modules (on your venv terminal):
+
+1. Install the required Python modules (on your venv terminal):
     ```
     pip install Flask
     pip install Flask-Session
@@ -23,11 +23,12 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
     pip install textdistance
     pip install inflect
     ```
-3. Optionally, you may also install the following modules for data analysis tasks:
+2. Optionally, you may also install the following modules for data analysis tasks:
     ```
     pip install scipy
     pip install scikit-learn
     ```
+3. Set the `JAVA_HOME` environment to `C:\Program Files\Java\jdk1.X.X_XXX` or similar
 4. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
 5. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.
 6. Download the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml#Download) (tested with version 3.9.1).
@@ -39,7 +40,7 @@ A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams i
     > nltk.download('wordnet')
     ```
     
-Steps 4-7 are only required you want to run the Stanford Parser and POS-tagger locally. It is recommended to use the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) API instead. AUDiaL can be configured to use either option:
+Steps 3-7 are only required if you want to run the Stanford Parser and POS-tagger locally. It is recommended to use the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) API instead. AUDiaL can be configured to use either option:
 
 - **Local NLP**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford'`.
 - **CoreNLP API**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford_web'`. In the NLP parser config file (`/NLP/parser/config.py`) set the corresponding values for each configuration constant. An example file can be found under `/NLP/parser/config-default.py`

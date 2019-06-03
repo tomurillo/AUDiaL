@@ -5,7 +5,7 @@ from nltk.parse import CoreNLPParser
 from nltk.internals import find_jars_within_path
 from nltk import Tree
 import os
-from GeneralUtil import asWindows
+from general_util import asWindows
 from NLP.model.Query import *
 from NLP.poc.POCCreator import *
 

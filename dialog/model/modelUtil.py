@@ -2,7 +2,7 @@ import json
 import os
 from dialog.model.Key import *
 from dialog.model.LearningVote import *
-from GeneralUtil import asWindows
+from general_util import asWindows
 
 MODEL_FILE = 'dialog/storage/votes.json'
 

@@ -56,9 +56,7 @@ def retrieve_values():
         c.clearSessionContext()
         if c.isOntologyLoaded():
             output = ''
-            if to_count:
-                output = c.retrieveCount(to_count)
-            elif to_retrieve:
+            if to_retrieve:
                 output, output_type = c.retrieveValue(to_retrieve)
             if not output:
                 output = "No results"

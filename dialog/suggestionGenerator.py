@@ -7,7 +7,7 @@ from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilar
 from NLP.constants import *
 from NLP.util.TreeUtil import containNodes
 from ontology.upper_vis_ontology import UpperVisOntology
-from GeneralUtil import beautifyOutputString
+from general_util import beautifyOutputString
 
 
 class SuggestionGenerator(object):

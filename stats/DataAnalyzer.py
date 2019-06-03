@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.stats as st
 import warnings
-from GeneralUtil import isNumber, replaceLastCommaWithAnd
+from general_util import isNumber, replaceLastCommaWithAnd
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 

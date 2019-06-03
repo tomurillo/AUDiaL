@@ -2,7 +2,7 @@ from ontology.upper_vis_ontology import UpperVisOntology
 from NLP.model.QueryFilter import QueryFilterCardinal, QueryFilterNominal
 from sys import float_info
 from rdflib import XSD
-from GeneralUtil import isNumber, stringOpToPython, numberToOrdinal, replaceLastCommaWithAnd
+from general_util import isNumber, stringOpToPython, numberToOrdinal, replaceLastCommaWithAnd
 
 
 class BarChartOntology(UpperVisOntology):

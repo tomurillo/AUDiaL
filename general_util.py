@@ -19,6 +19,20 @@ def beautifyOutputString(name):
     return beauty
 
 
+def truncateString(what, length=80, dots='...'):
+    """
+    Truncates a string to the given length
+    :param what: string; string to truncate
+    :param length: int; position from which the string gets truncated
+    :param dots: string; something to append at the end of the truncated string
+    :return: string; truncated string
+    """
+    if len(what) > length:
+        return what[: length] + dots
+    else:
+        return what
+
+
 def replaceLastCommaWithAnd(what):
     """
     Given a string containing a comma-separated list of elements, replace the last comma with 'and'
@@ -75,8 +89,7 @@ def isNumber(n):
     """
     Checks whether the given string is a number
     :param n: The string to be checked
-    :return boolean: True if the string can be converted to a float,
-    False otherwise
+    :return boolean: True if the string can be converted to a float, False otherwise
     """
     try:
         float(n)

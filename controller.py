@@ -9,6 +9,7 @@ from oc.OCCreator import addSemanticConcepts
 from consolidator.Consolidator import *
 from dialog.dialogHandler import DialogHandler
 from dialog.model.SuggestionPair import SuggestionPair
+from logger.Logger import AudialLogger
 from config import NLP_PARSER, NLP_POS_TAGGER
 
 
@@ -33,6 +34,7 @@ class Controller(object):
         self.mapper = Mapper(parser=NLP_PARSER, tagger=NLP_POS_TAGGER)
         self.consolidator = None
         self.dialogue = None  # Dialogue controller
+        self.logger = AudialLogger()
         if type == c.BAR_CHART:
             self.o = BarChartOntology(RDFpath)
         else:
@@ -88,6 +90,7 @@ class Controller(object):
                 updateLearningModel(suggestion_pair, self.o)
             scs_updated = [v.candidate for v in votes_chosen]  # OCs chosen by the user in dialogue
             if scs_updated:
+                self.logger.log_vote(scs_updated[0].OE.uri)
                 if suggestion_pair.subject:
                     # It was a POC -> OC mapping dialogue
                     self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)
@@ -259,14 +262,19 @@ class Controller(object):
         output = ""
         output_type = 'answer'
         if self.type == c.BAR_CHART:
+            self.logger.log_query(what)
             output = self.commandLookUp(what)
-            if not output:
+            if output:
+                self.logger.log_command(output)
+            else:
                 suggestion = self.processQuery(what)
                 if suggestion:
                     output_type = 'dialogue'
                     output = suggestion
+                    self.logger.log_dialog(output)
                 else:
                     output = self.computeAnswer()
+                    self.logger.log_answer(output)
         return output, output_type
 
     def processVoteSelection(self, vote_id):
@@ -277,8 +285,10 @@ class Controller(object):
             if suggestion:
                 output_type = 'dialogue'
                 output = suggestion
+                self.logger.log_dialog(output)
             else:
                 output = self.computeAnswer()
+                self.logger.log_answer(output)
         return output, output_type
 
     def retrieveValueSimple(self, what):
