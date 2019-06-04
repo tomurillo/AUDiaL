@@ -105,6 +105,9 @@ class BarChartOntology(UpperVisOntology):
         elif task == self.StructuralTask.CorrelationTask.CLUSTER:
             answer, success = self.computeClustering(bars)
             add_units = False
+        elif task == self.StructuralTask.DistributionTask.FIND_ANOMALIES:
+            answer, success = self.computeFindAnomalies(bars)
+            add_units = False
         if answer:
             if add_units and units:
                 answer += units_answer
@@ -1058,6 +1061,41 @@ class BarChartOntology(UpperVisOntology):
         finally:
             return answer, success
 
+    def computeFindAnomalies(self, bars):
+        """
+        Returns the result of the task of finding anomalies on the given set of bars according to their values
+        @param iterable<string> bars: the bars whose values to take into account
+        @return (string, boolean): task answer, and whether the task could be resolved
+        """
+        success = False
+        answer = 'The answer could not be computed'
+        try:
+            from stats.DataAnalyzer import DataAnalyzer
+            if bars:
+                bar_vals = self.getBarValues(bars)
+                if bar_vals:
+                    analyzer = DataAnalyzer(bar_vals)
+                    _, outliers = analyzer.find_clusters()
+                    if outliers:
+                        units = self.getChartMeasurementUnit()
+                        if units:
+                            units_label = units.replace("_", " ").lower()
+                        else:
+                            units_label = ''
+                        answer = "<h5>Found %d possible bar outliers:</h5>" % len(outliers)
+                        answer += '<section><ul>'
+                        for i, bar in enumerate(outliers, 1):
+                            bar_info = self.printBarDetails(bar, skipNav=True, units=units_label)
+                            answer += "<li><strong>%s bar:</strong> %s</li>" % (numberToOrdinal(i), bar_info)
+                        answer += '</ul></section>'
+                        success = True
+                    else:
+                        answer = 'No anomalies found within the bars of this chart.'
+        except ImportError:
+            answer = 'Task (find anomalies) not supported!'
+        finally:
+            return answer, success
+
     def computeBarsNavOrder(self):
         """
         Initializes the datatype properties specifying navigation bar order
@@ -1748,7 +1786,7 @@ class BarChartOntology(UpperVisOntology):
             else:
                 output += "Simple bar "
             if len(barfilters) > 0:
-                output += ' with labels: '
+                output += 'with labels: '
                 output += ', '.join(str(v) for v in sorted(barfilters) if v)
             size = self.getMetricBarValue(bar)
             output += " (%0.2f %s). " % (size, unitsNL)
