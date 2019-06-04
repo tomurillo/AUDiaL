@@ -30,3 +30,8 @@ class QuickRegex(object):
         self.SUMMARY_2 = '^(?:.*\s)?(%s)(?:(?:\s.*?\s)|\s*)?(?:%s)(?:\W.*)?$' % \
                          (self.SUMMARY_VERB_2, self.SUMMARY_OBJ_2)
         self.summary_regexes = [self.SUMMARY_1, self.SUMMARY_2]
+        # Where am I?
+        self.WAI_1 = '^(?:.*\s)?where(?:(?:\s.*?\s)|\s*)?((am i)|(i am)).*$'
+        self.WAI_2 = '^(?:.*\s)?where(?:(?:\s.*?\s)|\s*)?(are we|we are|you are|are you).*$'
+        self.WAI_3 = '^(?:.*\s)?(my|our|your)(?:(?:\s.*?\s)|\s*)?(location|position|whereabouts).*$'
+        self.where_regexes = [self.WAI_1, self.WAI_2, self.WAI_3]

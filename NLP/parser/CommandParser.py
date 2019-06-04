@@ -31,6 +31,11 @@ class CommandParser(object):
                     task = self.shortcuts.get(m.group(1))
                     if task:
                         return task
+            for regex in rx.where_regexes:
+                p = re.compile(regex, re.IGNORECASE)
+                m = p.match(self.what)
+                if m:
+                    return UpperVisOntology.StructuralTask.NavigationTask.WHERE
             # Set home task
             p = re.compile(rx.SET_HOME, re.IGNORECASE)
             m = p.match(self.what)
