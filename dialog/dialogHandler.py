@@ -129,9 +129,10 @@ class DialogHandler(object):
         :param pair: A SuggestionPair instance with candidate votes
         :return: None; Updates the SuggestionPair instance; votes are empty if they have been automatically resolved
         """
-        if len(pair.votes) > 1:
+        if pair.votes:
+            num_votes = len(pair.votes)
             pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
-            if pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
+            if num_votes == 1 or pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
                 from consolidator.Consolidator import Consolidator
                 consolidator = Consolidator(self.q)
                 self.q = consolidator.disambiguateOCs([pair.votes[0].candidate])
@@ -181,9 +182,10 @@ class DialogHandler(object):
         :param pair: A SuggestionPair instance with candidate votes
         :return: None; Updates the SuggestionPair instance; votes are empty if they have been automatically resolved
         """
-        if len(pair.votes) > 1:
+        if pair.votes:
+            num_votes = len(pair.votes)
             pair.votes.sort(key=lambda v: v.vote, reverse=True)  # Sort votes descending according to score
-            if pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
+            if num_votes == 1 or pair.votes[0].vote - pair.votes[1].vote >= MIN_VOTE_DIFF_RESOLVE:
                 from consolidator.Consolidator import Consolidator
                 consolidator = Consolidator(self.q)
                 self.q = consolidator.resolvePOCtoOC(pair.subject, [pair.votes[0].candidate])
