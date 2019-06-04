@@ -19,25 +19,25 @@ class AudialLogger(object):
         Logger constructor
         """
         self.start_time = 0.0
-        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%d-%m-%Y %H:%M:%S")
-        sysh = logging.handlers.RotatingFileHandler("%s/%s.log" % (LOG_DIR, __name__),
-                                                    maxBytes=MAX_BYTES,
-                                                    backupCount=SYS_BACKUP_N)
-        sysh.setLevel(logging.DEBUG)
-        sysh.setFormatter(formatter)
         self.system_logger = logging.getLogger(__name__)
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%d-%m-%Y %H:%M:%S")
         if not self.system_logger.handlers:
+            sysh = logging.handlers.RotatingFileHandler("%s/%s.log" % (LOG_DIR, __name__),
+                                                        maxBytes=MAX_BYTES,
+                                                        backupCount=SYS_BACKUP_N)
+            sysh.setLevel(logging.DEBUG)
+            sysh.setFormatter(formatter)
             self.system_logger.setLevel(logging.DEBUG)
             self.system_logger.addHandler(sysh)
         self.session_logger = None
         if session:
-            sessh = logging.handlers.RotatingFileHandler("%s/session-%s.log" % (LOG_DIR, session.sid),
-                                                         maxBytes=MAX_BYTES,
-                                                         backupCount=SES_BACKUP_N)
-            sessh.setLevel(logging.INFO)
-            sessh.setFormatter(formatter)
             self.session_logger = logging.getLogger(session.sid)
             if not self.session_logger.handlers:
+                sessh = logging.handlers.RotatingFileHandler("%s/session-%s.log" % (LOG_DIR, session.sid),
+                                                             maxBytes=MAX_BYTES,
+                                                             backupCount=SES_BACKUP_N)
+                sessh.setLevel(logging.INFO)
+                sessh.setFormatter(formatter)
                 self.session_logger.setLevel(logging.INFO)
                 self.session_logger.addHandler(sessh)
 
@@ -74,19 +74,22 @@ class AudialLogger(object):
         :return: None; log the answer
         """
         ex_time = self.__exec_time()
-        msg = "Answer: %s. " % truncateString(answer)
-        msg += "Elapsed: %.2f seconds." % ex_time
+        msg = "Answer: %s " % truncateString(answer)
+        if ex_time > 0:
+            msg += "Elapsed: %.2f seconds." % ex_time
         self.session_logger.info(msg)
 
-    def log_command(self, answer):
+    def log_command(self, command, answer):
         """
         Logs that the user has performed a navigational command
+        @param command: string; performed command
         @param answer: string; the answer given to the user
         :return: None; log the command
         """
         ex_time = self.__exec_time()
-        msg = "Executed Command: %s. " % truncateString(answer)
-        msg += "Elapsed: %.2f seconds." % ex_time
+        msg = "Executed Command: %s. Answer: %s." % (truncateString(command), truncateString(answer))
+        if ex_time > 0:
+            msg += "Elapsed: %.2f seconds." % ex_time
         self.session_logger.info(msg)
 
     def log_dialog(self, suggestion_pair):

@@ -264,9 +264,7 @@ class Controller(object):
         if self.type == c.BAR_CHART:
             self.logger.log_query(what)
             output = self.commandLookUp(what)
-            if output:
-                self.logger.log_command(output)
-            else:
+            if not output:
                 suggestion = self.processQuery(what)
                 if suggestion:
                     output_type = 'dialogue'
@@ -621,6 +619,7 @@ class Controller(object):
             if isinstance(self.o, BarChartOntology):
                 summary = self.o.generateSummary()
             session['summary'] = summary
+        self.logger.log_answer('Summary fetched.')
         return summary
 
     def setUserTags(self, usertags, to = 'current'):
@@ -654,7 +653,8 @@ class Controller(object):
     def navigate(self, action):
         """
         Performs an atomic navigation action on the graphic
-        :param string: the action to perform (where, next, previous...). May also be a formal task instance name.
+        :param action: string; the action to perform (where, next, previous...). May also be a formal task
+        instance name
         :return string: a natural language description of the action's result
         """
         output = ""
@@ -662,6 +662,7 @@ class Controller(object):
         b = None
         moved = True
         compare_home = True
+        action_valid = True
         if isinstance(self.o, BarChartOntology):
             node_name = "bar"
         if action in ['where', self.o.StructuralTask.NavigationTask.WHERE]:
@@ -768,12 +769,16 @@ class Controller(object):
                     output += self.o.printBarDetails(b[-1], skipNav=True)
             else:
                 output += "Error while resetting."
+        else:
+            action_valid = False
         if moved and b:
             output += "<br/>"
             if compare_home:
                 home_bars = self.o.getHomeNodes()
                 if home_bars and b[-1] not in home_bars and b[0] not in home_bars:
                     output += self.o.printCompareToHome(b[-1])
+        if action_valid:
+            self.logger.log_command(action, output)
         return output
 
     def executeTask(self, task):

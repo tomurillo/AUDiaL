@@ -44,6 +44,7 @@ def homepage():
             session.clear()
         return printException(e)
 
+
 @app.route('/_retrieve_values')
 def retrieve_values():
     c = None
@@ -111,6 +112,7 @@ def overview():
         handleException(e, c)
         return jsonify(result=printException(e), output_type='answer')
 
+
 @app.route('/_navigate')
 def navigate():
     c = None
@@ -128,6 +130,7 @@ def navigate():
         handleException(e, c)
         return jsonify(result=printException(e), output_type='answer')
 
+
 @app.route('/_add_user_tags')
 def addUserTagsToCurrentBar():
     c = None
@@ -143,6 +146,7 @@ def addUserTagsToCurrentBar():
     except Exception as e:
         handleException(e, c)
         return jsonify(result=printException(e), output_type='answer')
+
 
 @app.route('/_fetch_intention')
 def fetchIntention():
