@@ -90,7 +90,7 @@ class Controller(object):
                 updateLearningModel(suggestion_pair, self.o)
             scs_updated = [v.candidate for v in votes_chosen]  # OCs chosen by the user in dialogue
             if scs_updated:
-                self.logger.log_vote(scs_updated[0].OE.uri)
+                self.logger.log_vote(scs_updated[0])
                 if suggestion_pair.subject:
                     # It was a POC -> OC mapping dialogue
                     self.q = self.consolidator.resolvePOCtoOC(suggestion_pair.subject, scs_updated)

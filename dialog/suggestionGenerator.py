@@ -89,7 +89,7 @@ class SuggestionGenerator(object):
                         oe.triples.append((str(element), str(prop), text))
                         v = self.createVote(key_text, oe)
                         if PRIORITY_DIAG_LABELS and v.vote < 1:
-                            v.vote += 1
+                            v.vote += 0.2
                         votes[text] = v
                         i += 1
                         if i >= limit:
@@ -178,7 +178,7 @@ class SuggestionGenerator(object):
             vis_label_oe = self.createOntologyElementforURI(vis_label_uri, 'datatypeProperty', check_exists=False)
             v = self.createVote(key.text, vis_label_oe)
             if PRIORITY_DIAG_LABELS and v.vote < 1:
-                v.vote += 1
+                v.vote += 0.2
             votes.append(v)
         if add_none:
             none_vote = self.createNoneVote(focus)
