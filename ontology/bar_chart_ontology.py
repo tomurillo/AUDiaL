@@ -70,12 +70,12 @@ class BarChartOntology(UpperVisOntology):
             res = self.computeExtreme('max', bars)
             if res and 'max' in res:
                 add_labels_bar, numeric_result = res['max']
-                answer = "The maximum value is : %.2f" % numeric_result
+                answer = "The maximum value is: %.2f" % numeric_result
         elif task == self.StructuralTask.ComparisonTask.FIND_MINIMUM:
             res = self.computeExtreme('min', bars)
             if res and 'min' in res:
                 add_labels_bar, numeric_result = res['min']
-                answer = "The mininum value is : %.2f" % numeric_result
+                answer = "The mininum value is: %.2f" % numeric_result
         elif task in [self.StructuralTask.ComparisonTask.FIND_EXTREMUM, self.StructuralTask.ComparisonTask.RANGE]:
             res = self.computeExtreme(['max', 'min'], bars)
             add_units = False

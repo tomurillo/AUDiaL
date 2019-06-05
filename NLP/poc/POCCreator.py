@@ -20,7 +20,7 @@ class POCCreator(object):
         :return: None; update this instance's query object
         """
         pocs = []
-        p_pocs = self.getPocTrees()  # Potential POCs
+        p_pocs = self.getPocTrees()
         if p_pocs:
             query_token_list = self.q.pt.leaves()
             visited = []
@@ -77,16 +77,16 @@ class POCCreator(object):
             added = False
             label = subtree.label()
             childlabels = getChildrenLabels(subtree)
-            if label and any([label.startswith(l) for l in prepre_labels]):
+            if label and any(label.startswith(l) for l in prepre_labels):
                 add_poc = True
                 for child_label in childlabels:
-                    if any([child_label.startswith(l) for l in child_ignore_labels]):
+                    if any(child_label.startswith(l) for l in child_ignore_labels):
                         add_poc = False
                 if add_poc:
                     pocs.append(subtree)
                     prepre_pocs.append(subtree)
                     added = True
-            if label and not added and any([label.startswith(l) for l in prepre_wh_labels]):
+            if label and not added and any(label.startswith(l) for l in prepre_wh_labels):
                 n_children = len(subtree)
                 first_child, second_child, fchild_label, schild_label = (None,) * 4
                 if n_children > 0:

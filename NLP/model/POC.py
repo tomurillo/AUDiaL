@@ -1,10 +1,10 @@
 from NLP.util.TreeUtil import immutableCopy
 
+
 class POC(object):
     """
     Potential Ontology Concept (POC) class
     """
-
     #  Main Subject Priorities
     MSUB_PRIORITY_MIN = 'min'
     MSUB_PRIORITY_MAX = 'max'

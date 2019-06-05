@@ -3,6 +3,7 @@ import logging.handlers
 import time
 from flask import session
 from general_util import truncateString
+from NLP.model.POC import POC
 
 LOG_DIR = 'logger/logs'  # Log directory
 MAX_BYTES = 10485760  # Maximum size of each log file (default: 10 MiB)
@@ -53,18 +54,20 @@ class AudialLogger(object):
         msg = "Input query: '%s'" % query
         self.session_logger.info(msg)
 
-    def log_vote(self, uri, exec_log_start=True):
+    def log_vote(self, vote, exec_log_start=True):
         """
         Logs that the user has voted for a suggestion in a dialog
-        :param uri: string; URI of the concept the user has voted for
+        :param vote: SemanticConcept or POC instance the user has voted for
         :param exec_log_start: boolean; whether to start counting the execution time
         :return:
         """
         if exec_log_start:
             self.start_exec_log()
-        if not uri:
-            uri = 'None'
-        msg = "Vote for '%s' casted." % uri
+        if isinstance(vote, POC):
+            label = 'query focus'
+        else:
+            label = vote.OE.uri if vote.OE.uri else 'None'
+        msg = "Vote for '%s' casted." % label
         self.session_logger.info(msg)
 
     def log_answer(self, answer):

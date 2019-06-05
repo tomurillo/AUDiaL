@@ -154,7 +154,10 @@ class Consolidator(object):
                             j += 1
             if filtered_sc_list:
                 filtered_ocs.append(list(filtered_sc_list))
-        return filtered_ocs
+            if match_found:
+                return filtered_ocs
+            else:
+                return []
 
     def cleanSemanticConcepts(self):
         """
@@ -169,18 +172,20 @@ class Consolidator(object):
         if self.q.semanticConcepts:
             new_scs = []
             for sc_list in self.q.semanticConcepts:
-                add = True
-                skip = False
+                add = False
                 if sc_list:
                     first_sc = sc_list[0]
                     if first_sc and first_sc.OE and first_sc.OE.annotation:
+                        add = True
                         ann = first_sc.OE.annotation
+                        ann_txt = quick_norm(ann.text)
+                        if ann_txt in TOKEN_IGNORE_DOMAIN:
+                            add = False
                         for qf in self.q.filters:
                             if qf.overlaps(ann, strict=False):
                                 add = False
-                                skip = True
                                 break
-                        if not skip:
+                        if add:
                             if focus and focus.mainSubjectPriority == POC.MSUB_PRIORITY_MAX:
                                 if ann.start == focus.start and ann.end == focus.end:
                                     #  match --> remove SemanticConcept list
@@ -301,22 +306,25 @@ class Consolidator(object):
         """
         new_pocs = []
         for poc in pocs:
-            newpoc = poc
-            children = getSubtreesAtHeight(poc.tree, 2)
-            for child in children:
-                child_str = quick_norm(treeRawString(child))
-                if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
-                    ignore = True
-                elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
-                    ignore = True
-                else:
-                    ignore = False
-                if ignore:
-                    if len(poc.tree) > 1:
-                        new_pt = removeSubTree(newpoc.tree, child)
-                        newpoc = self.updateSplitPOC(poc, new_pt, poc.tree.label())
+            newpoc = None
+            poc_txt = quick_norm(poc.rawText)
+            if poc_txt not in TOKEN_IGNORE_DOMAIN:
+                newpoc = poc
+                children = getSubtreesAtHeight(poc.tree, 2)
+                for child in children:
+                    child_str = quick_norm(treeRawString(child))
+                    if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
+                        ignore = True
+                    elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
+                        ignore = True
                     else:
-                        newpoc = None
+                        ignore = False
+                    if ignore:
+                        if len(poc.tree) > 1:
+                            new_pt = removeSubTree(newpoc.tree, child)
+                            newpoc = self.updateSplitPOC(poc, new_pt, poc.tree.label())
+                        else:
+                            newpoc = None
             if newpoc:
                 new_pocs.append(newpoc)
         return new_pocs
