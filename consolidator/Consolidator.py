@@ -307,27 +307,26 @@ class Consolidator(object):
         """
         new_pocs = []
         for poc in pocs:
-            newpoc = None
-            poc_txt = quick_norm(poc.rawText)
-            if poc_txt not in TOKEN_IGNORE_DOMAIN:
-                newpoc = poc
-                children = getSubtreesAtHeight(poc.tree, 2)
-                for child in children:
-                    child_str = quick_norm(treeRawString(child))
-                    if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
-                        ignore = True
-                    elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
-                        ignore = True
+            newpoc = poc
+            children = getSubtreesAtHeight(poc.tree, 2)
+            for child in children:
+                child_str = quick_norm(treeRawString(child))
+                if any(child_str.startswith(s) for s in TOKEN_IGNORE_CONSOLIDATION):
+                    ignore = True
+                elif child.label() in [PRP_TREE_POS_TAG, PRPDOLLAR_TREE_POS_TAG]:
+                    ignore = True
+                else:
+                    ignore = False
+                if ignore:
+                    if len(poc.tree) > 1:
+                        new_pt = removeSubTree(newpoc.tree, child)
+                        newpoc = self.updateSplitPOC(poc, new_pt, poc.tree.label())
                     else:
-                        ignore = False
-                    if ignore:
-                        if len(poc.tree) > 1:
-                            new_pt = removeSubTree(newpoc.tree, child)
-                            newpoc = self.updateSplitPOC(poc, new_pt, poc.tree.label())
-                        else:
-                            newpoc = None
+                        newpoc = None
             if newpoc:
-                new_pocs.append(newpoc)
+                poc_txt = quick_norm(newpoc.rawText)
+                if poc_txt not in TOKEN_IGNORE_DOMAIN:
+                    new_pocs.append(newpoc)
         return new_pocs
 
     @staticmethod
