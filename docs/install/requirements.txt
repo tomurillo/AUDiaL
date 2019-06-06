@@ -1,0 +1,7 @@
+Flask>=1.0.2
+Flask-Session>=0.3.1
+rdflib>=4.2.2
+nltk>=3.3
+textdistance>=3.0.2
+inflect>=2.1.0
+requests==2.21.0
