@@ -824,6 +824,7 @@ class UpperVisOntology(UpperOntology):
                        self.StructuralTask.DerivedValueTask.MEDIAN,
                        self.StructuralTask.DerivedValueTask.MODE,
                        self.StructuralTask.DerivedValueTask.COUNT,
+                       self.StructuralTask.DerivedValueTask.SUM,
                        self.StructuralTask.DistributionTask.CHARACTERIZE_DISTRIBUTION]
             task_name = self.stripNamespace(task.task)
             if task_name in req_sum:

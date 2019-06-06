@@ -1719,12 +1719,9 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Sum_Task">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">alltogether</ns1:task_has_verbalization>
+        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">add</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">combine</ns1:task_has_verbalization>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mixed</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sum</ns1:task_has_verbalization>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">total</ns1:task_has_verbalization>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">total amount</ns1:task_has_verbalization>
     </NamedIndividual>
     
 

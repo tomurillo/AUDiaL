@@ -22,7 +22,7 @@ class FilterCreator(object):
         """
         filters = []
         for ann in self.q.annotations:
-            if ann.tree and ann.tree.label() in FILTER_TOP_LABELS:
+            if self.labelOfFilter(ann.tree):
                 preters = getSubtreesAtHeight(ann.tree, 2)
                 qf_operators = []
                 qf_operator_combined = None
@@ -44,6 +44,7 @@ class FilterCreator(object):
                             operand = raw_text
                             match = True
                             pos_end = i
+                        at_found = False
                     elif pt.label() in FILTER_CONJ_LABELS:
                         or_conj = True
                         match = True
@@ -67,6 +68,20 @@ class FilterCreator(object):
                         qfilter.text = ' '.join([treeRawString(t) for t in preters[pos_start: pos_end + 1]])
                         filters.append(qfilter)
         return filters
+
+    def labelOfFilter(self, tree):
+        """
+        Returns whether the given parse tree may contain a cardinal filter
+        :param tree: nltk.Tree instance
+        :return: boolean; True if the tree should be considered in cardinal filter search, False otherwise
+        """
+        potential_filter = False
+        if tree:
+            if tree.label() in FILTER_TOP_LABELS:
+                potential_filter = True
+            elif tree.label == NP_TREE_POS_TAG and tree[0].label() == QP_TREE_POS_TAG:  # Quantifier Phrase
+                potential_filter = True
+        return potential_filter
 
     def parseOperator(self, pt, clause_tree):
         """
@@ -94,6 +109,12 @@ class FilterCreator(object):
                         qf_operator = QueryFilterCardinal.CardinalFilter.GT
                     else:
                         qf_operator = QueryFilterCardinal.CardinalFilter.LT
+            elif operator in FILTER_GEQ_TOKENS:
+                clause = treeRawString(clause_tree).strip().lower()
+                at_idx = [i + 3 for i in find_substrings(clause, 'at ')]
+                o_i = clause.find(operator)
+                if any(i == o_i for i in at_idx):
+                    qf_operator = QueryFilterCardinal.CardinalFilter.GEQ
         return qf_operator
 
 

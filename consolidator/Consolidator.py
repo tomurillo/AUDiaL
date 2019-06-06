@@ -200,7 +200,7 @@ class Consolidator(object):
                                         self.q.task = first_sc
                                     else:
                                         from warnings import warn
-                                        warn('Two tasks (%s and %s) found in query!' % (self.q.task.uri, task))
+                                        warn('Two tasks (%s and %s) found in query!' % (self.q.task.task, task))
                 if add:
                     new_scs.append(sc_list)
             self.q.semanticConcepts = sorted(new_scs, cmp=SemanticConceptListCompareOffset)
