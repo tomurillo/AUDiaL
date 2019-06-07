@@ -111,7 +111,9 @@ class FilterCreator(object):
                         qf_operator = QueryFilterCardinal.CardinalFilter.LT
             elif operator in FILTER_GEQ_TOKENS:
                 clause = treeRawString(clause_tree).strip().lower()
-                at_idx = [i + 3 for i in find_substrings(clause, 'at ')]
+                at_idx = [i + 4 for i in find_substrings(clause, ' at ')]
+                at_beg_idx = [i + 3 for i in find_substrings(clause, 'at ') if i == 0]
+                at_idx.extend(at_beg_idx)
                 o_i = clause.find(operator)
                 if any(i == o_i for i in at_idx):
                     qf_operator = QueryFilterCardinal.CardinalFilter.GEQ
