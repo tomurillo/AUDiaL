@@ -26,12 +26,18 @@ class FilterCreator(object):
                 preters = getSubtreesAtHeight(ann.tree, 2)
                 qf_operators = []
                 qf_operator_combined = None
+                parsed_op = None
                 operand = None
                 or_conj = False
+                negate = False
                 pos_start, pos_end = len(preters) - 1, 0
                 for i, pt in enumerate(preters):
                     match = False
-                    if pt.label() in FILTER_COMP_LABELS:
+                    if pt.label() in FILTER_NEG_LABELS:
+                        raw_text = treeRawString(pt)
+                        if raw_text in FILTER_NEG_TOKENS and not operand and not parsed_op:
+                            negate = not negate  # We do not set match=True for overlapsByOperator to work
+                    elif pt.label() in FILTER_COMP_LABELS:
                         parsed_op = self.parseOperator(pt, ann.tree)
                         if parsed_op and not operand:
                             qf_operators.append(parsed_op)
@@ -44,7 +50,6 @@ class FilterCreator(object):
                             operand = raw_text
                             match = True
                             pos_end = i
-                        at_found = False
                     elif pt.label() in FILTER_CONJ_LABELS:
                         or_conj = True
                         match = True
@@ -62,10 +67,13 @@ class FilterCreator(object):
                     else:
                         qf_operator_combined = qf_operators[0]
                     if qf_operator_combined:
-                        qfilter = QueryFilterCardinal(ann, qf_operator_combined)
+                        qfilter = QueryFilterCardinal(ann, qf_operator_combined, negate)
                         qfilter.operands.append(operand)
                         qfilter.start, qfilter.end = ann.start + pos_start, ann.start + pos_end
-                        qfilter.text = ' '.join([treeRawString(t) for t in preters[pos_start: pos_end + 1]])
+                        filter_text = ' '.join([treeRawString(t) for t in preters[pos_start: pos_end + 1]])
+                        if negate:
+                            filter_text = 'not ' + filter_text
+                        qfilter.text = filter_text
                         filters.append(qfilter)
         return filters
 
@@ -112,7 +120,7 @@ class FilterCreator(object):
             elif operator in FILTER_GEQ_TOKENS:
                 clause = treeRawString(clause_tree).strip().lower()
                 at_idx = [i + 4 for i in find_substrings(clause, ' at ')]
-                if clause[:3] == ' at':
+                if clause[:3] == 'at ':
                     at_idx.append(3)
                 o_i = clause.find(operator)
                 if any(i == o_i for i in at_idx):

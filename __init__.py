@@ -2,8 +2,12 @@ import traceback
 from flask import Flask, render_template, jsonify, request
 from flask_session import Session
 from content_management import Content
-from controller import *
-from config import FLASK_SECRET_KEY, FLASK_BUBBLE_EXCEPTIONS, FLASK_DEBUG
+from controller import Controller
+from flask import session
+import const as c
+import os
+
+from config import *
 
 app = Flask(__name__)
 SESSION_TYPE = 'filesystem'
@@ -219,7 +223,7 @@ def printException(e):
     @return string: the information to be printed
     """
     t = traceback.format_exc()
-    pretty_e =  "%s\n%s" % (str(e), t)
+    pretty_e = "%s\n%s" % (str(e), t)
     return pretty_e.replace("\n", "<br/>")
 
 

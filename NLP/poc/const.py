@@ -29,6 +29,9 @@ FILTER_EQ_TOKENS = ['same', 'equal', 'identical', 'exactly']
 
 FILTER_CONJ_LABELS = [CC_TREE_POS_TAG]
 
+FILTER_NEG_LABELS = [RB_TREE_POS_TAG]
+
+FILTER_NEG_TOKENS = ["n't", "not"]
 
 TOKEN_IGNORE_PAIR = ["show me", "give me", "tell me", "show us", "give us", "tell us"]
 
@@ -37,4 +40,4 @@ TASK_IGNORE = ["go", "proceed", "move", "show", "give", "tell", "say", "output",
                "fetch", "filter", "calculate", "infer", "is", "are", "was", "were", "have", "has", "had"]
 
 # Adverbs that can be ignored
-RB_IGNORE = ["there"]
+RB_IGNORE = ["there", "n't", "not"]

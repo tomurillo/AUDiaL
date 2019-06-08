@@ -42,7 +42,7 @@ class OutputFormatter(object):
                             votes.append(v)  # Append NoneVote
                         break
             if pair.filter:
-                filter_task = self.operatorLabel(pair.filter.operands, pair.filter.op)
+                filter_task = self.operatorLabel(pair.filter.operands, pair.filter.op, pair.filter.negate)
             for vote in votes:
                 if vote.candidate:
                     json_vote = {}
@@ -107,28 +107,41 @@ class OutputFormatter(object):
                 label = self.findOELabel(oc)
         return label
 
-    def operatorLabel(self, operand, operator):
+    def operatorLabel(self, operand, operator, negate):
         """
         Converts a QueryFilterCardinal task to a NL label
         :param operand: list<string>; numbers or literals to compare against
         :param operator: string; one of QueryFilterCardinal.CardinalFilter
+        :param negate: boolean; whether the operator is negated
         :return: string; NL representation of the operator
         """
         label = 'return those'
+        op_label = ''
+        if negate:
+            op_label = 'not '
         if operator == QueryFilterCardinal.CardinalFilter.EQ:
-            op_label = 'equal to'
+            op_label += 'equal to'
         elif operator == QueryFilterCardinal.CardinalFilter.NEQ:
-            op_label = 'not equal to'
+            op_label = ''
+            if not negate:
+                op_label += 'not '
+            op_label += 'equal to'
         elif operator == QueryFilterCardinal.CardinalFilter.GT:
-            op_label = 'greater than'
+            op_label += 'greater than'
         elif operator == QueryFilterCardinal.CardinalFilter.LT:
-            op_label = 'less than'
+            op_label += 'less than'
         elif operator == QueryFilterCardinal.CardinalFilter.GEQ:
-            op_label = 'at least'
+            if negate:
+                op_label = 'less than'
+            else:
+                op_label = 'at least'
         elif operator == QueryFilterCardinal.CardinalFilter.LEQ:
-            op_label = 'at most'
+            if negate:
+                op_label = 'greater than'
+            else:
+                op_label = 'at most'
         else:
-            op_label = 'equal'
+            op_label += 'equal to'
         label += " %s" % op_label
         label += " %s" % ', '.join(operand)
         return label

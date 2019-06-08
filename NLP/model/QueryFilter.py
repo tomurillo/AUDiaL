@@ -7,10 +7,10 @@ class QueryFilter(object):
     """
     This class models a filtering of labels or results found in a user query
     """
-    def __init__(self, annotation=None):
+    def __init__(self, annotation=None, negate=False):
         self.annotation = annotation  # Query annotation
         self.text = ''  # Query substring matching the filter
-        self.negate = False  # Whether to negate the result i.e., return elements not meeting filter criteria
+        self.negate = negate  # Whether to negate the result i.e., return elements not meeting filter criteria
         self.operands = []  # List of operands e.g. datatype property value or instance names
         self.pocs = []  # List of POCs found within the filter's annotation
         self.start = -1  # Start offset of actual filter (may be contained within its annotation)
@@ -130,11 +130,11 @@ class QueryFilterCardinal(QueryFilter):
     Cardinal filtering of datatype property values
     """
 
-    def __init__(self, annotation=None, op=None):
+    def __init__(self, annotation=None, op=None, negate=False):
         self.op = op  # Operator, one of CardinalFilter
         self.property = None  # SemanticConcept instance; property being filtered
         self.result = False  # Whether the filter must be applied to the result rows; only if self.property is None
-        super(QueryFilterCardinal, self).__init__(annotation)
+        super(QueryFilterCardinal, self).__init__(annotation, negate)
 
     class CardinalFilter:
         """
@@ -155,8 +155,14 @@ class QueryFilterCardinal(QueryFilter):
         :param other: QueryFilter instance being compared
         :return: boolean; True if current instance overlaps the given one; False otherwise
         """
-        return isinstance(other, QueryFilterCardinal) and other.op == self.CardinalFilter.EQ \
-            and self.operands == other.operands and self.op in [self.CardinalFilter.GEQ, self.CardinalFilter.LEQ]
+        overlaps = False
+        if isinstance(other, QueryFilterCardinal) and self.operands == other.operands:
+            if other.op == self.CardinalFilter.EQ and self.op in [self.CardinalFilter.GEQ, self.CardinalFilter.LEQ] \
+                    and self.overlaps(other, strict=False):
+                overlaps = True
+            elif self.start == other.start and self.end == other.end and self.negate and not other.negate:
+                overlaps = True
+        return overlaps
 
     def opToPython(self):
         """
