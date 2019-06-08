@@ -29,15 +29,15 @@ FILTER_EQ_TOKENS = ['same', 'equal', 'identical', 'exactly']
 
 FILTER_CONJ_LABELS = [CC_TREE_POS_TAG]
 
-FILTER_NEG_LABELS = [RB_TREE_POS_TAG]
+FILTER_NEG_LABELS = [RB_TREE_POS_TAG, DT_TREE_POS_TAG]
 
-FILTER_NEG_TOKENS = ["n't", "not"]
+FILTER_NEG_TOKENS = ["n't", "not", "no"]
 
 TOKEN_IGNORE_PAIR = ["show me", "give me", "tell me", "show us", "give us", "tell us"]
 
 # Redundant tasks and commands, will be evaluated as filtering tasks if not other task OC found in query
 TASK_IGNORE = ["go", "proceed", "move", "show", "give", "tell", "say", "output", "compute", "set", "apply", "get"
-               "fetch", "filter", "calculate", "infer", "is", "are", "was", "were", "have", "has", "had"]
+               "fetch", "filter", "calculate", "infer", "is", "are", "was", "were", "have", "has", "had", "return"]
 
 # Adverbs that can be ignored
 RB_IGNORE = ["there", "n't", "not"]
