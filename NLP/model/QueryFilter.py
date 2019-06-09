@@ -161,7 +161,7 @@ class QueryFilterCardinal(QueryFilter):
             value = float(value)
             if self.op != self.CardinalFilter.SIM:
                 op = stringOpToPython(self.opToPython(), self.negate)
-                ast = all(op(value, o) for o in self.operands)
+                ast = all(op(value, float(o)) for o in self.operands)
             else:
                 ast = True
                 tol_p = self.sim_tol / 100.0
