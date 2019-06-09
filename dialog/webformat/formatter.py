@@ -140,6 +140,8 @@ class OutputFormatter(object):
                 op_label = 'greater than'
             else:
                 op_label = 'at most'
+        elif operator == QueryFilterCardinal.CardinalFilter.SIM:
+            op_label += 'approximately'
         else:
             op_label += 'equal to'
         label += " %s" % op_label

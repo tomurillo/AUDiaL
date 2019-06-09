@@ -289,35 +289,6 @@ class Controller(object):
                 self.logger.log_answer(output)
         return output, output_type
 
-    def retrieveValueSimple(self, what):
-        """
-        Handles a user query related to a filtering of bars according to the
-        user-given labels
-        @param what: the input query
-        """
-        output = ""
-        if self.type == c.BAR_CHART:
-            query = self.NL.splitCompoundQuery(what)
-            units = self.o.getChartMeasurementUnit()
-            if units:
-                unitsNL = units.replace("_", " ").lower()
-            else:
-                unitsNL = "unknown"
-            q = ""
-            for subq in query:
-                # Remove units to avoid mistaking them for tags
-                subq = subq.replace(unitsNL, "")
-                q += subq # Combine sub-queries to remove connectors
-            filtersInQuery = self.NL.retrieveQualitativeFilters(q)
-            if filtersInQuery:
-                negate = self.NL.retrieveNegate(q)
-                bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.FILTER,
-                                                filters = filtersInQuery,
-                                                negate = negate)
-                for bar in bars:
-                    output += self.o.printBarDetails(bar)
-        return output
-
     def retrieveNumeric(self, what):
         """
         Handles a user query related to a numeric filtering of bars

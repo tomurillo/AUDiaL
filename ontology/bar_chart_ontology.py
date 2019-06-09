@@ -771,21 +771,16 @@ class BarChartOntology(UpperVisOntology):
         to_remove = set()
         if bars:
             for f in cardinal_f_result:
-                for o in f.operands:
-                    bars = self.filterBarsWithValues(filters=None, op=f.opToPython(), operand=o,
-                                                     negate=f.negate, barset=bars)
-                    if not bars:
-                        break
+                bars = set(b for b in bars if f.assertFilter(self.getMetricBarValue(b)))
+                if not bars:
+                    break
             if cardinal_f_label:
                 for b in bars:
                     bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
                     if bar_filters:
                         for f in cardinal_f_label:
-                            op = stringOpToPython(f.opToPython(), f.negate)
-                            for b_f in bar_filters:
-                                for o in f.operands:
-                                    if not op(b_f, o):
-                                        to_remove.add(b)
+                            if all(not f.assertFilter(b_label) for b_label in bar_filters):
+                                to_remove.add(b)
         return list(bars - to_remove)
 
     def computeExtreme(self, ops, bars):

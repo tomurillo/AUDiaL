@@ -1,6 +1,7 @@
 from NLP.model.Annotation import *
 from NLP.model.SemanticConcept import SemanticConcept
 from NLP.model.POC import *
+from general_util import stringOpToPython, isNumber
 
 
 class QueryFilter(object):
@@ -134,6 +135,7 @@ class QueryFilterCardinal(QueryFilter):
         self.op = op  # Operator, one of CardinalFilter
         self.property = None  # SemanticConcept instance; property being filtered
         self.result = False  # Whether the filter must be applied to the result rows; only if self.property is None
+        self.sim_tol = 10  # Tolerance of SIM filter, in % with respect to the value being compared
         super(QueryFilterCardinal, self).__init__(annotation, negate)
 
     class CardinalFilter:
@@ -147,6 +149,37 @@ class QueryFilterCardinal(QueryFilter):
         LT = "less_than"
         LEQ = "less_equal_than"
         SIM = 'similar_to'
+
+    def assertFilter(self, value):
+        """
+        Returns whether the current filter applies to the given value
+        :param value: A numerical value to compare against the filter
+        :return: True if value asserts this filter; False otherwise
+        """
+        ast = False
+        if self.op and self.operands and isNumber(value):
+            value = float(value)
+            if self.op != self.CardinalFilter.SIM:
+                op = stringOpToPython(self.opToPython(), self.negate)
+                ast = all(op(value, o) for o in self.operands)
+            else:
+                ast = True
+                tol_p = self.sim_tol / 100.0
+                for v in self.operands:
+                    if isNumber(v):
+                        v = float(v)
+                        if abs(v) <= 10:
+                            upper_tol = v + 1.1
+                            lower_tol = v - 1.1
+                        else:
+                            upper_tol = v * (1 + tol_p)
+                            lower_tol = v * (1 - tol_p)
+                            if v < 0:
+                                upper_tol, lower_tol = lower_tol, upper_tol
+                        if value < lower_tol or value > upper_tol:
+                            ast = False
+                            break
+        return ast
 
     def overlapsByOperator(self, other):
         """
@@ -196,6 +229,7 @@ class QueryFilterCardinal(QueryFilter):
         d['op'] = self.op
         d['property'] = self.property.to_dict() if self.property else None
         d['result'] = self.result
+        d['sim_tol'] = self.sim_tol
         return d
 
     def from_dict(self, d):
@@ -207,6 +241,7 @@ class QueryFilterCardinal(QueryFilter):
         super(QueryFilterCardinal, self).from_dict(d)
         self.op = d.get('op')
         self.result = d.get('result', False)
+        self.sim_tol = d.get('sim_tol', 10)
         prop_dict = d.get('property')
         if prop_dict:
             self.property = SemanticConcept()

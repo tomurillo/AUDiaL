@@ -2,6 +2,7 @@ from const import *
 from NLP.util.TreeUtil import getSubtreesAtHeight, treeRawString
 from NLP.model.QueryFilter import *
 from general_util import isNumber
+from nltk import Tree
 
 
 class FilterCreator(object):
@@ -33,11 +34,14 @@ class FilterCreator(object):
                 pos_start, pos_end = len(preters) - 1, 0
                 for i, pt in enumerate(preters):
                     match = False
+                    check_operator = False
                     if pt.label() in FILTER_NEG_LABELS:
                         raw_text = treeRawString(pt)
                         if raw_text in FILTER_NEG_TOKENS and not operand and not parsed_op:
                             negate = not negate  # We do not set match=True for overlapsByOperator to work
-                    elif pt.label() in FILTER_COMP_LABELS:
+                        elif raw_text in FILTER_SIM_TOKENS:
+                            check_operator = True
+                    if check_operator or pt.label() in FILTER_COMP_LABELS:
                         parsed_op = self.parseOperator(pt, ann.tree)
                         if parsed_op and not operand:
                             qf_operators.append(parsed_op)
@@ -87,8 +91,10 @@ class FilterCreator(object):
         if tree:
             if tree.label() in FILTER_TOP_LABELS:
                 potential_filter = True
-            elif tree.label == NP_TREE_POS_TAG and tree[0].label() == QP_TREE_POS_TAG:  # Quantifier Phrase
-                potential_filter = True
+            elif tree.label == NP_TREE_POS_TAG and isinstance(tree[0], Tree):
+                child_label = tree[0].label()
+                if child_label == QP_TREE_POS_TAG:  # Quantifier Phrase
+                    potential_filter = True
         return potential_filter
 
     def parseOperator(self, pt, clause_tree):
@@ -108,6 +114,8 @@ class FilterCreator(object):
                 qf_operator = QueryFilterCardinal.CardinalFilter.LT
             elif operator in FILTER_EQ_TOKENS:
                 qf_operator = QueryFilterCardinal.CardinalFilter.EQ
+            elif operator in FILTER_SIM_TOKENS:
+                qf_operator = QueryFilterCardinal.CardinalFilter.SIM
             elif operator in FILTER_GT_THAN_TOKENS or operator in FILTER_LT_THAN_TOKENS:
                 clause = treeRawString(clause_tree).strip().lower()
                 than_idx = find_substrings(clause, ' than ')
@@ -117,6 +125,8 @@ class FilterCreator(object):
                         qf_operator = QueryFilterCardinal.CardinalFilter.GT
                     else:
                         qf_operator = QueryFilterCardinal.CardinalFilter.LT
+                elif operator == 'more' and 'more or less' in clause:
+                    qf_operator = QueryFilterCardinal.CardinalFilter.SIM
             elif operator in FILTER_GEQ_TOKENS:
                 clause = treeRawString(clause_tree).strip().lower()
                 at_idx = [i + 4 for i in find_substrings(clause, ' at ')]
