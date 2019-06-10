@@ -10,12 +10,13 @@ class UpperVisOntology(UpperOntology):
     """
     Upper Visualization Ontology handler
     """
-    def __init__(self, RDFPath):
+    def __init__(self, RDFPath, reload=False):
         """
         UpperVisOntology constructor
         :param RDFpath: string; path to an RDF ontology file
+        :param reload: bool; whether to re-fetch ontology data from the given file
         """
-        super(UpperVisOntology, self).__init__(RDFPath)
+        super(UpperVisOntology, self).__init__(RDFPath ,reload)
         #  Abbreviations of entities e.g. used as suffixes in entity names
         self.ENTITY_ABBRV = {"GO": self.SyntacticEntity.GRAPHIC_OBJECT,
                              "GR": self.SyntacticEntity.GRAPHIC_RELATION,

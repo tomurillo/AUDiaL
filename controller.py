@@ -15,11 +15,12 @@ from config import NLP_PARSER, NLP_POS_TAGGER
 
 class Controller(object):
 
-    def __init__(self, type, RDFpath=None):
+    def __init__(self, type, RDFpath=None, reload_file=False):
         """
         Controller constructor
-        @param type: domain ontology to be loaded
-        @param RDFPath: path to the ontology to be loaded. None to load from
+        :param type: domain ontology handler to employ
+        :param RDFPath: path to the ontology to be loaded. None to load from
+        :param reload_file: bool; whether to re-fetch ontology data from the given file
         serialized ontology.
         """
         self.type = type
@@ -27,6 +28,7 @@ class Controller(object):
             q = Query()
             q.from_dict(session['user_query'])
             self.q = q
+            reload_file = False
         else:
             self.q = None
         self.o = None  # Ontology
@@ -36,9 +38,9 @@ class Controller(object):
         self.dialogue = None  # Dialogue controller
         self.logger = AudialLogger()
         if type == c.BAR_CHART:
-            self.o = BarChartOntology(RDFpath)
+            self.o = BarChartOntology(RDFpath, reload_file)
         else:
-            self.o = UpperVisOntology(RDFpath)
+            self.o = UpperVisOntology(RDFpath, reload_file)
 
     def isOntologyLoaded(self):
         """

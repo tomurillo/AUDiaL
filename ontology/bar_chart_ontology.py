@@ -9,12 +9,13 @@ class BarChartOntology(UpperVisOntology):
     """
     Bar Chart Ontology handler; subclass of Upper Visualization Ontology for handling bar charts
     """
-    def __init__(self, RDFPath):
+    def __init__(self, RDFPath, reload=False):
         """
         BarChartOntology constructor
         :param RDFpath: string; path to an RDF ontology file
+        :param reload: bool; whether to re-fetch ontology data from the given file
         """
-        super(BarChartOntology, self).__init__(RDFPath)
+        super(BarChartOntology, self).__init__(RDFPath, reload)
 
     class BarChartProperty:
         """Object properties related to bar charts"""

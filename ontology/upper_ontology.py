@@ -12,17 +12,18 @@ class UpperOntology(object):
     """
     Upper Ontology handler; contains common attributes and methods for handling RDF ontologies
     """
-    def __init__(self, RDFpath):
+    def __init__(self, RDFpath, reload=False):
         """
         UpperOntology constructor
         :param RDFpath: string; path to an RDF ontology file
+        :param reload: bool; whether to re-fetch ontology data from the given file
         """
         self.VIS_NS = c.VIS_NS
         self.graph = rdflib.ConjunctiveGraph("Sleepycat")
         if not os.path.isdir(c.STOREDIR):
             os.makedirs(c.STOREDIR)
         self.open(c.STOREDIR)
-        if not self.graph and RDFpath is not None:
+        if reload or (not self.graph and RDFpath is not None):
             self.load(RDFpath)
 
     class ScoreDataProperty:
