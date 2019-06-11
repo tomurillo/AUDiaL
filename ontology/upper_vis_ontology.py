@@ -10,13 +10,14 @@ class UpperVisOntology(UpperOntology):
     """
     Upper Visualization Ontology handler
     """
-    def __init__(self, RDFPath, reload=False):
+    def __init__(self, RDFPath, sess_id='', reload=False):
         """
         UpperVisOntology constructor
         :param RDFpath: string; path to an RDF ontology file
+        :param sess_id: string; session ID to use as prefix for session attributes
         :param reload: bool; whether to re-fetch ontology data from the given file
         """
-        super(UpperVisOntology, self).__init__(RDFPath ,reload)
+        super(UpperVisOntology, self).__init__(RDFPath, sess_id, reload)
         #  Abbreviations of entities e.g. used as suffixes in entity names
         self.ENTITY_ABBRV = {"GO": self.SyntacticEntity.GRAPHIC_OBJECT,
                              "GR": self.SyntacticEntity.GRAPHIC_RELATION,
@@ -546,7 +547,8 @@ class UpperVisOntology(UpperOntology):
         Return the instance name of the previously visited graphic elements
         :return list<string>: instance name of previous graphic objects in the current session
         """
-        return session.get('prev_nodes', [])
+        prev_sess_var = "%s_prev_nodes" % self.sess_id
+        return session.get(prev_sess_var, [])
 
     def isPrevious(self, node):
         """
@@ -566,7 +568,8 @@ class UpperVisOntology(UpperOntology):
         Return the instance name of the currently selected graphic elements
         :return list<string>: instance name of current graphic objects in current session.
         """
-        return session.get('current_nodes', [])
+        sess_var = "%s_current_nodes" % self.sess_id
+        return session.get(sess_var, [])
 
     def isCurrent(self, node):
         """
@@ -587,10 +590,12 @@ class UpperVisOntology(UpperOntology):
         elements as the previous visited ones
         :param elms iterable: the new current element instance names
         """
-        prev_nodes = session.get('current_nodes', [])
+        curr_sess_var = "%s_current_nodes" % self.sess_id
+        prev_nodes = session.get(curr_sess_var, [])
         if prev_nodes:
-            session['prev_nodes'] = prev_nodes
-        session['current_nodes'] = elms
+            prev_sess_var = "%s_prev_nodes" % self.sess_id
+            session[prev_sess_var] = prev_nodes
+        session[curr_sess_var] = elms
 
     def getHomeNodes(self):
         """
@@ -598,7 +603,8 @@ class UpperVisOntology(UpperOntology):
         home nodes
         :return list<string>: instance names of home nodes in the current session.
         """
-        return session.get('home_nodes', [])
+        home_sess_var = "%s_home_nodes" % self.sess_id
+        return session.get(home_sess_var, [])
 
     def isHomeNode(self, node):
         """
@@ -617,7 +623,8 @@ class UpperVisOntology(UpperOntology):
         Set the given elements as the current home nodes
         :param elms iterable: the new home node element instance names
         """
-        session['home_nodes'] = elms
+        home_sess_var = "%s_home_nodes" % self.sess_id
+        session[home_sess_var] = elms
 
     def getNavigationNodes(self, p):
         """
@@ -658,25 +665,25 @@ class UpperVisOntology(UpperOntology):
         """
         ul = ""
         if element:
-            labels = session.get('user_labels', {})
+            sess_var = "%s_user_labels" % self.sess_id
+            labels = session.get(sess_var, {})
             ul = labels.get(element, "")
         return ul
 
     def setUserLabels(self, elements, userTags):
         """
         Adds the given string to the given elements as user-defined labels
-        :param iterable<string> or string: a list of graphic object instance
-        names or a single element name
-        :param string: userTags: the user data to add to the elements. The
-        string will be copied to all elements.
+        :param iterable<string> or string: a list of graphic object instance names or a single element name
+        :param string: userTags: the user data to add to the elements. The string will be copied to all elements.
         """
         if elements and userTags:
-            labels = session.get('user_labels', {})
+            sess_var = "%s_user_labels" % self.sess_id
+            labels = session.get(sess_var, {})
             if not isinstance(elements, list):
                 elements = [elements]
             for e in elements:
                 labels[e] = userTags
-            session['user_labels'] = labels
+            session[sess_var] = labels
 
     def isLowLevelTask(self, task):
         """

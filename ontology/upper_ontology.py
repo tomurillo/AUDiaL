@@ -1,6 +1,6 @@
 import rdflib
 from rdflib.term import URIRef
-from rdflib import RDF, RDFS, OWL, Namespace, Literal, XSD
+from rdflib import RDF, RDFS, Literal, XSD
 from util import *
 import os
 import bsddb
@@ -12,19 +12,25 @@ class UpperOntology(object):
     """
     Upper Ontology handler; contains common attributes and methods for handling RDF ontologies
     """
-    def __init__(self, RDFpath, reload=False):
+    def __init__(self, RDFpath, sess_id='', reload=False):
         """
         UpperOntology constructor
         :param RDFpath: string; path to an RDF ontology file
+        :param sess_id: string; session ID to use as prefix for session attributes
         :param reload: bool; whether to re-fetch ontology data from the given file
         """
         self.VIS_NS = c.VIS_NS
+        self.sess_id = sess_id
         self.graph = rdflib.ConjunctiveGraph("Sleepycat")
         store_dir = os.path.join(os.path.dirname(__file__), o_c.ONT_REL_DIR)
         if not os.path.isdir(store_dir):
             os.makedirs(store_dir)
         self.open(store_dir)
-        if reload or (not self.graph and RDFpath is not None):
+        if reload:
+            for context in self.graph.contexts():
+                self.graph.remove_context(context)
+            self.load(RDFpath)
+        if not self.graph and RDFpath is not None:
             self.load(RDFpath)
 
     class ScoreDataProperty:

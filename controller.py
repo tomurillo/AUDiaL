@@ -15,11 +15,12 @@ from config import NLP_PARSER, NLP_POS_TAGGER
 
 class Controller(object):
 
-    def __init__(self, type, RDFpath=None, reload_file=False):
+    def __init__(self, type, RDFpath=None, sess_id='', reload_file=False):
         """
         Controller constructor
         :param type: domain ontology handler to employ
         :param RDFPath: path to the ontology to be loaded. None to load from
+        :param sess_id: string; session ID to use as prefix for session attributes
         :param reload_file: bool; whether to re-fetch ontology data from the given file
         serialized ontology.
         """
@@ -38,9 +39,9 @@ class Controller(object):
         self.dialogue = None  # Dialogue controller
         self.logger = AudialLogger()
         if type == c.BAR_CHART:
-            self.o = BarChartOntology(RDFpath, reload_file)
+            self.o = BarChartOntology(RDFpath, sess_id, reload_file)
         else:
-            self.o = UpperVisOntology(RDFpath, reload_file)
+            self.o = UpperVisOntology(RDFpath, sess_id, reload_file)
 
     def isOntologyLoaded(self):
         """
@@ -583,25 +584,25 @@ class Controller(object):
         """
         Returns the summary of the given graphic. Delegated to the domain
         ontology handler.
-        @return string: A natural language summary of the graphic
+        :return string: A natural language summary of the graphic
         """
         summary = 'Summary not available'
-        if 'summary' in session:
-            summary = session['summary']
-        else:
-            if isinstance(self.o, BarChartOntology):
+        if isinstance(self.o, BarChartOntology):
+            sum_var = "%s_summary" % self.o.sess_id
+            if sum_var in session:
+                summary = session[sum_var]
+            else:
                 summary = self.o.generateSummary()
-            session['summary'] = summary
-        self.logger.log_answer('Summary fetched.')
+                session[sum_var] = summary
+            self.logger.log_answer('Summary fetched.')
         return summary
 
-    def setUserTags(self, usertags, to = 'current'):
+    def setUserTags(self, usertags, to='current'):
         """
         Sets the given user tags to an element of the current graphic
-        @param usertags: a string containing the user data
-        @to to which element to associate the tags: current (default), previous,
-        home.
-        @return: string: A natural language description of the operation
+        :param usertags: a string containing the user data
+        :param to: to which element to associate the tags: current (default), previous, home.
+        :return: string: A natural language description of the operation
         """
         output = "Operation could not be performed. <br/>"
         tags = ""

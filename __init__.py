@@ -30,7 +30,7 @@ def homepage():
     try:
         key = "Austrian Population"
         current = GRAPHICS[key][5]
-        c = Controller(current, ontologyPath(GRAPHICS[key][4]), reload_file=True)
+        c = Controller(current, ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6], reload_file=True)
         curBarTags = ""
         if c.isOntologyLoaded():
             curBarTags = c.o.getCurrentBarUserTags()
@@ -56,7 +56,7 @@ def bar_chart_caprio():
     c = None
     try:
         key = "Leonardo DiCaprio"
-        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), reload_file=True)
+        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6], reload_file=True)
         curBarTags = ""
         if c.isOntologyLoaded():
             curBarTags = c.o.getCurrentBarUserTags()
@@ -84,7 +84,7 @@ def retrieve_values():
         current = request.args.get('current_graphic', '')
         to_retrieve = request.args.get('to_retrieve', '')
         output_type = 'answer'
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         c.clearSessionContext()
         if c.isOntologyLoaded():
             output = ''
@@ -111,7 +111,7 @@ def vote_selected():
     try:
         current = request.args.get('current_graphic', '')
         vote_id = request.args.get('vote_id', '')
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         if c.isOntologyLoaded():
             if vote_id:
                 output, output_type = c.processVoteSelection(vote_id)
@@ -134,7 +134,7 @@ def overview():
     c = None
     try:
         current = request.args.get('current_graphic', '')
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         c.clearSessionContext()
         output = c.retrieveSummary()
         c.clean()
@@ -150,7 +150,7 @@ def navigate():
     try:
         current = request.args.get('current_graphic', '')
         action = request.args.get('action', '')
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         c.clearSessionContext()
         output = c.navigate(action)
         usertags = c.o.getCurrentBarUserTags()
@@ -168,7 +168,7 @@ def addUserTagsToCurrentBar():
     try:
         current = request.args.get('current_graphic', '')
         usertags = request.args.get('user_tags', '')
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         c.clearSessionContext()
         output = c.setUserTags(usertags, to='current')
         c.clean()
@@ -185,7 +185,7 @@ def fetchIntention():
     try:
         current = request.args.get('current_graphic', '')
         force = request.args.get('force_exec', '')
-        c = Controller(GRAPHICS[current][5])
+        c = Controller(GRAPHICS[current][5], sess_id=GRAPHICS[current][6])
         c.clearSessionContext()
         intentions = c.getAuthorIntentions(force == 'yes')
         html = intentionDictToHTML(intentions)
