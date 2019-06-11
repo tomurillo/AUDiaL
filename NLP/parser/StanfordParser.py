@@ -1,4 +1,3 @@
-import const as c
 from nltk.tag.stanford import StanfordPOSTagger
 from nltk.parse.stanford import StanfordParser
 from nltk.parse import CoreNLPParser

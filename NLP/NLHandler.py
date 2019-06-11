@@ -11,6 +11,10 @@ class NLHandler(object):
     """
     def __init__(self, mapper):
         self.mapper = mapper
+        try:
+            nltk.data.find('corpora/wordnet')
+        except LookupError:
+            nltk.download('wordnet')  # Download Wordnet corpus if not already installed
 
     def parseQuery(self, user_query):
         """

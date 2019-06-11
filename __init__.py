@@ -4,7 +4,6 @@ from flask_session import Session
 from content_management import Content
 from controller import Controller
 from flask import session
-import const as c
 import os
 from config import *
 
@@ -13,13 +12,13 @@ from config import *
 root_dir = os.path.dirname(__file__)
 app = Flask(__name__)
 SESSION_TYPE = 'filesystem'
+SESSION_FILE_DIR = os.path.join(root_dir, 'flask_session')
 app.config.from_object(__name__)
 Session(app)
 app.config['DEBUG'] = FLASK_DEBUG
 app.config['PROPAGATE_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
 app.config['TRAP_HTTP_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
 app.secret_key = FLASK_SECRET_KEY
-SESSION_FILE_DIR = os.path.join(root_dir, 'flask_session')
 
 GRAPHICS = Content()
 

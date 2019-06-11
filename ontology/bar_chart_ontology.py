@@ -1051,7 +1051,7 @@ class BarChartOntology(UpperVisOntology):
                         answer += '</ul></section>'
                         success = True
                     else:
-                        answer = 'The bars of the chart could not be grouped!'
+                        answer = 'The bars of your query could not be grouped! Try with a broader query'
         except ImportError:
             answer = 'Task (clustering) not supported!'
         finally:
