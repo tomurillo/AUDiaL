@@ -20,9 +20,10 @@ class UpperOntology(object):
         """
         self.VIS_NS = c.VIS_NS
         self.graph = rdflib.ConjunctiveGraph("Sleepycat")
-        if not os.path.isdir(c.STOREDIR):
-            os.makedirs(c.STOREDIR)
-        self.open(c.STOREDIR)
+        store_dir = os.path.join(os.path.dirname(__file__), o_c.ONT_REL_DIR)
+        if not os.path.isdir(store_dir):
+            os.makedirs(store_dir)
+        self.open(store_dir)
         if reload or (not self.graph and RDFpath is not None):
             self.load(RDFpath)
 

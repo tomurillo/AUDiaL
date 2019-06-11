@@ -2,6 +2,7 @@
 General utility methods
 """
 
+
 def beautifyOutputString(name):
     """
     Converts a string from the ontology into a more human-friendly string
@@ -45,15 +46,6 @@ def replaceLastCommaWithAnd(what):
         if n > 0:
             processed = what[:n] + ' and ' + what[n+2:]
     return processed
-
-
-def asWindows(unixpath):
-    """
-    Converts a Unix file path into its Windows equivalent
-    :param unixpath: string
-    :return: string; transformed input path
-    """
-    return unixpath.replace('/','\\')
 
 
 def stringOpToPython(string_op, negate=False):

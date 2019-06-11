@@ -5,7 +5,6 @@ from nltk.parse import CoreNLPParser
 from nltk.internals import find_jars_within_path
 from nltk import Tree
 import os
-from general_util import asWindows
 from NLP.model.Query import *
 from NLP.poc.POCCreator import *
 
@@ -207,38 +206,27 @@ class GraphNavStanfordParser(object):
 
     def _loadStanfordPOSTagger(self):
         """
-        Loads the Stanford POS Tagger
+        Loads the local Stanford POS Tagger (warning: deprecated)
         @return StanfordPOSTagger instance
         """
-        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.pyc")]
-        if not base.endswith("/") or not base.endswith("\\"):
-            base += "/"
-        stanfdir = base + 'lib/postaggers/stanford-postagger/'
-        modeldir = stanfdir + 'models/'
-        if c.CURR_ENV == 'windows':
-            stanfdir = asWindows(stanfdir)
-            modeldir = asWindows(modeldir)
-        jarfile = stanfdir + 'stanford-postagger-3.9.1.jar'
-        modelfile = modeldir + 'english-bidirectional-distsim.tagger'
+        POS_JAR = "stanford-postagger-3.9.1.jar"
+        POS_MODEL = "english-bidirectional-distsim.tagger"
+        base = os.path.dirname(__file__)
+        jarfile = os.path.normpath(os.path.join(base, "../lib", "postaggers", "stanford-postagger", POS_JAR))
+        modelfile = os.path.normpath(os.path.join(base, "../lib", "postaggers", "stanford-postagger", "models",
+                                                  POS_MODEL))
         tagger = StanfordPOSTagger(model_filename=modelfile, path_to_jar=jarfile)
         return tagger
 
     def _loadStanfordParser(self):
         """
-        Loads a Stanford Parser
+        Loads the local Stanford Parser (warning: deprecated)
         @return An instance of the given parser class
         """
-        base = os.path.realpath(__file__)[:-len("parser/StanfordParser.pyc")]
-        if not base.endswith("/") or not base.endswith("\\"):
-            base += "/"
-        stanfdir = base + 'lib/parsers/stanford-parser-full/'
-        modeldir = stanfdir + 'models/'
-        if c.CURR_ENV == 'windows':
-            stanfdir = asWindows(stanfdir)
-            modeldir = asWindows(modeldir)
-        #parfile = stanfdir + 'stanford-parser.jar'
-        #mfile = stanfdir + 'stanford-parser-3.9.1-models.jar'
-        modelfile = modeldir + 'englishPCFG.ser.gz'
+        PARSER_MODEL = "englishPCFG.ser.gz"
+        base = os.path.dirname(__file__)
+        stanfdir = os.path.normpath(os.path.join(base, "../lib", "parsers", "stanford-parser-full"))
+        modelfile = os.path.normpath(os.path.join(stanfdir, "models", PARSER_MODEL))
         os.environ['STANFORD_PARSER'] = stanfdir
         os.environ['STANFORD_MODELS'] = stanfdir
         parser = StanfordParser(model_path=modelfile)

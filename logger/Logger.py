@@ -5,7 +5,7 @@ from flask import session
 from general_util import truncateString
 from NLP.model.POC import POC
 
-LOG_DIR = 'logger/logs'  # Log directory
+LOG_REL_DIR = 'logs'  # Relative directory to log files
 MAX_BYTES = 10485760  # Maximum size of each log file (default: 10 MiB)
 SYS_BACKUP_N = 5  # Maximum number of previous system log files to keep
 SES_BACKUP_N = 2  # Maximum number of previous individual session log files to keep
@@ -19,11 +19,13 @@ class AudialLogger(object):
         """
         Logger constructor
         """
+        import os
+        log_dir = os.path.join(os.path.dirname(__file__), LOG_REL_DIR)
         self.start_time = 0.0
         self.system_logger = logging.getLogger(__name__)
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%d-%m-%Y %H:%M:%S")
         if not self.system_logger.handlers:
-            sysh = logging.handlers.RotatingFileHandler("%s/%s.log" % (LOG_DIR, __name__),
+            sysh = logging.handlers.RotatingFileHandler("%s/%s.log" % (log_dir, __name__),
                                                         maxBytes=MAX_BYTES,
                                                         backupCount=SYS_BACKUP_N)
             sysh.setLevel(logging.DEBUG)
@@ -34,7 +36,7 @@ class AudialLogger(object):
         if session:
             self.session_logger = logging.getLogger(session.sid)
             if not self.session_logger.handlers:
-                sessh = logging.handlers.RotatingFileHandler("%s/session-%s.log" % (LOG_DIR, session.sid),
+                sessh = logging.handlers.RotatingFileHandler("%s/session-%s.log" % (log_dir, session.sid),
                                                              maxBytes=MAX_BYTES,
                                                              backupCount=SES_BACKUP_N)
                 sessh.setLevel(logging.INFO)

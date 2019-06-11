@@ -2,9 +2,8 @@ import json
 import os
 from dialog.model.Key import *
 from dialog.model.LearningVote import *
-from general_util import asWindows
 
-MODEL_FILE = 'dialog/storage/votes.json'
+MODEL_FILE = 'votes.json'
 
 
 def loadLearningModel(deserialize=True):
@@ -83,8 +82,4 @@ def getLearningModelPath():
     Returns the platform-specific path to the learning model
     :return: string; absolute path to the json file with the serialized learning model
     """
-    if os.name == 'nt':
-        path = asWindows(os.path.abspath(MODEL_FILE))
-    else:
-        path = os.path.abspath(MODEL_FILE)
-    return path
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), "../storage", MODEL_FILE))

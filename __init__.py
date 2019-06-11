@@ -6,18 +6,20 @@ from controller import Controller
 from flask import session
 import const as c
 import os
-
 from config import *
 
+
+#  Bootstrapping
+root_dir = os.path.dirname(__file__)
 app = Flask(__name__)
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
 app.config['DEBUG'] = FLASK_DEBUG
 app.config['PROPAGATE_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
-# Bubble HTTP exceptions through the exception stack
 app.config['TRAP_HTTP_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
 app.secret_key = FLASK_SECRET_KEY
+SESSION_FILE_DIR = os.path.join(root_dir, 'flask_session')
 
 GRAPHICS = Content()
 
@@ -254,15 +256,12 @@ def printException(e):
 
 
 def ontologyPath(fileName):
-    if c.CURR_ENV == 'windows':
-        path = os.path.realpath(__file__)
-        if path.endswith("pyc"):
-            path = path[:-len("__init__.pyc")]
-        else:
-            path = path[:-len("__init__.py")]
-        return path + "static\\graphics\\%s" % fileName
-    else:
-        return "/home/FlaskApp/FlaskApp/static/graphics/%s" % fileName
+    """
+    Returns the absolute path to the given serialized ontology file
+    :param fileName: string; filename of the serialized ontology
+    :return: string; absolute path to the given file, if it exists.
+    """
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", fileName))
 
 
 if __name__ == '__main__':

@@ -288,7 +288,7 @@ class Consolidator(object):
                         adjs.append(preter)
                     else:
                         others.append(preter)
-            else:
+            elif poc_preters:  # Stray DETs may have an empty parse tree; ignore those
                 others.append(poc_preters[0])
             if others:
                 newpoc = self.updateSplitPOC(poc, [mutableCopy(t) for t in others], poc.tree.label())
