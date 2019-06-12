@@ -620,45 +620,53 @@ class BarChartOntology(UpperVisOntology):
         """
         Returns the length of a given labeled axis. If the axis length can not
         be retrieved, computes and saves it
-        @param axis: the name of the axis
-        @return int: the length in pixels of the axis as given by the position
+        :param axis: the name of the axis
+        :return int: the length in pixels of the axis as given by the position
         of its labels in the Y axis
         """
         length = 0
         if axis:
             length = self.lengthOfElement(axis)
             if length <= 0:
-                labels = self.labelsOfAxis(axis)
-                topLabel = None
-                bottomLabel = None
-                """Top and bottom are inverted in SVG i.e. the topmost Y
-                   coordinate has the lowest value """
-                topYCoor = float_info.max
-                bottomYCoor = float_info.min
-                for label in labels:
-                    lText = self.getText(label)
-                    if lText and isNumber(lText):
-                        y = self.getCoordinate(label, coor="y")
-                        if y:
-                            if y < topYCoor:
-                                topYCoor = y
-                                topLabel = label
-                            if y > bottomYCoor:
-                                bottomYCoor = y
-                                bottomLabel = label
-                if topLabel and bottomLabel:
-                    length = bottomYCoor - topYCoor
-                    self.addDataTypePropertyTriple(axis,
-                                                   self.SytacticDataProperty.HAS_LENGTH,
-                                                   length, datatype = XSD.float)
-                    self.addObjectPropertyTriple(axis,
-                                                self.BarChartProperty.HAS_TOP_LABEL,
-                                                topLabel)
-                    self.addObjectPropertyTriple(axis,
-                                                self.BarChartProperty.HAS_BOTTOM_LABEL,
-                                                bottomLabel)
-
+                length = self.computeAxisLengthFromLabels(axis)
         return length
+
+    def computeAxisLengthFromLabels(self, axis):
+        """
+        Infers the length of a metric axis from its labels.
+        :param axis: the name of the axis
+        :return: float; length of the axis. The ontology gets updated with the new information as well.
+        """
+        length = 0.0
+        labels = self.labelsOfAxis(axis)
+        topLabel = None
+        bottomLabel = None
+        topYCoor = float_info.max  # Y coordinates are inverted in SVG; the topmost Y coordinate has the lowest value
+        bottomYCoor = float_info.min
+        for label in labels:
+            lText = self.getText(label)
+            if lText and isNumber(lText):
+                y = self.getCoordinate(label, coor="y")
+                if y:
+                    if y < topYCoor:
+                        topYCoor = y
+                        topLabel = label
+                    if y > bottomYCoor:
+                        bottomYCoor = y
+                        bottomLabel = label
+        if topLabel and bottomLabel:
+            length = bottomYCoor - topYCoor
+            self.addDataTypePropertyTriple(axis,
+                                           self.SytacticDataProperty.HAS_LENGTH,
+                                           length, datatype=XSD.float)
+            self.addObjectPropertyTriple(axis,
+                                         self.BarChartProperty.HAS_TOP_LABEL,
+                                         topLabel)
+            self.addObjectPropertyTriple(axis,
+                                         self.BarChartProperty.HAS_BOTTOM_LABEL,
+                                         bottomLabel)
+        return length
+
 
     def getIndependentVariables(self):
         """
@@ -1277,6 +1285,9 @@ class BarChartOntology(UpperVisOntology):
         """
         super(BarChartOntology, self).resetNavigation()
         self.computeBarsNavOrder()
+        axis = self.getMetricAxis()
+        if axis:
+            self.computeAxisLengthFromLabels(axis)
         return self.__moveFirst()
 
     def __getExtremeNavBar(self, pos='first', bars=None):

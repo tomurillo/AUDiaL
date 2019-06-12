@@ -30,7 +30,7 @@ def homepage():
     try:
         key = "Austrian Population"
         current = GRAPHICS[key][5]
-        c = Controller(current, ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6], reload_file=True)
+        c = Controller(current, ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
         curBarTags = ""
         if c.isOntologyLoaded():
             curBarTags = c.o.getCurrentBarUserTags()
@@ -56,7 +56,7 @@ def bar_chart_caprio():
     c = None
     try:
         key = "Leonardo DiCaprio"
-        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6], reload_file=True)
+        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
         curBarTags = ""
         if c.isOntologyLoaded():
             curBarTags = c.o.getCurrentBarUserTags()

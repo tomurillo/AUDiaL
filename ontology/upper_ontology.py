@@ -16,21 +16,22 @@ class UpperOntology(object):
         """
         UpperOntology constructor
         :param RDFpath: string; path to an RDF ontology file
-        :param sess_id: string; session ID to use as prefix for session attributes
+        :param sess_id: string; ID to use as graph store index and prefix for session attributes
         :param reload: bool; whether to re-fetch ontology data from the given file
         """
         self.VIS_NS = c.VIS_NS
         self.sess_id = sess_id
         self.graph = rdflib.ConjunctiveGraph("Sleepycat")
-        store_dir = os.path.join(os.path.dirname(__file__), o_c.ONT_REL_DIR)
-        if not os.path.isdir(store_dir):
-            os.makedirs(store_dir)
-        self.open(store_dir)
+        store_dir = "%s_%s" % (sess_id, o_c.ONT_REL_DIR)
+        store_path = os.path.join(os.path.dirname(__file__), store_dir)
+        if not os.path.isdir(store_path):
+            os.makedirs(store_path)
+        already_loaded = self.open(store_path)
         if reload:
             for context in self.graph.contexts():
                 self.graph.remove_context(context)
             self.load(RDFpath)
-        if not self.graph and RDFpath is not None:
+        if not already_loaded and RDFpath is not None:
             self.load(RDFpath)
 
     class ScoreDataProperty:
@@ -45,10 +46,14 @@ class UpperOntology(object):
         """
         Open or create a persistent ontology graph
         """
+        exists = True
         try:
             self.graph.open(path, create=False)
         except bsddb.db.DBNoSuchFileError:
             self.graph.open(path, create=True)
+            exists = False
+        finally:
+            return exists
 
     def load(self, fileName):
         """
