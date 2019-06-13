@@ -788,34 +788,40 @@ class UpperOntology(object):
             neighbors_list = list(neighbors)
         return neighbors_list
 
-    def addObjectPropertyTriple(self, s, p, o, ns = None):
+    def addObjectPropertyTriple(self, s, p, o, functional=False, ns=None):
         """
         Add a new object property to the ontology
         :param s: name of the subject
         :param p: name of the property
         :param o: name of the object
+        :param functional boolean; Whether the property should be treated as functional (if True, existing triples
+        will be removed)
         :param ns: namespace, None for default visualization NS
         """
-        self.addTriple(s, p, o, type="object", ns=ns)
+        self.addTriple(s, p, o, type="object", functional=functional, ns=ns)
 
-    def addDataTypePropertyTriple(self, s, p, o, datatype=None, ns=None):
+    def addDataTypePropertyTriple(self, s, p, o, datatype=None, functional=False, ns=None):
         """
         Add a new object property to the ontology
         :param s: name of the subject
         :param p: name of the property
         :param o: value of the object
         :param dataype: a valid XSD datatype for the object, if relevant
+        :param functional boolean; Whether the property should be treated as functional (if True, existing triples
+        will be removed)
         :param ns: namespace, None for default visualization NS
         """
-        self.addTriple(s, p, o, "datatype", datatype, ns)
+        self.addTriple(s, p, o, "datatype", functional, datatype, ns)
 
-    def addTriple(self, s, p, o, type="object", datatype=None, ns=None):
+    def addTriple(self, s, p, o, type="object", functional=False, datatype=None, ns=None):
         """
         Add a new triple to the ontology
         :param s: name of the subject
         :param p: name of the property
         :param o: name or value of the object
         :param type: "object" property or "datatype" property
+        :param functional boolean; Whether the property should be treated as functional (if True, existing triples
+        will be removed)
         :param datatype: a valid XSD datatype for the object, if relevant
         :param ns: namespace, None for default visualization NS
         """
@@ -830,6 +836,8 @@ class UpperOntology(object):
                 objectURI = URIRef("%s#%s" % (ns, o))
             else:
                 objectURI = Literal(o, datatype=datatype)
+            if functional:
+                self.graph.remove((subjectURI, propertyURI, None))
             if (subjectURI, propertyURI, objectURI) not in self.graph:
                 self.graph.add((subjectURI, propertyURI, objectURI))
 

@@ -1,9 +1,11 @@
 from flask import session
+from sys import float_info
 from ontology.upper_ontology import UpperOntology
 import rdflib
 from rdflib import XSD, URIRef
 from collections import defaultdict
 import const as c
+from general_util import isNumber
 
 
 class UpperVisOntology(UpperOntology):
@@ -93,6 +95,7 @@ class UpperVisOntology(UpperOntology):
         IS_LABEL_FOR = "is_label_for"
         HAS_COLOR = "has_color_named"
         HAS_ORIENTATION = "has_orientation_named"
+        HAS_DATATYPE = "has_datatype"
 
     class StatisticalProperty:
         """
@@ -149,6 +152,10 @@ class UpperVisOntology(UpperOntology):
         STACKED_BAR = "Stacked_Bar_SR"
         SURFACE_LOCATOR = "Surface_Locator_SR"
         UNDIRECTED_CONNECTOR = "Undirected_Connector_SR"
+
+    class MetricAxisProperty:
+        HAS_TOP_LABEL = "has_top_label"
+        HAS_BOTTOM_LABEL = "has_bottom_label"
 
     class InformationalRoles:
         DECORATION_OBJECT = "Decoration_Object"
@@ -372,6 +379,193 @@ class UpperVisOntology(UpperOntology):
             if text and type(text) == rdflib.term.Literal:
                 text = text.toPython()
         return text
+
+    def getChartMeasurementUnit(self, axis=None):
+        """
+        Returns the units the chart is concerned about
+        :param axis: string; name of an axis from the chart; None to fetch default axis
+        :return: string: a measurement unit
+        """
+        if axis is None:
+            axis = self.getMetricAxis()
+        return self.getMetricAxisMeasurementUnit(axis)
+
+    def getChartMeasurementDataType(self, axis=None):
+        """
+        Returns the datatype of the information expressed by the given axis of the chart, if available
+        :param axis: string; name of an axis from the chart; None to fetch default axis
+        :return: string: a datatype name, None if not available
+        """
+        dtype = None
+        if axis is None:
+            axis = self.getMetricAxis()
+        info = self.getValue(axis, self.StatisticalProperty.EXPRESSES_CARDINAL_INFORMATION)
+        if info:
+            axis_type = self.getValue(info, self.SyntacticProperty.HAS_DATATYPE)
+            if axis_type:
+                dtype = axis_type
+        return dtype
+
+    def getMetricAxis(self):
+        """
+        Returns the metric axis of the chart (usually the vertical one)
+        @return string: the name of the metric axis element
+        """
+        axisList = self.getElementsWithRole(self.SyntacticRoles.AXIS)
+        for axis in axisList:
+            if self.elementHasRole(axis, self.InformationalRoles.SPATIAL_REFERENCE_OBJECT, "informational"):
+                return axis
+        return None
+
+    def getMetricAxisMeasurementUnit(self, axis):
+        """
+        Returns the measurement units of a given metric axis
+        @param axis: the name of the axis
+        @return string: the name of the measurement unit as given by the
+                expresses_cardinal_information property
+        """
+        if axis:
+            cardinalInfo = self.getObjects(axis, self.StatisticalProperty.EXPRESSES_CARDINAL_INFORMATION)
+            if cardinalInfo:
+                if len(cardinalInfo) == 1:
+                    units = cardinalInfo[0].lower().replace("_", " ")
+                    return units
+                else:
+                    raise Exception("Axis %s is associated with more than one cardinal information." % axis)
+
+    def getMetricAxisTitle(self, axis):
+        """
+        Looks for a non-numerical label of the given axis and returns it
+        @param axis: the name of the axis individual
+        @return string: the title of the axis, None if not found
+        """
+        title = None
+        labels = self.labelsOfAxis(axis)
+        for l in labels:
+            lText = self.getText(l)
+            if lText and not isNumber(lText):
+                title = lText
+        return title
+
+    def getAxisDescription(self):
+        """
+        Returns a description of the chart's axes and their labels
+        @return string: a natural language enumeration of the axes
+        """
+        output = ""
+        metricAxis = self.getMetricAxis()
+        if metricAxis:
+            orientation = self.getOrientation(metricAxis)
+            axisTitle = self.getMetricAxisTitle(metricAxis)
+            if axisTitle:
+                output = "The metric axis has the title \"%s\". " % axisTitle
+            else:
+                output = "The metric axis has no title. "
+            if orientation:
+                output += "It has %s." % orientation.replace('_', ' ').lower()
+            output += "<br/>"
+        else:
+            output = "This chart has no metric axis<br/>"
+        return output
+
+    def labelsOfAxis(self, axis):
+        """
+        Returns the labels existing along the given axis
+        @param axis: the name of the axis
+        @return list<string> a list of label elements' names
+        """
+        if axis:
+            labels = self.getObjects(axis, self.SyntacticProperty.
+                                           IS_LABELED_BY)
+            return labels
+
+    def lengthOfElement(self, element):
+        """
+        Returns the length of a given element as returned by its has_length
+        datatype property.
+        @param element: the name of an instance in the ontology
+        @return float: the length of the element, -1 if not found
+        """
+        length = -1.0
+        if element:
+            l = self.getValue(element, self.SytacticDataProperty.HAS_LENGTH)
+            if l:
+                length = float(l)
+        return length
+
+    def lengthOfAxis(self, axis):
+        """
+        Returns the length of a given labeled axis. If the axis length can not
+        be retrieved, computes and saves it
+        :param axis: the name of the axis
+        :return int: the length in pixels of the axis as given by the position
+        of its labels in the Y axis
+        """
+        length = 0
+        if axis:
+            length = self.lengthOfElement(axis)
+            if length <= 0:
+                length = self.computeAxisLengthFromLabels(axis)
+        return length
+
+    def getExtremeLabels(self, axis):
+        """
+        Returns the topmost and bottom-most labels of a vertical axis
+        @param axis: the name of the axis
+        @return (string, string): a tuple containing the names of the top label
+        (smallest Y-axis value) and the bottom label (greatest Y-axis value)
+        """
+        topLabel = None
+        bottomLabel = None
+        if axis:
+            topLabel = self.getValue(axis, self.MetricAxisProperty.HAS_TOP_LABEL)
+            bottomLabel = self.getValue(axis, self.MetricAxisProperty.HAS_BOTTOM_LABEL)
+        return (str(topLabel), str(bottomLabel))
+
+    def computeAxisLengthFromLabels(self, axis):
+        """
+        Infers the length of a metric axis from its labels.
+        :param axis: the name of the axis
+        :return: float; length of the axis. The ontology gets updated with the new information as well.
+        """
+        length = 0.0
+        labels = self.labelsOfAxis(axis)
+        topLabel = None
+        bottomLabel = None
+        topYCoor = float_info.max  # Y coordinates are inverted in SVG; the topmost Y coordinate has the lowest value
+        bottomYCoor = float_info.min
+        for label in labels:
+            lText = self.getText(label)
+            if lText and isNumber(lText):
+                y = self.getCoordinate(label, coor="y")
+                if y:
+                    if y < topYCoor:
+                        topYCoor = y
+                        topLabel = label
+                    if y > bottomYCoor:
+                        bottomYCoor = y
+                        bottomLabel = label
+        if topLabel and bottomLabel:
+            length = bottomYCoor - topYCoor
+            self.addDataTypePropertyTriple(axis,
+                                           self.SytacticDataProperty.HAS_LENGTH,
+                                           length, datatype=XSD.float, functional=True)
+            self.addObjectPropertyTriple(axis,
+                                         self.MetricAxisProperty.HAS_TOP_LABEL,
+                                         topLabel, functional=True)
+            self.addObjectPropertyTriple(axis,
+                                         self.MetricAxisProperty.HAS_BOTTOM_LABEL,
+                                         bottomLabel, functional=True)
+        return length
+
+
+    def getIndependentVariables(self):
+        """
+        Returns the name of the classes representing Independent Variables in
+        the ontology
+        @return list<string>: names of the independent variables
+        """
+        return self.getSubclasses(self.StatisticalVarType.INDEPENDENT_VARIABLE)
 
     def getOrientation(self, element):
         """
@@ -884,7 +1078,12 @@ class UpperVisOntology(UpperOntology):
         :return: float: slope between points, in degrees
         """
         import math
-        return -math.degrees(math.atan((float(p1[1]) - p2[1])/(float(p1[0]) - p2[0])))
+        numerator = float(p1[1]) - p2[1]
+        denominator = float(p1[0]) - p2[0]
+        if abs(denominator) >= 1.0:
+            return -math.degrees(math.atan(numerator/denominator))
+        else:  # X coordinates less than 1px apart, consider them aligned
+            return 90.0 if numerator < 0 else -90.0
 
     def lineIsMonotonic(self, slope_list, tol=5.0):
         """
@@ -947,7 +1146,19 @@ class UpperVisOntology(UpperOntology):
                 if n_points == 4:
                     label += " followed by a %s" % (self.straightSlopeLabel([points[2], points[3]]))
         elif n_points > 4:
-            degs = [self.slopeBetweenPoints(a, b) for a, b in zip(points, points[1:])]
+            degs = []
+            i = 0
+            while i < n_points - 1:
+                found = False
+                j = i + 1
+                while not found and j < n_points:
+                    deg = self.slopeBetweenPoints(points[i], points[j])
+                    if abs(deg) < 90.0:  # Vertical changes indicate bars are superimposed; ignore them
+                        degs.append(deg)
+                        found = True
+                    else:
+                        j += 1
+                i = j
             trend_changes = self.significantTrendChange(degs, max_n=10, tol=30.0)
             start = 0
             for i in trend_changes:

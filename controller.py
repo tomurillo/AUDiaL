@@ -419,7 +419,7 @@ class Controller(object):
                             output += "Error: No operator found."
                         if cont:
                             output += self.o.printBarDetails(bar)
-                            barVal = self.o.getMetricBarValue(bar)
+                            barVal = float(self.o.getMetricBarValue(bar))
                             if stacked:
                                 outputNumeric = (barVal, None)
                             else:
@@ -861,7 +861,7 @@ class Controller(object):
         n = len(bars)
         if n > 1:
             for b in bars:
-                val += self.o.getMetricBarValue(b)
+                val += float(self.o.getMetricBarValue(b))
             summary = 'Total value: %0.2f<br/>' % val
             summary += 'Average value: %0.2f<br/>' % (val / n)
         return summary
