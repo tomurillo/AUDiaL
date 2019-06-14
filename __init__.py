@@ -1,5 +1,5 @@
 import traceback
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect
 from flask_session import Session
 from content_management import Content
 from controller import Controller
@@ -43,12 +43,8 @@ def homepage():
                                output='Please enter a query below',
                                output_type='result')
     except Exception as e:
-        if c:
-            c.clearSessionContext()
-            c.clean()
-        else:
-            session.clear()
-        return printException(e)
+        handleException(e, c)
+        return jsonify(result=printException(e), output_type='answer')
 
 
 @app.route('/bar-chart-leo-dicaprio')
@@ -69,12 +65,8 @@ def bar_chart_caprio():
                                output='Please enter a query below',
                                output_type='result')
     except Exception as e:
-        if c:
-            c.clearSessionContext()
-            c.clean()
-        else:
-            session.clear()
-        return printException(e)
+        handleException(e, c)
+        return jsonify(result=printException(e), output_type='answer')
 
 
 @app.route('/_retrieve_values')
@@ -203,6 +195,53 @@ def fetchIntention():
         return jsonify(result=printException(e), output_type='answer')
 
 
+# Administrative handle to delete serialized data
+@app.route('/admin_delete/<command>')
+def admin_delete(command):
+    from general_util import deleteDirContents
+    error_msg = ''
+    succ = True
+    if command in ['ontology', 'o', 'all']:
+        paths = serializedOntologyDirs()
+        if paths:
+            import shutil
+            for p in paths:
+                try:
+                    shutil.rmtree(p)
+                except Exception as e:
+                    succ = False
+                    error_msg = str(e)
+                    break
+    if command in ['logs', 'l', 'all']:
+        import logging
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "logger", "logs"))
+        try:
+            logging.shutdown()
+            deleteDirContents(path, ignore=[".keep", "GraphNav.logger.Logger.log"])
+        except Exception as e:
+            succ = False
+            error_msg = str(e)
+    if command in ['votes', 'v', 'all']:
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "dialog", "storage", "votes.json"))
+        try:
+            with open(path, "w") as f:
+                f.write("{}")  # Empty learning model
+        except Exception as e:
+            succ = False
+            error_msg = str(e)
+    if command in ['session', 's', 'all']:
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "flask_session"))
+        try:
+            deleteDirContents(path)
+        except Exception as e:
+            succ = False
+            error_msg = str(e)
+    if succ:
+        return redirect("/")
+    else:
+        return "An error occurred: %s" % error_msg
+
+
 def intentionDictToHTML(intentions):
     """
     Converts an intention dictionary to HTML ready to be embedded.
@@ -254,13 +293,30 @@ def printException(e):
     return pretty_e.replace("\n", "<br/>")
 
 
-def ontologyPath(fileName):
+def ontologyPath(filaname):
     """
-    Returns the absolute path to the given serialized ontology file
-    :param fileName: string; filename of the serialized ontology
+    Returns the absolute path to the given serialized ontology file; None to return storage directory
+    :param filaname: string; filename of the serialized ontology
     :return: string; absolute path to the given file, if it exists.
     """
-    return os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", fileName))
+    path = ''
+    if filaname:
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", filaname))
+    return path
+
+
+def serializedOntologyDirs():
+    """
+    Returns all paths to the serialized ontologies in the system
+    :return: list<string>: absolute paths to the serialized ontologies
+    """
+    paths = []
+    for _, data in GRAPHICS.iteritems():
+        dir_name = "%s_storage" % data[6]
+        p = os.path.normpath(os.path.join(os.path.dirname(__file__), "ontology", dir_name))
+        if os.path.isdir(p):
+            paths.append(p)
+    return paths
 
 
 if __name__ == '__main__':

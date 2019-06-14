@@ -88,3 +88,22 @@ def isNumber(n):
         return True
     except ValueError:
         return False
+
+
+def deleteDirContents(path, ignore=None):
+    """
+    Delete all contents of the given directory
+    :param path: string; absolute path to a directory
+    :param ignore: list<string>; files to spare from being deleted
+    :return: None
+    """
+    import os, shutil
+    if os.path.isdir(path):
+        if ignore is None:
+            ignore = []
+        for root, dirs, files in os.walk(path):
+            for f in files:
+                if f not in ignore:
+                    os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
