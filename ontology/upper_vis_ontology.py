@@ -741,7 +741,7 @@ class UpperVisOntology(UpperOntology):
         Return the instance name of the previously visited graphic elements
         :return list<string>: instance name of previous graphic objects in the current session
         """
-        prev_sess_var = "%s_prev_nodes" % self.sess_id
+        prev_sess_var = c.SESS_PREV_NODES % self.sess_id
         return session.get(prev_sess_var, [])
 
     def isPrevious(self, node):
@@ -762,7 +762,7 @@ class UpperVisOntology(UpperOntology):
         Return the instance name of the currently selected graphic elements
         :return list<string>: instance name of current graphic objects in current session.
         """
-        sess_var = "%s_current_nodes" % self.sess_id
+        sess_var = c.SESS_CURR_NODES % self.sess_id
         return session.get(sess_var, [])
 
     def isCurrent(self, node):
@@ -784,10 +784,10 @@ class UpperVisOntology(UpperOntology):
         elements as the previous visited ones
         :param elms iterable: the new current element instance names
         """
-        curr_sess_var = "%s_current_nodes" % self.sess_id
+        curr_sess_var = c.SESS_CURR_NODES % self.sess_id
         prev_nodes = session.get(curr_sess_var, [])
         if prev_nodes:
-            prev_sess_var = "%s_prev_nodes" % self.sess_id
+            prev_sess_var = c.SESS_PREV_NODES % self.sess_id
             session[prev_sess_var] = prev_nodes
         session[curr_sess_var] = elms
 
@@ -797,7 +797,7 @@ class UpperVisOntology(UpperOntology):
         home nodes
         :return list<string>: instance names of home nodes in the current session.
         """
-        home_sess_var = "%s_home_nodes" % self.sess_id
+        home_sess_var = c.SESS_HOME_NODES % self.sess_id
         return session.get(home_sess_var, [])
 
     def isHomeNode(self, node):
@@ -817,7 +817,7 @@ class UpperVisOntology(UpperOntology):
         Set the given elements as the current home nodes
         :param elms iterable: the new home node element instance names
         """
-        home_sess_var = "%s_home_nodes" % self.sess_id
+        home_sess_var = c.SESS_HOME_NODES % self.sess_id
         session[home_sess_var] = elms
 
     def getNavigationNodes(self, p):
@@ -859,7 +859,7 @@ class UpperVisOntology(UpperOntology):
         """
         ul = ""
         if element:
-            sess_var = "%s_user_labels" % self.sess_id
+            sess_var = c.SESS_USER_LABELS % self.sess_id
             labels = session.get(sess_var, {})
             ul = labels.get(element, "")
         return ul
@@ -871,7 +871,7 @@ class UpperVisOntology(UpperOntology):
         :param string: userTags: the user data to add to the elements. The string will be copied to all elements.
         """
         if elements and userTags:
-            sess_var = "%s_user_labels" % self.sess_id
+            sess_var = c.SESS_USER_LABELS % self.sess_id
             labels = session.get(sess_var, {})
             if not isinstance(elements, list):
                 elements = [elements]

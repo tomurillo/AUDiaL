@@ -4,9 +4,10 @@ from NLP.model.Annotation import *
 class OntologyElement(object):
     def __init__(self):
         """
-        Ontology Element constructor.
+        Ontology Element (OE) constructor. An OE is a part of a user query that has an equivalent resource in the
+        underlying ontology.
         """
-        self.uri = ''  # OE's URI in the instance
+        self.uri = ''  # OE's URI in the ontology
         self.annotation = None  # Associated Query annotation
         self.added = False
         self.main_subject = False

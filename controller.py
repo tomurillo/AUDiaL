@@ -1,7 +1,7 @@
 from flask import session
 from oc.triple_utils import *
 from NLP.parser.CommandParser import *
-from NLP.SimpleNLHandler import *
+from NLP.SimpleNLHandler import SimpleNLHandler
 from NLP.NLHandler import *
 from mapper.Mapper import *
 from oc.OCUtil import *
@@ -11,6 +11,7 @@ from dialog.dialogHandler import DialogHandler
 from dialog.model.SuggestionPair import SuggestionPair
 from logger.Logger import AudialLogger
 from config import NLP_PARSER, NLP_POS_TAGGER
+import const as c
 
 
 class Controller(object):
@@ -25,9 +26,9 @@ class Controller(object):
         serialized ontology.
         """
         self.type = type
-        if 'user_query' in session:  # Coming from a dialogue, fetch consolidated query from session
+        if c.SESS_QUERY in session:  # Coming from a dialogue, fetch consolidated query from session
             q = Query()
-            q.from_dict(session['user_query'])
+            q.from_dict(session[c.SESS_QUERY])
             self.q = q
             reload_file = False
         else:
@@ -69,7 +70,7 @@ class Controller(object):
         self.dialogue = DialogHandler(self.q, self.o)  # Dialog needs consolidated query
         suggestion_pair = self.dialogue.generateDialogs()
         if suggestion_pair:
-            session['suggestion_pair'] = suggestion_pair.to_dict()
+            session[c.SESS_SUG_PAIR] = suggestion_pair.to_dict()
             # Output dialog
             formatter = OutputFormatter(self.o, skip_inflect=True)
             return formatter.suggestionPairToJSON(suggestion_pair)
@@ -83,7 +84,7 @@ class Controller(object):
         (no further dialogue needed; query instance is resolved and task needs to be performed next)
         """
         from dialog.learning.util import updateVoteScores, updateLearningModel, LEARNING_ENABLED
-        suggestion_pair_dict = session.get('suggestion_pair')
+        suggestion_pair_dict = session.get(c.SESS_SUG_PAIR)
         self.consolidator = Consolidator(self.q)
         if self.q and vote_id and suggestion_pair_dict:
             suggestion_pair = SuggestionPair()
@@ -107,8 +108,8 @@ class Controller(object):
             self.dialogue = DialogHandler(self.q, self.o)
             suggestion_pair_new = self.dialogue.generateDialogs()
             if suggestion_pair_new:
-                session.pop('suggestion_pair')
-                session['suggestion_pair'] = suggestion_pair_new.to_dict()
+                session.pop(c.SESS_SUG_PAIR)
+                session[c.SESS_SUG_PAIR] = suggestion_pair_new.to_dict()
                 # Output dialog
                 formatter = OutputFormatter(self.o, skip_inflect=True)
                 return formatter.suggestionPairToJSON(suggestion_pair_new)
@@ -588,7 +589,7 @@ class Controller(object):
         """
         summary = 'Summary not available'
         if isinstance(self.o, BarChartOntology):
-            sum_var = "%s_summary" % self.o.sess_id
+            sum_var = c.SESS_SUMMARY % self.o.sess_id
             if sum_var in session:
                 summary = session[sum_var]
             else:
@@ -872,7 +873,7 @@ class Controller(object):
         :return: None, session object gets updated
         """
         if self.q:
-            session['user_query'] = self.q.to_dict()
+            session[c.SESS_QUERY] = self.q.to_dict()
             session.modified = True
 
     def clearSessionContext(self):
@@ -880,11 +881,11 @@ class Controller(object):
         Clears query-related information from the user's session
         :return: None, session object gets updated
         """
-        if 'user_query' in session:
-            session.pop('user_query')
+        if c.SESS_QUERY in session:
+            session.pop(c.SESS_QUERY)
             self.q = None
-        if 'suggestion_pair' in session:
-            session.pop('suggestion_pair')
+        if c.SESS_SUG_PAIR in session:
+            session.pop(c.SESS_SUG_PAIR)
 
     def __printOutputList(self, generator, *args):
         """

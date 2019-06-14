@@ -2,7 +2,9 @@
 Graphic Navigator constants
 """
 
-"""Commonly used Namespaces"""
+"""
+Commonly used Namespaces
+"""
 VIS_NS = "http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization"
 OWL_NS = "http://www.w3.org/2002/07/owl"
 RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns"
@@ -13,8 +15,22 @@ PURL_NS_1 = 'http://purl.org/dc/elements/1.1'
 PURL_NS_2 = 'http://purl.org/dc/terms'
 COMMON_NS = [OWL_NS, RDFS_NS, RDF_NS, XML_NS, XSD_NS, PURL_NS_1, PURL_NS_2]
 
-"""Domains"""
+"""
+Domains
+"""
 BAR_CHART = 'Bar Chart'
+
+"""
+Session variables
+"""
+SESS_QUERY = "user_query"
+SESS_SUG_PAIR = "suggestion_pair"
+SESS_CURR_NODES = "%s_current_nodes"
+SESS_PREV_NODES = "%s_prev_nodes"
+SESS_HOME_NODES = "%s_home_nodes"
+SESS_USER_LABELS = "%s_user_labels"
+SESS_SUMMARY = "%s_summary"
+
 
 """ ------------------- """
 """ NLI basic operators """
