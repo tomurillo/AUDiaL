@@ -106,6 +106,7 @@ class QueryFilterNominal(QueryFilter):
     Nominal filtering of graphic elements (i.e. label search)
     """
     def __init__(self, annotation):
+        self.is_user_label = False  # True if this filter must be applied to user-defined tags
         super(QueryFilterNominal, self).__init__(annotation)
 
     def to_dict(self):
@@ -115,6 +116,7 @@ class QueryFilterNominal(QueryFilter):
         """
         d = super(QueryFilterNominal, self).to_dict()
         d['type'] = 'QueryFilterNominal'
+        d['is_user_label'] = self.is_user_label
         return d
 
     def from_dict(self, d):
@@ -124,6 +126,7 @@ class QueryFilterNominal(QueryFilter):
         :return: None; updates current instance
         """
         super(QueryFilterNominal, self).from_dict(d)
+        self.is_user_label = d.get('is_user_label', False)
 
 
 class QueryFilterCardinal(QueryFilter):

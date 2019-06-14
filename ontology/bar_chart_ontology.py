@@ -1,5 +1,6 @@
 from ontology.upper_vis_ontology import UpperVisOntology
 from NLP.model.QueryFilter import QueryFilterCardinal, QueryFilterNominal
+from NLP.util.TreeUtil import quick_norm
 from sys import float_info
 from rdflib import XSD
 from general_util import isNumber, stringOpToPython, numberToOrdinal, replaceLastCommaWithAnd
@@ -285,7 +286,7 @@ class BarChartOntology(UpperVisOntology):
         @param barset: the bars to take into account. None (default) for all
         @return: a set of bar instance names
         """
-        barset = self.__filterBarsWithFilters(filters, negate, barset)
+        barset = self.__filterBarsWithFilters(filters, negate, barset=barset)
         op = stringOpToPython(op, negate)
         if operand is not None and op:
             filtered = set()
@@ -591,12 +592,16 @@ class BarChartOntology(UpperVisOntology):
         :return: list<string> bar instance URIs
         """
         labels = {}  # {Textual label: negate}
+        user_tags = {}  # {User tag to filter: negate}
         cardinal_f_result = []  # Cardinal Filters applied to result
         cardinal_f_label = []  # Cardinal Filters applied to labels
         for f in query_filters:
             if isinstance(f, QueryFilterNominal):
                 for o in f.operands:
-                    labels[o] = f.negate
+                    if f.is_user_label:
+                        user_tags[o] = f.negate
+                    else:
+                        labels[o] = f.negate
             elif isinstance(f, QueryFilterCardinal):
                 if f.result:
                     cardinal_f_result.append(f)
@@ -615,19 +620,34 @@ class BarChartOntology(UpperVisOntology):
             bars = self.__filterBarsWithFilters(pos_labels, negate=False, barset=bars)
         if neg_labels:
             bars = self.__filterBarsWithFilters(neg_labels, negate=True, barset=bars)
+        if not bars:
+            return []
+        # Apply user tag filters
+        pos_labels = []
+        neg_labels = []
+        for l, n in user_tags.iteritems():
+            if n:
+                neg_labels.append(l)
+            else:
+                pos_labels.append(l)
+        if pos_labels:
+            bars = self.__filterBarsWithFilters(pos_labels, negate=False, user_tags=True, barset=bars)
+        if neg_labels:
+            bars = self.__filterBarsWithFilters(neg_labels, negate=True, user_tags= True, barset=bars)
+        if not bars:
+            return []
         to_remove = set()
-        if bars:
-            for f in cardinal_f_result:
-                bars = set(b for b in bars if f.assertFilter(self.getMetricBarValue(b)))
-                if not bars:
-                    break
-            if cardinal_f_label:
-                for b in bars:
-                    bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
-                    if bar_filters:
-                        for f in cardinal_f_label:
-                            if all(not f.assertFilter(b_label) for b_label in bar_filters):
-                                to_remove.add(b)
+        for f in cardinal_f_result:
+            bars = set(b for b in bars if f.assertFilter(self.getMetricBarValue(b)))
+            if not bars:
+                break
+        if cardinal_f_label:
+            for b in bars:
+                bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]
+                if bar_filters:
+                    for f in cardinal_f_label:
+                        if all(not f.assertFilter(b_label) for b_label in bar_filters):
+                            to_remove.add(b)
         return list(bars - to_remove)
 
     def computeExtreme(self, ops, bars):
@@ -992,23 +1012,27 @@ class BarChartOntology(UpperVisOntology):
             self.removeDataTypePropertyTriple(bar, self.NavigationDataProperty.HAS_ORDER)
             self.addDataTypePropertyTriple(bar, self.NavigationDataProperty.HAS_ORDER, n, XSD.int, functional=True)
 
-    def __filterBarsWithFilters(self, filters, negate = False, barset = None):
+    def __filterBarsWithFilters(self, filters, negate=False, user_tags=False, barset=None):
         """
-        Returns the bars that satisfy the given filters (i.e. are tagged by ALL
-        the labels given, including navigation properties)
-        @param filters: a list or set of textual filters (i.e. labels' text)
-        @param negate: whether to logically negate the results (default False)
-        @param barset: a set with the bars to take into account;
-               None (default) for all
-        @return set<string>: bar element names that satisfy the filters
+        Returns the bars that satisfy the given filters (i.e. are tagged by ALL the labels given, including
+        navigation properties)
+        :param filters: list<string>; a list or set of textual filters (i.e. labels' text)
+        :param negate: boolean; whether to logically negate the results (default False)
+        :param user_tags: boolean; whether the filter must be compared (only) the bars' user tags. If false,
+        filters are compared to the bar's labels in the diagram
+        :param barset: a set with the bars to take into account; None (default) for all
+        :return set<string>: bar element names that satisfy the filters
         """
         if not barset:
             barset = set(self.getMetricBars() + self.getStackedBars())
         if filters is not None:
             barsOut = set()
-            filtersSet = set([self.normalizeItem(f) for f in filters])
-            labelsSet = filtersSet.copy()
-            for f in filtersSet:
+            if user_tags:
+                filters_set = set(filters)
+            else:
+                filters_set = set([self.normalizeItem(f) for f in filters])
+            labelsSet = filters_set.copy()
+            for f in filters_set:
                 navFilter = True
                 if f == self.NavigationEntity.HOME_NODE:
                      barset &= set(self.getHomeNodes())
@@ -1021,13 +1045,17 @@ class BarChartOntology(UpperVisOntology):
                 if navFilter:
                     labelsSet.remove(f)
             for bar in barset:
-                barFilters = [self.normalizeItem(f) for f in self.getElementFilters(bar)]
-                if labelsSet.issubset(barFilters):
+                if user_tags:
+                    f_str = self.getUserLabels(bar)
+                    bar_filters = set([quick_norm(l) for l in f_str.replace(';', ',').split(",")])
+                    bar_filters.add(f_str)
+                else:
+                    bar_filters = [self.normalizeItem(f) for f in self.getElementFilters(bar)]
+                if labelsSet.issubset(bar_filters):
                     if not negate:
                         barsOut.add(bar)
-                else:
-                    if negate:
-                        barsOut.add(bar)
+                elif negate:
+                    barsOut.add(bar)
         else:
             barsOut = barset
         return barsOut

@@ -169,6 +169,8 @@ class Controller(object):
                         qf = QueryFilterNominal(sc.OE.annotation)
                         qf.operands.append(self.o.stripNamespace(sc.OE.uri))
                         filters.append(qf)
+                        if isinstance(sc.OE, OntologyLiteralElement):
+                            qf.is_user_label = sc.OE.is_user_label
         return filters
 
     def fetchAnswerFromDomain(self):
@@ -235,7 +237,7 @@ class Controller(object):
         self.q = self.NL.getCardinalFilters(self.q)  # Get filters
         self.q = self.mapper.ontologyBasedLookUp(self.o, self.q)  # Get OCs
         self.q = preConsolidateQuery(self.q, self.o)
-        self.q = addSemanticConcepts(self.q)
+        self.q = addSemanticConcepts(self.q, self.o.sess_id)
 
     def consolidateQuery(self):
         """

@@ -75,7 +75,7 @@ class DialogHandler(object):
         """
         key = SuggestionKey()
         pair = SuggestionPair()
-        next_ocs = nextAmbiguousOCs(self.q)  # OCs (SemanticConcept instances) closest to question focus
+        next_ocs = nextAmbiguousOCs(self.q)  # OCs closest to question focus
         sc_first = None
         if next_ocs:
             sc_first = next_ocs[0]

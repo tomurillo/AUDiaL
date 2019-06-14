@@ -260,6 +260,8 @@ class OutputFormatter(object):
                         roles.extend([r.replace('_SR', '').lower() for r in self.o.getObjects(triple[0], role_p)])
                     label += ' (text of %s in the diagram)' % ', '.join(set(roles))
                     label = replaceLastCommaWithAnd(label)
+            elif oe.is_user_label:
+                label = "%s (user-defined tag)" % oe.annotation.rawText.capitalize()
         return label
 
     def fullLabelForResource(self, uri, oe):

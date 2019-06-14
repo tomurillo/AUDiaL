@@ -520,8 +520,10 @@ class SuggestionGenerator(object):
         from textdistance import monge_elkan
         sim_main = similarityBetweenWords(text_one, text_two, monge_elkan)  # Main similarity between the words
         #  Similarity measures between each word and the other one's synonyms
-        synonyms_one = synonymsOfWord(text_one, pos_tag=None, n_synonyms=with_synoynms)
-        synonyms_two = synonymsOfWord(text_two, pos_tag=None, n_synonyms=with_synoynms)
+        synonyms_one, synonyms_two = [], []
+        if with_synoynms > 0:
+            synonyms_one = synonymsOfWord(text_one, pos_tag=None, n_synonyms=with_synoynms)
+            synonyms_two = synonymsOfWord(text_two, pos_tag=None, n_synonyms=with_synoynms)
         simsyn_one = 0.0
         if synonyms_one:
             for syn in synonyms_one:
@@ -536,5 +538,8 @@ class SuggestionGenerator(object):
         w_main = VOTE_CRITERIA_WEIGHTS[0]
         w_sound = VOTE_CRITERIA_WEIGHTS[1]
         w_syn = VOTE_CRITERIA_WEIGHTS[2] / 2.0
+        if with_synoynms == 0:
+            w_main += w_syn
+            w_sound += w_syn
         sim_final = w_main * sim_main + w_sound * soundex_sim + w_syn * simsyn_one + w_syn * simsyn_two
         return sim_final

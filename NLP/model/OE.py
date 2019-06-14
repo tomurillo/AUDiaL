@@ -466,6 +466,8 @@ class OntologyLiteralElement(OntologyElement):
     def __init__(self):
         # (SubjectURI, PropertyURI, LiteralURI) triples where this literal appears in the ontology (grouped by property)
         self.triples = []
+        # User-defined labels are session-bound and do not underpin ontology elements, but behave like string Literals
+        self.is_user_label = False
         super(OntologyLiteralElement, self).__init__()
 
     def to_dict(self):
@@ -476,6 +478,7 @@ class OntologyLiteralElement(OntologyElement):
         d = super(OntologyLiteralElement, self).to_dict()
         d['type'] = 'OntologyLiteralElement'
         d['triples'] = self.triples
+        d['is_user_label'] = self.is_user_label
         return d
 
     def from_dict(self, d):
@@ -486,6 +489,7 @@ class OntologyLiteralElement(OntologyElement):
         """
         super(OntologyLiteralElement, self).from_dict(d)
         self.triples = d.get('triples', [])
+        self.is_user_label = d.get('is_user_label', False)
 
     def print_uri(self):
         """
@@ -497,7 +501,9 @@ class OntologyLiteralElement(OntologyElement):
     def __eq__(self, other):
         if not isinstance(other, OntologyLiteralElement):
             return False
-        if self.triples != other.triples:
+        elif self.is_user_label != other.is_user_label:
+            return False
+        elif self.triples != other.triples:
             return False
         else:
             return super(OntologyLiteralElement, self).__eq__(other)
@@ -506,8 +512,9 @@ class OntologyLiteralElement(OntologyElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.annotation) \
-               ^ hash(self.main_subject) ^ hash((self.added, self.main_subject))
+        return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.is_user_label) \
+               ^ hash(self.annotation) ^ hash(self.main_subject) \
+               ^ hash((self.added, self.main_subject, self.is_user_label))
 
     def copy(self):
         oe_copy = OntologyLiteralElement()
@@ -517,6 +524,7 @@ class OntologyLiteralElement(OntologyElement):
         if self.annotation:
             oe_copy.annotation = self.annotation.copy()
         oe_copy.triples = self.triples
+        oe_copy.is_user_label = self.is_user_label
         return oe_copy
 
     __copy__ = copy
@@ -529,6 +537,7 @@ class OntologyLiteralElement(OntologyElement):
         if self.annotation:
             oe_copy.annotation = self.annotation.deepcopy()
         oe_copy.triples = list(self.triples)
+        oe_copy.is_user_label = self.is_user_label
         return oe_copy
 
     __deepcopy__ = deepcopy

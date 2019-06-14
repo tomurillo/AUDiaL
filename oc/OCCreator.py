@@ -1,31 +1,36 @@
+from flask import session
+from const import SESS_USER_LABELS
 import ontology.constants as o_c
 from NLP.model.OE import *
 from NLP.model.SemanticConcept import *
+from NLP.util.TreeUtil import quick_norm
 from OCUtil import SemanticConceptListCompareOffset
 
 
-def addSemanticConcepts(q):
+def addSemanticConcepts(q, sess_id):
     """
     Add a list of semantic concepts to a Query instance
     :param q: A Query instance with annotations
+    :param sess_id: string; prefix of user session variables
     :return: Updated query instance
     """
     query_anns = q.annotations
-    q.semanticConcepts = getSemanticConcepts(query_anns)
+    q.semanticConcepts = getSemanticConcepts(query_anns, sess_id)
     return q
 
 
-def getSemanticConcepts(annotations, add_none=False):
+def getSemanticConcepts(annotations, sess_id=None, add_none=False):
     """
     Converts annotations to semantic concepts
     :param annotations: An offset-sorted list of Annotation
+    :param sess_id: string; prefix of user session variables
     :param add_none: Whether to add None Semantic Concepts to the output lists
     :return: list<list<SemanticConcept>>: a list of overlapped semantic concepts by text, where the first SC of each
     list is the overlapping one.
     """
     overlapped_anns = getOverlappedAnnotations(annotations)
     #  Create OEs from overlapped Annotations
-    overlapped_oes = getOverlappedOntologyElements(overlapped_anns)
+    overlapped_oes = getOverlappedOntologyElements(overlapped_anns, sess_id)
     #  Group overlapped OEs by text
     overlapped_by_text = getOverlappedOntologyElementsGroupByText(overlapped_oes)
     #  Group overlapping instances of the same class under one OE
@@ -44,27 +49,29 @@ def getSemanticConcepts(annotations, add_none=False):
     return sorted_sems
 
 
-def getOverlappedOntologyElements(nested_annotations):
+def getOverlappedOntologyElements(nested_annotations, sess_id=None):
     """
     Creates Ontology Elements according to a given list of overlapped annotations
     :param nested_annotations: A dict of Annotation as given by the getOverlappedAnnotations method
+    :param sess_id: string; prefix of user session variables
     :return: list<list<SemanticConcept>>: a list of overlapped OEs where the first OEs of each
     list are the overlapping ones.
     """
     oelements = []
     for ann, overlapped_anns in nested_annotations.iteritems():
         ov_oe_list = []
-        ov_oe_list.extend(annotationToOntologyElements(ann))
+        ov_oe_list.extend(annotationToOntologyElements(ann, sess_id))
         for ov_ann in overlapped_anns:
-            ov_oe_list.extend(annotationToOntologyElements(ov_ann))
+            ov_oe_list.extend(annotationToOntologyElements(ov_ann, sess_id))
         oelements.append(ov_oe_list)
     return oelements
 
 
-def annotationToOntologyElements(annotation):
+def annotationToOntologyElements(annotation, sess_id=None):
     """
     Creates Ontology Elements according to a given annotation
     :param annotation: Annotation instance
+    :param sess_id: string; prefix of user session variables
     :return: list<OntologyElement> instances
     """
     oe_list = []
@@ -125,7 +132,36 @@ def annotationToOntologyElements(annotation):
                 oe.annotation = annotation
                 oe.uri = annotation.oc_type[ann_type]
                 oe_list.append(oe)
+    user_oes = annotationToUserLabel(annotation, sess_id)
+    oe_list.extend(user_oes)
     return oe_list
+
+
+def annotationToUserLabel(annotation, sess_id):
+    """
+    Checks if the given annotation matches any of the labels declared by the user in the current session. If so,
+    creates a new string Literal OE for it.
+    :param annotation: Annotation instance
+    :param sess_id: string; prefix of user session variables
+    :return: list<OntologyLiteralElement> instance if matching user labels found; empty list otherwise
+    """
+    label_oes = []
+    if sess_id and annotation and annotation.rawText:
+        ann_text = annotation.rawText
+        sess_var = SESS_USER_LABELS % sess_id
+        labels = session.get(sess_var, {})
+        user_labels = set()
+        for e, e_label in labels.iteritems():
+            user_labels.update([quick_norm(l) for l in e_label.replace(';', ',').split(",")])
+            user_labels.add(e_label)
+        for label in user_labels:
+            if label.strip() == ann_text:
+                oe = OntologyLiteralElement()
+                oe.uri = ann_text
+                oe.annotation = annotation
+                oe.is_user_label = True
+                label_oes.append(oe)
+    return label_oes
 
 
 def getOverlappedAnnotations(annotations):
