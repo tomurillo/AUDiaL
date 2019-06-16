@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+    <form action='/handle-login' method = 'POST'>
+        <div class="form-group">
+            <label for="username">User name</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
+                   style='width:20em'>
+        </div>
+        <div class="form-group">
+            <label for="pwd">Password</label>
+            <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Password"
+                   style='width:20em'>
+        </div>
+        <button type="submit" class="btn btn-default">Log in</button>
+    </form>
+</div>
+
+{% endblock %}

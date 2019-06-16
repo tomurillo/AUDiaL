@@ -1,6 +1,8 @@
 import traceback
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_session import Session
+from functools import wraps
+from auth_secrets import *
 from content_management import Content
 from controller import Controller
 from flask import session
@@ -21,6 +23,7 @@ app.config['TRAP_HTTP_EXCEPTIONS'] = FLASK_BUBBLE_EXCEPTIONS
 app.secret_key = FLASK_SECRET_KEY
 
 GRAPHICS = Content()
+DEFAULT_KEY = "Austrian Population"
 
 
 @app.route('/')
@@ -195,8 +198,37 @@ def fetchIntention():
         return jsonify(result=printException(e), output_type='answer')
 
 
-# Administrative handle to delete serialized data
-@app.route('/admin_delete/<command>')
+# Administrative handles
+def validate_admin_action(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        auth = False
+        if session.get('logged_in', False):
+            if session.get('username', '') in ADMINS:
+                auth = True
+        if auth:
+            return f(*args, **kwargs)
+        else:
+            return redirect('/audial-login')
+    return wrapper
+
+
+@app.route('/audial-login')
+def login_form():
+    return render_template("login.html", GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-login', methods=['POST'])
+def login_handle():
+    name, pwd = request.form['username'], request.form['pwd']
+    if name in ADMINS and pwd == ADMINS[name]:
+        session['username'] = name
+        session['logged_in'] = True
+    return redirect("/")
+
+
+@app.route('/admin-delete/<command>')
+@validate_admin_action
 def admin_delete(command):
     from general_util import deleteDirContents
     error_msg = ''
@@ -232,6 +264,7 @@ def admin_delete(command):
     if command in ['session', 's', 'all']:
         path = os.path.normpath(os.path.join(os.path.dirname(__file__), "flask_session"))
         try:
+            session.clear()
             deleteDirContents(path)
         except Exception as e:
             succ = False
@@ -240,6 +273,11 @@ def admin_delete(command):
         return redirect("/")
     else:
         return "An error occurred: %s" % error_msg
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY), 404
 
 
 def intentionDictToHTML(intentions):
