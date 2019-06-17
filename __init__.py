@@ -202,10 +202,7 @@ def fetchIntention():
 def validate_admin_action(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        auth = False
-        if session.get('logged_in', False):
-            if session.get('username', '') in ADMINS:
-                auth = True
+        auth = session.get('logged_in', False) and session.get('username', '') in ADMINS
         if auth:
             return f(*args, **kwargs)
         else:
@@ -217,6 +214,13 @@ def validate_admin_action(f):
 def login_form():
     return render_template("login.html", GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
 
+@app.route('/audial-logout')
+def logout():
+    if 'username' and 'logged_in' in session:
+        session.pop('username')
+        session.pop('logged_in')
+    return redirect("/")
+
 
 @app.route('/handle-login', methods=['POST'])
 def login_handle():
@@ -224,7 +228,9 @@ def login_handle():
     if name in ADMINS and pwd == ADMINS[name]:
         session['username'] = name
         session['logged_in'] = True
-    return redirect("/")
+        return redirect("/")
+    else:
+        return redirect('/audial-login')
 
 
 @app.route('/admin-delete/<command>')

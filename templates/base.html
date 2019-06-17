@@ -48,6 +48,38 @@
 	</div>
 </div>
 
+<footer class="footer page-footer">
+    <div class="container footer-contents">
+        <ul class="list-inline">
+            <li>
+            {%- if session['logged_in'] -%}
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+            {%- else -%}
+                <a href="{{ url_for('login_form') }}">
+                    Login
+                </a>
+            {% endif %}
+            </li><li>
+                <a href="https://www.jku.at/institut-integriert-studieren/" target="_blank">
+                    Institut Integriert Studieren
+                </a>
+            </li><li>
+                <a href="https://www.jku.at/" target="_blank">
+                    Johannes Kepler University Linz
+                </a>
+            </li><li class="smedia-logo">
+                <a href="https://github.com/tomurillo/AUDiaL/" target="_blank">
+                    <img src="{{ url_for('static', filename='icons/github-brands.svg') }}"
+                         width="100%"  class="img-responsive"
+                         alt="Fork me on Github" title="Fork me on Github">
+                </a>
+            </li>
+        </ul>
+    </div>
+</footer>
+
 </body>
 
 </html>
