@@ -71,6 +71,27 @@ def bar_chart_caprio():
         handleException(e, c)
         return jsonify(result=printException(e), output_type='answer')
 
+@app.route('/bar-chart-power')
+def bar_chart_power():
+    c = None
+    try:
+        key = "Power in Europe"
+        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
+        curBarTags = ""
+        if c.isOntologyLoaded():
+            curBarTags = c.o.getCurrentBarUserTags()
+        c.clearSessionContext()
+        c.clean()
+        return render_template("graphic_nav.html",
+                               GRAPHICS=GRAPHICS,
+                               current=key,
+                               curBarTags=curBarTags,
+                               output='Please enter a query below',
+                               output_type='result')
+    except Exception as e:
+        handleException(e, c)
+        return jsonify(result=printException(e), output_type='answer')
+
 
 @app.route('/_retrieve_values')
 def retrieve_values():
