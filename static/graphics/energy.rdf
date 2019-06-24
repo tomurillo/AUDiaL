@@ -1651,6 +1651,7 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Legend">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Composite_GO"/>
+        <ns1:has_informational_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Legend_Reference_Object_IR"/>
         <ns1:hasSVGElement>rect3998</ns1:hasSVGElement>
         <ns1:hasSVGElement>rect3998-0</ns1:hasSVGElement>
         <ns1:hasSVGElement>rect3998-2</ns1:hasSVGElement>
@@ -2244,6 +2245,8 @@
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#percent">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Dependent_Variable"/>
         <ns1:has_datatype>int</ns1:has_datatype>
+        <ns1:has_length>None</ns1:has_length>
+        <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
     
 
@@ -2424,11 +2427,11 @@
         <ns1:has_informational_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Spatial_Reference_Object_IR"/>
         <ns1:has_orientation_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Orientation"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Axis_SR"/>
+        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_0_787"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_100_10"/>
         <ns1:hasSVGElement>rect1663</ns1:hasSVGElement>
         <ns1:hasXCoordinate>35.6</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>320.965</ns1:hasYCoordinate>
-        <ns1:has_length>281.75034</ns1:has_length>
         <ns1:has_width>19.954794</ns1:has_width>
     </NamedIndividual>
     
@@ -15489,6 +15492,21 @@
         <ns1:hasYCoordinate>396.319</ns1:hasYCoordinate>
         <ns1:has_length>67.537346</ns1:has_length>
         <ns1:has_width>15.931973</ns1:has_width>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_0_787 -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_0_787">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Elementary_GO"/>
+        <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Label_SR"/>
+        <ns1:hasSVGElement>text1667-7</ns1:hasSVGElement>
+        <ns1:hasXCoordinate>13.541</ns1:hasXCoordinate>
+        <ns1:hasYCoordinate>472.244</ns1:hasYCoordinate>
+        <ns1:has_length>None</ns1:has_length>
+        <ns1:has_text>0</ns1:has_text>
+        <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
     
 
