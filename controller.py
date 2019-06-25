@@ -10,7 +10,7 @@ from consolidator.Consolidator import *
 from dialog.dialogHandler import DialogHandler
 from dialog.model.SuggestionPair import SuggestionPair
 from logger.Logger import AudialLogger
-from config import NLP_PARSER, NLP_POS_TAGGER
+from config import *
 import const as c
 
 
@@ -143,9 +143,14 @@ class Controller(object):
                         answer = '<h5>The following%s bar%s matched your query:</h5><ul>' % (n_str, pl_str)
                     if add_summary:
                         sorted_bars = self.o.sortBarsAccordingToNavigation(bars)
+                        if n > MAX_OUTPUT_NODES:
+                            sorted_bars = sorted_bars[:MAX_OUTPUT_NODES]
                         for bar in sorted_bars:
                             answer += '<li>%s</li>' % self.o.printBarDetails(bar)
+                        if n > MAX_OUTPUT_NODES:
+                            answer += '<li>And %d more (not shown)</li>' % (n - MAX_OUTPUT_NODES)
                     answer += "</ul>"
+
                     if not self.q.task:
                         answer += self.__summarizeBars(bars)
                 else:

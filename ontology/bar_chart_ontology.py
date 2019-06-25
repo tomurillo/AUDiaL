@@ -1018,7 +1018,7 @@ class BarChartOntology(UpperVisOntology):
         navigation properties)
         :param filters: list<string>; a list or set of textual filters (i.e. labels' text)
         :param negate: boolean; whether to logically negate the results (default False)
-        :param user_tags: boolean; whether the filter must be compared (only) the bars' user tags. If false,
+        :param user_tags: boolean; whether the filter must be compared (only) to the bars' user tags. If false,
         filters are compared to the bar's labels in the diagram
         :param barset: a set with the bars to take into account; None (default) for all
         :return set<string>: bar element names that satisfy the filters
@@ -1026,7 +1026,6 @@ class BarChartOntology(UpperVisOntology):
         if not barset:
             barset = set(self.getMetricBars() + self.getStackedBars())
         if filters is not None:
-            barsOut = set()
             if user_tags:
                 filters_set = set(filters)
             else:
@@ -1044,21 +1043,16 @@ class BarChartOntology(UpperVisOntology):
                     navFilter = False
                 if navFilter:
                     labelsSet.remove(f)
-            for bar in barset:
-                if user_tags:
-                    f_str = self.getUserLabels(bar)
-                    bar_filters = set([quick_norm(l) for l in f_str.replace(';', ',').split(",")])
-                    bar_filters.add(f_str)
-                else:
-                    bar_filters = [self.normalizeItem(f) for f in self.getElementFilters(bar)]
-                if labelsSet.issubset(bar_filters):
-                    if not negate:
-                        barsOut.add(bar)
-                elif negate:
-                    barsOut.add(bar)
-        else:
-            barsOut = barset
-        return barsOut
+            if user_tags:
+                barset &= set(self.getElementsWithUserLabels(labelsSet, negate))
+            else:
+                for bar_filter in labelsSet:
+                    elements_labeled = set(self.getElementsLabeledByText(bar_filter))
+                    if negate:
+                        barset.remove(elements_labeled)
+                    else:
+                        barset &= elements_labeled
+        return barset
 
     def getCurrentBar(self):
         """

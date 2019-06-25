@@ -1,6 +1,7 @@
 from flask import session
 from sys import float_info
 from ontology.upper_ontology import UpperOntology
+from NLP.util.TreeUtil import quick_norm
 import rdflib
 from rdflib import XSD, URIRef
 from collections import defaultdict
@@ -863,6 +864,24 @@ class UpperVisOntology(UpperOntology):
             labels = session.get(sess_var, {})
             ul = labels.get(element, "")
         return ul
+
+    def getElementsWithUserLabels(self, userTags, negate=False):
+        """
+        Return the elements of the ontology tagged by the user with all the given user tags
+        :param userTags: list<string> user tags to search for
+        :param negate: boolean; whether to logically negate the results (default False)
+        :return: list<string>: elements that have been labeled by the current user with all the given tags
+        """
+        user_set = set([quick_norm(t) for t in userTags])
+        elements = set()
+        if userTags:
+            sess_var = c.SESS_USER_LABELS % self.sess_id
+            labels = session.get(sess_var, {})
+            for element, e_tags in labels.iteritems():
+                tag_set = set([quick_norm(l) for l in e_tags.replace(';', ',').split(",")])
+                if tag_set.issubset(user_set) or (negate and not any(tag in tag_set for tag in user_set)):
+                    elements.add(element)
+        return list(elements)
 
     def setUserLabels(self, elements, userTags):
         """

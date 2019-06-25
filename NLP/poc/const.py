@@ -27,7 +27,7 @@ FILTER_LT_TOKENS = ['below', 'before']
 
 FILTER_EQ_TOKENS = ['same', 'equal', 'identical', 'exactly']
 
-FILTER_SIM_TOKENS = ['approximate', 'approximately', 'about', 'around', 'roughly']
+FILTER_SIM_TOKENS = ['approximate', 'approximately', 'around', 'roughly']
 
 FILTER_CONJ_LABELS = [CC_TREE_POS_TAG]
 
