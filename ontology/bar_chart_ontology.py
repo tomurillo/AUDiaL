@@ -337,14 +337,15 @@ class BarChartOntology(UpperVisOntology):
         if color:  # TODO: retrieve filters according to other attributes
             legends = self.getLegends()
             for legend in legends:
-                legendElements = self.getLegendPairs(legend)
-                for subelement, label in legendElements:
-                    elementColor = self.getValue(subelement,
-                                         self.SyntacticProperty.HAS_COLOR)
-                    if elementColor == color:
-                        # Add label from legend to the bar
-                        self.addObjectPropertyTriple(subelement, self.SyntacticProperty.IS_LABELED_BY, label)
-                        labels.add(label)
+                if not self.getValue(legend, self.ReasonerDataPropery.LEGEND_REASONED, default=False):
+                    legendElements = self.getLegendPairs(legend)
+                    for subelement, label in legendElements:
+                        elementColor = self.getValue(subelement,
+                                             self.SyntacticProperty.HAS_COLOR)
+                        if elementColor == color:
+                            # Add label from legend to the bar
+                            self.addObjectPropertyTriple(subelement, self.SyntacticProperty.IS_LABELED_BY, label)
+                            labels.add(label)
         if returnText:
             return set([self.getText(l) for l in labels if l])  # Discard NoneType and ""
         else:
@@ -364,58 +365,6 @@ class BarChartOntology(UpperVisOntology):
             if n:
                 bardict[int(n)] = bar
         return bardict
-
-    def getLegends(self):
-        """
-        Returns the legends of the chart
-        @return List<string>: a list of element names
-        """
-        return self.getElementsWithRole(self.InformationalRoles.LEGEND_OBJECT,
-                                        "informational")
-
-    def getLegendPairs(self, legend):
-        """
-        Retrieves the pairs of informational objects and their labels that
-        appear on a given legend
-        @param legend: the name of a Legend instance
-        @return list<(string, string)>: a list of (object, label) instance names
-        """
-        pairs = set()
-        if legend:
-            elementsOfLegend = self.getConstituentElements(legend)
-            for e in elementsOfLegend:
-                if self.elementHasRole(e, self.SyntacticRoles.LABEL):
-                    labeled = self.getSubjects(self.SyntacticProperty.IS_LABELED_BY,
-                                               e)
-                    for l in labeled:
-                        if l in elementsOfLegend:
-                            pairs.add((l, e))
-        return list(pairs)
-
-    def getLegendsDescription(self):
-        """
-        Returns a description of the chart's legends and their sub-elements
-        @return string: a natural language enumeration of the legends' labels
-        """
-        legends = self.getLegends()
-        output = "This chart has "
-        n = len(legends)
-        if n == 0:
-            output += "no legends.<br/>"
-        else:
-            if n > 1:
-                output += "more than "
-            output += "one legend. "
-        for i, legend in enumerate(legends, start=1):
-            if n > 1:
-                output += "Legend number %d has the following items:<br/>" % i
-            else:
-                output += "The legend is made up of the following items: "
-            pairs = self.getLegendPairs(legend)
-            output += ", ".join([self.getText(l)
-                                 for s,l in self.getLegendPairs(legend)])
-            output += "<br/>"
-        return output
 
     def getMetricBarValue(self, metricBar):
         """
@@ -445,6 +394,38 @@ class BarChartOntology(UpperVisOntology):
             if dtype == "int":
                 value = int(round(value))
         return value
+
+    def reasonLabelsFromLegends(self):
+        """
+        Add labels of the bars in the chart according to its legends
+        :return: None, updates knowledge base
+        """
+        legends = self.getLegends()
+        color_label_map = {}
+        for legend in legends:
+            if not self.getValue(legend, self.ReasonerDataPropery.LEGEND_REASONED, default=False):
+                legendElements = self.getLegendPairs(legend)
+                for subelement, label in legendElements:
+                    elementColor = self.getValue(subelement,
+                                                 self.SyntacticProperty.HAS_COLOR)
+                    if elementColor:
+                        if elementColor in color_label_map:
+                            color_labels = color_label_map[elementColor]
+                        else:
+                            color_labels = []
+                            color_label_map[elementColor] = color_labels
+                        color_labels.append(label)
+        if color_label_map:
+            bars = self.getMetricBars()
+            for b in bars:  # This may take a while
+                bar_color = self.getValue(b, self.SyntacticProperty.HAS_COLOR)
+                if bar_color:
+                    for label in color_label_map.get(bar_color, []):
+                        self.addObjectPropertyTriple(b, self.SyntacticProperty.IS_LABELED_BY, label)
+            for legend in legends:
+                self.addDataTypePropertyTriple(legend, self.ReasonerDataPropery.LEGEND_REASONED, True,
+                                               datatype=XSD.boolean,
+                                               functional=True)
 
     def lengthOfElement(self, element):
         """
@@ -1147,6 +1128,7 @@ class BarChartOntology(UpperVisOntology):
         axis = self.getMetricAxis()
         if axis:
             self.computeAxisLengthFromLabels(axis)
+        self.reasonLabelsFromLegends()
         return self.__moveFirst()
 
     def __getExtremeNavBar(self, pos='first', bars=None):

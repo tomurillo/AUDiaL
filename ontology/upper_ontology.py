@@ -63,6 +63,18 @@ class UpperOntology(object):
             self.path = fileName
             self.graph.load(fileName)
 
+    def save(self, fileName):
+        """
+        Serialize current graph triples into a RDF file
+        :param fileName: output file name
+        :return: None
+        """
+        dir_path = os.path.join(os.path.dirname(__file__), 'export')
+        file_path = os.path.join(dir_path, fileName)
+        if not os.path.isdir(dir_path):
+            os.makedirs(dir_path)
+        self.graph.serialize(file_path, format='turtle')
+
     def close(self):
         """
         Close graph to avoid lock entries leak

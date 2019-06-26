@@ -240,6 +240,12 @@ class UpperVisOntology(UpperOntology):
         IS_INTENTION = "task_is_intention"
         HAS_VERBALIZATION = "task_has_verbalization"
 
+    class ReasonerDataPropery:
+        """
+        Helper Datatype Properties for internal reasoning tasks
+        """
+        LEGEND_REASONED = "legend_reasoned"
+
     SYNT_ENTS = []  # Syntactic Entities Array i.e. ['GRAPHIC_OBJECT', ... ]
     SYNT_ROLES = []  # Syntactic Roles Array i.e. ['AXIS', 'CONTAINER', ... ]
 
@@ -559,7 +565,6 @@ class UpperVisOntology(UpperOntology):
                                          bottomLabel, functional=True)
         return length
 
-
     def getIndependentVariables(self):
         """
         Returns the name of the classes representing Independent Variables in
@@ -580,6 +585,58 @@ class UpperVisOntology(UpperOntology):
             if o and type(o) == rdflib.term.Literal:
                 o = o.toPython()
         return o
+
+    def getLegends(self):
+        """
+        Returns the legends of the chart
+        :return List<string>: a list of element names
+        """
+        return self.getElementsWithRole(self.InformationalRoles.LEGEND_OBJECT,
+                                        "informational")
+
+    def getLegendPairs(self, legend):
+        """
+        Retrieves the pairs of informational objects and their labels that
+        appear on a given legend
+        :param legend: the name of a Legend instance
+        :return list<(string, string)>: a list of (object, label) instance names
+        """
+        pairs = set()
+        if legend:
+            elementsOfLegend = self.getConstituentElements(legend)
+            for e in elementsOfLegend:
+                if self.elementHasRole(e, self.SyntacticRoles.LABEL):
+                    labeled = self.getSubjects(self.SyntacticProperty.IS_LABELED_BY,
+                                               e)
+                    for l in labeled:
+                        if l in elementsOfLegend:
+                            pairs.add((l, e))
+        return list(pairs)
+
+    def getLegendsDescription(self):
+        """
+        Returns a description of the chart's legends and their sub-elements
+        :return string: a natural language enumeration of the legends' labels
+        """
+        legends = self.getLegends()
+        output = "This chart has "
+        n = len(legends)
+        if n == 0:
+            output += "no legends.<br/>"
+        else:
+            if n > 1:
+                output += "more than "
+            output += "one legend. "
+        for i, legend in enumerate(legends, start=1):
+            if n > 1:
+                output += "Legend number %d has the following items:<br/>" % i
+            else:
+                output += "The legend is made up of the following items: "
+            pairs = self.getLegendPairs(legend)
+            output += ", ".join([self.getText(l)
+                                 for s,l in self.getLegendPairs(legend)])
+            output += "<br/>"
+        return output
 
     def getLabels(self):
         """
