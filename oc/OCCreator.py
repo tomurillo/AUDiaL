@@ -155,9 +155,9 @@ def annotationToUserLabel(annotation, sess_id):
             user_labels.update([quick_norm(l) for l in e_label.replace(';', ',').split(",")])
             user_labels.add(e_label)
         for label in user_labels:
-            if label.strip() == ann_text:
+            if quick_norm(label) == ann_text:
                 oe = OntologyLiteralElement()
-                oe.uri = ann_text
+                oe.uri = label
                 oe.annotation = annotation
                 oe.is_user_label = True
                 label_oes.append(oe)

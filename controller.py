@@ -122,7 +122,7 @@ class Controller(object):
         """
         answer = 'Your query could not be resolved'
         if allOCsShareNamespace(self.q.semanticConcepts, self.o.VIS_NS):
-            self.q.filters.extend(self.getFiltersFromQuery())
+            self.q.filters.extend(self.q.getNominalFilters())
             if isinstance(self.o, BarChartOntology):
                 bars = self.o.applyLowLevelTask(self.o.StructuralTask.ReadingTask.APPLY_QFILTER, filters=self.q.filters)
                 if bars:
@@ -158,25 +158,6 @@ class Controller(object):
         else:
             answer = self.fetchAnswerFromDomain()
         return answer
-
-    def getFiltersFromQuery(self):
-        """
-        Infer remaining filters from a user's query
-        :return: list<QueryFilter>
-        """
-        filters = []
-        #  Remaining semantic concepts are considered nominal filters unless they underpin a task
-        for sc_list in self.q.semanticConcepts:
-            if sc_list:
-                sc = sc_list[0]
-                if sc and sc.OE and isinstance(sc.OE, (OntologyInstanceElement, OntologyLiteralElement)):
-                    if not sc.answer or not sc.task:
-                        qf = QueryFilterNominal(sc.OE.annotation)
-                        qf.operands.append(self.o.stripNamespace(sc.OE.uri))
-                        filters.append(qf)
-                        if isinstance(sc.OE, OntologyLiteralElement):
-                            qf.is_user_label = sc.OE.is_user_label
-        return filters
 
     def fetchAnswerFromDomain(self):
         """

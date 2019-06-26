@@ -41,6 +41,26 @@ class Query(object):
                     warnings.warn('Warning: flattening list of ambiguous SemanticConcepts!')
         return flat_scs
 
+    def getNominalFilters(self):
+        """
+        Infer remaining filters from a user's query
+        :return: list<QueryFilter>
+        """
+        from ontology.util import stripNamespace
+        filters = []
+        #  Remaining semantic concepts are considered nominal filters unless they underpin a task
+        for sc_list in self.semanticConcepts:
+            if sc_list:
+                sc = sc_list[0]
+                if sc and sc.OE and isinstance(sc.OE, (OntologyInstanceElement, OntologyLiteralElement)):
+                    if not sc.answer or not sc.task:
+                        qf = QueryFilterNominal(sc.OE.annotation)
+                        qf.operands.append(stripNamespace(sc.OE.uri))
+                        filters.append(qf)
+                        if isinstance(sc.OE, OntologyLiteralElement):
+                            qf.is_user_label = sc.OE.is_user_label
+        return filters
+
     def ocs_consistent(self):
         """
         Check whether the OCs of the Query are consistent (all overlapping OCs are resources of the same class)
