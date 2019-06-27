@@ -1007,10 +1007,7 @@ class BarChartOntology(UpperVisOntology):
         if not barset:
             barset = set(self.getMetricBars() + self.getStackedBars())
         if filters is not None:
-            if user_tags:
-                filters_set = set(filters)
-            else:
-                filters_set = set([self.normalizeItem(f) for f in filters])
+            filters_set = set(filters)
             labelsSet = filters_set.copy()
             for f in filters_set:
                 navFilter = True
