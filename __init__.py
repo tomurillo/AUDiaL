@@ -27,55 +27,28 @@ DEFAULT_KEY = "Austrian Population"
 
 
 @app.route('/')
-@app.route('/bar-chart-austria')
 def homepage():
-    c = None
-    try:
-        key = "Austrian Population"
-        current = GRAPHICS[key][5]
-        c = Controller(current, ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
-        curBarTags = ""
-        if c.isOntologyLoaded():
-            curBarTags = c.o.getCurrentBarUserTags()
-        c.clearSessionContext()
-        c.clean()
-        return render_template("graphic_nav.html",
-                               GRAPHICS=GRAPHICS,
-                               current=key,
-                               curBarTags=curBarTags,
-                               output='Please enter a query below',
-                               output_type='result')
-    except Exception as e:
-        handleException(e, c)
-        return jsonify(result=printException(e), output_type='answer')
+    return render_graphic(DEFAULT_KEY)
+
+
+@app.route('/bar-chart-austria')
+def bar_chart_austria():
+    return render_graphic("Austrian Population")
 
 
 @app.route('/bar-chart-leo-dicaprio')
 def bar_chart_caprio():
-    c = None
-    try:
-        key = "Leonardo DiCaprio"
-        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
-        curBarTags = ""
-        if c.isOntologyLoaded():
-            curBarTags = c.o.getCurrentBarUserTags()
-        c.clearSessionContext()
-        c.clean()
-        return render_template("graphic_nav.html",
-                               GRAPHICS=GRAPHICS,
-                               current=key,
-                               curBarTags=curBarTags,
-                               output='Please enter a query below',
-                               output_type='result')
-    except Exception as e:
-        handleException(e, c)
-        return jsonify(result=printException(e), output_type='answer')
+    return render_graphic("Leonardo DiCaprio")
+
 
 @app.route('/bar-chart-power')
 def bar_chart_power():
+    return render_graphic("Power in Europe")
+
+
+def render_graphic(key):
     c = None
     try:
-        key = "Power in Europe"
         c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
         curBarTags = ""
         if c.isOntologyLoaded():
