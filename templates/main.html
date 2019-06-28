@@ -2,6 +2,8 @@
     <div id="maingraph-container" class="container-fluid">
         <img src="{{ url_for('static', filename='graphics/' + GRAPHICS[current][0]) }}"
              alt="{{ GRAPHICS[current][2] }}" style="width: 100%; height: auto; max-width:800px"/>
+        <br/>
+        <a href="{{ request.path }}?longdesc=1">Image Description</a>
     </div>
     <hr/>
     <div id="result-container" class="container-fluid">

@@ -1,5 +1,5 @@
 import traceback
-from flask import Flask, render_template, jsonify, request, redirect
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_session import Session
 from functools import wraps
 from auth_secrets import *
@@ -28,42 +28,38 @@ DEFAULT_KEY = "Austrian Population"
 
 @app.route('/')
 def homepage():
-    return render_graphic(DEFAULT_KEY)
+    key = DEFAULT_KEY
+    if request.args.get('longdesc') is None:
+        return render_graphic(key)
+    else:
+        return render_longdesc(key)
 
 
 @app.route('/bar-chart-austria')
 def bar_chart_austria():
-    return render_graphic("Austrian Population")
+    key = "Austrian Population"
+    if request.args.get('longdesc') is None:
+        return render_graphic(key)
+    else:
+        return render_longdesc(key)
 
 
 @app.route('/bar-chart-leo-dicaprio')
 def bar_chart_caprio():
-    return render_graphic("Leonardo DiCaprio")
+    key = "Leonardo DiCaprio"
+    if request.args.get('longdesc') is None:
+        return render_graphic(key)
+    else:
+        return render_longdesc(key)
 
 
 @app.route('/bar-chart-power')
 def bar_chart_power():
-    return render_graphic("Power in Europe")
-
-
-def render_graphic(key):
-    c = None
-    try:
-        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
-        curBarTags = ""
-        if c.isOntologyLoaded():
-            curBarTags = c.o.getCurrentBarUserTags()
-        c.clearSessionContext()
-        c.clean()
-        return render_template("graphic_nav.html",
-                               GRAPHICS=GRAPHICS,
-                               current=key,
-                               curBarTags=curBarTags,
-                               output='Please enter a query below',
-                               output_type='result')
-    except Exception as e:
-        handleException(e, c)
-        return jsonify(result=printException(e), output_type='answer')
+    key = "Power in Europe"
+    if request.args.get('longdesc') is None:
+        return render_graphic(key)
+    else:
+        return render_longdesc(key)
 
 
 @app.route('/_retrieve_values')
@@ -200,7 +196,7 @@ def validate_admin_action(f):
         if auth:
             return f(*args, **kwargs)
         else:
-            return redirect('/audial-login')
+            return redirect(url_for('login_form'))
     return wrapper
 
 
@@ -213,7 +209,7 @@ def logout():
     if 'username' and 'logged_in' in session:
         session.pop('username')
         session.pop('logged_in')
-    return redirect("/")
+    return redirect(url_for('homepage'))
 
 
 @app.route('/handle-login', methods=['POST'])
@@ -222,9 +218,9 @@ def login_handle():
     if name in ADMINS and pwd == ADMINS[name]:
         session['username'] = name
         session['logged_in'] = True
-        return redirect("/")
+        return redirect(url_for('homepage'))
     else:
-        return redirect('/audial-login')
+        return redirect(url_for('login_form'))
 
 
 @app.route('/admin-delete/<command>')
@@ -270,14 +266,43 @@ def admin_delete(command):
             succ = False
             error_msg = str(e)
     if succ:
-        return redirect("/")
+        return redirect(url_for('homepage'))
     else:
-        return "An error occurred: %s" % error_msg
+        error_full = "An error occurred: %s" % error_msg
+        return jsonify(result=error_full, output_type='answer')
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY), 404
+
+
+def render_graphic(key):
+    c = None
+    try:
+        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
+        curBarTags = ""
+        if c.isOntologyLoaded():
+            curBarTags = c.o.getCurrentBarUserTags()
+        c.clearSessionContext()
+        c.clean()
+        return render_template("graphic_nav.html",
+                               GRAPHICS=GRAPHICS,
+                               current=key,
+                               curBarTags=curBarTags,
+                               output='Please enter a query below',
+                               output_type='result')
+    except Exception as e:
+        handleException(e, c)
+        return jsonify(result=printException(e), output_type='answer')
+
+
+def render_longdesc(key):
+    html = longdescContents(GRAPHICS[key][4])
+    return render_template("longdesc.html",
+                           GRAPHICS=GRAPHICS,
+                           current=key,
+                           longdesc_html=html)
 
 
 def intentionDictToHTML(intentions):
@@ -341,6 +366,27 @@ def ontologyPath(filaname):
     if filaname:
         path = os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", filaname))
     return path
+
+
+def longdescContents(ontology_filename):
+    """
+    Returns the contents of an HTML file with the long description for the given ontology
+    :param ontology_filename: string; filename of a serialized ontology
+    :return: string; HTML markup of the longdesc file
+    """
+    html = ''
+    path = ''
+    html_file = "%s.html" % os.path.splitext(ontology_filename)[0] if ontology_filename else ''
+    if html_file:
+        fpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", "longdesc", html_file))
+        if os.path.isfile(fpath):
+            path = fpath
+    if path:
+        with open(path, 'r') as f:
+            html = f.read()
+    if not html:
+        html = 'No long description available.'
+    return html
 
 
 def serializedOntologyDirs():
