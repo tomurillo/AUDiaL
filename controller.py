@@ -146,7 +146,7 @@ class Controller(object):
                         if n > MAX_OUTPUT_NODES:
                             sorted_bars = sorted_bars[:MAX_OUTPUT_NODES]
                         for bar in sorted_bars:
-                            answer += '<li>%s</li>' % self.o.printBarDetails(bar)
+                            answer += '<li>%s</li>' % self.o.printBarDetails(bar)[0]
                         if n > MAX_OUTPUT_NODES:
                             answer += '<li>And %d more (not shown)</li>' % (n - MAX_OUTPUT_NODES)
                     answer += "</ul>"
@@ -308,7 +308,7 @@ class Controller(object):
                                                 operand = operand,
                                                 negate = negate)
             for bar in bars:
-                output += self.o.printBarDetails(bar)
+                output += self.o.printBarDetails(bar)[0]
             if len(bars) == 1:
                 outNumeric = self.o.getMetricBarValue(bars.pop())
         return output, outNumeric
@@ -407,7 +407,7 @@ class Controller(object):
                         else:
                             output += "Error: No operator found."
                         if cont:
-                            output += self.o.printBarDetails(bar)
+                            output += self.o.printBarDetails(bar)[0]
                             barVal = float(self.o.getMetricBarValue(bar))
                             if stacked:
                                 outputNumeric = (barVal, None)
@@ -466,12 +466,12 @@ class Controller(object):
                         value = None
                         if op == 'max' or op == 'range':
                             bar, value = infoStacked['max']
-                            tags = self.o.printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)[0]
                             output += "%s: Stacked bars maximum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'min' or op == 'range':
                             bar, value = infoStacked['min']
-                            tags = self.o.printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)[0]
                             output += "%s: Stacked bars minimum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'range':
@@ -484,12 +484,12 @@ class Controller(object):
                         value = None
                         if op == 'max' or op == 'range':
                             bar, value = infoSimple['max']
-                            tags = self.o.printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)[0]
                             output += "%s: Metric bars maximum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'min' or op == 'range':
                             bar, value = infoSimple['min']
-                            tags = self.o.printBarDetails(bar)
+                            tags = self.o.printBarDetails(bar)[0]
                             output += "%s: Metric bars minimum: %s. %s" \
                                 % (q, value, tags)
                         if op == 'range':
@@ -633,7 +633,7 @@ class Controller(object):
             if b[-1]:
                 output += "Current %s: " % node_name
                 if isinstance(self.o, BarChartOntology):
-                    output += self.o.printBarDetails(b[-1], skipNav=True)
+                    output += self.o.printBarDetails(b[-1], skipNav=True)[0]
             else:
                 output += " No current %s available!. Please reset the navigation." % node_name
                 moved = False
@@ -729,7 +729,7 @@ class Controller(object):
             if b[-1]:
                 output += "Navigation has been reset. Current %s: " % node_name
                 if isinstance(self.o, BarChartOntology):
-                    output += self.o.printBarDetails(b[-1], skipNav=True)
+                    output += self.o.printBarDetails(b[-1], skipNav=True)[0]
             else:
                 output += "Error while resetting."
         else:

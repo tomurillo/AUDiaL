@@ -321,36 +321,6 @@ class BarChartOntology(UpperVisOntology):
                 text = ''
         return text
 
-    def getElementFilters(self, element, returnText=True):
-        """
-        Retrieves the filters that apply to an element given by its labels,
-        color and other attributes
-        :param element: the name of a metric bar instance
-        :param returnText: whether to return the text of the labels (True) or
-        the instance names of the label elements (False)
-        :return: set<sting>: a list of the texts of those labels that apply
-        to the bar if returText is True, or a list of label instance names
-        otherwise
-        """
-        labels = set(self.getLabelsOfElement(element))
-        color = self.getValue(element, self.SyntacticProperty.HAS_COLOR)
-        if color:  # TODO: retrieve filters according to other attributes
-            legends = self.getLegends()
-            for legend in legends:
-                if not self.getValue(legend, self.ReasonerDataPropery.LEGEND_REASONED, default=False):
-                    legendElements = self.getLegendPairs(legend)
-                    for subelement, label in legendElements:
-                        elementColor = self.getValue(subelement,
-                                             self.SyntacticProperty.HAS_COLOR)
-                        if elementColor == color:
-                            # Add label from legend to the bar
-                            self.addObjectPropertyTriple(subelement, self.SyntacticProperty.IS_LABELED_BY, label)
-                            labels.add(label)
-        if returnText:
-            return set([self.getText(l) for l in labels if l])  # Discard NoneType and ""
-        else:
-            return set([l for l in labels if l])
-
     def getBarsOrders(self, bars = None):
         """
         Returns a dictionary of all bars indexed by their navigational order
@@ -867,38 +837,68 @@ class BarChartOntology(UpperVisOntology):
         @param iterable<string> bars: the bars whose values to take into account
         @return (string, boolean): task answer, and whether the task could be resolved
         """
+        from config import MAX_OUTPUT_NODES
         success = False
         answer = 'The answer could not be computed'
         try:
             from stats.DataAnalyzer import DataAnalyzer
-            if bars:
-                bar_vals = self.getBarValues(bars)
-                if bar_vals:
-                    analyzer = DataAnalyzer(bar_vals)
-                    clusters, outliers = analyzer.find_clusters()
-                    n_clusters = len(clusters)
-                    if n_clusters > 1:
-                        units = self.getChartMeasurementUnit()
-                        if units:
-                            units_label = units.replace("_", " ").lower()
+            bar_vals = self.getBarValues(bars)
+            if not bar_vals:
+                return answer
+            analyzer = DataAnalyzer(bar_vals)
+            clusters, outliers = analyzer.find_clusters()
+            n_clusters = len(clusters)
+            if n_clusters > 1:
+                units = self.getChartMeasurementUnit()
+                if units:
+                    units_label = units.replace("_", " ").lower()
+                else:
+                    units_label = ''
+                answer = "<h5>Found %d possible bar groupings:</h5>" % n_clusters
+                answer += '<section><ul>'
+                for i, c in enumerate(clusters, 1):
+                    common_labels = set()
+                    cluster = c[:MAX_OUTPUT_NODES]
+                    answer += "<li><strong>%s cluster" % (numberToOrdinal(i))
+                    ul_html = '<ul>'
+                    for j, bar in enumerate(cluster):
+                        str_l, labels = self.printBarDetails(bar, skipNav=True, units=units_label)
+                        ul_html += '<li>%s</li>' % str_l
+                        if j == 0:
+                            common_labels |= labels
                         else:
-                            units_label = ''
-                        answer = "<h5>Found %d possible bar groupings:</h5>" % n_clusters
-                        answer += '<section><ul>'
-                        for i, c in enumerate(clusters, 1):
-                            answer += "<li><strong>%s cluster:</strong><ul>" % (numberToOrdinal(i))
-                            for bar in c:
-                                answer += '<li>%s</li>' % self.printBarDetails(bar, skipNav=True, units=units_label)
-                            answer += "</ul></li>"
-                        answer += '</ul></section>'
-                        answer += "<h5>The remaining bars do not belong to any group:</h5>"
-                        answer += '<section><ul>'
-                        for bar in outliers:
-                            answer += '<li>%s</li>' % self.printBarDetails(bar, skipNav=True, units=units_label)
-                        answer += '</ul></section>'
-                        success = True
-                    else:
-                        answer = 'The bars of your query could not be grouped! Try with a broader query'
+                            common_labels &= labels
+                    n_c = len(c)
+                    if n_c > MAX_OUTPUT_NODES:
+                        ul_html += '<li>And %d more</li>' % (n_c - MAX_OUTPUT_NODES)
+                    ul_html += "</ul></li>"
+                    if common_labels:
+                        answer += ' (%s)' % ", ".join(common_labels)
+                    answer += "</strong>:%s" % ul_html
+                answer += '</ul></section>'
+                if outliers:
+                    common_labels = set()
+                    ul_html = '<section><ul>'
+                    outliers_trimmed = outliers[:MAX_OUTPUT_NODES]
+                    for j, bar in enumerate(outliers_trimmed):
+                        str_l, labels = self.printBarDetails(bar, skipNav=True, units=units_label)
+                        ul_html += '<li>%s</li>' % str_l
+                        if j == 0:
+                            common_labels |= labels
+                        else:
+                            common_labels &= labels
+                    n_o = len(outliers)
+                    if n_o > MAX_OUTPUT_NODES:
+                        ul_html += '<li>And %d more</li>' % (n_o - MAX_OUTPUT_NODES)
+                    ul_html += '</ul></section>'
+                    c_l = ''
+                    if common_labels:
+                        c_l = ' (%s)' % ", ".join(common_labels)
+                    answer += "<h5>The remaining bars%s do not belong to any group:</h5>" % c_l
+                    answer += ul_html
+                success = True
+            else:
+                answer = 'The bars of your query could not be grouped! Try with a broader query'
         except ImportError:
             answer = 'Task (clustering) not supported!'
         finally:
@@ -910,6 +910,7 @@ class BarChartOntology(UpperVisOntology):
         @param iterable<string> bars: the bars whose values to take into account
         @return (string, boolean): task answer, and whether the task could be resolved
         """
+        from config import MAX_OUTPUT_NODES
         success = False
         answer = 'The answer could not be computed'
         try:
@@ -925,12 +926,25 @@ class BarChartOntology(UpperVisOntology):
                             units_label = units.replace("_", " ").lower()
                         else:
                             units_label = ''
-                        answer = "<h5>Found %d possible bar outliers:</h5>" % len(outliers)
-                        answer += '<section><ul>'
-                        for i, bar in enumerate(outliers, 1):
-                            bar_info = self.printBarDetails(bar, skipNav=True, units=units_label)
-                            answer += "<li><strong>%s bar:</strong> %s</li>" % (numberToOrdinal(i), bar_info)
-                        answer += '</ul></section>'
+                        n_o = len(outliers)
+                        ul_html = '<section><ul>'
+                        outliers_trimmed = outliers[:MAX_OUTPUT_NODES]
+                        common_labels = set()
+                        for i, bar in enumerate(outliers_trimmed, 1):
+                            bar_info, labels = self.printBarDetails(bar, skipNav=True, units=units_label)
+                            ul_html += "<li><strong>%s bar:</strong> %s</li>" % (numberToOrdinal(i), bar_info)
+                            if i == 0:
+                                common_labels |= labels
+                            else:
+                                common_labels &= labels
+                        if n_o > MAX_OUTPUT_NODES:
+                            ul_html += '<li>And %d more</li>' % (n_o - MAX_OUTPUT_NODES)
+                        ul_html += '</ul></section>'
+                        c_str = ''
+                        if common_labels:
+                            c_str = replaceLastCommaWithAnd(' (with shared labels: %s)' % ", ".join(common_labels))
+                        answer = "<h5>Found %d possible bar outliers%s:</h5>" % (n_o, c_str)
+                        answer += ul_html
                         success = True
                     else:
                         answer = 'No anomalies found within the bars of this chart.'
@@ -1084,7 +1098,7 @@ class BarChartOntology(UpperVisOntology):
             path = self.__moveToBar(bar, default_curr_first=False)
             if path:
                 output = 'Jumped from '
-                output += self.printBarDetails(path[0], skipNav=True)
+                output += self.printBarDetails(path[0], skipNav=True)[0]
                 output += '<br/>to: '
                 output += self.printPath(path, skipNav=True)
         return output
@@ -1449,7 +1463,7 @@ class BarChartOntology(UpperVisOntology):
         points = self.barPoints(bars)
         n_bars = len(bars)
         if n_bars > 0:
-            path = self.printBarDetails(bars[-1], skipNav, units)
+            path = self.printBarDetails(bars[-1], skipNav, units)[0]
         if n_bars > 1:
             path += "<br/>"
             if target == 'prev':
@@ -1614,7 +1628,7 @@ class BarChartOntology(UpperVisOntology):
         :param skipNav: boolean; whether to skip user navigation information
                (i.e. if the bar is the current or home bar)
         :param units: string; units to print after each bar. None to infer from ontology
-        :return string: a natural-language description of the bar
+        :return (string, set): a natural-language description of the bar and a set with its labels
         """
         output = ''
         if bar:
@@ -1626,14 +1640,14 @@ class BarChartOntology(UpperVisOntology):
                     unitsNL = units.replace("_", " ").lower()
                 else:
                     unitsNL = "(units unknown)"
-            barfilters = self.getElementFilters(bar)
+            barfilters = set(str(v) for v in sorted(self.getElementFilters(bar)) if v)
             if self.elementHasRole(bar, self.SyntacticRoles.STACKED_BAR):
                 output += "Stacked bar "
             else:
                 output += "Simple bar "
             if len(barfilters) > 0:
                 output += 'with labels: '
-                output += ', '.join(str(v) for v in sorted(barfilters) if v)
+                output += ', '.join(barfilters)
             size = self.getMetricBarValue(bar)
             if isinstance(size, int):
                 output += " (%d %s). " % (size, unitsNL)
@@ -1651,7 +1665,7 @@ class BarChartOntology(UpperVisOntology):
                     output += "User tags: %s. " % ul
         else:
             output += "Bar not found!"
-        return output
+        return output, barfilters
 
     def __printLabels(self, element):
         """

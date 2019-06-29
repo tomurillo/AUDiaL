@@ -354,6 +354,35 @@ class UpperVisOntology(UpperOntology):
                 property = self.SyntacticProperty.HAS_INFORMATIONAL_ROLE
             return self.tripleExists(element, property, role, "object", ns)
 
+    def getElementFilters(self, element, returnText=True):
+        """
+        Retrieves the filters that apply to an element given by its labels,
+        color and other attributes
+        :param element: the name of a metric bar instance
+        :param returnText: whether to return the text of the labels (True) or
+        the instance names of the label elements (False)
+        :return: set<sting>: a list of the texts of those labels that apply
+        to the bar if returText is True, or a list of label instance names
+        otherwise
+        """
+        labels = set(self.getLabelsOfElement(element))
+        color = self.getValue(element, self.SyntacticProperty.HAS_COLOR)
+        if color:  # TODO: retrieve filters according to other visual attributes
+            legends = self.getLegends()
+            for legend in legends:
+                if not self.getValue(legend, self.ReasonerDataPropery.LEGEND_REASONED, default=False):
+                    legendElements = self.getLegendPairs(legend)
+                    for subelement, label in legendElements:
+                        elementColor = self.getValue(subelement, self.SyntacticProperty.HAS_COLOR)
+                        if elementColor == color:
+                            # Add label from legend to the bar
+                            self.addObjectPropertyTriple(subelement, self.SyntacticProperty.IS_LABELED_BY, label)
+                            labels.add(label)
+        if returnText:
+            return set([self.getText(l) for l in labels if l])  # Discard NoneType and ""
+        else:
+            return set([l for l in labels if l])
+
     def yieldTextElement(self):
         """
         Yields a text literal in the object of a has_text datatype property occurrence
@@ -1260,7 +1289,7 @@ class UpperVisOntology(UpperOntology):
         diffs = [0.0]
         n_slopes = len(degrees)
         if n_slopes > 1:
-            n = max(1, max_n * n_slopes / 100)
+            n = max(1, min(5, max_n * n_slopes / 100))
             for i, di in enumerate(degrees):
                 j = i + 1
                 if j < n_slopes:
