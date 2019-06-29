@@ -97,7 +97,7 @@ class Consolidator(object):
                                 #  Create new POC without the contained OC
                                 new_poc = self.createSubPOC(poc, sc.OE.annotation.tree)
                                 if new_poc:
-                                    pocs_clean.append(new_poc)
+                                    self.q.pocs.append(new_poc)
                                     add = False
                             sc.OE.annotation.tree = immutableCopy(poc.tree)
             if add:

@@ -1460,7 +1460,6 @@ class BarChartOntology(UpperVisOntology):
                 units = chart_units.replace("_", " ").lower()
             else:
                 add_units = False
-        points = self.barPoints(bars)
         n_bars = len(bars)
         if n_bars > 0:
             path = self.printBarDetails(bars[-1], skipNav, units)[0]
@@ -1486,6 +1485,7 @@ class BarChartOntology(UpperVisOntology):
             else:
                 if n_bars == 2:
                     if show_trend:
+                        points = self.barPoints(bars)
                         trend = self.straightSlopeLabel(points)
                         path += "There is a %s between this bar and %s" % (trend, t_str)
                         path += "; its value is %.2f %s(%.2f%%) %s." % (v, u, r, cmp_str)
@@ -1496,6 +1496,7 @@ class BarChartOntology(UpperVisOntology):
                     n_verb = 'are' if n_between > 1 else 'is'
                     n_pl = 's' if n_between > 1 else ''
                     if show_trend:
+                        points = self.barPoints(bars)
                         path += "There %s %d bar%s between this bar and %s. " % (n_verb, n_between, n_pl, t_str)
                         trend = self.straightSlopeLabel(points)
                         path += "The bars follow a %s" % trend
@@ -1503,14 +1504,16 @@ class BarChartOntology(UpperVisOntology):
                     path += "The current bar's value is %.2f %s(%.2f%%) %s than %s' value." % (v, u, r, cmp_str, t_str)
         return path
 
-    def trendIsMeaningful(self, path):
+    def trendIsMeaningful(self, path, max_n=50):
         """
         Returns whether the trend on a given path between bars should be displayed
         :param path: list<string>; a sorted list of bar instance names specifying a path from path[0] to path [-1]
+        :param max_n: int; maximum number of bars to consider, if higher then skip trend display
         :return: boolean; whether the trend information of the path is meaningful and should be given to the user
         """
         show_trend = False
-        if len(path) > 1:
+        n_elements = len(path)
+        if 2 <= n_elements <= max_n:
             if self.getElementsWithRole(self.SyntacticRoles.STACKED_BAR):
                 if self.elementHasRole(path[-1], self.SyntacticRoles.STACKED_BAR) and \
                         self.elementHasRole(path[0], self.SyntacticRoles.STACKED_BAR):
