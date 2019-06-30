@@ -683,6 +683,7 @@ class BarChartOntology(UpperVisOntology):
         :param bars: list<string>; bars to take into account
         :return: (string, boolean): NL answer of the task and whether the task could be completed
         """
+        from config import MAX_OUTPUT_NODES
         answer = ''
         success = False
         if bars:
@@ -698,7 +699,8 @@ class BarChartOntology(UpperVisOntology):
             if home:
                 to_compare.append('home')
             if to_compare:
-                ordered_bars = self.sortBarsAccordingToNavigation(bars)
+                n_bars = len(bars)
+                ordered_bars = self.sortBarsAccordingToNavigation(bars[:MAX_OUTPUT_NODES])
                 for c_label in to_compare:
                     if c_label == 'current':
                         curr_filters = self.getElementFiltersString(current)
@@ -730,6 +732,9 @@ class BarChartOntology(UpperVisOntology):
                             else:
                                 answer += "<li>%s: the same</li>" % labels
                             success = True
+                    if n_bars > MAX_OUTPUT_NODES:
+                        n_skipped = n_bars - MAX_OUTPUT_NODES
+                        answer += "<li>Too many elements to show. %d elements have been skipped.</li>" % n_skipped
                     answer += '</ul></section>'
         return answer, success
 
@@ -1545,7 +1550,7 @@ class BarChartOntology(UpperVisOntology):
             if bar_val is not None:
                 val_diff = bar_val - val
                 rel_diff = -(1 - bar_val / val) * 100
-        return val_diff, rel_diff
+        return round(val_diff, 2), round(rel_diff, 2)
 
     def printCompareValToHome(self, val):
         """

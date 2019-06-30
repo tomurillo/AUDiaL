@@ -296,6 +296,12 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_datatype -->
+
+    <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_datatype"/>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_hue -->
 
     <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_hue">
@@ -2189,6 +2195,7 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Number_of_People">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Dependent_Variable"/>
+        <ns1:has_datatype>int</ns1:has_datatype>
     </NamedIndividual>
     
 
@@ -3592,7 +3599,7 @@
         <ns1:hasSVGElement>text4429-4-72-6</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.096</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>219.034</ns1:hasYCoordinate>
-        <ns1:has_text>11556</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1155600</ns1:has_text>
     </NamedIndividual>
     
 
@@ -3606,7 +3613,7 @@
         <ns1:hasSVGElement>text4429-4-72-7</ns1:hasSVGElement>
         <ns1:hasXCoordinate>19.8</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>182.479</ns1:hasYCoordinate>
-        <ns1:has_text>13482</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1348200</ns1:has_text>
     </NamedIndividual>
     
 
@@ -3620,7 +3627,7 @@
         <ns1:hasSVGElement>text4429-4-72-1</ns1:hasSVGElement>
         <ns1:hasXCoordinate>19.911</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>145.554</ns1:hasYCoordinate>
-        <ns1:has_text>15408</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1540800</ns1:has_text>
     </NamedIndividual>
     
 
@@ -3634,7 +3641,7 @@
         <ns1:hasSVGElement>text4429-4-72-00</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.112</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>108.667</ns1:hasYCoordinate>
-        <ns1:has_text>17334</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1733400</ns1:has_text>
     </NamedIndividual>
     
 
@@ -3648,7 +3655,7 @@
         <ns1:hasSVGElement>text4429-4-72-4</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.069</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>71.582</ns1:hasYCoordinate>
-        <ns1:has_text>19260</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1926000</ns1:has_text>
     </NamedIndividual>
     
 
@@ -3662,7 +3669,7 @@
         <ns1:hasSVGElement>text4429-4</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.033</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>403.234</ns1:hasYCoordinate>
-        <ns1:has_text>1926</ns1:has_text>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">192600</ns1:has_text>
     </NamedIndividual>
     
 
@@ -4054,6 +4061,7 @@
         <ns1:hasSVGElement>text4429-4-0</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.074</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>366.417</ns1:hasYCoordinate>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">385200</ns1:has_text>
     </NamedIndividual>
     
 
@@ -4067,6 +4075,7 @@
         <ns1:hasSVGElement>text4429-4-7</ns1:hasSVGElement>
         <ns1:hasXCoordinate>19.965</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>329.618</ns1:hasYCoordinate>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">577800</ns1:has_text>
     </NamedIndividual>
     
 
@@ -4080,6 +4089,7 @@
         <ns1:hasSVGElement>text4429-4-72</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.116</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>292.865</ns1:hasYCoordinate>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">770400</ns1:has_text>
     </NamedIndividual>
     
 
@@ -4093,6 +4103,7 @@
         <ns1:hasSVGElement>text4429-4-72-0</ns1:hasSVGElement>
         <ns1:hasXCoordinate>20.024</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>255.842</ns1:hasYCoordinate>
+        <ns1:has_text rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">963000</ns1:has_text>
     </NamedIndividual>
     
 
