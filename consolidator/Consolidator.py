@@ -73,7 +73,9 @@ class Consolidator(object):
         :return: None; Updates Query attribute
         """
         pocs_clean = []
-        for poc in self.q.pocs:
+        i = 0
+        while i < len(self.q.pocs):
+            poc = self.q.pocs[i]
             add = True  # Add POCs not contained in any OC or filter for dialogue resolution
             matching_ocs = self.matchingOCsOfPOC(poc)
             if matching_ocs:
@@ -88,12 +90,12 @@ class Consolidator(object):
                 for scs in self.q.semanticConcepts:
                     if not add:
                         break
-                    for i, sc in enumerate(scs):
+                    for j, sc in enumerate(scs):
                         if sc.overlapsPOC(poc):
                             add = False
                             break
                         elif poc.overlapsOC(sc):
-                            if i == 0:
+                            if j == 0:
                                 #  Create new POC without the contained OC
                                 new_poc = self.createSubPOC(poc, sc.OE.annotation.tree)
                                 if new_poc:
@@ -102,6 +104,7 @@ class Consolidator(object):
                             sc.OE.annotation.tree = immutableCopy(poc.tree)
             if add:
                 pocs_clean.append(poc)
+            i += 1
         self.q.pocs = pocs_clean
 
     def matchingFiltersOfPOC(self, poc):
