@@ -1046,7 +1046,7 @@ class BarChartOntology(UpperVisOntology):
                 for bar_filter in labelsSet:
                     elements_labeled = set(self.getElementsLabeledByText(bar_filter))
                     if negate:
-                        barset.remove(elements_labeled)
+                        barset -= elements_labeled
                     else:
                         barset &= elements_labeled
         return barset

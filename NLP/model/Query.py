@@ -56,6 +56,7 @@ class Query(object):
                     if not sc.answer or not sc.task:
                         qf = QueryFilterNominal(sc.OE.annotation)
                         qf.operands.append(stripNamespace(sc.OE.uri))
+                        qf.computeNegate(self.annotations)
                         filters.append(qf)
                         if isinstance(sc.OE, OntologyLiteralElement):
                             qf.is_user_label = sc.OE.is_user_label

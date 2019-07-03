@@ -35,6 +35,9 @@ FILTER_NEG_LABELS = [RB_TREE_POS_TAG, DT_TREE_POS_TAG]
 
 FILTER_NEG_TOKENS = ["n't", "not", "no"]
 
+FILTER_NEG_TOKENS_NOM = ['except ', 'besides ', 'other than ', 'without ', 'excluding ', 'exclude', 'apart from ',
+                         'leaving out ', 'leave out ', 'omitting ', 'barring ', 'outside of ', "is n't", "are n't"]
+
 TOKEN_IGNORE_PAIR = ["show me", "give me", "tell me", "show us", "give us", "tell us"]
 
 # Redundant tasks and commands, will be evaluated as filtering tasks if not other task OC found in query

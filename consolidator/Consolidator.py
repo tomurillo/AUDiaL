@@ -102,7 +102,7 @@ class Consolidator(object):
                                     self.q.pocs.append(new_poc)
                                     add = False
                             sc.OE.annotation.tree = immutableCopy(poc.tree)
-            if add:
+            if add and not self.tokenIsOrphan(poc):
                 pocs_clean.append(poc)
             i += 1
         self.q.pocs = pocs_clean
@@ -301,6 +301,25 @@ class Consolidator(object):
                 newpocs.append(adjpoc)
         return newpocs
 
+    def tokenIsOrphan(self, poc):
+        """
+        Returns whether the given POC is an orphan preposition, conjunction, determiner, or other word-level element
+        that cannot be a POC
+        :param poc: POC instance
+        :return:
+        """
+        orphan = False
+        if isinstance(poc, POC) and len(poc.tree) == 1:
+            orphan_ignore_labels = [CC_TREE_POS_TAG, DT_TREE_POS_TAG, IN_TREE_POS_TAG, EX_TREE_POS_TAG, MD_TREE_POS_TAG,
+                                    TO_TREE_POS_TAG, WPDOLLAR_TREE_POS_TAG, LS_TREE_POS_TAG]
+            preters = getSubtreesAtHeight(poc.tree, 2)
+            if preters:
+                if len(preters) == 1:
+                    orphan = preters[0].label() in orphan_ignore_labels
+            else:
+                orphan = True
+        return orphan
+
     def removeUselessTokens(self, pocs):
         """
         Updates POCs by removing useless tokens at the starting offset e.g. 'which', 'what'...
@@ -342,7 +361,7 @@ class Consolidator(object):
         """
         new_poc = None
         new_tree = removeSubTree(poc.tree, mutableCopy(sub_tree))
-        if new_tree and isinstance(new_tree, nltk.Tree):
+        if new_tree and isinstance(new_tree, nltk.Tree) and sub_tree.height() < poc.tree.height():
             new_poc = POC()
             new_poc.start_original = poc.start_original
             new_poc.end_original = poc.end_original

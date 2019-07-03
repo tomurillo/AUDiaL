@@ -30,16 +30,13 @@ class FilterCreator(object):
                 parsed_op = None
                 operand = None
                 or_conj = False
-                negate = False
                 pos_start, pos_end = len(preters) - 1, 0
                 for i, pt in enumerate(preters):
                     match = False
                     check_operator = False
                     if pt.label() in FILTER_NEG_LABELS:
                         raw_text = treeRawString(pt)
-                        if raw_text in FILTER_NEG_TOKENS and not operand and not parsed_op:
-                            negate = not negate  # We do not set match=True for overlapsByOperator to work
-                        elif raw_text in FILTER_SIM_TOKENS:
+                        if raw_text in FILTER_SIM_TOKENS:
                             check_operator = True
                     if check_operator or pt.label() in FILTER_COMP_LABELS:
                         parsed_op = self.parseOperator(pt, ann.tree)
@@ -71,11 +68,12 @@ class FilterCreator(object):
                     else:
                         qf_operator_combined = qf_operators[0]
                     if qf_operator_combined:
-                        qfilter = QueryFilterCardinal(ann, qf_operator_combined, negate)
+                        qfilter = QueryFilterCardinal(ann, qf_operator_combined)
                         qfilter.operands.append(operand)
                         qfilter.start, qfilter.end = ann.start + pos_start, ann.start + pos_end
                         filter_text = ' '.join([treeRawString(t) for t in preters[pos_start: pos_end + 1]])
-                        if negate:
+                        qfilter.computeNegate(self.q.annotations)
+                        if qfilter.negate:
                             filter_text = 'not ' + filter_text
                         qfilter.text = filter_text
                         filters.append(qfilter)

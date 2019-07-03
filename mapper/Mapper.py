@@ -169,6 +169,7 @@ class Mapper(object):
                                     tree_clean = removeSubTree(tree_copy, prepreterminal)
                             annotation.tree = immutableCopy(tree_clean)
                             annotation.rawText = quick_norm(treeRawString(tree_clean))
+                    annotation.negated = self._isPhraseNegated(annotation.tree)
                     annotation.stem = stem_first
                     annotations.append(annotation)
         if preferLonger:
@@ -296,6 +297,22 @@ class Mapper(object):
                 elif label in TOKEN_IGNORE_PHRASE:
                     ignore = True
         return ignore
+
+    def _isPhraseNegated(self, ptree):
+        """
+        Returns whether the given clause contains a negation operand
+        :param ptree: nltk.Tree; parse tree of the clause
+        :return: True if a negation operand is found within the clause; False otherwise
+        """
+        negate = False
+        if isinstance(ptree, nltk.Tree) and 2 < ptree.height() <= 6:
+            preters = getSubtreesAtHeight(ptree, 2)
+            if preters:
+                negate = preters[0][0] in FILTER_NEG_TOKENS
+            if not negate:
+                treestr = quick_norm(treeRawString(ptree))
+                negate = any(treestr.startswith(token) for token in FILTER_NEG_TOKENS_NOM)
+        return negate
 
     def _tokenIsPlural(self, ptree):
         """

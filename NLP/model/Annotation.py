@@ -1,16 +1,20 @@
 class Annotation(object):
+    """
+    An annotated clause appearing in a user query.
+    """
     def __init__(self, rawText='', tree=None):
         """
         Annotation constructor.
         """
-        self.tree = tree  # Must be of type nltk.ImmutableTree
-        self.lemma_tree = None
-        self.rawText = rawText
+        self.tree = tree  # nltk.ImmutableTree; Original parse tree
+        self.lemma_tree = None  # nltk.Tree; Lemmatized parse tree
+        self.rawText = rawText  # Clause text
         self.start = -1  # Position at which the annotation starts in the sentence
         self.end = -1  # Position at which the annotation ends in the sentence
         self.stem = False  # Whether to lemmatize its text when searching in the KB
         self.inOntology = False  # Does this annotation have an associated OC?
         self.isSynonym = False  # Whether the found OC is a synonym of the annotation
+        self.negated = False  # Whether the annotation contains a negation operator
         self.text = ''  # Actual text found in the ontology, if any
         self.oc_type = {}  # Types of ontology concept (class, instance, property, ...) found in the ontology (keys)
                            # and their URIs (vals)
@@ -70,7 +74,8 @@ class Annotation(object):
         :return: dict
         """
         d = {'rawText': self.rawText, 'start': self.start, 'end': self.end, 'stem': self.stem, 'inOntology': self.inOntology,
-             'isSynonym': self.isSynonym, 'text': self.text, 'oc_type': self.oc_type, 'extra': self.extra}
+             'isSynonym': self.isSynonym, 'negated': self.negated, 'text': self.text, 'oc_type': self.oc_type,
+             'extra': self.extra}
         if self.tree:
             d['tree'] = str(self.tree)
         else:
@@ -99,6 +104,7 @@ class Annotation(object):
             self.stem = d.get('stem', False)
             self.inOntology = d.get('inOntology', False)
             self.isSynonym = d.get('isSynonym', False)
+            self.negated = d.get('negated', False)
             self.text = d.get('text', '')
             self.oc_type = d.get('oc_type', {})
             self.extra = d.get('extra', {})
@@ -122,8 +128,8 @@ class Annotation(object):
 
     def __hash__(self):
         return hash(self.rawText) ^ hash(self.tree) ^ hash(self.start) ^ hash(self.end) \
-               ^ hash((self.start, self.end)) ^ hash(self.stem) ^ hash(self.inOntology) \
-               ^ hash((self.stem, self.inOntology))
+               ^ hash((self.start, self.end)) ^ hash(self.stem) ^ hash(self.inOntology) ^ hash(self.negated) \
+               ^ hash((self.stem, self.inOntology, self.negated))
 
     def copy(self):
         ann_copy = Annotation()
@@ -141,6 +147,7 @@ class Annotation(object):
         ann_copy.stem = self.stem
         ann_copy.inOntology = self.inOntology
         ann_copy.isSynonym = self.isSynonym
+        ann_copy.negated = self.negated
         ann_copy.text = self.text
         ann_copy.oc_type = self.oc_type.copy()
         ann_copy.extra = self.extra.copy()
@@ -165,6 +172,7 @@ class Annotation(object):
         ann_copy.stem = self.stem
         ann_copy.inOntology = self.inOntology
         ann_copy.isSynonym = self.isSynonym
+        ann_copy.negated = self.negated
         ann_copy.text = self.text
         ann_copy.oc_type = copy.deepcopy(self.oc_type)
         ann_copy.extra = copy.deepcopy(self.extra)

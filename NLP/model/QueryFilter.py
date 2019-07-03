@@ -17,6 +17,17 @@ class QueryFilter(object):
         self.start = -1  # Start offset of actual filter (may be contained within its annotation)
         self.end = -1  # End offset of actual filter
 
+    def computeNegate(self, annotations):
+        """
+        Computes whether this filter has to be negated according to its query
+        :param annotations: List<Annotation>; annotations of the user query where this filter appears
+        :return: None, updates current instance
+        """
+        for a in annotations:
+            if a.negated and a.overlaps(self.annotation, strict=False):
+                self.negate = True
+                break
+
     def overlaps(self, other, strict=True):
         """
         Returns whether the current instance overlaps the given annotation or filter
