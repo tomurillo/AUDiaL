@@ -152,7 +152,7 @@ def annotationToUserLabel(annotation, sess_id):
         labels = session.get(sess_var, {})
         user_labels = set()
         for e, e_label in labels.iteritems():
-            user_labels.update([quick_norm(l) for l in e_label.replace(';', ',').split(",")])
+            user_labels.update(l for l in e_label.replace(';', ',').split(","))
             user_labels.add(e_label)
         for label in user_labels:
             if quick_norm(label) == ann_text:

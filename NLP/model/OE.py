@@ -468,6 +468,8 @@ class OntologyLiteralElement(OntologyElement):
         self.triples = []
         # User-defined labels are session-bound and do not underpin ontology elements, but behave like string Literals
         self.is_user_label = False
+        # OE underpins a numeric value bound to a metric axis, which may not explicitly exist in the ontology
+        self.is_axis_value = False
         super(OntologyLiteralElement, self).__init__()
 
     def to_dict(self):
@@ -479,6 +481,7 @@ class OntologyLiteralElement(OntologyElement):
         d['type'] = 'OntologyLiteralElement'
         d['triples'] = self.triples
         d['is_user_label'] = self.is_user_label
+        d['is_axis_value'] = self.is_axis_value
         return d
 
     def from_dict(self, d):
@@ -490,6 +493,7 @@ class OntologyLiteralElement(OntologyElement):
         super(OntologyLiteralElement, self).from_dict(d)
         self.triples = d.get('triples', [])
         self.is_user_label = d.get('is_user_label', False)
+        self.is_axis_value = d.get('is_axis_value', False)
 
     def print_uri(self):
         """
@@ -503,6 +507,8 @@ class OntologyLiteralElement(OntologyElement):
             return False
         elif self.is_user_label != other.is_user_label:
             return False
+        elif self.is_axis_value != other.is_axis_value:
+            return False
         elif self.triples != other.triples:
             return False
         else:
@@ -513,8 +519,8 @@ class OntologyLiteralElement(OntologyElement):
 
     def __hash__(self):
         return hash(self.uri) ^ hash(tuple(self.triples)) ^ hash(self.added) ^ hash(self.is_user_label) \
-               ^ hash(self.annotation) ^ hash(self.main_subject) \
-               ^ hash((self.added, self.main_subject, self.is_user_label))
+               ^ hash(self.annotation) ^ hash(self.main_subject) ^ hash(self.is_axis_value) \
+               ^ hash((self.added, self.main_subject, self.is_user_label, self.is_axis_value))
 
     def copy(self):
         oe_copy = OntologyLiteralElement()
@@ -525,6 +531,7 @@ class OntologyLiteralElement(OntologyElement):
             oe_copy.annotation = self.annotation.copy()
         oe_copy.triples = self.triples
         oe_copy.is_user_label = self.is_user_label
+        oe_copy.is_axis_value = self.is_axis_value
         return oe_copy
 
     __copy__ = copy
@@ -538,6 +545,7 @@ class OntologyLiteralElement(OntologyElement):
             oe_copy.annotation = self.annotation.deepcopy()
         oe_copy.triples = list(self.triples)
         oe_copy.is_user_label = self.is_user_label
+        oe_copy.is_axis_value = self.is_axis_value
         return oe_copy
 
     __deepcopy__ = deepcopy

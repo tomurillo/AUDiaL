@@ -1,4 +1,5 @@
 from NLP.util.TreeUtil import immutableCopy
+from general_util import isNumber
 
 
 class POC(object):
@@ -16,7 +17,8 @@ class POC(object):
         self.tree = tree
         self.rawText = rawText
         self.modifiers = []  # List of nltk.Tree
-        self.head = None  # POC instance
+        self.head = None  # POC instance; head of the NP
+        self.numeric = isNumber(rawText)  # Does this POC represent a number?
         self.start = -1  # Start word offset in query
         self.end = -1  # End word offset in query
         self.start_original = -1  # Copy of start offset in case POC is altered
@@ -31,6 +33,7 @@ class POC(object):
         """
         if ann:
             self.rawText = ann.rawText
+            self.numeric = isNumber(ann.rawText)
             self.tree = ann.tree
             self.start = ann.start
             self.start_original = ann.start
@@ -68,8 +71,9 @@ class POC(object):
         :return: dict
         """
         d = {'type': 'POC','tree': str(self.tree), 'rawText': self.rawText, 'start': self.start,
-             'end': self.end, 'start_original': self.start_original, 'end_original': self.end_original,
-             'mainSubjectPriority': self.mainSubjectPriority, 'modifiers': [str(m) for m in self.modifiers]}
+             'numeric': self.numeric, 'end': self.end, 'start_original': self.start_original,
+             'end_original': self.end_original, 'mainSubjectPriority': self.mainSubjectPriority,
+             'modifiers': [str(m) for m in self.modifiers]}
         if self.head:
             d['head'] = self.head.to_dict()
         else:
@@ -100,6 +104,7 @@ class POC(object):
             self.start_original = d.get('start_original', -1)
             self.end = d.get('end', -1)
             self.end_original = d.get('end_original', -1)
+            self.numeric = d.get('numeric', False)
             self.mainSubjectPriority = d.get('mainSubjectPriority', self.MSUB_PRIORITY_MIN)
         else:
             raise ValueError('POC.from_dict: parameter must be of type dict.')
@@ -136,6 +141,7 @@ class POC(object):
         poc_copy.start_original = self.start_original
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
+        poc_copy.numeric = self.numeric
         if self.head:
             poc_copy.head = self.head.copy()
         poc_copy.modifiers = [m.copy() for m in self.modifiers]
@@ -154,6 +160,7 @@ class POC(object):
         poc_copy.start_original = self.start_original
         poc_copy.end = self.end
         poc_copy.end_original = self.end_original
+        poc_copy.numeric = self.numeric
         if self.head:
             poc_copy.head = self.head.deepcopy()
         poc_copy.modifiers = [m.copy(deep=True) for m in self.modifiers]
@@ -162,7 +169,7 @@ class POC(object):
     __deepcopy__ = deepcopy
 
     def __hash__(self):
-        return hash(self.rawText) ^ hash(self.start) ^ hash(self.end) \
-               ^ hash(self.start_original) ^ hash(self.end_original) ^ hash(immutableCopy(self.tree)) ^ hash(self.head) \
+        return hash(self.rawText) ^ hash(self.start) ^ hash(self.end) ^ hash(self.start_original) \
+               ^ hash(self.end_original) ^ hash(self.numeric) ^ hash(immutableCopy(self.tree)) ^ hash(self.head) \
                ^ hash(self.mainSubjectPriority) ^ hash((self.start, self.end, self.start_original, self.end_original)) \
                ^ hash(tuple([immutableCopy(m) for m in self.modifiers]))

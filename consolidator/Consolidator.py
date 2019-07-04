@@ -362,12 +362,10 @@ class Consolidator(object):
         new_poc = None
         new_tree = removeSubTree(poc.tree, mutableCopy(sub_tree))
         if new_tree and isinstance(new_tree, nltk.Tree) and sub_tree.height() < poc.tree.height():
-            new_poc = POC()
+            new_poc = POC(treeRawString(new_tree), new_tree)
             new_poc.start_original = poc.start_original
             new_poc.end_original = poc.end_original
             new_poc.start, new_poc.end = getSplitPOCOffsets(poc, new_tree.leaves())
-            new_poc.tree = new_tree
-            new_poc.rawText = treeRawString(new_tree)
             new_poc.head = poc.head
             new_poc.modifiers = poc.modifiers
             new_poc.mainSubjectPriority = poc.mainSubjectPriority

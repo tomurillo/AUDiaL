@@ -92,7 +92,7 @@ class DialogHandler(object):
             #  Find additional votes by creating a new POC from the OE
             sug_generator = SuggestionGenerator(self.q, self.o, force_parents=True)
             poc = POC()
-            poc.populateFromAnnotation(sc_first.OE.annotation.copy())
+            poc.populateFromAnnotation(sc_first.OE.annotation)
             poc_votes = []
             skip_others = poc.tree.label().startswith(VB_TREE_POS_TAG)
             if neighbor_ocs:

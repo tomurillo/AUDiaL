@@ -544,6 +544,7 @@ class BarChartOntology(UpperVisOntology):
         """
         labels = {}  # {Textual label: negate}
         user_tags = {}  # {User tag to filter: negate}
+        values = []  # Bars values to filter
         cardinal_f_result = []  # Cardinal Filters applied to result
         cardinal_f_label = []  # Cardinal Filters applied to labels
         for f in query_filters:
@@ -551,6 +552,8 @@ class BarChartOntology(UpperVisOntology):
                 for o in f.operands:
                     if f.is_user_label:
                         user_tags[o] = f.negate
+                    elif f.is_axis_value:
+                        values.append(float(o))
                     else:
                         labels[o] = f.negate
             elif isinstance(f, QueryFilterCardinal):
@@ -588,10 +591,24 @@ class BarChartOntology(UpperVisOntology):
         if not bars:
             return []
         to_remove = set()
-        for f in cardinal_f_result:
-            bars = set(b for b in bars if f.assertFilter(self.getMetricBarValue(b)))
-            if not bars:
-                break
+        n_bars = len(bars)
+        i = 0
+        for b in bars:
+            added = False
+            b_v = self.getMetricBarValue(b)
+            for v in values:
+                if v != b_v:
+                    to_remove.add(b)
+                    added = True
+            if not added:
+                for f in cardinal_f_result:
+                    if not f.assertFilter(b_v):
+                        to_remove.add(b)
+            if added:
+                i += 1
+                if i == n_bars:
+                    break
+        bars = bars - to_remove
         if cardinal_f_label:
             for b in bars:
                 bar_filters = [f for f in self.getElementFilters(b, returnText=True) if isNumber(f)]

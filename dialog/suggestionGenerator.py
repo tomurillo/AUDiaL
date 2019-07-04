@@ -70,7 +70,8 @@ class SuggestionGenerator(object):
 
     def createTextVotes(self, key_text, limit=100):
         """
-        Create votes from occurrences of the has_text property in the ontology
+        Create votes from occurrences of the has_text property in the ontology (and, similarly, from potential
+        metric axis value elements)
         :param key_text: text input by the user
         :param limit: maximum number of votes to create (default 100)
         :return: list<Vote>
@@ -78,6 +79,7 @@ class SuggestionGenerator(object):
         votes = {}  # Key: Literal string; value: Vote containing that Literal as candidate
         if key_text and isinstance(self.o, UpperVisOntology):
             from dialog.learning.util import PRIORITY_DIAG_LABELS
+            from general_util import numbersInText
             i = 0
             for element, prop, text_literal in self.o.yieldTextElement():
                 if text_literal:
@@ -96,6 +98,15 @@ class SuggestionGenerator(object):
                             break
                 else:
                     break
+            # Look for numbers in the key text and offer votes for chart values
+            numbers = numbersInText(key_text)
+            for n in numbers:
+                oe = self.createOntologyElementforURI(n, 'literal', check_exists=False)
+                oe.is_axis_value = True
+                v = self.createVote(key_text, oe)
+                if PRIORITY_DIAG_LABELS and v.vote < 1:
+                    v.vote += 1.0
+                votes[n] = v
         return votes.values()
 
     def createTaskVotes(self, key_text):

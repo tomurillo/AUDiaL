@@ -89,23 +89,27 @@ def getHeadOfNounPhrase(ptree):
     noun_labels = [NN_TREE_POS_TAG, NNS_TREE_POS_TAG, NNP_TREE_POS_TAG, NNPS_TREE_POS_TAG]
     top_trees = [child for child in ptree if isinstance(child, nltk.Tree)]
     top_nouns = [t for t in top_trees if t.label() in noun_labels]
-    head_poc = POC()
+    poc_text = ''
+    poc_tree = None
     if len(top_nouns) > 0:
-        head_poc.rawText = top_nouns[-1][0]
-        head_poc.tree = top_nouns[-1]
+        poc_text = top_nouns[-1][0]
+        poc_tree = top_nouns[-1]
     else:
         top_nps = [t for t in top_trees if t.label() == NP_TREE_POS_TAG]
         if len(top_nps) > 0:
-            head_poc.rawText = top_nps[-1][0]
-            head_poc.tree = top_nps[-1]
+            poc_text = top_nps[-1][0]
+            poc_tree = top_nps[-1]
         else:
             nouns = [p for p in getSubtreesAtHeight(ptree, 2) if p.label() in noun_labels]
             if len(nouns) > 0:
-                head_poc.rawText = nouns[-1][0]
-                head_poc.tree = nouns[-1]
+                poc_text = nouns[-1][0]
+                poc_tree = nouns[-1]
             else:
-                head_poc.tree = getSubtreesAtHeight(ptree, 2)[-1]
-                head_poc.rawText = head_poc.tree[0]
+                preters = getSubtreesAtHeight(ptree, 2)
+                if preters:
+                    poc_tree = preters[-1]
+                    poc_text = poc_tree[0]
+    head_poc = POC(poc_text, poc_tree)
     return head_poc
 
 
@@ -230,6 +234,7 @@ def getSplitPOCOffsets(poc, new_tokens):
     new_start = poc.start + start_delay
     new_end = poc.end - end_delay
     return new_start, new_end
+
 
 def distanceBetweenAnnotations(ptree, ann1, ann2):
     """

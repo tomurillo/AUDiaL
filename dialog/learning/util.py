@@ -198,7 +198,7 @@ def updateVotesFromLearningVotes(lvotes, old_votes):
             if old_vote.candidate:
                 if isinstance(old_vote.candidate, SemanticConcept) and old_vote.candidate.OE:
                     if isinstance(old_vote.candidate.OE, OntologyLiteralElement):
-                        if lvote.triples == old_vote.candidate.OE.triples:
+                        if lvote.triples and lvote.triples == old_vote.candidate.OE.triples:
                             equal = True
                     elif lvote.identifier == old_vote.candidate.OE.uri:
                         if isinstance(old_vote.candidate.OE, OntologyInstanceElement):

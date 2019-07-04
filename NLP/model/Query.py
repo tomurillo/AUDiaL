@@ -60,6 +60,7 @@ class Query(object):
                         filters.append(qf)
                         if isinstance(sc.OE, OntologyLiteralElement):
                             qf.is_user_label = sc.OE.is_user_label
+                            qf.is_axis_value = sc.OE.is_axis_value
         return filters
 
     def ocs_consistent(self):

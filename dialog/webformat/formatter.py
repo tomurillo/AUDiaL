@@ -60,7 +60,7 @@ class OutputFormatter(object):
                             task = filter_task
                     elif isinstance(vote.candidate, SemanticConcept):
                         key_label = self.findOELabel(vote.candidate.OE)
-                        task = self.findTaskLabel(vote.candidate.task)
+                        task = self.findTaskLabel(vote.candidate)
                     json_vote['candidate'] = key_label
                     json_vote['id'] = vote.id
                     json_vote['score'] = "%.2f" % vote.vote
@@ -148,18 +148,22 @@ class OutputFormatter(object):
         label += " %s" % ', '.join(operand)
         return label
 
-    def findTaskLabel(self, task):
+    def findTaskLabel(self, sc):
         """
         Returns a label to be displayed for an analytic task
-        :param task: string; a task URI or a quick task string (such as 'max', 'min', 'sum', 'avg')
+        :param task: SemantinConcept instance where to search for a task label
         :return: string; label to be shown in dialogue
         """
-        from dialog.config import QUICK_TASKS
         label = ''
-        if task in QUICK_TASKS:
-            label = QUICK_TASKS[task]
-        elif task and task[-5:] == '_Task':  # Task is visualization task ontology resource URI
-            label = self.quickURILabel(task[:-5])
+        if isinstance(sc, SemanticConcept):
+            if sc.task:
+                from dialog.config import QUICK_TASKS
+                if sc.task in QUICK_TASKS:
+                    label = QUICK_TASKS[sc.task]
+                elif sc.task and sc.task[-5:] == '_Task':  # Task is visualization task ontology resource URI
+                    label = self.quickURILabel(sc.task[:-5])
+            elif isinstance(sc.OE, OntologyLiteralElement) and sc.OE.is_axis_value:
+                label = "Equals to %s" % sc.OE.uri
         return label
 
     def findOELabel(self, oe, print_generic=True):
@@ -262,6 +266,14 @@ class OutputFormatter(object):
                     label = replaceLastCommaWithAnd(label)
             elif oe.is_user_label:
                 label = "%s (user-defined tag)" % oe.uri
+            elif oe.is_axis_value:
+                units = ''
+                if isinstance(self.o, BarChartOntology):
+                    units = self.o.getChartMeasurementUnit()
+                if units:
+                    label = units.capitalize()
+                else:
+                    label = "Element value"
         return label
 
     def fullLabelForResource(self, uri, oe):

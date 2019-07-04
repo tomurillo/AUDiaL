@@ -77,6 +77,16 @@ def numberToOrdinal(n):
     return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
 
 
+def numbersInText(text):
+    """
+    Returns all the numbers found within the given string
+    :param text: string; text where to search for the numbers
+    :return: list<string>; found numbers within the text
+    """
+    import re
+    return re.findall('-?\d+\.?\d*', text)
+
+
 def isNumber(n):
     """
     Checks whether the given string is a number
