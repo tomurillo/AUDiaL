@@ -188,19 +188,40 @@ class BarChartOntology(UpperVisOntology):
         output += self.getAxisDescription()
         output += self.getLegendsDescription()
 
-        # Bar line-ups. In simple (ungrouped) bar charts there is only one
-        lineups = self.getBarLineups()
+        metric_bars = self.getMetricBars()
+        n_m = len(metric_bars)
+        labels_metric = set()
+        for b in metric_bars:
+            labels_metric |= self.getElementFilters(b, returnText=False)
+        stacked_bars = self.getStackedBars()
+        labels_all = set(self.getLabels())
+
+        if stacked_bars:
+            n_s = 0
+            labels_stacked = set()
+            for b in stacked_bars:
+                labels_stacked |= self.getElementFilters(b, returnText=False)
+                n_s += 1
+            labels_metric = labels_metric - labels_stacked
+            l_m_str = replaceLastCommaWithAnd(", ".join(self.getText(l) for l in labels_metric))
+            n_m_s = n_m / n_s
+            output += "There are %d stacked bars, each of which is made up of %d sub-bars" % (n_s, n_m_s)
+            if l_m_str:
+                output += " (%s)" % l_m_str
+            output += ". There is a combined (metric + stacked) total of %d bars." % (n_s + n_m)
+        else:
+            output += "There are %d bars in the chart. They are all simple metric bars." % n_m
+        output += "<br/>"
+
+        lineups = self.getBarLineups()  # Bar line-ups. In simple (ungrouped) bar charts there is only one
         lcount = len(lineups)
         if lcount > 1:
-            output += ("The chart has its bars grouped into %d subsets:<br/>"
-                                                                    % lcount)
-        allLabels = set(self.getLabels())
+            output += ("The chart has its bars grouped into %d subsets:<br/>" % lcount)
 
         for l, bars in lineups.iteritems():
             # Try to find the common label of the lineup
-            labels = allLabels.copy()
-            # Bar individual labels (excluding labels common to all the bars
-            # in the lineup)
+            labels = labels_all.copy()
+            # Bar individual labels (excluding labels common to all the bars in the lineup)
             specificLabels = {}
             stacked = []
             simple = []
@@ -209,8 +230,7 @@ class BarChartOntology(UpperVisOntology):
                 labels &= barLabels
                 specificLabels[b] = barLabels
             for b in bars:
-                #Remove common labels to the lineup
-                specificLabels[b] = specificLabels[b] - labels
+                specificLabels[b] = specificLabels[b] - labels  # Remove common labels to the lineup
                 if self.elementHasRole(b, self.SyntacticRoles.STACKED_BAR):
                     stacked.append(b)
                 elif self.elementHasRole(b, self.SyntacticRoles.METRIC_BAR):
@@ -233,22 +253,20 @@ class BarChartOntology(UpperVisOntology):
 
         extremeMetric = self.computeExtreme(['max', 'min'], self.getMetricBars())
         extremeStacked = self.computeExtreme(['max', 'min'], self.getStackedBars())
-        bar, value = extremeStacked['max']
-        tags = ",".join([f for f in self.getElementFilters(bar) if f])
-        output += "Stacked bars maximum: %.2f (tags: %s)<br/>" \
-            % (value, tags)
-        bar, value = extremeStacked['min']
-        tags = ",".join([f for f in self.getElementFilters(bar) if f])
-        output += "Stacked bars minimum: %.2f (tags: %s)<br/>" \
-            % (value, tags)
-        bar, value = extremeMetric['max']
-        tags = ",".join([f for f in self.getElementFilters(bar) if f])
-        output += "Metric bars maximum: %.2f (tags: %s)<br/>" \
-            % (value, tags)
-        bar, value = extremeMetric['min']
-        tags = ",".join([f for f in self.getElementFilters(bar) if f])
-        output += "Metric bars minimum: %.2f (tags: %s)<br/>" \
-            % (value, tags)
+        if extremeStacked:
+            bar, value = extremeStacked['max']
+            tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
+            output += "Stacked bars maximum: %.2f (tags: %s)<br/>" % (value, tags)
+            bar, value = extremeStacked['min']
+            tags = ",".join(sorted([f for f in self.getElementFilters(bar) if f]))
+            output += "Stacked bars minimum: %.2f (tags: %s)<br/>" % (value, tags)
+        if extremeMetric:
+            bar, value = extremeMetric['max']
+            tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
+            output += "Metric bars maximum: %.2f (tags: %s)<br/>" % (value, tags)
+            bar, value = extremeMetric['min']
+            tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
+            output += "Metric bars minimum: %.2f (tags: %s)<br/>" % (value, tags)
 
         output += "End of summary.<br/>"
         return output
