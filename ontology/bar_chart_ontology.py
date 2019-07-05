@@ -190,15 +190,15 @@ class BarChartOntology(UpperVisOntology):
 
         metric_bars = self.getMetricBars()
         n_m = len(metric_bars)
-        labels_metric = set()
-        for b in metric_bars:
-            labels_metric |= self.getElementFilters(b, returnText=False)
         stacked_bars = self.getStackedBars()
         labels_all = set(self.getLabels())
 
         if stacked_bars:
-            n_s = 0
+            labels_metric = set()
+            for b in metric_bars:
+                labels_metric |= self.getElementFilters(b, returnText=False)
             labels_stacked = set()
+            n_s = 0
             for b in stacked_bars:
                 labels_stacked |= self.getElementFilters(b, returnText=False)
                 n_s += 1
@@ -247,7 +247,7 @@ class BarChartOntology(UpperVisOntology):
             output += "This subset (%s) is further divided into:<br/>" % lbloutput
             for b in stacked:
                 specificLblTxt = [self.getText(l) for l in specificLabels[b]]
-                output += ",".join(specificLblTxt) + "<br/>"
+                output += ", ".join(specificLblTxt) + "<br/>"
 
         output += "Extreme values of graph:<br/>"
 
