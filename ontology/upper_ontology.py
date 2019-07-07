@@ -775,6 +775,36 @@ class UpperOntology(object):
         query_res = self.graph.query(query)
         return [self.stripNamespace(row.p) if stripns else row.p for row in query_res]
 
+    def getNumericRangeOfDatatypeProperty(self, prop, ns=None):
+        """
+        Return the minimum and maximum values of the given datatype property
+        :param prop: string; URI of the property to consider
+        :param ns: namespace, None for default visualization NS
+        :return: float, float: min and max values of the property. None, None if the property does not have
+        numerical values.
+        """
+        from general_util import isNumber
+        if not ns:
+            ns = self.getNamespace(prop)
+            if not ns:
+                ns = self.VIS_NS
+        prop = self.stripNamespace(prop)
+        propertyURI = URIRef("%s#%s" % (ns, prop))
+        prop_min, prop_max = float('inf'), float('-inf')
+        found = False
+        for s, p, o in self.graph.triples((None, propertyURI, None)):
+            n = self.stripNamespace(o)
+            if isNumber(n):
+                n_float = float(n)
+                if n_float > prop_max:
+                    found = True
+                    prop_max = n_float
+                if n_float < prop_min:
+                    prop_min = n_float
+        if not found:
+            prop_min, prop_max = None, None
+        return prop_min, prop_max
+
     def neighborRangeOrDomainClasses(self, element, range_or_domain, stripns=True):
         """
         Return the neighbor classes of the given one according to the domain or range of the properties in the

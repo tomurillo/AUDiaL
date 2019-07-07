@@ -2,6 +2,7 @@ from dialog.model.Vote import *
 from NLP.model.SemanticConcept import *
 from NLP.model.Annotation import *
 from NLP.model.POC import *
+from NLP.model.QueryFilter import QueryFilterCardinal
 from dialog.config import *
 from NLP.NLHandler import synonymsOfWord, similarityBetweenWords, soundexSimilarityBetweenWords
 from NLP.constants import *
@@ -178,7 +179,7 @@ class SuggestionGenerator(object):
         :return: list<Vote>
         """
         votes = []
-        if isinstance(focus, POC):
+        if isinstance(focus, POC) and self.isCardinalFilterConsistent(filter_instance, 'axis'):
             vote = self.createFocusVote(focus)
             if vote:
                 votes.append(vote)
@@ -187,14 +188,56 @@ class SuggestionGenerator(object):
             from const import VIS_NS
             vis_label_uri = "%s#%s" % (VIS_NS, 'is_labeled_by')
             vis_label_oe = self.createOntologyElementforURI(vis_label_uri, 'datatypeProperty', check_exists=False)
-            v = self.createVote(key.text, vis_label_oe)
-            if PRIORITY_DIAG_LABELS and v.vote < 1:
-                v.vote += 0.2
-            votes.append(v)
+            has_text_oe = self.createOntologyElementforURI(self.o.SytacticDataProperty.HAS_TEXT,
+                                                           'datatypeProperty', check_exists=False)
+            if self.isCardinalFilterConsistent(filter_instance, has_text_oe):
+                v = self.createVote(key.text, vis_label_oe)
+                if PRIORITY_DIAG_LABELS and v.vote < 1:
+                    v.vote += 0.2
+                votes.append(v)
         if add_none:
             none_vote = self.createNoneVote(focus)
             votes.append(none_vote)
         return votes
+
+    def isCardinalFilterConsistent(self, filter, oe):
+        """
+        Returns whether the given cardinal filter is within the range of the given property
+        :param filter: QueryFilterCardinal instance
+        :param oe: OntologyElement instance or 'axis' if referring to the values of the chart's main axis
+        :return: boolean; True if the oe should be suggested to the user as a subject for the filter; False otherwise
+        """
+        if not isinstance(filter, QueryFilterCardinal):
+            return False
+        consistent = True
+        prop_max, prop_min = None, None
+        if isinstance(oe, OntologyDatatypePropertyElement):
+            prop_min, prop_max = self.o.getNumericRangeOfDatatypeProperty(oe.uri)
+        elif oe == 'axis':
+            prop_min, prop_max = self.o.getAxisExtremes()
+        else:
+            consistent = False
+        if prop_max is not None or prop_min is not None:
+            for op in filter.operands:
+                if not consistent:
+                    break
+                if isNumber(op):
+                    op_float = float(op)
+                    if consistent and prop_max is not None:
+                        if filter.op == filter.CardinalFilter.GT:
+                            consistent = op_float <= prop_max
+                        elif filter.op == filter.CardinalFilter.GEQ:
+                            consistent = op_float < prop_max
+                    if consistent and prop_min is not None:
+                        if filter.op == filter.CardinalFilter.LT:
+                            consistent = op_float >= prop_min
+                        elif filter.op == filter.CardinalFilter.LEQ:
+                            consistent = op_float > prop_min
+                else:
+                    consistent = False
+        else:
+            consistent = False
+        return consistent
 
     def createFocusVote(self, poc):
         """

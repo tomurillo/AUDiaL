@@ -87,7 +87,7 @@ class UpperVisOntology(UpperOntology):
 
     class SyntacticProperty:
         """
-        Upper visualization ontology object properties
+        Upper visualization ontology properties
         """
         HAS_SYNTACTIC_ROLE = "has_syntactic_role"
         IS_SYNTACTIC_ROLE_OF = "is_syntactic_role_of"
@@ -96,7 +96,10 @@ class UpperVisOntology(UpperOntology):
         IS_LABEL_FOR = "is_label_for"
         HAS_COLOR = "has_color_named"
         HAS_ORIENTATION = "has_orientation_named"
+        #  Metric Axis properties
         HAS_DATATYPE = "has_datatype"
+        MAX_VALUE = 'maximum_value'
+        MIN_VALUE = 'minimum_value'
 
     class StatisticalProperty:
         """
@@ -441,6 +444,27 @@ class UpperVisOntology(UpperOntology):
             if axis_type:
                 dtype = axis_type
         return dtype
+
+    def getAxisExtremes(self, axis=None):
+        """
+        Return the maximum and minimum values that are given by the metric axis.
+        :param axis: string; name of an axis from the chart; None to fetch default axis
+        :return: float, float:  minimum and maximum value supported by the given axis, or None if the axis is not
+        abelled.
+        """
+        axis_max = None
+        axis_min = None
+        if axis is None:
+            axis = self.getMetricAxis()
+        info = self.getValue(axis, self.StatisticalProperty.EXPRESSES_CARDINAL_INFORMATION)
+        if info:
+            axis_max = self.getValue(info, self.SyntacticProperty.MAX_VALUE)
+            if isNumber(axis_max):
+                axis_max = float(axis_max)
+            axis_min = self.getValue(info, self.SyntacticProperty.MIN_VALUE)
+            if isNumber(axis_min):
+                axis_min = float(axis_min)
+        return axis_min, axis_max
 
     def getMetricAxis(self):
         """
