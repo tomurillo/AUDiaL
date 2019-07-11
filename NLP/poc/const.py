@@ -42,7 +42,8 @@ TOKEN_IGNORE_PAIR = ["show me", "give me", "tell me", "show us", "give us", "tel
 
 # Redundant tasks and commands, will be evaluated as filtering tasks if not other task OC found in query
 TASK_IGNORE = ["go", "proceed", "move", "show", "give", "tell", "say", "output", "compute", "set", "apply", "get"
-               "fetch", "filter", "calculate", "infer", "is", "are", "was", "were", "have", "has", "had", "return"]
+               "fetch", "filter", "calculate", "infer", "is", "are", "was", "were", "have", "has", "had", "return",
+               "do", "did", "does"]
 
 # Adverbs that can be ignored
 RB_IGNORE = ["there", "n't", "not"]

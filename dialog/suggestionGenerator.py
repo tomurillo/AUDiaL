@@ -47,7 +47,7 @@ class SuggestionGenerator(object):
         if add_text_labels and not skip_non_tasks:
             votes.extend(self.createTextVotes(key.text))
         votes.extend(self.createTaskVotes(key.text))
-        if not skip_non_tasks:
+        if not skip_non_tasks and self.o.domainOntologyLoaded():
             candidates = set()
             for neighbor_sc in key.nearest_neighbors:
                 neighbor_candidates = set()
@@ -225,14 +225,14 @@ class SuggestionGenerator(object):
                     op_float = float(op)
                     if consistent and prop_max is not None:
                         if filter.op == filter.CardinalFilter.GT:
-                            consistent = op_float <= prop_max
-                        elif filter.op == filter.CardinalFilter.GEQ:
                             consistent = op_float < prop_max
+                        elif filter.op == filter.CardinalFilter.GEQ:
+                            consistent = op_float <= prop_max
                     if consistent and prop_min is not None:
                         if filter.op == filter.CardinalFilter.LT:
-                            consistent = op_float >= prop_min
-                        elif filter.op == filter.CardinalFilter.LEQ:
                             consistent = op_float > prop_min
+                        elif filter.op == filter.CardinalFilter.LEQ:
+                            consistent = op_float >= prop_min
                 else:
                     consistent = False
         else:
@@ -280,7 +280,7 @@ class SuggestionGenerator(object):
             task_votes = self.createTaskVotes(key.text)
             votes.extend(task_votes)
             n += len(task_votes)
-        if n < max and not skip_non_tasks:
+        if n < max and not skip_non_tasks and self.o.domainOntologyLoaded():
             oes = self.findGenericOEs(max, skip_uris)
             for oe in oes:
                 if isinstance(poc, Annotation):
@@ -299,7 +299,7 @@ class SuggestionGenerator(object):
                     n += len(additional_votes)
                     if n >= max:
                         break
-        if n < max and not skip_non_tasks:
+        if n < max and not skip_non_tasks and self.o.domainOntologyLoaded():
             n_left = max - n
             all_leftover_votes = self.createVotesfromOEs(self.findLeftOverOEs(), poc, key.text, None, skip_uris)
             leftover_votes = all_leftover_votes[:n_left]

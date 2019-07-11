@@ -1252,7 +1252,6 @@
         <ns1:has_width>None</ns1:has_width>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cluster</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">group</ns1:task_has_verbalization>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ns1:task_has_verbalization>
     </NamedIndividual>
     
 
@@ -2543,7 +2542,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2012_47"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-6-5</ns1:hasSVGElement>
         <ns1:hasXCoordinate>129.359</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>96.416</ns1:hasYCoordinate>
@@ -2560,7 +2558,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2009_40"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-4-83</ns1:hasSVGElement>
         <ns1:hasXCoordinate>106.17</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>101.607</ns1:hasYCoordinate>
@@ -2594,7 +2591,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2005_46"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-4-8</ns1:hasSVGElement>
         <ns1:hasXCoordinate>75.152</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>108.349</ns1:hasYCoordinate>
@@ -2611,7 +2607,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2018_28"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-4-8-1-8</ns1:hasSVGElement>
         <ns1:hasXCoordinate>174.846</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>85.954</ns1:hasYCoordinate>
@@ -2628,7 +2623,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2011_43"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-0-5</ns1:hasSVGElement>
         <ns1:hasXCoordinate>121.771</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>98.275</ns1:hasYCoordinate>
@@ -2645,7 +2639,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2017_42"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-6-5-4</ns1:hasSVGElement>
         <ns1:hasXCoordinate>167.176</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>87.848</ns1:hasYCoordinate>
@@ -2662,7 +2655,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2001_45"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-4</ns1:hasSVGElement>
         <ns1:hasXCoordinate>44.295</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>115.276</ns1:hasYCoordinate>
@@ -2679,7 +2671,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2014_25"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7-6-5</ns1:hasSVGElement>
         <ns1:hasXCoordinate>144.805</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>93.137</ns1:hasYCoordinate>
@@ -2696,7 +2687,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2000_49"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6</ns1:hasSVGElement>
         <ns1:hasXCoordinate>36.342</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>116.975</ns1:hasYCoordinate>
@@ -2713,7 +2703,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2007_41"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-1</ns1:hasSVGElement>
         <ns1:hasXCoordinate>90.63</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>104.975</ns1:hasYCoordinate>
@@ -2730,7 +2719,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2003_36"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-0</ns1:hasSVGElement>
         <ns1:hasXCoordinate>59.895</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>111.715</ns1:hasYCoordinate>
@@ -2747,7 +2735,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2019_52"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7-6-5-3</ns1:hasSVGElement>
         <ns1:hasXCoordinate>182.623</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>84.287</ns1:hasYCoordinate>
@@ -2764,7 +2751,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2004_44"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-6</ns1:hasSVGElement>
         <ns1:hasXCoordinate>67.483</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>110.126</ns1:hasYCoordinate>
@@ -2781,7 +2767,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2002_31"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7</ns1:hasSVGElement>
         <ns1:hasXCoordinate>52.072</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>113.627</ns1:hasYCoordinate>
@@ -2798,7 +2783,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2015_32"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7-7-1</ns1:hasSVGElement>
         <ns1:hasXCoordinate>151.765</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>91.317</ns1:hasYCoordinate>
@@ -2815,7 +2799,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2008_58"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-2</ns1:hasSVGElement>
         <ns1:hasXCoordinate>98.218</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>103.376</ns1:hasYCoordinate>
@@ -2832,7 +2815,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2013_51"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-4-8-1</ns1:hasSVGElement>
         <ns1:hasXCoordinate>137.028</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>94.733</ns1:hasYCoordinate>
@@ -2849,7 +2831,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2006_48"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7-6</ns1:hasSVGElement>
         <ns1:hasXCoordinate>82.929</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>106.806</ns1:hasYCoordinate>
@@ -2866,7 +2847,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2010_59"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-6-7-7</ns1:hasSVGElement>
         <ns1:hasXCoordinate>113.947</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>99.912</ns1:hasYCoordinate>
@@ -2883,7 +2863,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_1999_33"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529</ns1:hasSVGElement>
         <ns1:hasXCoordinate>28.754</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>118.559</ns1:hasYCoordinate>
@@ -2900,7 +2879,6 @@
         <ns1:has_color_named rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orange"/>
         <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
         <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_2016_26"/>
-        <ns1:is_labeled_by rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79"/>
         <ns1:hasSVGElement>rect4529-0-5-3</ns1:hasSVGElement>
         <ns1:hasXCoordinate>159.588</ns1:hasXCoordinate>
         <ns1:hasYCoordinate>89.751</ns1:hasYCoordinate>
@@ -3420,22 +3398,6 @@
         <ns1:hasYCoordinate>75.165</ns1:hasYCoordinate>
         <ns1:has_length>None</ns1:has_length>
         <ns1:has_text>Leo&apos;s Age Limit</ns1:has_text>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79 -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#text_Leonardo_D_79">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Elementary_GO"/>
-        <ns1:has_informational_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Object"/>
-        <ns1:has_syntactic_role rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Label_SR"/>
-        <ns1:hasSVGElement>text4695-6-5-2</ns1:hasSVGElement>
-        <ns1:hasXCoordinate>9.609</ns1:hasXCoordinate>
-        <ns1:hasYCoordinate>190.853</ns1:hasYCoordinate>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_text>Leonardo DiCaprio</ns1:has_text>
         <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
     

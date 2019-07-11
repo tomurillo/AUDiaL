@@ -19,6 +19,14 @@ body {
     padding: 10px 0 10px 10px;
 }
 
+#form-group-retrieve-input {
+    width: 80%;
+}
+
+#inputRetrieve {
+    width: 100%;
+}
+
 #submit-retrieve {
     margin-top: 10px;
 }

@@ -118,6 +118,9 @@ def synonymsOfWord(word, pos_tag=None, n_synonyms=None):
             s = syn_set[0]  # Take into consideration only most relevant synonym set
             lemmas = s.lemma_names()
             syns.update([l.replace("_", " ") for l in lemmas if l != text_norm])
+        quick_syn = QUICK_SYN_NOUN.get(text_norm)
+        if quick_syn:
+            syns.add(quick_syn)
     return list(syns)[0:n_synonyms]
 
 

@@ -3,7 +3,7 @@
         <img src="{{ url_for('static', filename='graphics/' + GRAPHICS[current][0]) }}"
              alt="{{ GRAPHICS[current][2] }}" style="width: 100%; height: auto; max-width:800px"/>
         <br/>
-        <a href="{{ request.path }}?longdesc=1">Image Description</a>
+        <a href="{{ request.path }}?longdesc=1" target="_blank">Image Description (opens in a new window)</a>
     </div>
     <hr/>
     <div id="result-container" class="container-fluid">

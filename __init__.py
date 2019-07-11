@@ -177,9 +177,9 @@ def fetchIntention():
         if intentions:
             output = "Author's intention fetched. See the intention area for more information."
         else:
-             output = "No intentions found."
-             if force:
-                 output += " Try recomputing the author's intention."
+            output = "No intentions found."
+            if force:
+                output += " Try recomputing the author's intention."
         c.clean()
         return jsonify(result=output,
                        intentions=html)

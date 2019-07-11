@@ -17,7 +17,7 @@
 <div id="navigation-container" class="container-fluid">
         <ul id="navtabs" class="nav nav-pills" role="tablist">
             <li role="presentation" class="active">
-                <a href="#dialog" aria-controls="Dialogue" role="tab" data-toggle="tab">Dialogue</a></li>
+                <a href="#dialog" aria-controls="dialog" role="tab" data-toggle="tab">Query</a></li>
             <li role="presentation">
                 <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Navigation</a></li>
             <li role="presentation">
@@ -26,10 +26,10 @@
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active query-box" id="dialog">
 			 <div class="form-inline">
-                  <div class="form-group">
+                  <div id="form-group-retrieve-label" class="form-group">
                     <p class="form-control-static">Retrieve: </p>
                   </div>
-                  <div class="form-group">
+                  <div id="form-group-retrieve-input" class="form-group">
                     <label for="inputRetrieve" class="sr-only">Retrieve:</label>
                     <input type="text" class="form-control" name="inputRetrieve" 
                         id="inputRetrieve" placeholder="e.g. What is the average population of Vienna?">

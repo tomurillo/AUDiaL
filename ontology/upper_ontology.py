@@ -128,6 +128,20 @@ class UpperOntology(object):
                 ns_with_prefixes.append((prefix, uri))
         return ns_with_prefixes
 
+    def domainOntologyLoaded(self):
+        """
+        Returns whether there is some unknown namespace in the current graph
+        :return: True if unknown namespace found; False otherwise
+        """
+        loaded = False
+        ns_list = self.getNamespaces()
+        for ns in ns_list:
+            namespace = ns[1][:-1] if ns[1].endswith('#') else ns[1]
+            if namespace not in c.COMMON_NS and namespace != c.VIS_NS:
+                loaded = True
+                break
+        return loaded
+
     def yieldResource(self, res_type='all', ns='all'):
         """
         Yield a new URI of the given type each time

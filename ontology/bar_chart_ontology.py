@@ -1,4 +1,4 @@
-from ontology.upper_vis_ontology import UpperVisOntology
+from ontology.upper_vis_ontology import UpperVisOntology, NavigationException
 from NLP.model.QueryFilter import QueryFilterCardinal, QueryFilterNominal
 from NLP.util.TreeUtil import quick_norm
 from sys import float_info
@@ -1093,14 +1093,14 @@ class BarChartOntology(UpperVisOntology):
         """
         current = self.getCurrentNodes()
         if len(current) > 1:
-            raise Exception("More than one current bar selected!")
+            raise NavigationException("More than one current bar selected!")
         elif len(current) == 0:
             return None
         else:
             bar = current[0]
         if not self.elementHasRole(bar, self.SyntacticRoles.METRIC_BAR) and \
            not self.elementHasRole(bar, self.SyntacticRoles.STACKED_BAR):
-            raise Exception("Current element '%s' is not a bar!" % bar)
+            raise NavigationException("Current element '%s' is not a bar!" % bar)
         return bar
 
     def setCurrentBar(self, newCurrent):
@@ -1161,7 +1161,7 @@ class BarChartOntology(UpperVisOntology):
         """
         h = self.getHomeNodes()
         if len(h) > 1:
-            raise Exception("More than one home node selected!")
+            raise NavigationException("More than one home node selected!")
         elif len(h) == 0:
             return [None]
         else:
@@ -1371,7 +1371,7 @@ class BarChartOntology(UpperVisOntology):
                 curr_n = int(v)
                 curr_role = self.getRolesOfElement(current)
             else:
-                raise Exception("Current bar %s has no ordinal value!" % current)
+                raise NavigationException("Current bar %s has no ordinal value!" % current)
             i = curr_n
             if n > 0:
                 stop_i = max(barsOrder, key=int)
@@ -1466,7 +1466,7 @@ class BarChartOntology(UpperVisOntology):
         bar = self.getCurrentBar()
         ulbls = self.getUserLabels(bar)
         if not ulbls:
-            ulbls = "<No Tags>"
+            ulbls = "No Tags"
         return ulbls
 
     def barPoints(self, bars):
@@ -1683,14 +1683,14 @@ class BarChartOntology(UpperVisOntology):
                     unitsNL = units.replace("_", " ").lower()
                 else:
                     unitsNL = "(units unknown)"
-            barfilters = set(str(v) for v in sorted(self.getElementFilters(bar)) if v)
+            barfilters = set(str(v) for v in self.getElementFilters(bar) if v)
             if self.elementHasRole(bar, self.SyntacticRoles.STACKED_BAR):
                 output += "Stacked bar "
             else:
                 output += "Simple bar "
             if len(barfilters) > 0:
                 output += 'with labels: '
-                output += ', '.join(barfilters)
+                output += ', '.join(sorted([f for f in barfilters]))
             size = self.getMetricBarValue(bar)
             if isinstance(size, int):
                 output += " (%d %s). " % (size, unitsNL)

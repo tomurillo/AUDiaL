@@ -19,40 +19,18 @@
               to_retrieve: $('input[name="inputRetrieve"]').val()
           }, function (data) {
               if (data) {
+                  let res_div = $("#query-result");
                   if (data.output_type === 'answer') {
-                      $("#query-result").empty().append(data.result);
+                      res_div.empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
-                      $("#query-result").empty().append(dialog_caption(data.result));
+                      res_div.empty().append(dialog_caption(data.result));
                       let table = dialog_table(data.result);
                       $(table).insertAfter("#query-result");
-                      $("#query-result").focus();
                   } else {
-                      $("#query-result").empty().append('Your query could not be resolved.');
+                      res_div.empty().append('Your query could not be resolved.');
                   }
+                  res_div.focus();
               }
-          });
-          return false;
-      });
-
-      $('button#submit-filter').bind('click', function () {
-          $.getJSON($SCRIPT_ROOT + '/_filter', {
-              current_graphic: $('input[name="currentGraphic"]').val(),
-              to_filter: $('input[name="inputFilter"]').val(),
-          }, function (data) {
-              $("#query-result").empty().append(data.result);
-          });
-          return false;
-      });
-
-      $('button#submit-derivedValue').bind('click', function () {
-          $.getJSON($SCRIPT_ROOT + '/_derived_value', {
-              current_graphic: $('input[name="currentGraphic"]').val(),
-              query: $('input[name="inputDerivedVal"]').val(),
-              queryExtreme: $('input[name="inputExtreme"]').val(),
-              querySort: $('input[name="inputSort"]').val(),
-              queryRange: $('input[name="inputRange"]').val(),
-          }, function (data) {
-              $("#query-result").empty().append(data.result);
           });
           return false;
       });
@@ -62,7 +40,7 @@
           $.getJSON($SCRIPT_ROOT + '/_overview', {
               current_graphic: $('input[name="currentGraphic"]').val(),
           }, function (data) {
-              $("#query-result").empty().append(data.result);
+              $("#query-result").empty().append(data.result).focus();
           });
           return false;
       });
@@ -72,9 +50,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'next',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
           });
           return false;
       });
@@ -84,9 +63,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'previous',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              let cur_tags = $('#inputCurBarTags');
+              $("#query-result").empty().append(data.result).focus();
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -96,9 +76,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'up',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -108,9 +89,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'down',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -120,9 +102,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'first',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -132,9 +115,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'last',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -144,9 +128,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'highest',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -156,9 +141,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'lowest',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -168,9 +154,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'reset',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -180,9 +167,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'where',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -192,9 +180,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'sethome',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -204,9 +193,10 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               action: 'gotohome',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
-              $('#inputCurBarTags').attr('placeholder', data.usertags);
-              $('#inputCurBarTags').val(data.usertags);
+              $("#query-result").empty().append(data.result).focus();
+              let cur_tags = $('#inputCurBarTags');
+              cur_tags.attr('placeholder', data.usertags);
+              cur_tags.val(data.usertags);
           });
           return false;
       });
@@ -216,7 +206,7 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               user_tags: $('input[name="inputCurBarTags"]').val(),
           }, function (data) {
-              $("#query-result").empty().append(data.result);
+              $("#query-result").empty().append(data.result).focus();
               $('#inputCurBarTags').attr('placeholder', data.usertags);
           });
           return false;
@@ -227,7 +217,7 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               force_exec: 'no',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
+              $("#query-result").empty().append(data.result).focus();
               $("#intention-result").html(data.intentions)
           });
           return false;
@@ -238,7 +228,7 @@
               current_graphic: $('input[name="currentGraphic"]').val(),
               force_exec: 'yes',
           }, function (data) {
-              $("#query-result").empty().append(data.result);
+              $("#query-result").empty().append(data.result).focus();
               $("#intention-result").html(data.intentions)
           });
           return false;
@@ -266,16 +256,17 @@
           }, function (data) {
               if (data) {
                   $("#suggestions-table").remove();
+                  let q_res = $("#query-result");
                   if (data.output_type === 'answer') {
-                      $("#query-result").empty().append(data.result);
+                      q_res.empty().append(data.result);
                   } else if (data.output_type === 'dialogue') {
-                      $("#query-result").empty().append(dialog_caption(data.result));
+                      q_res.empty().append(dialog_caption(data.result));
                       let table = dialog_table(data.result);
                       $(table).insertAfter("#query-result");
-                      $("#query-result").focus();
                   } else {
-                      $("#query-result").empty().append('Your query could not be resolved.');
+                      q_res.empty().append('Your query could not be resolved.');
                   }
+                  q_res.focus();
               }
           });
       }

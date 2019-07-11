@@ -1238,7 +1238,6 @@
         <ns1:has_width>None</ns1:has_width>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cluster</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">group</ns1:task_has_verbalization>
-        <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ns1:task_has_verbalization>
     </NamedIndividual>
     
 

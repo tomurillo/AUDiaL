@@ -3,9 +3,9 @@ NLP constants file
 Most constants are related to POS tags
 """
 
-# ===================================== #
-#   Penn Treebank II Tags
-# ===================================== #
+# ============================================================================= #
+#   Penn Treebank II Tags (see https://gist.github.com/nlothian/9240750)
+# ============================================================================= #
 
 ROOT_TREE_POS_TAG = 'ROOT'
 
@@ -102,3 +102,6 @@ POS_TAG_JJ = [ADJP_TREE_POS_TAG, JJ_TREE_POS_TAG, JJR_TREE_POS_TAG, JJS_TREE_POS
 
 # Lemmas not identified by Wordnet lemmatizer
 HARD_LEMMA = {'people':'person'}
+
+# Quick synonym search (optional)
+QUICK_SYN_NOUN = {'men': 'Male', 'man': 'Male', 'women': 'Female', 'woman': 'Female', 'Wien': 'Vienna'}

@@ -1357,3 +1357,10 @@ class UpperVisOntology(UpperOntology):
         else:
             normItem = ""
         return normItem
+
+
+class NavigationException(Exception):
+    """
+    Custom exception: error raised during navigation
+    """
+    pass
