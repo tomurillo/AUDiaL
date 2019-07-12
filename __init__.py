@@ -28,11 +28,19 @@ DEFAULT_KEY = "Austrian Population"
 
 @app.route('/')
 def homepage():
-    key = DEFAULT_KEY
-    if request.args.get('longdesc') is None:
-        return render_graphic(key)
-    else:
-        return render_longdesc(key)
+    return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/quest-dem')
+def questionnaire_dem():
+    return render_template('quest_dem.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-quest-dem', methods=['POST'])
+def questionnaire_dem_handle():
+    from forms.handlers import process_quest_dem
+    process_quest_dem(request.form, session['username'])
+    return redirect(url_for('homepage'))
 
 
 @app.route('/bar-chart-austria')
@@ -188,21 +196,10 @@ def fetchIntention():
         return jsonify(result=printException(e), output_type='answer')
 
 
-# Administrative handles
-def validate_admin_action(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        auth = session.get('logged_in', False) and session.get('username', '') in ADMINS
-        if auth:
-            return f(*args, **kwargs)
-        else:
-            return redirect(url_for('login_form'))
-    return wrapper
-
-
 @app.route('/audial-login')
 def login_form():
     return render_template("login.html", GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
 
 @app.route('/audial-logout')
 def logout():
@@ -215,12 +212,24 @@ def logout():
 @app.route('/handle-login', methods=['POST'])
 def login_handle():
     name, pwd = request.form['username'], request.form['pwd']
-    if name in ADMINS and pwd == ADMINS[name]:
+    if (name in ADMINS and pwd == ADMINS[name]) or (name in USERS and pwd == USERS[name]):
         session['username'] = name
         session['logged_in'] = True
         return redirect(url_for('homepage'))
     else:
         return redirect(url_for('login_form'))
+
+
+# Administrative handles
+def validate_admin_action(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        auth = session.get('logged_in', False) and session.get('username', '') in ADMINS
+        if auth:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('login_form'))
+    return wrapper
 
 
 @app.route('/admin-delete/<command>')

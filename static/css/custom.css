@@ -7,6 +7,15 @@ body {
   margin-bottom: 60px;
 }
 
+#main-logos-container {
+    margin-top: 20px;
+}
+
+#main-logos-container>.row {
+    display: flex;
+    align-items: center;
+}
+
 .query-box {
     background-color: #fff;
     border-color: #ddd;

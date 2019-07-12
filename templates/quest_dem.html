@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+
+    <h1>
+        Demographic Questionnaire
+    </h1>
+
+    <p class="text-justify">
+        The following form will ask you personal information that is relevant for this workshop. Data is anonymous (we
+        will not ask you about your name or other data that may personally identify you).
+    </p>
+
+    {%- if session['logged_in'] -%}
+
+        <h4>Your username is: {{ session['username'] }}</h4>
+
+        <form action="{{ url_for('questionnaire_dem_handle') }}" method = 'POST'>
+            <div class="form-group">
+                <label for="age">How old are you?</label>
+                <select id="age" name="age" class="form-control">
+                    <option>Less than 16</option>
+                    <option>16</option>
+                    <option>17</option>
+                    <option>18</option>
+                    <option>19</option>
+                    <option>20</option>
+                    <option>21</option>
+                    <option>22</option>
+                    <option>23</option>
+                    <option>24</option>
+                    <option>25</option>
+                    <option>26</option>
+                    <option>More than 26</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sex">What is your gender?</label>
+                <select id="sex" name="sex" class="form-control">
+                    <option>Female</option>
+                    <option>Male</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="experience-web">How long (approximately) have you been browsing Web pages?</label>
+                <select id="experience-web" name="experience-web" class="form-control">
+                    <option>I have no experience browising the Web</option>
+                    <option>Less than 1 year</option>
+                    <option>Between 1 and 5 years</option>
+                    <option>Between 5 and 10 years</option>
+                    <option>More than 10 years</option>
+                </select>
+            </div>
+
+            <label>How do you browse Web pages? (choose all that apply):</label>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="tech-tts" value="tech-tts">
+                    Screen reader and text-to-speech software
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="tech-bd" value="tech-bd">
+                    Screen reader and a Braille display
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="tech-mag" value="tech-mag">
+                    Screen magnifier software
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="tech-other" value="tech-other">
+                    Other assistive technologies
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="tech-no" value="tech-no">
+                    I do not use assistive technologies
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="screen-reader">Which screen reader (if any) do you use?</label>
+                <input type="text" class="form-control" id="screen-reader" name="screen-reader"
+                       placeholder="Examples: JAWS, NVDA, ...">
+            </div>
+
+            <label>Which of these diagram types do you know about?:</label>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-bar" value="diag-type-bar">
+                    Bar Chart
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-hist"  value="diag-type-hist">
+                    Histogram
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-pie" value="diag-type-pie">
+                    Pie Chart
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-line" value="diag-type-line">
+                    Line Chart
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-scatter" value="diag-type-scatter">
+                    Scatterplot
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-area" value="diag-type-area">
+                    Area Chart
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-graph" value="diag-type-graph">
+                    Link diagram (also known as graph)
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-type-euler" value="diag-type-euler">
+                    Group diagrams (for example, Euler diagrams)
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="diag-type-other">Which other diagram types do you know?</label>
+                <input type="text" class="form-control" id="diag-type-other" name="diag-type-other">
+            </div>
+
+
+            <div class="form-group">
+                <label for="diag-freq">How often do you encounter diagrams on Web pages?</label>
+                <select id="diag-freq" name="diag-freq" class="form-control">
+                    <option>Never</option>
+                    <option>Almost never (less than 5% of visited Web pages)</option>
+                    <option>Not too often (less than 15% of visited Web pages)</option>
+                    <option>Often (between 15% and 25% of visited Web pages)</option>
+                    <option>Very often (more than 25% of visited Web pages)</option>
+                </select>
+            </div>
+
+            <label>Where do you find diagrams in Web pages? (choose all that apply):</label>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-news" value="diag-news">
+                    News sites
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-uni" value="diag-uni">
+                    At my school/university course Web pages
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-sn" value="diag-sn">
+                    Social Networks
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-per" value="diag-per">
+                    Personal and Corporate Web pages
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-game" value="diag-game">
+                    Online Web-based games
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="diag-other" value="diag-other">
+                    Other Web pages
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="diag-alttext">Are the diagrams you encounter on Web pages usually properly labeled with an alt-text?</label>
+                <select id="diag-alttext" name="diag-alttext" class="form-control">
+                    <option>Never</option>
+                    <option>Almost never</option>
+                    <option>Sometimes</option>
+                    <option>Often</option>
+                    <option>Most of the time</option>
+                    <option>Always</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="diag-longdesc">Are the diagrams you encounter on Web pages usually enhanced with a longer textual and table-based description of their contents?</label>
+                <select id="diag-longdesc" name="diag-longdesc" class="form-control">
+                    <option>Never</option>
+                    <option>Almost never</option>
+                    <option>Sometimes</option>
+                    <option>Often</option>
+                    <option>Most of the time</option>
+                    <option>Always</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="diag-tactile">How often do you read tactile and/or haptic diagrams?</label>
+                <select id="diag-tactile" name="diag-tactile" class="form-control">
+                    <option>I have never read a tactile diagram</option>
+                    <option>Less than 5 times in my life</option>
+                    <option>Less than 10 times in my life</option>
+                    <option>A few times a year</option>
+                    <option>A few times a month</option>
+                    <option>A few times a week</option>
+                    <option>Very often</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="diag-prefer">What is your preferred manner of accessing diagrams (if you had to)?</label>
+                <select id="diag-prefer" name="diag-prefer" class="form-control">
+                    <option>Reading a textual description of its contents</option>
+                    <option>Reading an equivalent table with its contents</option>
+                    <option>Reading a tactile copy of the diagram</option>
+                    <option>Having a sighted person explain its contents to me</option>
+                    <option>Other methods</option>
+                    <option>I don't know or I am not sure</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-default">Save my answers</button>
+        </form>
+    {%- else -%}
+        <p class="text-justify">
+            You must <a href="{{ url_for('login_form') }}">log in</a> to fill in the questionnaire!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

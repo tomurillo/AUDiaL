@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+    <div id="main-logos-container" class="container-fluid">
+        <div class="row">
+            <div class="col-md-4 hidden-sm hidden-xs">
+                <img src="{{ url_for('static', filename='icons/logos/audial-logo.png') }}" class="img-responsive"
+                             alt="" title="AUDial: Accessible Graphics" width="165px" style="margin: 0 auto">
+            </div>
+            <div class="col-md-4 hidden-sm hidden-xs">
+                <img src="{{ url_for('static', filename='icons/logos/jku-logo.svg') }}" class="img-responsive"
+                             alt="" title="Johannes Kepler University" width="165px" style="margin: 0 auto">
+            </div>
+            <div class="col-md-4 hidden-sm hidden-xs">
+                <img src="{{ url_for('static', filename='icons/logos/iis-logo.png') }}" class="img-responsive"
+                             alt="" title="Institute Integriert Studieren" width="165px" style="margin: 0 auto">
+            </div>
+        </div>
+    </div>
+
+    <div id="navigation-container" class="container-fluid">
+
+        <h1>
+            Welcome
+        </h1>
+
+        <p class="text-justify">
+            Thank you for taking part in this workshop! In the next few hours we will try out and compare different methods for accessing diagrams, such as bar charts, in a non-visual manner.
+            The main focus of the workshop consists on the evaluation of a web application in which diagrams can be queried through natural language.
+            Natural language is the normal speech you use daily to communicate with other persons.
+            However, the web application you are about to try is a prototype, not a finished product, and as such it currently only understands a small portion of the English language.
+        </p>
+
+        <p class="text-justify">
+            The goal of the evaluation is to better understand whether natural language could be used in a satisfactory manner as an alternative to other existing methods for
+            accessing diagrams that you may already be familiar with, such as static descriptions in text and tables, and tactile graphics.
+            You will be asked to perform a few tasks on three different diagrams, from lower to higher complexity (more complex diagrams display a higher amount of information than simpler diagrams).
+            Afterwards, we will ask you about your opinion regarding each method’s efficiency, ease of use, and how likely you would be to use them in your daily life.
+        </p>
+
+        <p class="text-justify">
+            Please note that, even if you will be asked several questions throughout the workshop, we are not testing you!
+            Instead, with your help, we are testing the methods you will be using to access diagrams non-visually.
+            We are interested in your opinion, which will be very valuable in order to improve these methods in the future.
+            You are not expected to be able to answer all questions, and most likely you will not! Please remember those things that you found confusing or unclear, and,
+            if you have any doubts, simply ask.</p>
+
+        <h2>
+            Workshop Structure
+        </h2>
+
+        <p class="text-justify">
+            First, you will be asked to complete a short questionnaire about yourself, containing basic information such as your age, computer skills, etc. This data is completely anonymous and you will never be asked to add any information that may identify you.
+        </p>
+
+        <p class="text-justify">
+            After filling in the questionnaire, three different diagrams about completely different topics will be given to you in some alternative form. For each of them, you will be asked 10 questions of different difficulty levels. Some questions require you to find a single item in the diagram (for example: how many people lived in the city of Vienna in 2014?), whereas others require you to combine and reason about several different data points (for example: what was the trend of the population in Vienna between 1994 and 2014?). There is no time limit for answering any question.
+        </p>
+
+        <p>
+            Again, if you have any questions just ask!
+        </p>
+
+        <h2>
+            Workshop Steps
+        </h2>
+
+        <p class="text-justify">
+            These are the steps we will go through during this workshop. You can use them as a guide if at some point you are not sure how to proceed:
+        </p>
+
+        <ol>
+            <li>
+                {%- if session['logged_in'] -%}
+                    You are already logged in, so you may continue to the next steps. Your username is
+                    <strong>{{ session['username'] }}</strong>.
+                {%- else -%}
+                    You will be given access credentials consisting on a username (a number) and a password.&nbsp;
+                    Please <a href="{{ url_for('login_form') }}">log in</a> using those credentials before carrying on.
+                {% endif %}
+            </li>
+            <li>Please fill in first the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a>.</li>
+        </ol>
+
+    </div>
+
+{% endblock %}

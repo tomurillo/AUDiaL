@@ -3,7 +3,7 @@
 {% block pageinfo %}
 
 <div id="navigation-container" class="container-fluid">
-    <form action='/handle-login' method = 'POST'>
+    <form action="{{ url_for('login_handle') }}" method = 'POST'>
         <div class="form-group">
             <label for="username">User name</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Username"
