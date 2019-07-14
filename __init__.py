@@ -31,6 +31,17 @@ def homepage():
     return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
 
 
+def logged_in(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get('logged_in') is not None:
+            return f(*args, **kwargs)
+        else:
+            login_url = '%s?next=%s' % (url_for('login_form'), request.url or url_for('homepage'))
+            return redirect(login_url)
+    return wrapper
+
+
 @app.route('/quest-dem')
 def questionnaire_dem():
     return render_template('quest_dem.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
@@ -38,12 +49,16 @@ def questionnaire_dem():
 
 @app.route('/handle-quest-dem', methods=['POST'])
 def questionnaire_dem_handle():
-    from forms.handlers import process_quest_dem
-    process_quest_dem(request.form, session['username'])
-    return redirect(url_for('homepage'))
+    if session.get('logged_in') and request.form:
+        from forms.handlers import process_quest_dem
+        process_quest_dem(request.form, session['username'])
+        return redirect(url_for('homepage'))
+    else:
+        return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_dem')))
 
 
 @app.route('/bar-chart-austria')
+@logged_in
 def bar_chart_austria():
     key = "Austrian Population"
     if request.args.get('longdesc') is None:
@@ -52,7 +67,23 @@ def bar_chart_austria():
         return render_longdesc(key)
 
 
+@app.route('/quest-austria')
+def questionnaire_austria():
+    return render_template('quest_austria.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-quest-austria', methods=['POST'])
+def questionnaire_austria_handle():
+    if session.get('logged_in') and request.form:
+        from forms.handlers import process_quest_tasks
+        process_quest_tasks(request.form, session['username'], 'austria_pop')
+        return redirect(url_for('homepage'))
+    else:
+        return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_austria')))
+
+
 @app.route('/bar-chart-leo-dicaprio')
+@logged_in
 def bar_chart_caprio():
     key = "Leonardo DiCaprio"
     if request.args.get('longdesc') is None:
@@ -62,6 +93,7 @@ def bar_chart_caprio():
 
 
 @app.route('/bar-chart-power')
+@logged_in
 def bar_chart_power():
     key = "Power in Europe"
     if request.args.get('longdesc') is None:
@@ -198,7 +230,10 @@ def fetchIntention():
 
 @app.route('/audial-login')
 def login_form():
-    return render_template("login.html", GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    if not session.get('logged_in'):
+        return render_template("login.html", GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    else:
+        return redirect(redirect_to_url())
 
 
 @app.route('/audial-logout')
@@ -215,9 +250,12 @@ def login_handle():
     if (name in ADMINS and pwd == ADMINS[name]) or (name in USERS and pwd == USERS[name]):
         session['username'] = name
         session['logged_in'] = True
-        return redirect(url_for('homepage'))
+        return redirect(url_to_next())
     else:
-        return redirect(url_for('login_form'))
+        get_str = ''
+        if request.args.get('next'):
+            get_str = '?next=%s' % request.args.get('next')
+        return redirect(url_for('login_form') + get_str)
 
 
 # Administrative handles
@@ -312,6 +350,14 @@ def render_longdesc(key):
                            GRAPHICS=GRAPHICS,
                            current=key,
                            longdesc_html=html)
+
+
+def redirect_to_url(default='homepage'):
+    return request.args.get('next') or request.referrer or url_for(default)
+
+
+def url_to_next(default='homepage'):
+    return request.args.get('next') or url_for(default)
 
 
 def intentionDictToHTML(intentions):

@@ -461,9 +461,13 @@ class UpperVisOntology(UpperOntology):
             axis_max = self.getValue(info, self.SyntacticProperty.MAX_VALUE)
             if isNumber(axis_max):
                 axis_max = float(axis_max)
+            else:
+                axis_max = None
             axis_min = self.getValue(info, self.SyntacticProperty.MIN_VALUE)
             if isNumber(axis_min):
                 axis_min = float(axis_min)
+            else:
+                axis_min = None
         return axis_min, axis_max
 
     def getMetricAxis(self):

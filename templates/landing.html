@@ -80,7 +80,11 @@
                     Please <a href="{{ url_for('login_form') }}">log in</a> using those credentials before carrying on.
                 {% endif %}
             </li>
-            <li>Please fill in first the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a>.</li>
+            <li>Please fill in the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a> first.</li>
+            <li>Next, we will explore a bar chart about the Austrian population.</li>
+            <li>Take a look at the tasks that you will perform on this chart (<a href="{{ url_for('questionnaire_austria') }}"
+                                                                                 target="_blank">tasks form</a>),
+                and complete them using your assigned method. </li>
         </ol>
 
     </div>

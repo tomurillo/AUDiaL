@@ -236,7 +236,7 @@ class SuggestionGenerator(object):
                 else:
                     consistent = False
         else:
-            consistent = False
+            consistent = True  # We do not have enough information
         return consistent
 
     def createFocusVote(self, poc):

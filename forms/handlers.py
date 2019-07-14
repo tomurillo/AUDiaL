@@ -1,12 +1,38 @@
 from util import getStoragePath
 
 
+def process_quest_tasks(form, username, diagram):
+    """
+    Handles the submission of a tasks evaluation form
+    :param form: dict with form values
+    :param username: string; name of the user that has submitted the form
+    :param diagram: string; name of the diagram being evaluated
+    :return: None; form data is serialized to file
+    """
+    if form and username and diagram:
+        store_path = getStoragePath("%s.txt" % diagram, username)
+        i = 1
+        lines = ["Tasks evaluation (%s) for user %s" % (diagram, username), "\n\n"]
+        while True:
+            input_name = "answer-task-%d" % i
+            if input_name in form:
+                input_val = form.get(input_name)
+                if not input_val:
+                    input_val = 'left empty.'
+                lines.append("Task no. %d. Answer: %s\n" % (i, input_val))
+                i += 1
+            else:
+                break
+        with open(store_path, 'a') as f:
+            f.writelines(lines)
+
+
 def process_quest_dem(form, username):
     """
     Handles the submission of the demographics form
     :param form: dict with form values
     :param username: string; name of the user that has submitted the form
-    :return: None
+    :return: None; form data is serialized to file
     """
     if form and username:
         store_path = getStoragePath("demographic.txt", username)
@@ -76,9 +102,9 @@ def process_quest_dem(form, username):
                 sorted_answers[11] = 'Tactile Diagrams used: %s' % v
             elif k == 'diag-prefer':
                 sorted_answers[12] = 'Preferred manner of accessing diagrams: %s' % v
-        sorted_answers[4] = "%s %s\n" % (br_habits_str, ", ".join(br_habits))
-        sorted_answers[6] = "%s %s\n" % (diagrams_str, ", ".join(diagrams))
-        sorted_answers[8] = "%s %s\n" % (diagram_loc_str, ", ".join(diagram_loc))
+        sorted_answers[4] = "%s %s" % (br_habits_str, ", ".join(br_habits))
+        sorted_answers[6] = "%s %s" % (diagrams_str, ", ".join(diagrams))
+        sorted_answers[8] = "%s %s" % (diagram_loc_str, ", ".join(diagram_loc))
         with open(store_path, 'a') as f:
             lines = ["Demographic data for user %s" % username, "\n\n"]
             f.writelines(lines)

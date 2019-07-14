@@ -251,7 +251,8 @@
         </form>
     {%- else -%}
         <p class="text-justify">
-            You must <a href="{{ url_for('login_form') }}">log in</a> to fill in the questionnaire!
+            You must <a href="{{ url_for('login_form') }}?next={{ url_for('questionnaire_dem') }}">log in</a> to fill in
+            the questionnaire!
         </p>
     {% endif %}
 

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+
+    <h1>
+        Austrian Population Chart: User Tasks
+    </h1>
+
+    {%- if session['logged_in'] -%}
+
+        <h3>Description:</h3>
+
+        <p class="text-justify">
+            The following form contains eight task descriptions. Read them carefully and try to solve them using the method
+            you have been assigned (tactile diagram, longdesc, dialogue interface). There is no time limit for solving
+            any task, but if you get stuck or something isn't clear please ask. You do not need to answer all tasks, only
+            as many as you can.
+        </p>
+
+        <h4>Your username is: {{ session['username'] }}</h4>
+
+        <h3>Tasks:</h3>
+
+        <form action="{{ url_for('questionnaire_austria_handle') }}" method = 'POST'>
+            <div class="form-group">
+
+                <section>
+                    <h4>Task 1</h4>
+                    <p>
+                        How many bars are there in the graph? What is the difference between a stacked bar and a metric bar?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-1">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-1" name="answer-task-1"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 2</h4>
+                    <p>
+                        Very generally, what does this diagram depict?
+                        Hint: if using the dialogue-enabled diagram, you can ask the system for a summary.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-2">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-2" name="answer-task-2"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 3</h4>
+                    <p>
+                        Navigate, one by one, through all the stacked bars in the diagram. Write down the values of
+                        the first and the last bar that you see.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-3">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-3" name="answer-task-3"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 4</h4>
+                    <p>
+                        Write the two Austrian regions having the maximum and minimum population in 2004, respectively.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-4">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-4" name="answer-task-4"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 5</h4>
+                    <p>
+                        Write the three regions having a total population smaller than 500000 people in 2014.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-5">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-5" name="answer-task-5"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 6</h4>
+                    <p>
+                        How many more women lived in Vienna in 2014 compared to 2004?
+                        Hint: if using the dialogue-enabled system, set one of the bars as your home bar.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-6">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-6" name="answer-task-6"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 7</h4>
+                    <p>
+                        Which regions increased in population between 2004 and 2014?
+                        Hint: navigate the stacked bars one by one and see their compared values.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-7">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 8</h4>
+                    <p>
+                        What would you say is the general trend of the population in Austria?
+                        Is it growing or decreasing with each passing decade?
+                        Where are the people moving to?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-8">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-8" name="answer-task-8"/>
+                    </div>
+                </section>
+
+            </div>
+            <button type="submit" class="btn btn-default">Save my answers</button>
+        </form>
+
+    {%- else -%}
+        <p class="text-justify">
+            You must <a href="{{ url_for('login_form') }}?next={{ url_for('questionnaire_austria') }}">log in</a> to
+            fill in the questionnaire!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
