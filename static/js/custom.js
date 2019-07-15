@@ -24,4 +24,10 @@ $(function () {
         }
     });
 
+    let alert_msg_div = $('#alert-message');
+
+    if(alert_msg_div.length)  {
+        alert_msg_div.focus();
+    }
+
 });

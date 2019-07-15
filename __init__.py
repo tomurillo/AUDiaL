@@ -28,7 +28,10 @@ DEFAULT_KEY = "Austrian Population"
 
 @app.route('/')
 def homepage():
-    return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    alert_msg = ''
+    if 'alert_msg' in session:
+        alert_msg = session.pop('alert_msg')
+    return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, alert_msg=alert_msg)
 
 
 def logged_in(f):
@@ -52,6 +55,7 @@ def questionnaire_dem_handle():
     if session.get('logged_in') and request.form:
         from forms.handlers import process_quest_dem
         process_quest_dem(request.form, session['username'])
+        session['alert_msg'] = alert_html('success')
         return redirect(url_for('homepage'))
     else:
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_dem')))
@@ -77,6 +81,7 @@ def questionnaire_austria_handle():
     if session.get('logged_in') and request.form:
         from forms.handlers import process_quest_tasks
         process_quest_tasks(request.form, session['username'], 'austria_pop')
+        session['alert_msg'] = alert_html('success')
         return redirect(url_for('homepage'))
     else:
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_austria')))
@@ -92,6 +97,7 @@ def questionnaire_caprio_handle():
     if session.get('logged_in') and request.form:
         from forms.handlers import process_quest_tasks
         process_quest_tasks(request.form, session['username'], 'caprio')
+        session['alert_msg'] = alert_html('success')
         return redirect(url_for('homepage'))
     else:
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_caprio')))
@@ -373,6 +379,14 @@ def redirect_to_url(default='homepage'):
 
 def url_to_next(default='homepage'):
     return request.args.get('next') or url_for(default)
+
+
+def alert_html(alert_type='success'):
+    html = "<div id=\"alert-message\" class=\"alert alert-%s\" tabindex=\"0\">" % alert_type
+    if alert_type == "success":
+        html += "<strong>Success!</strong> Your information has been saved."
+    html += "</div>"
+    return html
 
 
 def intentionDictToHTML(intentions):
