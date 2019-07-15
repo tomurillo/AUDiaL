@@ -825,6 +825,7 @@ class BarChartOntology(UpperVisOntology):
         :param descending: boolean: whether to return the bars in descending (default) or descending order
         :return: string; task answer
         """
+        from config import MAX_OUTPUT_NODES
         answer = ''
         sorted_b = self.sortBars(bars, descending)
         if sorted_b:
@@ -836,10 +837,13 @@ class BarChartOntology(UpperVisOntology):
                 units_answer = ''
             i = 0
             answer += '<section><ul>'
-            for b, v in sorted_b:
+            sorted_b_truncated = sorted_b[:MAX_OUTPUT_NODES]
+            for b, v in sorted_b_truncated:
                 i += 1
                 answer += "<li>%s bar %s: %s%s</li>" % (numberToOrdinal(i), self.getElementFiltersString(b), v,
                                                         units_answer)
+            if len(sorted_b) > MAX_OUTPUT_NODES:
+                answer += '<li>And %d more (not shown)</li>' % (len(sorted_b) - MAX_OUTPUT_NODES)
             answer += '</ul></section>'
         else:
             answer = 'No bars found'

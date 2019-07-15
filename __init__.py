@@ -82,6 +82,21 @@ def questionnaire_austria_handle():
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_austria')))
 
 
+@app.route('/quest-caprio')
+def questionnaire_caprio():
+    return render_template('quest_caprio.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-quest-caprio', methods=['POST'])
+def questionnaire_caprio_handle():
+    if session.get('logged_in') and request.form:
+        from forms.handlers import process_quest_tasks
+        process_quest_tasks(request.form, session['username'], 'caprio')
+        return redirect(url_for('homepage'))
+    else:
+        return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_caprio')))
+
+
 @app.route('/bar-chart-leo-dicaprio')
 @logged_in
 def bar_chart_caprio():

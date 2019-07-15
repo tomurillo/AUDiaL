@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+
+    <h1>
+        Leonardo Dicaprio Chart: User Tasks
+    </h1>
+
+    {%- if session['logged_in'] -%}
+
+        <h3>Description:</h3>
+
+        <p class="text-justify">
+            The following form contains eight task descriptions. Read them carefully and try to solve them using the method
+            you have been assigned (tactile diagram, longdesc, dialogue interface). There is no time limit for solving
+            any task, but if you get stuck or something isn't clear please ask. You do not need to answer all tasks, only
+            as many as you can.
+        </p>
+
+        <h4>Your username is: {{ session['username'] }}</h4>
+
+        <h3>Tasks:</h3>
+
+        <form action="{{ url_for('questionnaire_caprio_handle') }}" method = 'POST'>
+            <div class="form-group">
+
+                <section>
+                    <h4>Task 1</h4>
+                    <p>
+                        What do the values of this diagram's bars (for example, the number 24) represent?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-1">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-1" name="answer-task-1"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 2</h4>
+                    <p>
+                        Very generally, what does this diagram depict?
+                        Hint: if using the dialogue-enabled diagram, you can ask the system for a summary.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-2">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-2" name="answer-task-2"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 3</h4>
+                    <p>
+                        How old was Leonardo DiCaprio in 2009? And in 1998?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-3">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-3" name="answer-task-3"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 4</h4>
+                    <p>
+                        Who was Leonardo's girlfriend when he was 43 years old? How old was she?
+                        Hint: if using the dialogue system, you will have to divide this query into two simpler ones.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-4">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-4" name="answer-task-4"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 5</h4>
+                    <p>
+                        Write the names of the oldest girlfriends that DiCaprio has had. How old were they?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-5">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-5" name="answer-task-5"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 6</h4>
+                    <p>
+                        How many years has lasted DiCaprio's longest relationship(s)? Is there any relation between
+                        DiCaprio's age and the length of his relationships?
+                        Hint: navigate the diagram bar by bar and keep track of when the name of DiCaprio's girlfriend
+                        changes.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-6">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-6" name="answer-task-6"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 7</h4>
+                    <p>
+                        What is the average age difference between DiCaprio and his girlfriends?
+                        Hint: if using the dialogue system, you will have to divide this query into two simpler ones and
+                        compare their results, or you can navigate the bars one by one.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-7">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 8</h4>
+                    <p>
+                        Group DiCaprio's girlfriends according to their age and write their first names for each age.
+                        For example, he had three girlfriends aged 25: Bar, Kelly, and Nina.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-8">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-8" name="answer-task-8"/>
+                    </div>
+                </section>
+
+            </div>
+            <button type="submit" class="btn btn-default">Save my answers</button>
+        </form>
+
+    {%- else -%}
+        <p class="text-justify">
+            You must <a href="{{ url_for('login_form') }}?next={{ url_for('questionnaire_caprio') }}">log in</a> to
+            fill in the questionnaire!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
