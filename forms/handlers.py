@@ -15,11 +15,24 @@ def process_quest_tasks(form, username, diagram):
         lines = ["Tasks evaluation (%s) for user %s" % (diagram, username), "\n\n"]
         while True:
             input_name = "answer-task-%d" % i
+            difficulty_name = "difficulty-task-%d" % i
+            fail_reason_name = "fail-reason-task-%d" % i
+            fail_feedback_name = "feedback-task-%d" % i
             if input_name in form:
                 input_val = form.get(input_name)
                 if not input_val:
                     input_val = 'left empty.'
-                lines.append("Task no. %d. Answer: %s\n" % (i, input_val))
+                lines.append("Task no. %d.\n\nAnswer: %s\n" % (i, input_val))
+                if difficulty_name in form:
+                    difficulty_val = form.get(difficulty_name)
+                    lines.append("Difficulty for task %d: %s\n" % (i, difficulty_val))
+                    if difficulty_val == "No, I failed to complete the task":
+                        reason_val = form.get(fail_reason_name)
+                        lines.append("Reason for failure: %s\n" % reason_val)
+                        if reason_val == "Other reason":
+                            fail_feedback = form.get(fail_feedback_name)
+                            lines.append("Failure feedback: %s\n" % fail_feedback)
+                lines.append("\n\n")
                 i += 1
             else:
                 break

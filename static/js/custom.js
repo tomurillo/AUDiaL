@@ -10,6 +10,38 @@ $(function () {
         }
     });
 
+    $(".diff-select").on("change", function() {
+        let select_id = $(this).attr("id");
+        let task_no = select_id.substring(select_id.lastIndexOf("-") + 1);
+        if (task_no) {
+            let reason_div_id = "#fail-reason-task-" + task_no + "-container";
+            let feedback_div_id = "#fail-feedback-task-" + task_no + "-container";
+            if (this.value === "No, I failed to complete the task") {
+                $(reason_div_id).show();
+                let reason_select_id = '#fail-reason-task-' + task_no;
+                if ($(reason_select_id).val() === "Other reason") {
+                    $(feedback_div_id).show();
+                }
+            } else {
+                $(reason_div_id).hide();
+                $(feedback_div_id).hide();
+            }
+        }
+    });
+
+    $(".reason-select").on("change", function() {
+        let select_id = $(this).attr("id");
+        let task_no = select_id.substring(select_id.lastIndexOf("-") + 1);
+        if (task_no) {
+            let feedback_div_id = "#fail-feedback-task-" + task_no + "-container";
+            if (this.value === "Other reason") {
+                $(feedback_div_id).show();
+            } else {
+                $(feedback_div_id).hide();
+            }
+        }
+    });
+
     let bar_tags_field = $('#inputCurBarTags');
 
     bar_tags_field.on("keypress", function (e) {

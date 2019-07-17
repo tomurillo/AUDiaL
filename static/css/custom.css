@@ -53,6 +53,14 @@ body {
   background-color: #f7ecb5;
 }
 
+.fail-reason-task-container {
+    display: none;
+}
+
+.difficulty-feedback-container {
+    display: none;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
