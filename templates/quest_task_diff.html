@@ -1,0 +1,22 @@
+<div class="form-group">
+    <label for="difficulty-task-{{ task_n }}">Were you able to complete the task?</label>
+    <select id="difficulty-task-{{ task_n }}" name="difficulty-task-{{ task_n }}" class="form-control diff-select">
+        <option>Yes, with ease</option>
+        <option>Yes, but with difficulty</option>
+        <option>I am not sure</option>
+        <option>No, I failed to complete the task</option>
+    </select>
+</div>
+<div id="fail-reason-task-{{ task_n }}-container" class="form-group fail-reason-task-container">
+    <label for="fail-reason-task-{{ task_n }}">Why do you think you failed this task?</label>
+    <select id="fail-reason-task-{{ task_n }}" name="fail-reason-task-{{ task_n }}" class="form-control reason-select">
+        <option>The system gave no useful output</option>
+        <option>The system provided confusing output</option>
+        <option>I did not understand the task</option>
+        <option>Other reason</option>
+    </select>
+</div>
+<div id="fail-feedback-task-{{ task_n }}-container" class="form-group difficulty-feedback-container">
+    <label for="feedback-task-{{ task_n }}">Please write down the reasons:</label>
+    <textarea id="feedback-task-{{ task_n }}" name="feedback-task-{{ task_n }}" class="form-control"></textarea>
+</div>

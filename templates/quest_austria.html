@@ -35,28 +35,9 @@
                         <label for="answer-task-1">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-1" name="answer-task-1"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-1">Were you able to complete the task?</label>
-                        <select id="difficulty-task-1" name="difficulty-task-1" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-1-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-1">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-1" name="fail-reason-task-1" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-1-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-1">Please write down the reasons:</label>
-                        <textarea id="feedback-task-1" name="feedback-task-1" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=1 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -69,28 +50,9 @@
                         <label for="answer-task-2">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-2" name="answer-task-2"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-2">Were you able to complete the task?</label>
-                        <select id="difficulty-task-2" name="difficulty-task-2" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-2-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-2">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-2" name="fail-reason-task-2" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-2-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-2">Please write down the reasons:</label>
-                        <textarea id="feedback-task-2" name="feedback-task-2" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=2 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -103,28 +65,9 @@
                         <label for="answer-task-3">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-3" name="answer-task-3"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-3">Were you able to complete the task?</label>
-                        <select id="difficulty-task-3" name="difficulty-task-3" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-3-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-3">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-3" name="fail-reason-task-3" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-3-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-3">Please write down the reasons:</label>
-                        <textarea id="feedback-task-3" name="feedback-task-3" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=3 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -136,28 +79,9 @@
                         <label for="answer-task-4">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-4" name="answer-task-4"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-4">Were you able to complete the task?</label>
-                        <select id="difficulty-task-4" name="difficulty-task-4" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-4-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-4">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-4" name="fail-reason-task-4" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-4-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-4">Please write down the reasons:</label>
-                        <textarea id="feedback-task-4" name="feedback-task-4" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=4 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -169,28 +93,9 @@
                         <label for="answer-task-5">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-5" name="answer-task-5"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-5">Were you able to complete the task?</label>
-                        <select id="difficulty-task-5" name="difficulty-task-5" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-5-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-5">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-5" name="fail-reason-task-5" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-5-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-5">Please write down the reasons:</label>
-                        <textarea id="feedback-task-5" name="feedback-task-5" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=5 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -203,28 +108,9 @@
                         <label for="answer-task-6">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-6" name="answer-task-6"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-6">Were you able to complete the task?</label>
-                        <select id="difficulty-task-6" name="difficulty-task-6" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-6-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-6">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-6" name="fail-reason-task-6" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-6-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-6">Please write down the reasons:</label>
-                        <textarea id="feedback-task-6" name="feedback-task-6" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=6 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -237,28 +123,9 @@
                         <label for="answer-task-7">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-7">Were you able to complete the task?</label>
-                        <select id="difficulty-task-7" name="difficulty-task-7" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-7-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-7">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-7" name="fail-reason-task-7" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-7-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-7">Please write down the reasons:</label>
-                        <textarea id="feedback-task-7" name="feedback-task-7" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=7 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
                 <section>
@@ -272,28 +139,9 @@
                         <label for="answer-task-8">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-8" name="answer-task-8"/>
                     </div>
-                    <div class="form-group">
-                        <label for="difficulty-task-8">Were you able to complete the task?</label>
-                        <select id="difficulty-task-8" name="difficulty-task-8" class="form-control diff-select">
-                            <option>Yes, with ease</option>
-                            <option>Yes, but with difficulty</option>
-                            <option>I am not sure</option>
-                            <option>No, I failed to complete the task</option>
-                        </select>
-                    </div>
-                    <div id="fail-reason-task-8-container" class="form-group fail-reason-task-container">
-                        <label for="fail-reason-task-8">Why do you think you failed this task?</label>
-                        <select id="fail-reason-task-8" name="fail-reason-task-8" class="form-control reason-select">
-                            <option>The system gave no useful output</option>
-                            <option>The system provided confusing output</option>
-                            <option>I did not understand the task</option>
-                            <option>Other reason</option>
-                        </select>
-                    </div>
-                    <div id="fail-feedback-task-8-container" class="form-group difficulty-feedback-container">
-                        <label for="feedback-task-8">Please write down the reasons:</label>
-                        <textarea id="feedback-task-8" name="feedback-task-8" class="form-control"></textarea>
-                    </div>
+                    {% with task_n=8 %}
+                        {% include "quest_task_diff.html" %}
+                    {% endwith %}
                 </section>
 
             </div>
