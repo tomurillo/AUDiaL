@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+
+    <h1>
+        European Energy Generation Chart: User Tasks
+    </h1>
+
+    {%- if session['logged_in'] -%}
+
+        <h3>Description:</h3>
+
+        <p class="text-justify">
+            The following form contains seven task descriptions. Read them carefully and try to solve them using the method
+            you have been assigned (long description or dialogue interface).
+        </p>
+
+        <p class="text-justify">
+            Be aware that understanding this diagram will be especially challenging! It is a very big diagram with hundreds of
+            individual data points being displayed. So do not despair! There is no time limit for solving any task. Moreover,
+            it is OK to leave some answers empty.
+        </p>
+
+        <h4>Your username is: {{ session['username'] }}</h4>
+
+        <h3>Tasks:</h3>
+
+        <form action="{{ url_for('questionnaire_austria_handle') }}" method = 'POST'>
+            <div class="form-group">
+
+                <section>
+                    <h4>Task 1</h4>
+                    <p>
+                        Very generally, what does this diagram depict?
+                        Hint: if using the dialogue-enabled diagram, you can ask the system for a summary
+                        (it can take a few seconds to compute).
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-1">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-1" name="answer-task-1"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 2</h4>
+                    <p>
+                        What was the energy generation of Germany in 2018 like?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-2">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-2" name="answer-task-2"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 3</h4>
+                    <p>
+                        Which country generates the most nuclear power?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-3">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-3" name="answer-task-3"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 4</h4>
+                    <p>
+                        Which countries generate no nuclear power at all?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-4">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-4" name="answer-task-4"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 5</h4>
+                    <p>
+                        How did the energy generation of Denmark evolve with the years? Hint: navigate the bars one by one,
+                        starting with the bar labeled (denmark, coal, 2002), and compare their values
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-5">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-5" name="answer-task-5"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 6</h4>
+                    <p>
+                        Group countries according to their generation of renewable energies in 2018 into three categories:
+                        high generation, medium generation, low generation.
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-6">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-6" name="answer-task-6"/>
+                    </div>
+                </section>
+
+                <section>
+                    <h4>Task 7</h4>
+                    <p>
+                        There is a country whose energy generation looks similar to that of Austria. Which one?
+                    </p>
+                    <div class="form-group">
+                        <label for="answer-task-7">Your answer:</label>
+                        <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"/>
+                    </div>
+                </section>
+
+            </div>
+            <button type="submit" class="btn btn-default">Save my answers</button>
+        </form>
+
+    {%- else -%}
+        <p class="text-justify">
+            You must <a href="{{ url_for('login_form') }}?next={{ url_for('questionnaire_power') }}">log in</a> to
+            fill in the questionnaire!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

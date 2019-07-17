@@ -57,7 +57,7 @@
         </p>
 
         <p class="text-justify">
-            After filling in the questionnaire, three different diagrams about completely different topics will be given to you in some alternative form. For each of them, you will be asked 10 questions of different difficulty levels. Some questions require you to find a single item in the diagram (for example: how many people lived in the city of Vienna in 2014?), whereas others require you to combine and reason about several different data points (for example: what was the trend of the population in Vienna between 1994 and 2014?). There is no time limit for answering any question.
+            After filling in the questionnaire, three different diagrams about completely different topics will be given to you in some alternative form. For each of them, you will be asked a few questions of different difficulty levels. Some questions require you to find a single item in the diagram (for example: how many people lived in the city of Vienna in 2014?), whereas others require you to combine and reason about several different data points (for example: what was the trend of the population in Vienna between 1994 and 2014?). There is no time limit for answering any question.
         </p>
 
         <p>
@@ -82,14 +82,28 @@
                     Please <a href="{{ url_for('login_form') }}">log in</a> using those credentials before carrying on.
                 {% endif %}
             </li>
-            <li>Please fill in the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a> first.</li>
-            <li>The first diagram we will explore is about Leonardo DiCaprio's girlfriends. Please take a quick look at it using
-            your assigned diagram version. Then, take a look at the tasks that you will perform on this chart (<a href="{{ url_for('questionnaire_caprio') }}"
-                                                                                 target="_blank">tasks form</a>),
-                and complete them using your assigned method. </li>
-            <li>Next, we will explore a bar chart about the Austrian population. Take a look at the tasks that you will perform on this chart (<a href="{{ url_for('questionnaire_austria') }}"
-                                                                                 target="_blank">tasks form</a>),
-                and complete them using your assigned method. </li>
+            <li>
+                Please fill in the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a> first.
+            </li>
+            <li>
+                The first diagram we will explore is about Leonardo DiCaprio's girlfriends. Please take a quick look at it using
+                your assigned diagram version. Then, take a look at the tasks that you will perform on this chart
+                (<a href="{{ url_for('questionnaire_caprio') }}" target="_blank">tasks form</a>),
+                and complete them using your assigned method.
+            </li>
+            <li>
+                Next, we will explore a bar chart about the Austrian population.
+                Take a look at the tasks that you will perform on this chart
+                (<a href="{{ url_for('questionnaire_austria') }}" target="_blank">tasks form</a>),
+                and complete them using your assigned method.
+            </li>
+            <li>
+                The last diagram we will explore is about energy generation in Europe.
+                Take a look at the tasks that you will perform on this chart
+                (<a href="{{ url_for('questionnaire_power') }}" target="_blank">tasks form</a>),
+                and complete them using your assigned method. This will be especially challenging!
+            </li>
+
         </ol>
 
     </div>

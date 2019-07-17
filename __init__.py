@@ -87,6 +87,16 @@ def questionnaire_austria_handle():
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_austria')))
 
 
+@app.route('/bar-chart-leo-dicaprio')
+@logged_in
+def bar_chart_caprio():
+    key = "Leonardo DiCaprio"
+    if request.args.get('longdesc') is None:
+        return render_graphic(key)
+    else:
+        return render_longdesc(key)
+
+
 @app.route('/quest-caprio')
 def questionnaire_caprio():
     return render_template('quest_caprio.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
@@ -103,16 +113,6 @@ def questionnaire_caprio_handle():
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_caprio')))
 
 
-@app.route('/bar-chart-leo-dicaprio')
-@logged_in
-def bar_chart_caprio():
-    key = "Leonardo DiCaprio"
-    if request.args.get('longdesc') is None:
-        return render_graphic(key)
-    else:
-        return render_longdesc(key)
-
-
 @app.route('/bar-chart-power')
 @logged_in
 def bar_chart_power():
@@ -121,6 +121,22 @@ def bar_chart_power():
         return render_graphic(key)
     else:
         return render_longdesc(key)
+
+
+@app.route('/quest-power')
+def questionnaire_power():
+    return render_template('quest_power.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-quest-power', methods=['POST'])
+def questionnaire_power_handle():
+    if session.get('logged_in') and request.form:
+        from forms.handlers import process_quest_tasks
+        process_quest_tasks(request.form, session['username'], 'power')
+        session['alert_msg'] = alert_html('success')
+        return redirect(url_for('homepage'))
+    else:
+        return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_power')))
 
 
 @app.route('/_retrieve_values')
