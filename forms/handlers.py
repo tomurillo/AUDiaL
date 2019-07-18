@@ -1,4 +1,4 @@
-from util import getStoragePath, serializeForm
+from util import getStoragePath, serializeForm, susValueToScore
 
 
 def process_quest_tasks(form, username, diagram):
@@ -39,6 +39,55 @@ def process_quest_tasks(form, username, diagram):
         with open(store_path, 'a') as f:
             f.writelines(lines)
         serializeForm(form, diagram, username)
+
+
+def process_quest_sus(form, username):
+    """
+    Handles the submission of the System Usability Scale (SUS) questionnaire
+    :param form: dict with form values
+    :param username: string; name of the user that has submitted the form
+    :return: None; form data is serialized to file
+    """
+    if form and username:
+        score = 0
+        store_path = getStoragePath("sus_answers.txt", username)
+        lines = ["SUS data for user %s (diagram: %s)" % (username, form.get('sus-diagram', '')), "\n\n"]
+        sus_1 = form.get('sus-quest-1', '')
+        score += susValueToScore(1, sus_1)
+        lines.append("I think that I would like to use this system frequently: %s\n" % sus_1)
+        sus_2 = form.get('sus-quest-2', '')
+        score += susValueToScore(2, sus_2)
+        lines.append("I found the system unnecessarily complex: %s\n" % sus_2)
+        sus_3 = form.get('sus-quest-3', '')
+        score += susValueToScore(3, sus_3)
+        lines.append("I thought the system was easy to use: %s\n" % sus_3)
+        sus_4 = form.get('sus-quest-4', '')
+        score += susValueToScore(4, sus_4)
+        lines.append(
+            "I think that I would need the support of a technical person to be able to use this system: %s\n" % sus_4)
+        sus_5 = form.get('sus-quest-5', '')
+        score += susValueToScore(5, sus_5)
+        lines.append("I found the various functions in this system were well integrated: %s\n" % sus_5)
+        sus_6 = form.get('sus-quest-6', '')
+        score += susValueToScore(6, sus_6)
+        lines.append("I thought there was too much inconsistency in this system: %s\n" % sus_6)
+        sus_7 = form.get('sus-quest-7', '')
+        score += susValueToScore(7, sus_7)
+        lines.append("I would imagine that most people would learn to use this system very quickly: %s\n" % sus_7)
+        sus_8 = form.get('sus-quest-8', '')
+        score += susValueToScore(8, sus_8)
+        lines.append("I found the system very cumbersome to use: %s\n" % sus_8)
+        sus_9 = form.get('sus-quest-9', '')
+        score += susValueToScore(9, sus_9)
+        lines.append("I felt very confident using the system: %s\n" % sus_9)
+        sus_10 = form.get('sus-quest-10', '')
+        score += float(susValueToScore(10, sus_10))
+        lines.append("I needed to learn a lot of things before I could get going with this system: %s\n" % sus_10)
+        score *= 2.5
+        lines.append("SU score: %0.2f\n" % score)
+        lines.append("\n\n")
+        with open(store_path, 'a') as f:
+            f.writelines(lines)
 
 
 def process_quest_dem(form, username):

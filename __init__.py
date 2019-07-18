@@ -145,6 +145,22 @@ def questionnaire_power_handle():
         return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_power')))
 
 
+@app.route('/quest-sus')
+def questionnaire_sus():
+    return render_template('quest_sus.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+
+
+@app.route('/handle-quest-sus', methods=['POST'])
+def questionnaire_sus_handle():
+    if session.get('logged_in') and request.form:
+        from forms.handlers import process_quest_sus
+        process_quest_sus(request.form, session['username'])
+        session['alert_msg'] = alert_html('success')
+        return redirect(url_for('homepage'))
+    else:
+        return redirect(url_for('login_form') + ("?next=%s" % url_for('questionnaire_sus')))
+
+
 @app.route('/_retrieve_values')
 def retrieve_values():
     c = None
@@ -403,10 +419,13 @@ def url_to_next(default='homepage'):
     return request.args.get('next') or url_for(default)
 
 
-def alert_html(alert_type='success'):
+def alert_html(alert_type='success', msg=''):
     html = "<div id=\"alert-message\" class=\"alert alert-%s\" tabindex=\"0\">" % alert_type
     if alert_type == "success":
-        html += "<strong>Success!</strong> Your information has been saved."
+        if not msg:
+            html += "<strong>Success!</strong> Your information has been saved."
+        else:
+            html += '<strong>Success!</strong> %s' % msg
     html += "</div>"
     return html
 

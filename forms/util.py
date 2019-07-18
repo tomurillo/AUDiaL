@@ -3,6 +3,32 @@ import errno
 import json
 
 
+def susValueToScore(item_no, sus_value):
+    """
+    Given a textual SUS value, returns its numeric score contribution
+    :param item_no: int; item number of the SUS measure
+    :param sus_value: string; value chosen by the user for the given SUS measure
+    :return: int; score contribution for given value
+    """
+    if sus_value == "Strongly disagree":
+        v = 1
+    elif sus_value == "Disagree":
+        v = 2
+    elif sus_value == "Neutral":
+        v = 3
+    elif sus_value == "Agree":
+        v = 4
+    elif sus_value == "Strongly Agree":
+        v = 5
+    else:
+        return 0
+    if item_no % 2 == 0:
+        v = 5 - v
+    else:
+        v -= 1
+    return v
+
+
 def getStoragePath(filename, username):
     """
     Returns the platform-specific path to a form data storage file

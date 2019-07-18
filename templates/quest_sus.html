@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block pageinfo %}
+
+<div id="navigation-container" class="container-fluid">
+
+    <h1>
+        System Usability Scale (SUS) Questionnaire
+    </h1>
+
+    {%- if session['logged_in'] -%}
+
+        <h3>Description:</h3>
+
+        <p class="text-justify">
+            Please fill in the following form if you have completed all tasks for a diagram using the dialogue interface.
+            This will help us improve it in the future. <strong>Please note:</strong> all questions refer to the Web
+            interactive system only, not to the tactile or table versions of the diagram!
+        </p>
+
+        <p>
+            Thank you for your time!
+        </p>
+
+        <h4>Your username is: {{ session['username'] }}</h4>
+
+        <h3>Questionnaire:</h3>
+        <form action="{{ url_for('questionnaire_sus_handle') }}" method = 'POST'>
+
+            <div class="form-group">
+                <label for="sus-diagram">Which diagram have you explored with the dialogue system?</label>
+                <select id="sus-diagram" name="sus-diagram" class="form-control sus-select">
+                    <option>Leonardo DiCaprio's Girlfriends</option>
+                    <option>Austrian Population</option>
+                    <option>European Energy Generation</option>
+                </select>
+            </div>
+
+            <h4>In relation to the Web dialogue system:</h4>
+
+            <div class="form-group">
+                <label for="sus-quest-1">I think that I would like to use this system frequently</label>
+                <select id="sus-quest-1" name="sus-quest-1" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-2">I found the system unnecessarily complex</label>
+                <select id="sus-quest-2" name="sus-quest-2" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-3">I thought the system was easy to use</label>
+                <select id="sus-quest-3" name="sus-quest-3" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-4">I think that I would need the support of a technical person to be able to use this system</label>
+                <select id="sus-quest-4" name="sus-quest-4" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-5">I found the various functions in this system were well integrated</label>
+                <select id="sus-quest-5" name="sus-quest-5" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-6">I thought there was too much inconsistency in this system</label>
+                <select id="sus-quest-6" name="sus-quest-6" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-7">I would imagine that most people would learn to use this system very quickly</label>
+                <select id="sus-quest-7" name="sus-quest-7" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-8">I found the system very cumbersome to use</label>
+                <select id="sus-quest-8" name="sus-quest-8" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-9">I felt very confident using the system</label>
+                <select id="sus-quest-9" name="sus-quest-9" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sus-quest-10">I needed to learn a lot of things before I could get going with this system</label>
+                <select id="sus-quest-10" name="sus-quest-10" class="form-control sus-select">
+                    <option>Strongly disagree</option>
+                    <option>Disagree</option>
+                    <option>Neutral</option>
+                    <option>Agree</option>
+                    <option>Strongly Agree</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-default">Save my answers</button>
+        </form>
+
+    {%- else -%}
+        <p class="text-justify">
+            You must <a href="{{ url_for('login_form') }}?next={{ url_for('questionnaire_sus') }}">log in</a> to
+            fill in the questionnaire!
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
