@@ -1,4 +1,4 @@
-from util import getStoragePath
+from util import getStoragePath, serializeForm
 
 
 def process_quest_tasks(form, username, diagram):
@@ -38,6 +38,7 @@ def process_quest_tasks(form, username, diagram):
                 break
         with open(store_path, 'a') as f:
             f.writelines(lines)
+        serializeForm(form, diagram, username)
 
 
 def process_quest_dem(form, username):
@@ -123,3 +124,4 @@ def process_quest_dem(form, username):
             f.writelines(lines)
             for k in sorted(sorted_answers):
                 f.write("%s\n" % sorted_answers[k])
+        serializeForm(form, "demographic", username)

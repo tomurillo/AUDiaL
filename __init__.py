@@ -73,7 +73,9 @@ def bar_chart_austria():
 
 @app.route('/quest-austria')
 def questionnaire_austria():
-    return render_template('quest_austria.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    from forms.util import loadSerializedForm
+    form_values = loadSerializedForm('austria_pop', session.get('username', ''))
+    return render_template('quest_austria.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, values=form_values)
 
 
 @app.route('/handle-quest-austria', methods=['POST'])
@@ -99,7 +101,9 @@ def bar_chart_caprio():
 
 @app.route('/quest-caprio')
 def questionnaire_caprio():
-    return render_template('quest_caprio.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    from forms.util import loadSerializedForm
+    form_values = loadSerializedForm('caprio', session.get('username', ''))
+    return render_template('quest_caprio.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, values=form_values)
 
 
 @app.route('/handle-quest-caprio', methods=['POST'])
@@ -125,7 +129,9 @@ def bar_chart_power():
 
 @app.route('/quest-power')
 def questionnaire_power():
-    return render_template('quest_power.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY)
+    from forms.util import loadSerializedForm
+    form_values = loadSerializedForm('power', session.get('username', ''))
+    return render_template('quest_power.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, values=form_values)
 
 
 @app.route('/handle-quest-power', methods=['POST'])

@@ -1,22 +1,55 @@
 <div class="form-group">
     <label for="difficulty-task-{{ task_n }}">Were you able to complete the task?</label>
     <select id="difficulty-task-{{ task_n }}" name="difficulty-task-{{ task_n }}" class="form-control diff-select">
-        <option>Yes, with ease</option>
-        <option>Yes, but with difficulty</option>
-        <option>I am not sure</option>
-        <option>No, I failed to complete the task</option>
+        <option
+        {%- if values.get('difficulty-task-' + task_n|string, '') == 'Yes, with ease' %}
+             selected="selected"
+        {%- endif -%}
+        >Yes, with ease</option>
+        <option
+        {%- if values.get('difficulty-task-' + task_n|string, '') == 'Yes, but with difficulty' %}
+             selected="selected"
+        {%- endif -%}
+        >Yes, but with difficulty</option>
+        <option
+        {%- if values.get('difficulty-task-' + task_n|string, '') == 'I am not sure' %}
+             selected="selected"
+        {%- endif -%}
+        >I am not sure</option>
+        <option
+        {%- if values.get('difficulty-task-' + task_n|string, '') == 'No, I failed to complete the task' %}
+             selected="selected"
+        {%- endif -%}
+        >No, I failed to complete the task</option>
     </select>
 </div>
 <div id="fail-reason-task-{{ task_n }}-container" class="form-group fail-reason-task-container">
     <label for="fail-reason-task-{{ task_n }}">Why do you think you failed this task?</label>
     <select id="fail-reason-task-{{ task_n }}" name="fail-reason-task-{{ task_n }}" class="form-control reason-select">
-        <option>The system gave no useful output</option>
-        <option>The system provided confusing output</option>
-        <option>I did not understand the task</option>
-        <option>Other reason</option>
+        <option
+        {%- if values.get('fail-reason-task-' + task_n|string, '') == 'The system gave no useful output' %}
+             selected="selected"
+        {%- endif -%}
+        >The system gave no useful output</option>
+        <option
+        {%- if values.get('fail-reason-task-' + task_n|string, '') == 'The system provided confusing output' %}
+             selected="selected"
+        {%- endif -%}
+        >The system provided confusing output</option>
+        <option
+        {%- if values.get('fail-reason-task-' + task_n|string, '') == 'I did not understand the task' %}
+             selected="selected"
+        {%- endif -%}
+        >I did not understand the task</option>
+        <option
+        {%- if values.get('fail-reason-task-' + task_n|string, '') == 'Other reason' %}
+             selected="selected"
+        {%- endif -%}
+        >Other reason</option>
     </select>
 </div>
 <div id="fail-feedback-task-{{ task_n }}-container" class="form-group difficulty-feedback-container">
     <label for="feedback-task-{{ task_n }}">Please write down the reasons:</label>
-    <textarea id="feedback-task-{{ task_n }}" name="feedback-task-{{ task_n }}" class="form-control"></textarea>
+    <textarea id="feedback-task-{{ task_n }}" name="feedback-task-{{ task_n }}"
+              class="form-control">{{ values.get('feedback-task-' + task_n|string, '') }}</textarea>
 </div>
