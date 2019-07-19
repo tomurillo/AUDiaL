@@ -23,7 +23,7 @@ class AudialLogger(object):
         log_dir = os.path.join(os.path.dirname(__file__), LOG_REL_DIR)
         self.start_time = 0.0
         self.system_logger = logging.getLogger(__name__)
-        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%d-%m-%Y %H:%M:%S")
+        formatter = logging.Formatter("%(asctime)s - %(uname)s - %(message)s", "%d-%m-%Y %H:%M:%S")
         if not self.system_logger.handlers:
             sysh = logging.handlers.RotatingFileHandler("%s/%s.log" % (log_dir, __name__),
                                                         maxBytes=MAX_BYTES,
@@ -54,7 +54,7 @@ class AudialLogger(object):
         if exec_log_start:
             self.start_exec_log()
         msg = "Input query: '%s'" % query
-        self.session_logger.info(msg)
+        self.session_logger.info(msg, extra={'uname': self.__uname()})
 
     def log_vote(self, vote, exec_log_start=True):
         """
@@ -70,7 +70,7 @@ class AudialLogger(object):
         else:
             label = vote.OE.uri if vote.OE.uri else 'None'
         msg = "Vote for '%s' casted." % label
-        self.session_logger.info(msg)
+        self.session_logger.info(msg, extra={'uname': self.__uname()})
 
     def log_answer(self, answer):
         """
@@ -82,7 +82,7 @@ class AudialLogger(object):
         msg = "Answer: %s " % truncateString(answer)
         if ex_time > 0:
             msg += "Elapsed: %.2f seconds." % ex_time
-        self.session_logger.info(msg)
+        self.session_logger.info(msg, extra={'uname': self.__uname()})
 
     def log_command(self, command, answer):
         """
@@ -95,7 +95,7 @@ class AudialLogger(object):
         msg = "Executed Command: %s. Answer: %s." % (truncateString(command), truncateString(answer))
         if ex_time > 0:
             msg += "Elapsed: %.2f seconds." % ex_time
-        self.session_logger.info(msg)
+        self.session_logger.info(msg, extra={'uname': self.__uname()})
 
     def log_dialog(self, suggestion_pair):
         """
@@ -108,7 +108,7 @@ class AudialLogger(object):
             msg = "Dialog for '%s' shown " % suggestion_pair['text']
             msg += "(%d suggestions). " % len(suggestion_pair['votes'])
             msg += "Elapsed: %.2f seconds." % ex_time
-            self.session_logger.info(msg)
+            self.session_logger.info(msg, extra={'uname': self.__uname()})
 
     def start_exec_log(self):
         """
@@ -128,3 +128,10 @@ class AudialLogger(object):
             ex_time = end_time - self.start_time
         self.start_time = 0.0
         return ex_time
+
+    def __uname(self):
+        """
+        Returns the current user name to be displayed in logs
+        :return: string; current user name or 'anonymous'
+        """
+        return session.get('username', 'anonymous')
