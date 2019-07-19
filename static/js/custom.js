@@ -33,6 +33,15 @@ $(function () {
         }
     });
 
+    $("#sight").on("change", function() {
+        if (this.value !== "I am totally blind" &&
+            this.value !== "I have near total blindness") {
+            $('#blind-length-container').hide();
+        } else {
+            $('#blind-length-container').show();
+        }
+    });
+
     $(".diff-select").on("change", function() {
         let select_id = $(this).attr("id");
         let task_no = select_id.substring(select_id.lastIndexOf("-") + 1);

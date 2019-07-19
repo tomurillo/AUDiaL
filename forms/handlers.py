@@ -111,8 +111,12 @@ def process_quest_dem(form, username):
                 sorted_answers[1] = "Age: %s" % v
             elif k == 'sex':
                 sorted_answers[2] = 'Gender: %s' % v
+            elif k == 'sight':
+                sorted_answers[3] = 'Sight level: %s' % v
+            elif k == 'blind-length':
+                sorted_answers[4] = 'Blind since: %s' % v
             elif k == 'experience-web':
-                sorted_answers[3] = 'Web Browsing Experience: %s' % v
+                sorted_answers[5] = 'Web Browsing Experience: %s' % v
             elif k == 'tech-tts':
                 br_habits.append('Text-to-speech')
             elif k == 'tech-bd':
@@ -124,7 +128,7 @@ def process_quest_dem(form, username):
             elif k == 'tech-no':
                 br_habits.append('None')
             elif k == 'screen-reader':
-                sorted_answers[5] = 'Screen Reader: %s' % (v if v else 'none')
+                sorted_answers[7] = 'Screen Reader: %s' % (v if v else 'none')
             elif k == 'diag-type-bar':
                 diagrams.append('Bar Chart')
             elif k == 'diag-type-hist':
@@ -144,7 +148,7 @@ def process_quest_dem(form, username):
             elif k == 'diag-type-other' and v:
                 diagrams.append(v)
             elif k == 'diag-freq':
-                sorted_answers[7] = 'Diagrams encountered: %s' % v
+                sorted_answers[9] = 'Diagrams encountered: %s' % v
             elif k == 'diag-news':
                 diagram_loc.append('News Sites')
             elif k == 'diag-uni':
@@ -158,16 +162,16 @@ def process_quest_dem(form, username):
             elif k == 'diag-other':
                 diagram_loc.append('Other Sites')
             elif k == 'diag-alttext':
-                sorted_answers[9] = 'Alt-text in diagrams found: %s' % v
+                sorted_answers[11] = 'Alt-text in diagrams found: %s' % v
             elif k == 'diag-longdesc':
-                sorted_answers[10] = 'Longdesc in diagrams found: %s' % v
+                sorted_answers[12] = 'Longdesc in diagrams found: %s' % v
             elif k == 'diag-tactile':
-                sorted_answers[11] = 'Tactile Diagrams used: %s' % v
+                sorted_answers[13] = 'Tactile Diagrams used: %s' % v
             elif k == 'diag-prefer':
-                sorted_answers[12] = 'Preferred manner of accessing diagrams: %s' % v
-        sorted_answers[4] = "%s %s" % (br_habits_str, ", ".join(br_habits))
-        sorted_answers[6] = "%s %s" % (diagrams_str, ", ".join(diagrams))
-        sorted_answers[8] = "%s %s" % (diagram_loc_str, ", ".join(diagram_loc))
+                sorted_answers[14] = 'Preferred manner of accessing diagrams: %s' % v
+        sorted_answers[6] = "%s %s" % (br_habits_str, ", ".join(br_habits))
+        sorted_answers[8] = "%s %s" % (diagrams_str, ", ".join(diagrams))
+        sorted_answers[10] = "%s %s" % (diagram_loc_str, ", ".join(diagram_loc))
         with open(store_path, 'a') as f:
             lines = ["Demographic data for user %s" % username, "\n\n"]
             f.writelines(lines)
