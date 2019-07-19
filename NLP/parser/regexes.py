@@ -11,7 +11,7 @@ class QuickRegex(object):
         self.DIRECTION += 'current|shortest|smallest|start|starting|end|ending|beginning|initial|parent|ancestor|child|'
         self.DIRECTION += 'descendant|up|down|'
         self.DIRECTION += self.HOME
-        self.DIR_VERB = 'move|go|proceed|advance|progress|get to|bring me'
+        self.DIR_VERB = 'move|go|proceed|advance|progress|get to|bring me|jump'
         self.MOVE_REGEX_SHORT = '\s*(%s)\s+\w+\W*' % self.DIRECTION
         self.MOVE_REGEX_LONG = '.*?(?:%s)\s+.*?(?:to(?:wards)?\s)?\s*(?:the\s)?\s*(%s)(?:\w*)(?:\W+.*)?' % \
                                (self.DIR_VERB, self.DIRECTION)

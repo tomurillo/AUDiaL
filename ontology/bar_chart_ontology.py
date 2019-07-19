@@ -35,7 +35,7 @@ class BarChartOntology(UpperVisOntology):
             units_answer = ' %s' % units
         else:
             units_answer = ''
-        add_labels_bar = None  # If only one bar is fetched add its labels to output
+        add_labels_bar = []  # Bars of which to add labels to output
         task = self.stripNamespace(task_sc.task)
         if task == self.StructuralTask.DerivedValueTask.COMPARE:
             answer, success = self.computeCompare(bars)
@@ -65,17 +65,25 @@ class BarChartOntology(UpperVisOntology):
             c = self.computeDerived('count', bars)
             answer = '%d bars match your query.' % c
         elif task == self.StructuralTask.ComparisonTask.FIND_MAXIMUM:
-            res = self.computeExtreme('max', bars)
+            res = self.computeExtreme('max', bars, 'all')
             if res and 'max' in res:
-                add_labels_bar, numeric_result = res['max']
-                answer = "The maximum value is: %.2f" % numeric_result
+                add_labels_bar = res['max']
+                if add_labels_bar:
+                    answer = "The maximum value is: %.2f" % add_labels_bar[0][1]
+                else:
+                    answer = "No maximum could be found."
+                    add_units = False
         elif task == self.StructuralTask.ComparisonTask.FIND_MINIMUM:
-            res = self.computeExtreme('min', bars)
+            res = self.computeExtreme('min', bars, 'all')
             if res and 'min' in res:
-                add_labels_bar, numeric_result = res['min']
-                answer = "The mininum value is: %.2f" % numeric_result
+                add_labels_bar = res['min']
+                if add_labels_bar:
+                    answer = "The mininum value is: %.2f" % add_labels_bar[0][1]
+                else:
+                    answer = "No minimum could be found."
+                    add_units = False
         elif task in [self.StructuralTask.ComparisonTask.FIND_EXTREMUM, self.StructuralTask.ComparisonTask.RANGE]:
-            res = self.computeExtreme(['max', 'min'], bars)
+            res = self.computeExtreme(['max', 'min'], bars, 'all')
             add_units = False
             if task == self.StructuralTask.ComparisonTask.RANGE and 'range' in res:
                 _, r = res['range']
@@ -83,13 +91,13 @@ class BarChartOntology(UpperVisOntology):
                 answer += units_answer
                 answer += '. It has the following extreme values:<br/>'
             if res and 'min' in res:
-                bar, value = res['min']
+                bar, value = res['min'][0]
                 answer += "Minimum value: %.2f" % value
                 if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
                     answer += units_answer
                 answer += " %s<br/>" % self.getElementFiltersString(bar)
             if res and 'max' in res:
-                bar, value = res['max']
+                bar, value = res['max'][0]
                 answer += "Maximum value : %.2f" % value
                 if task == self.StructuralTask.ComparisonTask.FIND_EXTREMUM:
                     answer += units_answer
@@ -109,8 +117,15 @@ class BarChartOntology(UpperVisOntology):
         if answer:
             if add_units and units:
                 answer += units_answer
-            if add_labels_bar:
-                answer += " %s" % self.getElementFiltersString(add_labels_bar)
+            add_list_markup = len(add_labels_bar) > 1
+            if add_list_markup:
+                answer += ". There is a tie between the following %d bars:<br/>" % len(add_labels_bar)
+            answer += "<ol>" if add_list_markup else ''
+            for b, _ in add_labels_bar:
+                answer += "<li>Labels: " if add_list_markup else ''
+                answer += " %s" % self.getElementFiltersString(b, add_brackets=not add_list_markup)
+                answer += "</li>" if add_list_markup else ''
+            answer += "</ol>" if add_list_markup else ''
             answer += '<br/>'
             if numeric_result is not None:
                 cmp_home = self.printCompareValToHome(numeric_result)
@@ -251,22 +266,34 @@ class BarChartOntology(UpperVisOntology):
 
         output += "Extreme values of graph:<br/>"
 
-        extremeMetric = self.computeExtreme(['max', 'min'], self.getMetricBars())
-        extremeStacked = self.computeExtreme(['max', 'min'], self.getStackedBars())
+        extremeMetric = self.computeExtreme(['max', 'min'], self.getMetricBars(), 'all')
+        extremeStacked = self.computeExtreme(['max', 'min'], self.getStackedBars(), 'all')
         if extremeStacked:
-            bar, value = extremeStacked['max']
+            bar, value = extremeStacked['max'][0]
             tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
-            output += "Stacked bars maximum: %.2f (tags: %s)<br/>" % (value, tags)
-            bar, value = extremeStacked['min']
+            output += "Stacked bars maximum: %.2f (tags: %s)" % (value, tags)
+            if len(extremeStacked['max']) > 1:
+                output += ". Tied with %s other bars." % (len(extremeStacked['max']) - 1)
+            output += "<br/>"
+            bar, value = extremeStacked['min'][0]
             tags = ",".join(sorted([f for f in self.getElementFilters(bar) if f]))
-            output += "Stacked bars minimum: %.2f (tags: %s)<br/>" % (value, tags)
+            output += "Stacked bars minimum: %.2f (tags: %s)" % (value, tags)
+            if len(extremeStacked['min']) > 1:
+                output += ". Tied with %s other bars." % (len(extremeStacked['min']) - 1)
+            output += "<br/>"
         if extremeMetric:
-            bar, value = extremeMetric['max']
+            bar, value = extremeMetric['max'][0]
             tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
-            output += "Metric bars maximum: %.2f (tags: %s)<br/>" % (value, tags)
-            bar, value = extremeMetric['min']
+            output += "Metric bars maximum: %.2f (tags: %s)" % (value, tags)
+            if len(extremeMetric['max']) > 1:
+                output += ". Tied with %s other bars." % (len(extremeMetric['max']) - 1)
+            output += "<br/>"
+            bar, value = extremeMetric['min'][0]
             tags = ", ".join(sorted([f for f in self.getElementFilters(bar) if f]))
-            output += "Metric bars minimum: %.2f (tags: %s)<br/>" % (value, tags)
+            output += "Metric bars minimum: %.2f (tags: %s)" % (value, tags)
+            if len(extremeMetric['min']) > 1:
+                output += ". Tied with %s other bars." % (len(extremeMetric['min']) - 1)
+            output += "<br/>"
 
         output += "End of summary.<br/>"
         return output
@@ -636,15 +663,16 @@ class BarChartOntology(UpperVisOntology):
                             to_remove.add(b)
         return list(bars - to_remove)
 
-    def computeExtreme(self, ops, bars):
+    def computeExtreme(self, ops, bars, n=1):
         """
         Retrieves data cases possessing an extreme value of an attribute over
         its range within the data set: maximum, minimum of bars' values
-        @param list<string> ops: A list of operations or a single operation
+        :param list<string> ops: A list of operations or a single operation
          e.g. max, min
-        @param set<string> bars: the bars whose values to take into account
-        @return dict<string, (string, float)>. Key: op, value: (bar name, value)
-        e.g. {'max' : ('bar123', 1000), 'min' : ('bar456', 10)}
+        :param set<string> bars: the bars whose values to take into account
+        :param n: int; maximum number of tied elements to return, or 'all' to return all tied elements
+        :return dict<string, list<(string, float)>>. Key: op, value: list of (bar name, value)
+        e.g. {'max' : [('bar123', 1000)], 'min' : [('bar456', 10), ('bar789', 10)]}
         """
         if not isinstance(ops, list):
             ops = [ops]
@@ -656,14 +684,27 @@ class BarChartOntology(UpperVisOntology):
             if v:
                 barVals[bar] = float(v)
         if len(barVals) > 0:
-            maxBar = max(barVals, key=barVals.get)
-            minBar = min(barVals, key=barVals.get)
             if 'max' in ops:
-                result['max'] = (maxBar, barVals[maxBar])
+                result['max'] = []
             if 'min' in ops:
-                result['min'] = (minBar, barVals[minBar])
-             # Add a tuple without an associated bar, only the range value
-            result['range'] = (None, barVals[maxBar] - barVals[minBar])
+                result['min'] = []
+            max_v = float("-inf")
+            min_v = float("inf")
+            for b, v in barVals.iteritems():
+                if v > max_v:
+                    result['max'] = [(b, v)]
+                    max_v = v
+                elif v == max_v:
+                    result['max'].append((b, v))
+                if v < min_v:
+                    result['min'] = [(b, v)]
+                    min_v = v
+                elif v == min_v:
+                    result['min'].append((b, v))
+            if isNumber(n) and n > 0:
+                result['max'] = result['max'][: n]
+                result['min'] = result['min'][: n]
+            result['range'] = (None, result['max'][0][1] - result['min'][0][1])  # Range value only, no bar name
         return result
 
     def computeDerived(self, op, bars):
@@ -1418,7 +1459,7 @@ class BarChartOntology(UpperVisOntology):
                     if not bars:
                         bars = self.getBars()
                 extremes = self.computeExtreme(op, bars)
-                max_bar, _ = extremes[op]
+                max_bar, _ = extremes[op][0]
                 self.setCurrentBar(max_bar)
                 if self.elementHasRole(current, self.SyntacticRoles.METRIC_BAR) and \
                         self.elementHasRole(max_bar, self.SyntacticRoles.STACKED_BAR):
