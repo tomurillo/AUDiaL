@@ -14,7 +14,8 @@
 
         <p class="text-justify">
             The following form contains eight task descriptions. Read them carefully and try to solve them using the method
-            you have been assigned (tactile diagram, longdesc, dialogue interface). There is no time limit for solving
+            you have been assigned (tactile diagram, longdesc, dialogue interface). After inputting each answer, you may be asked to
+            rate how easy/difficult solving the task was on various levels. There is no time limit for solving
             any task, but if you get stuck or something isn't clear please ask. You do not need to answer all tasks, only
             as many as you can.
         </p>
@@ -130,7 +131,7 @@
                         <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"
                                value="{{ values.get('answer-task-7', '') }}">
                     </div>
-                    {% with task_n=7 %}
+                    {% with task_n=7, add_tlx=True %}
                         {% include "quest_task_diff.html" %}
                     {% endwith %}
                 </section>
@@ -140,14 +141,14 @@
                     <p>
                         What would you say is the general trend of the population in Austria?
                         Is it growing or decreasing with each passing decade?
-                        Where are the people moving to?
+                        Where are people moving to?
                     </p>
                     <div class="form-group">
                         <label for="answer-task-8">Your answer:</label>
                         <input type="text" class="form-control" id="answer-task-8" name="answer-task-8"
                                value="{{ values.get('answer-task-8', '') }}">
                     </div>
-                    {% with task_n=8 %}
+                    {% with task_n=8, add_tlx=True %}
                         {% include "quest_task_diff.html" %}
                     {% endwith %}
                 </section>

@@ -18,6 +18,12 @@ def process_quest_tasks(form, username, diagram):
             difficulty_name = "difficulty-task-%d" % i
             fail_reason_name = "fail-reason-task-%d" % i
             fail_feedback_name = "feedback-task-%d" % i
+            #  NASA Task Load Index (TLX) scores
+            tlx_mental_name = "tlx-mental-task-%d" % i
+            tlx_temporal_name = "tlx-tmp-task-%d" % i
+            tlx_performance_name = "tlx-prf-task-%d" % i
+            tlx_effort_name = "tlx-effort-task-%d" % i
+            tlx_frustration_name = "tlx-frus-task-%d" % i
             if input_name in form:
                 input_val = form.get(input_name)
                 if not input_val:
@@ -32,6 +38,13 @@ def process_quest_tasks(form, username, diagram):
                         if reason_val == "Other reason":
                             fail_feedback = form.get(fail_feedback_name)
                             lines.append("Failure feedback: %s\n" % fail_feedback)
+                if tlx_mental_name in form:
+                    lines.append("\nTLX Scores:\n")
+                    lines.append("Mental Demand: %s\n" % form.get(tlx_mental_name))
+                    lines.append("Temporal Demand: %s\n" % form.get(tlx_temporal_name))
+                    lines.append("Performance: %s\n" % form.get(tlx_performance_name))
+                    lines.append("Effort: %s\n" % form.get(tlx_effort_name))
+                    lines.append("Frustration: %s\n" % form.get(tlx_frustration_name))
                 lines.append("\n\n")
                 i += 1
             else:

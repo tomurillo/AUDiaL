@@ -14,7 +14,8 @@
 
         <p class="text-justify">
             The following form contains seven task descriptions. Read them carefully and try to solve them using the method
-            you have been assigned (long description or dialogue interface).
+            you have been assigned (long description or dialogue interface). After inputting each answer, you may be asked to
+            rate how easy/difficult solving the task was on various levels.
         </p>
 
         <p class="text-justify">
@@ -119,7 +120,7 @@
                         <input type="text" class="form-control" id="answer-task-6" name="answer-task-6"
                                value="{{ values.get('answer-task-6', '') }}" />
                     </div>
-                    {% with task_n=6 %}
+                    {% with task_n=6, add_tlx=True %}
                         {% include "quest_task_diff.html" %}
                     {% endwith %}
                 </section>
@@ -134,7 +135,7 @@
                         <input type="text" class="form-control" id="answer-task-7" name="answer-task-7"
                                value="{{ values.get('answer-task-7', '') }}" />
                     </div>
-                    {% with task_n=7 %}
+                    {% with task_n=7, add_tlx=True %}
                         {% include "quest_task_diff.html" %}
                     {% endwith %}
                 </section>

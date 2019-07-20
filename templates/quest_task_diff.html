@@ -53,3 +53,118 @@
     <textarea id="feedback-task-{{ task_n }}" name="feedback-task-{{ task_n }}"
               class="form-control">{{ values.get('feedback-task-' + task_n|string, '') }}</textarea>
 </div>
+{%- if add_tlx -%}
+    <div class="form-group">
+        <label for="tlx-mental-task-{{ task_n }}">How mentally demanding was the task? (1 means very low, 20 very high)</label>
+        <select id="tlx-mental-task-{{ task_n }}" name="tlx-mental-task-{{ task_n }}" class="form-control tlx-select">
+            <option
+            {%- if values.get('tlx-mental-task-' + task_n|string, '') == '1 - Lowest' %}
+                 selected="selected"
+            {%- endif -%}
+            >1 - Lowest</option>
+            {% for _ in range(2, 20) %}
+                <option
+                {%- if values.get('tlx-mental-task-' + task_n|string, '') == (loop.index + 1)|string %}
+                     selected="selected"
+                {%- endif -%}
+                >{{ loop.index + 1 }}</option>
+            {% endfor %}
+            <option
+            {%- if values.get('tlx-mental-task-' + task_n|string, '') == '20 - Highest' %}
+                 selected="selected"
+            {%- endif -%}
+            >20 - Highest</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tlx-tmp-task-{{ task_n }}">How hurried or rushed was the pace of the task? (1 means very low hurry, 20 very high hurry)</label>
+        <select id="tlx-tmp-task-{{ task_n }}" name="tlx-tmp-task-{{ task_n }}" class="form-control tlx-select">
+            <option
+            {%- if values.get('tlx-tmp-task-' + task_n|string, '') == '1 - Lowest' %}
+                 selected="selected"
+            {%- endif -%}
+            >1 - Lowest</option>
+            {% for _ in range(2, 20) %}
+                <option
+                {%- if values.get('tlx-tmp-task-' + task_n|string, '') == (loop.index + 1)|string %}
+                     selected="selected"
+                {%- endif -%}
+                >{{ loop.index + 1 }}</option>
+            {% endfor %}
+            <option
+            {%- if values.get('tlx-tmp-task-' + task_n|string, '') == '20 - Highest' %}
+                 selected="selected"
+            {%- endif -%}
+            >20 - Highest</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tlx-prf-task-{{ task_n }}">How successful were you in accomplishing what you were asked to do?
+            (1 means complete success, 20 means complete failure)</label>
+        <select id="tlx-prf-task-{{ task_n }}" name="tlx-prf-task-{{ task_n }}" class="form-control tlx-select">
+            <option
+            {%- if values.get('tlx-prf-task-' + task_n|string, '') == '1 - Perfect' %}
+                 selected="selected"
+            {%- endif -%}
+            >1 - Perfect</option>
+            {% for _ in range(2, 20) %}
+                <option
+                {%- if values.get('tlx-prf-task-' + task_n|string, '') == (loop.index + 1)|string %}
+                     selected="selected"
+                {%- endif -%}
+                >{{ loop.index + 1 }}</option>
+            {% endfor %}
+            <option
+            {%- if values.get('tlx-prf-task-' + task_n|string, '') == '20 - Failure' %}
+                 selected="selected"
+            {%- endif -%}
+            >20 - Failure</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tlx-effort-task-{{ task_n }}">How hard did you have to work to  accomplish your level of performance?
+            (1 means very successful, 20 very unsuccessful)</label>
+        <select id="tlx-effort-task-{{ task_n }}" name="tlx-effort-task-{{ task_n }}" class="form-control tlx-select">
+            <option
+            {%- if values.get('tlx-effort-task-' + task_n|string, '') == '1 - Lowest' %}
+                 selected="selected"
+            {%- endif -%}
+            >1 - Lowest</option>
+            {% for _ in range(2, 20) %}
+                <option
+                {%- if values.get('tlx-effort-task-' + task_n|string, '') == (loop.index + 1)|string %}
+                     selected="selected"
+                {%- endif -%}
+                >{{ loop.index + 1 }}</option>
+            {% endfor %}
+            <option
+            {%- if values.get('tlx-effort-task-' + task_n|string, '') == '20 - Highest' %}
+                 selected="selected"
+            {%- endif -%}
+            >20 - Highest</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="tlx-frus-task-{{ task_n }}">How insecure, discouraged, irritated, stressed,and annoyed were you?
+            (1 means very little, 20 means a lot)</label>
+        <select id="tlx-frus-task-{{ task_n }}" name="tlx-frus-task-{{ task_n }}" class="form-control tlx-select">
+            <option
+            {%- if values.get('tlx-frus-task-' + task_n|string, '') == '1 - Lowest' %}
+                 selected="selected"
+            {%- endif -%}
+            >1 - Lowest</option>
+            {% for _ in range(2, 20) %}
+                <option
+                {%- if values.get('tlx-frus-task-' + task_n|string, '') == (loop.index + 1)|string %}
+                     selected="selected"
+                {%- endif -%}
+                >{{ loop.index + 1 }}</option>
+            {% endfor %}
+            <option
+            {%- if values.get('tlx-frus-task-' + task_n|string, '') == '20 - Highest' %}
+                 selected="selected"
+            {%- endif -%}
+            >20 - Highest</option>
+        </select>
+    </div>
+{%- endif -%}
