@@ -12,7 +12,9 @@ def process_quest_tasks(form, username, diagram):
     if form and username and diagram:
         store_path = getStoragePath("%s.txt" % diagram, username)
         i = 1
-        lines = ["Tasks evaluation (%s) for user %s" % (diagram, username), "\n\n"]
+        lines = ["Tasks evaluation (%s) for user %s\n" % (diagram, username)]
+        modality = form.get('diagram-type', '')
+        lines.append("Modality: %s\n\n" % modality)
         while True:
             input_name = "answer-task-%d" % i
             difficulty_name = "difficulty-task-%d" % i
@@ -28,7 +30,7 @@ def process_quest_tasks(form, username, diagram):
                 input_val = form.get(input_name)
                 if not input_val:
                     input_val = 'left empty.'
-                lines.append("Task no. %d.\n\nAnswer: %s\n" % (i, input_val))
+                lines.append("Task no. %d.\nAnswer: %s\n" % (i, input_val))
                 if difficulty_name in form:
                     difficulty_val = form.get(difficulty_name)
                     lines.append("Difficulty for task %d: %s\n" % (i, difficulty_val))

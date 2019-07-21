@@ -9,7 +9,8 @@ $(function () {
             if ($(this).val() === "No, I failed to complete the task") {
                 let select_id = $(this).attr("id");
                 let task_no = select_id.substring(select_id.lastIndexOf("-") + 1);
-                if (task_no) {
+                let diag_type = $('#diagram-type').val();
+                if (task_no && diag_type === 'Dialogue System') {
                     let reason_div_id = "#fail-reason-task-" + task_no + "-container";
                     let feedback_div_id = "#fail-feedback-task-" + task_no + "-container";
                     $(reason_div_id).show();
@@ -42,13 +43,14 @@ $(function () {
         }
     });
 
-    $(".diff-select").on("change", function() {
-        let select_id = $(this).attr("id");
+    function handle_task_change(select_elem) {
+        let select_id = select_elem.attr("id");
         let task_no = select_id.substring(select_id.lastIndexOf("-") + 1);
         if (task_no) {
             let reason_div_id = "#fail-reason-task-" + task_no + "-container";
             let feedback_div_id = "#fail-feedback-task-" + task_no + "-container";
-            if (this.value === "No, I failed to complete the task") {
+            let diag_type = $('#diagram-type').val();
+            if (select_elem.val() === "No, I failed to complete the task" && diag_type === 'Dialogue System') {
                 $(reason_div_id).show();
                 let reason_select_id = '#fail-reason-task-' + task_no;
                 if ($(reason_select_id).val() === "Other reason") {
@@ -58,6 +60,21 @@ $(function () {
                 $(reason_div_id).hide();
                 $(feedback_div_id).hide();
             }
+        }
+    }
+
+    $(".diff-select").on("change", function() {
+        handle_task_change($(this));
+    });
+
+    $("#diagram-type").on("change", function() {
+        if (this.value !== "Dialogue System") {
+            $('.fail-reason-task-container').hide();
+            $('.difficulty-feedback-container').hide();
+        } else {
+            $(".diff-select").each(function() {
+                handle_task_change($(this));
+            });
         }
     });
 

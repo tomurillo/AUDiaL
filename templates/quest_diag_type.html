@@ -1,0 +1,22 @@
+<section>
+    <div class="form-group">
+        <label for="diagram-type">Please select the diagram alternative you have been assigned:</label>
+        <select id="diagram-type" name="diagram-type" class="form-control">
+            <option
+            {%- if values.get('diagram-type', '') == 'Tactile Diagram' %}
+                 selected="selected"
+            {%- endif -%}
+            >Tactile Diagram</option>
+            <option
+            {%- if values.get('diagram-type', '') == 'Long description' %}
+                 selected="selected"
+            {%- endif -%}
+            >Long description</option>
+            <option
+            {%- if values.get('diagram-type', '') == 'Dialogue System' %}
+                 selected="selected"
+            {%- endif -%}
+            >Dialogue System</option>
+        </select>
+    </div>
+</section>

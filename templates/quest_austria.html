@@ -27,6 +27,8 @@
         <form action="{{ url_for('questionnaire_austria_handle') }}" method = 'POST'>
             <div class="form-group">
 
+                {% include "quest_diag_type.html" %}
+
                 <section>
                     <h4>Task 1</h4>
                     <p>
