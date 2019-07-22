@@ -71,7 +71,7 @@ def serializeForm(form, filename_base, username):
     :param username: string; current user name; used as directory name for the user's data
     :return: None, form is serialized to disk
     """
-    if form:
+    if isinstance(form, dict):
         store_path = getStoragePath("%s-raw.json" % filename_base, username)
         with open(store_path, 'w') as f:
             f.write(json.dumps(form))

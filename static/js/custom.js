@@ -34,6 +34,20 @@ $(function () {
         }
     });
 
+    $('#permissions-all').on("click", function (e) {
+        let checkboxes = $('#table-permissions div.checkbox input[type=checkbox]');
+        for (let i=0; i<checkboxes.length; i++) {
+            checkboxes[i].checked = true;
+        }
+    });
+
+    $('#permissions-none').on("click", function (e) {
+        let checkboxes = $('#table-permissions div.checkbox input[type=checkbox]');
+        for (let i=0; i<checkboxes.length; i++) {
+            checkboxes[i].checked = false;
+        }
+    });
+
     $("#sight").on("change", function() {
         if (this.value !== "I am totally blind" &&
             this.value !== "I have near total blindness") {

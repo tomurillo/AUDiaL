@@ -329,7 +329,24 @@ def validate_admin_action(f):
     return wrapper
 
 
-@app.route('/admin-delete/<command>')
+@app.route('/admin/permissions')
+@validate_admin_action
+def admin_permissions():
+    from forms.util import loadSerializedForm
+    form_values = loadSerializedForm('permissions', 'admin')
+    return render_template('permissions.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, USERS=USERS, values=form_values)
+
+
+@app.route('/admin/handle-permissions', methods=['POST'])
+@validate_admin_action
+def admin_permissions_handle():
+    from forms.util import serializeForm
+    serializeForm(request.form, 'permissions', 'admin')
+    session['alert_msg'] = alert_html('success')
+    return redirect(url_for('homepage'))
+
+
+@app.route('/admin/delete/<command>')
 @validate_admin_action
 def admin_delete(command):
     from general_util import deleteDirContents
@@ -386,29 +403,41 @@ def page_not_found(e):
 def render_graphic(key):
     c = None
     try:
-        c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
-        curBarTags = ""
-        if c.isOntologyLoaded():
-            curBarTags = c.o.getCurrentBarUserTags()
-        c.clearSessionContext()
-        c.clean()
-        return render_template("graphic_nav.html",
-                               GRAPHICS=GRAPHICS,
-                               current=key,
-                               curBarTags=curBarTags,
-                               output='Please enter a query below',
-                               output_type='result')
+        d_id = GRAPHICS[key][6]
+        if user_access(session.get('username'), d_id, 'dialogue'):
+            c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
+            curBarTags = ""
+            if c.isOntologyLoaded():
+                curBarTags = c.o.getCurrentBarUserTags()
+            c.clearSessionContext()
+            c.clean()
+            return render_template("graphic_nav.html",
+                                   GRAPHICS=GRAPHICS,
+                                   current=key,
+                                   curBarTags=curBarTags,
+                                   output='Please enter a query below',
+                                   output_type='result')
+        else:
+            return access_denied_redirect()
     except Exception as e:
         handleException(e, c)
         return jsonify(result=printException(e), output_type='answer')
 
 
 def render_longdesc(key):
-    html = longdescContents(GRAPHICS[key][4])
-    return render_template("longdesc.html",
-                           GRAPHICS=GRAPHICS,
-                           current=key,
-                           longdesc_html=html)
+    try:
+        d_id = GRAPHICS[key][6]
+        if user_access(session.get('username'), d_id, 'ldesc'):
+            html = longdescContents(GRAPHICS[key][4])
+            return render_template("longdesc.html",
+                                   GRAPHICS=GRAPHICS,
+                                   current=key,
+                                   longdesc_html=html)
+        else:
+            return access_denied_redirect()
+    except Exception as e:
+        handleException(e, c)
+        return jsonify(result=printException(e), output_type='answer')
 
 
 def redirect_to_url(default='homepage'):
@@ -426,8 +455,18 @@ def alert_html(alert_type='success', msg=''):
             html += "<strong>Success!</strong> Your information has been saved."
         else:
             html += '<strong>Success!</strong> %s' % msg
+    elif alert_type == 'danger':
+        if not msg:
+            html += "<strong>An error happened!</strong> Please try again."
+        else:
+            html += '<strong>Error:</strong> %s' % msg
     html += "</div>"
     return html
+
+
+def access_denied_redirect():
+    session['alert_msg'] = alert_html('danger', 'Access Denied.')
+    return redirect(url_for('homepage'))
 
 
 def intentionDictToHTML(intentions):
@@ -457,6 +496,39 @@ def intentionDictToHTML(intentions):
     return html
 
 
+def permissions_of_user(username):
+    """
+    Returns the current permissions for the given user
+    :param username: string; a username
+    :return: list<list<string>>: user permissions
+    """
+    from forms.util import loadSerializedForm
+    all_perms = loadSerializedForm('permissions', 'admin')
+    len_u = len(username)
+    user_perms = [p[len_u + 1:].split('-') for p in all_perms if p.startswith(username)]
+    return user_perms
+
+
+def user_access(username, diagram, modality):
+    """
+    Returns whether the given user has access to a modality of a diagram
+    :param username: string; name of the user
+    :param diagram: string; session id of the diagram
+    :param modality: string; 'ldesc' or 'dialogue'
+    :return: boolean; True if the user can access the resource; False otherwise
+    """
+    access = False
+    if username in ADMINS:
+        access = True
+    elif username in USERS:
+        user_perms = permissions_of_user(username)
+        for perms in user_perms:
+            if diagram in perms and modality in perms:
+                access = True
+                break
+    return access
+
+
 def handleException(e, c=None):
     """
     Handle's the user session and persistent objects when an exception happens
@@ -469,6 +541,7 @@ def handleException(e, c=None):
         c.clean()
     else:
         session.clear()
+
 
 def printException(e):
     """

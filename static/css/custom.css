@@ -48,11 +48,6 @@ body {
     caption-side: top;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th,
-.table-hover tbody tr:focus td, .table-hover tbody tr:focus th {
-  background-color: #f7ecb5;
-}
-
 .fail-reason-task-container {
     display: none;
 }
