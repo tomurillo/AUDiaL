@@ -201,12 +201,21 @@ class BarChartOntology(UpperVisOntology):
 
         output += "<br/>"
         output += self.getAxisDescription()
-        output += self.getLegendsDescription()
+        leg_output, legend_labels = self.getLegendsDescription()
+        output += leg_output
 
         metric_bars = self.getMetricBars()
         n_m = len(metric_bars)
         stacked_bars = self.getStackedBars()
         labels_all = set(self.getLabels())
+        label_texts = [self.getText(l) for l in labels_all]
+        MAX_LEGENDS = 10
+        l_txt_no_legend = [l for l in label_texts if l not in legend_labels]
+
+        output += "Other labels include %s" % ', '.join(sorted(l_txt_no_legend[: MAX_LEGENDS]))
+        if len(l_txt_no_legend) > MAX_LEGENDS:
+            output += " and %d more" % (len(l_txt_no_legend) - MAX_LEGENDS)
+        output += ".<br/>"
 
         if stacked_bars:
             labels_metric = set()

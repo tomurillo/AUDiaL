@@ -673,9 +673,11 @@ class UpperVisOntology(UpperOntology):
     def getLegendsDescription(self):
         """
         Returns a description of the chart's legends and their sub-elements
-        :return string: a natural language enumeration of the legends' labels
+        :return string, set<string>: a natural language enumeration of the legends' labels, and a set containing the
+        labels' text
         """
         legends = self.getLegends()
+        legend_labels = set()
         output = "This chart has "
         n = len(legends)
         if n == 0:
@@ -690,10 +692,11 @@ class UpperVisOntology(UpperOntology):
             else:
                 output += "The legend is made up of the following items: "
             pairs = self.getLegendPairs(legend)
-            output += ", ".join([self.getText(l)
-                                 for s,l in self.getLegendPairs(legend)])
+            labels = [self.getText(l) for s,l in pairs]
+            legend_labels.update(labels)
+            output += ", ".join(labels)
             output += "<br/>"
-        return output
+        return output, legend_labels
 
     def getLabels(self):
         """
