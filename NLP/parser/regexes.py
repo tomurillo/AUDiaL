@@ -13,8 +13,10 @@ class QuickRegex(object):
         self.DIRECTION += self.HOME
         self.DIR_VERB = 'move|go|proceed|advance|progress|get to|bring me|jump'
         self.MOVE_REGEX_SHORT = '\s*(%s)\s+\w+\W*' % self.DIRECTION
-        self.MOVE_REGEX_LONG = '.*?(?:%s)\s+.*?(?:to(?:wards)?\s)?\s*(?:the\s)?\s*(%s)(?:\w*)(?:\W+.*)?' % \
-                               (self.DIR_VERB, self.DIRECTION)
+        self.MOVE_REGEX_LONG = \
+            '.*(?:%s)(?:\s+to(?:wards)?\s)?(?:\s+the\s)?(?:\s+\w+)*\s+(%s)(?:\s+\w+)*(?:\W*)?$' % \
+            (self.DIR_VERB, self.DIRECTION)
+
         self.nav_regexes = [self.MOVE_REGEX_SHORT, self.MOVE_REGEX_LONG]
         # Set home node
         self.SET_VERB = 'set|assign|fix|apply|establish|put'
