@@ -343,15 +343,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_population -->
-
-    <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_population">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-    </DatatypeProperty>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_saturation -->
 
     <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_saturation">
@@ -417,15 +408,6 @@
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Attribute"/>
         <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Spatial_VA"/>
         <rdfs:comment>A visual attribute that, when varied, does not alter any point of the anchoring to graphic space of its graphic object.</rdfs:comment>
-    </Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Independent_Variable"/>
-        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex"/>
     </Class>
     
 
@@ -955,14 +937,6 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Meaningful_GS"/>
-    </Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Independent_Variable"/>
     </Class>
     
 
@@ -1700,30 +1674,10 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Burgenland -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Burgenland">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Cardinal_Information -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Cardinal_Information">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Type"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Carinthia -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Carinthia">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
         <ns1:has_length>None</ns1:has_length>
         <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
@@ -1970,16 +1924,6 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Directed_Connector_SR">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Connector_SR"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Female -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Female">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex"/>
         <ns1:has_length>None</ns1:has_length>
         <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
@@ -2258,26 +2202,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Lower_Austria -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Lower_Austria">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Male -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Male">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Sex"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Map_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Map_GR"/>
@@ -2532,16 +2456,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Salzburg -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Salzburg">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_by_Separator_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_by_Separator_GR"/>
@@ -2637,16 +2551,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Styria -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Styria">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task">
@@ -2682,16 +2586,6 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Time_Chart_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Time_Chart_GR"/>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Tirol -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Tirol">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
     
 
 
@@ -2761,16 +2655,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Upper_Austria -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Upper_Austria">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Axis -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Axis">
@@ -2814,31 +2698,10 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vienna -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vienna">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_population rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1899055</ns1:has_population>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Violet -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Violet">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Color_Named_VA"/>
-        <ns1:has_length>None</ns1:has_length>
-        <ns1:has_width>None</ns1:has_width>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Voralberg -->
-
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Voralberg">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Austrian_Region"/>
         <ns1:has_length>None</ns1:has_length>
         <ns1:has_width>None</ns1:has_width>
     </NamedIndividual>
@@ -5015,24 +4878,6 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Written_Text_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Yellow"/>
         </distinctMembers>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointProperties"/>
-        <members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#LocationPoint"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasSVGElement"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasXCoordinate"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#hasYCoordinate"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_area"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_color"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_length"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_orientation"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_population"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_text"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#locationPointX"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#locationPointY"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#task_has_verbalization"/>
-        </members>
     </rdf:Description>
 </rdf:RDF>
 
