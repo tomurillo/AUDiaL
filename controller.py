@@ -722,7 +722,6 @@ class Controller(object):
                 output += "No home %s found." % node_name
                 moved = False
         elif action in ['reset', self.o.StructuralTask.NavigationTask.RESET]:
-            session.clear()
             moved = False
             compare_home = False
             b = self.o.navigate([self.o.StructuralTask.NavigationTask.RESET])

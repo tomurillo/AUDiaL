@@ -1339,6 +1339,18 @@ class UpperVisOntology(UpperOntology):
                         break
         return trend_changes
 
+    def resetNavigation(self):
+        """
+        Reset navigation-related session variables
+        @return string: instance name of first bar
+        """
+        super(UpperVisOntology, self).resetNavigation()
+        sess_vars = [c.SESS_CURR_NODES, c.SESS_PREV_NODES, c.SESS_USER_LABELS, c.SESS_HOME_NODES, c.SESS_SUMMARY]
+        for s in sess_vars:
+            s_full = s % self.sess_id
+            if s_full in session:
+                session.pop(s_full)
+
     def normalizeItem(self, item, type='entity'):
         """
         Normalizes the name of a given Entity or Property.
