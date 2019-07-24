@@ -24,7 +24,7 @@
     <div id="navigation-container" class="container-fluid">
 
         <h1>
-            Welcome
+            Welcome{%- if session['logged_in'] -%}, {{ session['username'] }}{% endif %}
         </h1>
 
         <p class="text-justify">
@@ -78,45 +78,71 @@
                     You are already logged in, so you may continue to the next steps. Your username is
                     <strong>{{ session['username'] }}</strong>.
                 {%- else -%}
-                    You will be given access credentials consisting on a username (a number) and a password.&nbsp;
+                    You will be given access credentials consisting on a username and a password.&nbsp;
                     Please <a href="{{ url_for('login_form') }}">log in</a> using those credentials before carrying on.
                 {% endif %}
             </li>
-            <li>
-                Please fill in the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a> first.
-            </li>
-            <li>
-                The first diagram we will explore is about Leonardo DiCaprio's girlfriends. Please take a quick look at it using
-                your assigned diagram version. Then, take a look at the tasks that you will perform on this chart
-                (<a href="{{ url_for('questionnaire_caprio') }}" target="_blank">tasks form - opens in new window</a>),
-                and complete them using your assigned method.
-            </li>
-            <li>
-                If you completed the previous tasks using the dialogue system, please fill in the feedback form
-                (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
-            </li>
-            <li>
-                Next, we will explore a bar chart about the Austrian population.
-                Take a look at the tasks that you will perform on this chart
-                (<a href="{{ url_for('questionnaire_austria') }}" target="_blank">tasks form - opens in new window</a>),
-                and complete them using your assigned method.
-            </li>
-            <li>
-                If you completed the previous tasks using the dialogue system, please fill in the feedback form
-                (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
-            </li>
-            <li>
-                The last diagram we will explore is about energy generation in Europe.
-                Take a look at the tasks that you will perform on this chart
-                (<a href="{{ url_for('questionnaire_power') }}" target="_blank">tasks form - opens in new window</a>),
-                and complete them using your assigned method. This will be especially challenging!
-            </li>
-            <li>
-                If you completed the previous tasks using the dialogue system, please fill in the feedback form
-                (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
-            </li>
-        </ol>
+            {%- if session['logged_in'] -%}
+                <li>
+                    Please fill in the <a href="{{ url_for('questionnaire_dem') }}">personal questionnaire</a> first.
+                </li>
 
+                {%- if user_access(session['username'], 'dc', 'any') -%}
+                    <li>
+                        The first diagram we will explore is about Leonardo DiCaprio's girlfriends. Open your
+                        <a href="{{ url_for('bar_chart_caprio') }}{%- if user_access(session['username'], 'dc', 'ldesc') -%}
+                            ?longdesc=1
+                        {% endif %}
+                        " target="_blank">assigned version of the diagram (opens in a new window)</a>.
+                        Then, take a look at the tasks that you will perform on this chart
+                        (<a href="{{ url_for('questionnaire_caprio') }}" target="_blank">tasks form - opens in new window</a>),
+                        and complete them using your assigned method.
+                    </li>
+                    {%- if user_access(session['username'], 'dc', 'dialogue') -%}
+                        <li>
+                            If you completed the previous tasks using the dialogue system, please fill in the feedback form
+                            (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {%- if user_access(session['username'], 'ap', 'any') -%}
+                    <li>
+                        Next, we will explore a bar chart about the
+                        <a href="{{ url_for('bar_chart_austria') }}{%- if user_access(session['username'], 'ap', 'ldesc') -%}
+                            ?longdesc=1
+                        {% endif %}
+                        " target="_blank">population in Austria - opens in a new window</a>.
+                        Take a look at the tasks that you will perform on this chart
+                        (<a href="{{ url_for('questionnaire_austria') }}" target="_blank">tasks form - opens in new window</a>),
+                        and complete them using your assigned method.
+                    </li>
+                    {%- if user_access(session['username'], 'ap', 'dialogue') -%}
+                        <li>
+                            If you completed the previous tasks using the dialogue system, please fill in the feedback form
+                            (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {%- if user_access(session['username'], 'pw', 'any') -%}
+                    <li>
+                        The last diagram we will explore is about
+                        <a href="{{ url_for('bar_chart_power') }}{%- if user_access(session['username'], 'pw', 'ldesc') -%}
+                            ?longdesc=1
+                        {% endif %}
+                        " target="_blank">energy generation in Europe - opens in a new window</a>.
+                        Take a look at the tasks that you will perform on this chart
+                        (<a href="{{ url_for('questionnaire_power') }}" target="_blank">tasks form - opens in new window</a>),
+                        and complete them using your assigned method. This will be especially challenging!
+                    </li>
+                    {%- if user_access(session['username'], 'pw', 'dialogue') -%}
+                        <li>
+                            If you completed the previous tasks using the dialogue system, please fill in the feedback form
+                            (<a href="{{ url_for('questionnaire_sus') }}" target="_blank">feedback form - opens in new window</a>)
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </ol>
     </div>
 
 {% endblock %}

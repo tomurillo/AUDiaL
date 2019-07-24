@@ -1,16 +1,20 @@
-    <h2 class="page-header">{{ current }}: <small>{{ GRAPHICS[current][1] }}</small></h2>
-    <div id="maingraph-container" class="container-fluid">
+<h2 class="page-header">{{ current }}: <small>{{ GRAPHICS[current][1] }}</small></h2>
+<div id="maingraph-container" class="container-fluid">
+    {%- if user_access(session.get('username', ''), GRAPHICS[current][6], 'img') -%}
         <img src="{{ url_for('static', filename='graphics/' + GRAPHICS[current][0]) }}"
              alt="{{ GRAPHICS[current][2] }}" style="width: 100%; height: auto; max-width:800px"/>
         <br/>
+    {% endif %}
+    {%- if user_access(session.get('username', ''), GRAPHICS[current][6], 'ldesc') -%}
         <a href="{{ request.path }}?longdesc=1" target="_blank">Image Description (opens in a new window)</a>
+    {% endif %}
+</div>
+<hr/>
+<div id="result-container" class="container-fluid">
+    <div class="panel panel-primary">
+        <div id="query-heading" class="panel-heading" role="heading" aria-level="2">Query Result:</div>
+        <div class="panel-body" id="query-result" aria-live="polite" tabindex="0">
+            Please enter a query below
+        </div>
     </div>
-    <hr/>
-    <div id="result-container" class="container-fluid">
-	    <div class="panel panel-primary">
-	        <div id="query-heading" class="panel-heading" role="heading" aria-level="2">Query Result:</div>
-	        <div class="panel-body" id="query-result" aria-live="polite" tabindex="0">
-	            Please enter a query below
-	        </div>
-	    </div>
-    </div>
+</div>

@@ -20,12 +20,13 @@
                 <tr>
                     <th scope="col" rowspan="2" class="text-center" style="vertical-align: middle">Username</th>
                     {% for graphic in GRAPHICS %}
-                        <th scope="col" colspan="2" class="text-center">{{ graphic }}</th>
+                        <th scope="col" colspan="3" class="text-center">{{ graphic }}</th>
                     {% endfor %}
                 </tr>
                 <tr>
                     {% for graphic in GRAPHICS %}
                         <th scope="col" class="text-center">Dialogue</th>
+                        <th scope="col" class="text-center">Image</th>
                         <th scope="col" class="text-center">Longdesc</th>
                     {% endfor %}
                 </tr>
@@ -40,6 +41,19 @@
                                            name="{{ user }}-{{ GRAPHICS[graphic][6] }}-dialogue"
                                            value="{{ user }}-{{ GRAPHICS[graphic][6] }}-dialogue"
                                             {%- if values.get(user + '-' + GRAPHICS[graphic][6] + '-dialogue') %}
+                                                checked
+                                            {%- endif -%}
+                                    >
+                                  </label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="checkbox">
+                                  <label>
+                                    <input type="checkbox"
+                                           name="{{ user }}-{{ GRAPHICS[graphic][6] }}-img"
+                                           value="{{ user }}-{{ GRAPHICS[graphic][6] }}-img"
+                                            {%- if values.get(user + '-' + GRAPHICS[graphic][6] + '-img') %}
                                                 checked
                                             {%- endif -%}
                                     >

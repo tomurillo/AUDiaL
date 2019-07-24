@@ -26,14 +26,6 @@ GRAPHICS = Content()
 DEFAULT_KEY = "Austrian Population"
 
 
-@app.route('/')
-def homepage():
-    alert_msg = ''
-    if 'alert_msg' in session:
-        alert_msg = session.pop('alert_msg')
-    return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, alert_msg=alert_msg)
-
-
 def logged_in(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -43,6 +35,14 @@ def logged_in(f):
             login_url = '%s?next=%s' % (url_for('login_form'), request.url or url_for('homepage'))
             return redirect(login_url)
     return wrapper
+
+
+@app.route('/')
+def homepage():
+    alert_msg = ''
+    if 'alert_msg' in session:
+        alert_msg = session.pop('alert_msg')
+    return render_template('landing.html', GRAPHICS=GRAPHICS, current=DEFAULT_KEY, alert_msg=alert_msg)
 
 
 @app.route('/quest-dem')
@@ -305,7 +305,11 @@ def logout():
 
 @app.route('/handle-login', methods=['POST'])
 def login_handle():
-    name, pwd = request.form['username'], request.form['pwd']
+    name_raw, pwd_raw = request.form['username'], request.form['pwd']
+    name, pwd = '', ''
+    if name_raw and pwd_raw:
+        name = name_raw.lower()
+        pwd = pwd_raw.lower()
     if (name in ADMINS and pwd == ADMINS[name]) or (name in USERS and pwd == USERS[name]):
         session['username'] = name
         session['logged_in'] = True
@@ -315,6 +319,11 @@ def login_handle():
         if request.args.get('next'):
             get_str = '?next=%s' % request.args.get('next')
         return redirect(url_for('login_form') + get_str)
+
+
+@app.context_processor
+def user_access_processor():
+    return dict(user_access=user_access)
 
 
 # Administrative handles
@@ -436,7 +445,7 @@ def render_longdesc(key):
         else:
             return access_denied_redirect()
     except Exception as e:
-        handleException(e, c)
+        handleException(e)
         return jsonify(result=printException(e), output_type='answer')
 
 
@@ -514,7 +523,7 @@ def user_access(username, diagram, modality):
     Returns whether the given user has access to a modality of a diagram
     :param username: string; name of the user
     :param diagram: string; session id of the diagram
-    :param modality: string; 'ldesc' or 'dialogue'
+    :param modality: string; 'ldesc' or 'dialogue'; 'any' for any of them.
     :return: boolean; True if the user can access the resource; False otherwise
     """
     access = False
@@ -523,7 +532,7 @@ def user_access(username, diagram, modality):
     elif username in USERS:
         user_perms = permissions_of_user(username)
         for perms in user_perms:
-            if diagram in perms and modality in perms:
+            if diagram in perms and (modality == 'any' or modality in perms):
                 access = True
                 break
     return access
