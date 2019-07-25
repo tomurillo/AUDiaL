@@ -14,6 +14,8 @@
 
 {% block semnav %}
 
+{%- if user_access(session.get('username', ''), GRAPHICS[current][6], 'dialogue') -%}
+
 <div id="navigation-container" class="container-fluid">
         <ul id="navtabs" class="nav nav-pills" role="tablist">
             <li role="presentation" class="active">
@@ -107,7 +109,9 @@
               </div>
             </div>
         </div>
-    </div>
+</div>
+
+{% endif %}
     
 {{ load_script_root() }}
 {{ load_script() }}

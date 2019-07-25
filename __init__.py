@@ -413,7 +413,7 @@ def render_graphic(key):
     c = None
     try:
         d_id = GRAPHICS[key][6]
-        if user_access(session.get('username'), d_id, 'dialogue'):
+        if user_access(session.get('username'), d_id, 'any'):
             c = Controller(GRAPHICS[key][5], ontologyPath(GRAPHICS[key][4]), GRAPHICS[key][6])
             curBarTags = ""
             if c.isOntologyLoaded():

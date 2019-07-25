@@ -10,11 +10,13 @@
     {% endif %}
 </div>
 <hr/>
-<div id="result-container" class="container-fluid">
-    <div class="panel panel-primary">
-        <div id="query-heading" class="panel-heading" role="heading" aria-level="2">Query Result:</div>
-        <div class="panel-body" id="query-result" aria-live="polite" tabindex="0">
-            Please enter a query below
+{%- if user_access(session.get('username', ''), GRAPHICS[current][6], 'dialogue') -%}
+    <div id="result-container" class="container-fluid">
+        <div class="panel panel-primary">
+            <div id="query-heading" class="panel-heading" role="heading" aria-level="2">Query Result:</div>
+            <div class="panel-body" id="query-result" aria-live="polite" tabindex="0">
+                Please enter a query below
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
