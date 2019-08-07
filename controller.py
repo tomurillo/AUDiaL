@@ -20,10 +20,9 @@ class Controller(object):
         """
         Controller constructor
         :param type: domain ontology handler to employ
-        :param RDFPath: path to the ontology to be loaded. None to load from
+        :param RDFPath: path to the ontology to be loaded. None to load from a serialized ontology according to :sess_id
         :param sess_id: string; session ID to use as prefix for session attributes
         :param reload_file: bool; whether to re-fetch ontology data from the given file
-        serialized ontology.
         """
         self.type = type
         if c.SESS_QUERY in session:  # Coming from a dialogue, fetch consolidated query from session
