@@ -1,0 +1,10 @@
+Participant,Age,Gender,Sight,Blind since,Web Browsing Experience,Browsing Habit,Screen Reader,Bar Chart,Histogram,Pie Chart,Line Chart,Scatterplot,Area Chart,Link Diag,Group Diag,Other,Diagram Frequency,News,School,Social,Personal,Game,Other,Alt Text,Longdesc,Tactile Freq,Preferred alt
+1,17,M,Blind,Birth,more than 5 years,TTS,Jaws; NVDA,Y,N,Y,Y,N,N,N,N,N,Almost Never,N,Y,N,N,N,N,Never,Never,Few times/year,Text description
+2,18,F,Blind,Birth,more than 5 years,TTS; Braille,NVDA,Y,N,Y,Y,N,N,N,N,N,Almost Never,Y,N,N,N,N,N,Never,Never,<5 times,Tactile copy
+3,19,F,Blind,Birth,more than 5 years,Braille,Jaws; NVDA,Y,N,Y,Y,N,N,Y,N,N,<15% of Websites,Y,Y,N,N,N,Y,Almost never,Almost never,Few times/year,Text description
+4,22,M,Blind,Birth,more than 5 years,TTS; Braille,Jaws; NVDA,Y,Y,Y,Y,Y,Y,Y,Y,N,<15% of Websites,Y,Y,Y,Y,Y,N,Sometimes,Almost never,<10 times,Table
+5,17,F,Near Blind,Birth,more than 5 years,TTS; Braille,NVDA,N,N,N,N,N,N,N,N,N,<5% of Websites,Y,N,N,N,N,N,Sometimes,Almost never,<5 times,Tactile copy
+6,22,F,Near Blind,more than 10 years,more than 5 years,TTS; Magnifier,Jaws,Y,N,Y,Y,N,N,N,N,N,<15% of Websites,Y,Y,Y,N,Y,N,Most times,Almost never,<5 times,Table
+7,23,M,Blind,Birth,more than 10 years,Braille,NVDA,N,N,N,N,N,N,N,N,N,Never,N,N,N,N,N,N,Never,Never,Never,Text description
+8,21,F,Blind,Birth,more than 10 years,TTS,NVDA,N,N,N,N,N,N,N,N,N,<15% of Websites,Y,Y,Y,N,N,N,Almost never,Never,Never,Text description
+9,58,M,Blind,Birth,more than 10 years,TTS; Braille,JAWS; NVDA; VoiceOver,Y,N,Y,Y,N,Y,Y,Y,N,<15% of Websites,N,N,Y,Y,Y,N,Almost never,Almost never,Few times/year,Text description
