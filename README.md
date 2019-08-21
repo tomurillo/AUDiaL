@@ -4,46 +4,25 @@
  
 A Web-based Natural Language Interface (NLI) to semantically-enhanced diagrams in RDF. Built with [Flask](http://flask.pocoo.org/), [NLTK](https://www.nltk.org/), the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml), and [RDFLib](https://rdflib.readthedocs.io). Code for initial NLP and dialogue handling derived from [FREyA](https://sites.google.com/site/naturallanguageinterfaces/freya).
 
-(Work in progress)
+## About
 
-## System Requirements
+This repository contains the Web application prototype employed for the evaluation of a NLI to diagrams as an advanced alternative to traditional tactile and tabular accessible versions thereof.
 
-- Python 2.7 (optionally pip)
-- Java JDK (1.8+)
+![AUDiaL Block Diagram](docs/resources/block_diagram.png)
 
-## Install (Windows)
+The block diagram above outlines the most relevant components of the proposed framework of NLI to graphics AUDiaL belongs to. Namely:
 
-1. Install the required Python modules (on your venv terminal):
-    ```
-    pip install Flask
-    pip install Flask-Session
-    pip install rdflib
-    pip install nltk
-    pip install requests
-    pip install textdistance
-    pip install inflect
-    ```
-2. Optionally, you may also install the following modules for data analysis tasks:
-    ```
-    pip install scipy
-    pip install scikit-learn
-    ```
-3. Set the `JAVA_HOME` environment to `C:\Program Files\Java\jdk1.X.X_XXX` or similar
-4. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (tested with version 3.9.1).
-5. Unzip the contents of step 3 such that `stanford-postagger-X.X.X.jar` is under `/NLP/lib/postaggers/stanford-postagger`.
-6. Download the [Stanford Parser](https://nlp.stanford.edu/software/lex-parser.shtml#Download) (tested with version 3.9.1).
-7. Unzip the contents of step 5 such that `stanford-parser-X.X.X-models.jar` is under `/NLP/lib/parsers/stanford-parser-full`.
-8. Add the Wordnet corpus to NLTK:
-    ```
-    python
-    > import nltk
-    > nltk.download('wordnet')
-    ```
-    
-Steps 3-7 are only required if you want to run the Stanford Parser and POS-tagger locally. It is recommended to use the [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) API instead. AUDiaL can be configured to use either option:
+* A formal mapping of visualization semantics from graphic primitives to ontological resources
+* Ontologically-supported Natural Language Processing (NLP) that maps phrases found within a user's query in natural language to Semantic Concepts
+* Domain-dependant task handling on diagrams
+* User-specific annotation techniques allowing for partial compesation of the loss of cognitive benefits derived from the lack of sight
+* Output of task result to the user in natural language
+* An accessible Web-based User Interface allowing blind users to access the prototype in an efficient manner
 
-- **Local NLP**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford'`.
-- **CoreNLP API**: set the `NLP_PARSER` and `NLP_POS_TAGGER` constants of the main configuration file (`/config.py`) to `'stanford_web'`. In the NLP parser config file (`/NLP/parser/config.py`) set the corresponding values for each configuration constant. An example file can be found under `/NLP/parser/config-default.py`
+
+## Install
+
+Please follow the [installation instructions](docs/install/INSTALL.md).
 
 ## Usage
 - Run locally:
