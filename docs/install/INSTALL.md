@@ -38,7 +38,7 @@ This document outlines the steps to install AUDiaL on a Web server running Apach
     > /etc/init.d/apache2 restart
     ``` 
 
-3. Copy this project (root directory) somewhere in your server e.g. `/home/audial/audial-app`.
+3. Copy AUDiaL's source code (i.e. the contents of the `/src/audial` directory) somewhere in your server e.g. `/home/audial/audial-app`.
 4. If you want to install the Stanford Parser and Tagger locally: 
     1. Download the [basic English Stanford Tagger](https://nlp.stanford.edu/software/tagger.shtml#Download) (version 3.9.1).
     2. Unzip the contents of the previous file such that `stanford-postagger-X.X.X.jar` is under `/home/audial/audial-app/NLP/lib/postaggers/stanford-postagger`.
@@ -51,7 +51,7 @@ This document outlines the steps to install AUDiaL on a Web server running Apach
     > cd /home/audial
     > virtualenv -p python2 ./venv
     > source ./venv/bin/activate
-    > (venv) pip install -r audial-app/docs/install/requirements.txt
+    > (venv) pip install -r audial-app/install/requirements.txt
     ```
 
 6. Optionally, you may also install the following modules for data analysis tasks:
