@@ -8,6 +8,7 @@ from controller import Controller
 from flask import session
 import os
 from config import *
+from general_util import ontologyPath
 
 
 #  Bootstrapping
@@ -561,18 +562,6 @@ def printException(e):
     t = traceback.format_exc()
     pretty_e = "%s\n%s" % (str(e), t)
     return pretty_e.replace("\n", "<br/>")
-
-
-def ontologyPath(filaname):
-    """
-    Returns the absolute path to the given serialized ontology file; None to return storage directory
-    :param filaname: string; filename of the serialized ontology
-    :return: string; absolute path to the given file, if it exists.
-    """
-    path = ''
-    if filaname:
-        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", filaname))
-    return path
 
 
 def longdescContents(ontology_filename):

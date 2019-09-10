@@ -1047,6 +1047,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
+        <rdfs:comment>A visual layer corresponds to a certain depth level in the equivalent mental space of a diagram, where depth is interpreted as a discrete sequence of levels or “layers”.</rdfs:comment>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visualization_Task"/>
@@ -4818,6 +4827,7 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Informational_Role"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Syntactic_Role"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Attribute"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
         </members>
     </rdf:Description>
     <rdf:Description>

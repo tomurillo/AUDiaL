@@ -100,6 +100,19 @@ def isNumber(n):
         return False
 
 
+def ontologyPath(filaname):
+    """
+    Returns the absolute path to the given serialized ontology file; None to return storage directory
+    :param filaname: string; filename of the serialized ontology
+    :return: string; absolute path to the given file, if it exists.
+    """
+    import os
+    path = ''
+    if filaname:
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__), "static", "graphics", filaname))
+    return path
+
+
 def deleteDirContents(path, ignore=None):
     """
     Delete all contents of the given directory
