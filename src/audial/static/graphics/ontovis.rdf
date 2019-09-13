@@ -22,6 +22,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#belongs_to_visual_layer -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#belongs_to_visual_layer">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#expresses_cardinal_information -->
 
     <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#expresses_cardinal_information">
@@ -94,7 +103,8 @@
 
     <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_graphic_space">
         <inverseOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_graphic_space_of"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Space"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Space"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
     </ObjectProperty>
     
 
@@ -153,6 +163,58 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_visual_layer -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_visual_layer">
+        <inverseOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_visual_layer_of"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Space"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#involves_graphic_object -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#involves_graphic_object">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Relation"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#involves_graphic_space -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#involves_graphic_space">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_GR"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Space_GS"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_above_visual_layer -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_above_visual_layer">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_below_visual_layer -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_below_visual_layer">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_correspondence_of -->
 
     <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_correspondence_of">
@@ -164,7 +226,10 @@
 
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_graphic_space_of -->
 
-    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_graphic_space_of"/>
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_graphic_space_of">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Space"/>
+    </ObjectProperty>
     
 
 
@@ -223,6 +288,15 @@
 
     <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_visual_attribute_of">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Attribute"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_visual_layer_of -->
+
+    <ObjectProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#is_visual_layer_of">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Space"/>
     </ObjectProperty>
     
 
@@ -405,6 +479,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Optics_VA"/>
+        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA"/>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Chart_Domain -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Chart_Domain"/>
@@ -423,7 +506,6 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Color_Named_VA">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Area-Fill_VA"/>
-        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
     </Class>
     
 
@@ -553,14 +635,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distorted_Metric_Axis_GS -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distorted_Metric_Axis_GS">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Axis_GS"/>
-    </Class>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task">
@@ -611,6 +685,7 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Relation">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
+        <rdfs:comment>A graphic relation underpins a meaningful interpretation from the relative context of two or more graphic resources i.e., from the way they relate to each other by comparing some of their visual characteristics, such as their relative positions or sizes.</rdfs:comment>
     </Class>
     
 
@@ -762,14 +837,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Axis_GS -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Axis_GS">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Space_GS"/>
-    </Class>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR">
@@ -782,7 +849,6 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Space_GS">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Meaningful_GS"/>
-        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS"/>
     </Class>
     
 
@@ -809,6 +875,7 @@
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Object_GR">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Relation"/>
         <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_GR"/>
+        <rdfs:comment>A graphic relation involving two or more graphic object instances semantically anchored to each other.</rdfs:comment>
     </Class>
     
 
@@ -825,6 +892,15 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_GR">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Relation"/>
+        <rdfs:comment>A meaningful relationship between a graphic object instance and a metric graphic space instance.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Optics_VA -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Optics_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Area-Fill_VA"/>
     </Class>
     
 
@@ -833,15 +909,6 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Ordered_Lineup_GR">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Lineup_GR"/>
-    </Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Ordered_Separation_GS -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Ordered_Separation_GS">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS"/>
-        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Unordered_Separation_GS"/>
     </Class>
     
 
@@ -926,14 +993,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Meaningful_GS"/>
-    </Class>
-    
-
-
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA">
@@ -999,6 +1058,30 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Granularity_Named_VA -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Granularity_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA -->
+
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
+    </Class>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA">
@@ -1015,10 +1098,10 @@
     
 
 
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Unordered_Separation_GS -->
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA -->
 
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Unordered_Separation_GS">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Separation_GS"/>
+    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Optics_VA"/>
     </Class>
     
 
@@ -1044,7 +1127,7 @@
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Visual_Layer">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
-        <rdfs:comment>A visual layer corresponds to a certain depth level in the equivalent mental space of a diagram, where depth is interpreted as a discrete sequence of levels or “layers”. Visual layers are occupied by a number of graphic spaces, which in turn are occupied by graphic objects and the graphic relations between them.</rdfs:comment>
+        <rdfs:comment>A visual layer corresponds to a certain depth level in the equivalent mental space of a diagram, where depth is interpreted as a discrete sequence of levels or “layers”. Visual layers belong to a certain graphic space.</rdfs:comment>
     </Class>
     
 
@@ -1220,6 +1303,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Coarse_Grained_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Coarse_Grained_Texture_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Granularity_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compare_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compare_Task">
@@ -1373,6 +1464,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Diagonal_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Diagonal_Texture_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Directed_Connector_SR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Directed_Connector_SR">
@@ -1432,6 +1531,14 @@
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lowest</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">minimum</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">smallest</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Fine_Grained_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Fine_Grained_Texture_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Granularity_Named_VA"/>
     </NamedIndividual>
     
 
@@ -1514,10 +1621,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Horizontal_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Horizontal_Texture_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Object -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Object">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Informational_Role"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Intense_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Intense_Blur_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA"/>
     </NamedIndividual>
     
 
@@ -1597,6 +1720,14 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Map_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Map_GR"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Medium_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Medium_Blur_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA"/>
+    </NamedIndividual>
     
 
 
@@ -1680,6 +1811,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#No_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#No_Blur_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Node_SR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Node_SR">
@@ -1692,6 +1831,14 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Nominal_Information">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Type"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Opaque_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Opaque_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA"/>
     </NamedIndividual>
     
 
@@ -1816,6 +1963,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Slight_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Slight_Blur_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Small_Size -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Small_Size">
@@ -1901,6 +2056,38 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Dotted_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Dotted_Pattern_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Grid_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Grid_Pattern_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Lined_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Lined_Pattern_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Random_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Random_Pattern_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Time_Chart_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Time_Chart_GR"/>
@@ -1939,6 +2126,22 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Translucent_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Translucent_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparent_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparent_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Transparency_Named_VA"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Triangular_Shape -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Triangular_Shape">
@@ -1965,6 +2168,14 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Orientation">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Vertical_Texture_VA">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA"/>
     </NamedIndividual>
     
 
@@ -2056,6 +2267,14 @@
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
         <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Color_Named_VA"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Optics_VA"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_VA"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Comparison_Task"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correlation_Task"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
@@ -2070,14 +2289,6 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Complex_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Hybrid_GR"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Primary_GR"/>
-        </members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Composite_Metric_Space_GS"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Elementary_Metric_Space_GS"/>
-            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Axis_GS"/>
         </members>
     </rdf:Description>
     <rdf:Description>
@@ -2116,6 +2327,14 @@
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Position_Named_VA"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Size_Named_VA"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Granularity_Named_VA"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Orientation_Named_VA"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Texture_Pattern_Named_VA"/>
         </members>
     </rdf:Description>
     <rdf:Description>
