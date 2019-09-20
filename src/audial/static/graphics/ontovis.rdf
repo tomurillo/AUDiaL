@@ -366,6 +366,8 @@
 
     <DatatypeProperty rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#has_color">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Object"/>
+        <rdfs:comment>The color of a graphic object given by its hexadecimal 8-bit RGB representation e.g. #1A2B9F.</rdfs:comment>
     </DatatypeProperty>
     
 
@@ -715,15 +717,6 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing -->
 
     <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Graphic_Thing"/>
-    
-
-
-    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR -->
-
-    <Class rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_Anchoring"/>
-        <disjointWith rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Metric_Bar_SR"/>
-    </Class>
     
 
 
@@ -1182,7 +1175,7 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Axis_SR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Axis_SR">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_Anchoring"/>
     </NamedIndividual>
     
 
@@ -1602,7 +1595,7 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Grid_Line_SR"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_Anchoring"/>
     </NamedIndividual>
     
 
@@ -1713,6 +1706,38 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Literal_Correspondence">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Correspondence"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Above_Center -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Above_Center">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Below_Center -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Below_Center">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Left_Center -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Left_Center">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Right_Center -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Little_Right_Center">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Position_Named_VA"/>
     </NamedIndividual>
     
 
@@ -1831,6 +1856,15 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Nominal_Information">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Information_Type"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_SR -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_SR">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Object_Anchoring"/>
+        <rdfs:comment>Graphic object connected to the end of a directed connector in a linking graphic relation</rdfs:comment>
     </NamedIndividual>
     
 
@@ -2016,15 +2050,22 @@
 
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Star_Shape -->
 
-    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Star_Shape">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
-    </NamedIndividual>
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Star_Shape"/>
     
 
 
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Statistical_Chart_GR -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Statistical_Chart_GR"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Subject_SR -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Subject_SR">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Object_Anchoring"/>
+        <rdfs:comment>Graphic object connected to the beginning of a directed connector in a linking graphic relation</rdfs:comment>
+    </NamedIndividual>
     
 
 
@@ -2204,6 +2245,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Volume_Locator_SR -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Volume_Locator_SR">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Where_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Where_Task">
@@ -2231,6 +2280,62 @@
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Yellow">
         <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#asterisk_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#asterisk_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#3_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#3_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#4_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#4_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#5_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#5_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#6_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#6_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#7_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#7_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#8_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#8_point_star_shape">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Shape_VA"/>
     </NamedIndividual>
     
 
