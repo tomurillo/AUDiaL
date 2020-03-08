@@ -1465,6 +1465,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Kurtosis_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Kurtosis_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Median_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Median_Task">
@@ -1486,6 +1494,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_STD_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_STD_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Sum_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Sum_Task">
@@ -1493,6 +1509,14 @@
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">add</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">combine</ns1:task_has_verbalization>
         <ns1:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sum</ns1:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Variance_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Compute_Variance_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Derived_Value_Task"/>
     </NamedIndividual>
     
 
@@ -2144,6 +2168,22 @@
     
 
 
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Adjacent_Task -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Adjacent_Task">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_History -->
+
+    <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_History">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Value_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Retrieve_Value_Task">
@@ -2262,7 +2302,7 @@
     <!-- http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task -->
 
     <NamedIndividual rdf:about="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Summary_Task">
-        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Reading_Task"/>
+        <rdf:type rdf:resource="http://www.semanticweb.org/ak116252/ontologies/2015/2/upper-visualization#Distribution_Task"/>
     </NamedIndividual>
     
 

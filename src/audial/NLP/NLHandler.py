@@ -52,20 +52,22 @@ class NLHandler(object):
         if type(ptree) is nltk.Tree:
             for child in ptree:
                 if type(child) is nltk.Tree:
+                    child_label = child.label()
                     if child.height() == 2: # Pre-terminal
-                        if child.label() in labels:
-                            child[0] = self._lemmatizeWord(child[0], lemma)
+                        if child_label in labels:
+                            child[0] = self._lemmatizeWord(child[0], lemma, child_label)
                         else:
                             self.lemmatizeTree(child, lemma)
                 elif ptree.label() in labels:
-                    ptree[0] = self._lemmatizeWord(child, lemma)
+                    ptree[0] = self._lemmatizeWord(child, lemma, ptree.label())
         return ptree
 
-    def _lemmatizeWord(self, word, lemma):
+    def _lemmatizeWord(self, word, lemma, pos=None):
         """
         Lemmatizes a single word
         :param ptree: a string
         :param lemma: an instantiated lemmatizer
+        :param pos: a Treebank II POS tag
         :return: lemmatized sting
         """
         l = ''
@@ -73,7 +75,9 @@ class NLHandler(object):
             if word.lower() in HARD_LEMMA:
                 l = HARD_LEMMA[word.lower()]
             else:
-                l = lemma.lemmatize(word)
+                if pos is None:
+                    pos = ''
+                l = lemma.lemmatize(word, wordNetPoSFromTreebank(pos))
         return l
 
 
@@ -176,3 +180,19 @@ def soundex(word):
         soundex = soundex.replace(".", "")
         soundex = soundex[:4].ljust(4, "0")
     return soundex
+
+
+def wordNetPoSFromTreebank(tbank_tag):
+    """
+    Returns the equivalent WordNet part-of-speech tag given a Treebank II POS tag
+    :param tbank_tag: string; a Treebank II POS tag
+    :return: string; equivalent WordNet POS tag
+    """
+    if tbank_tag.startswith('J'):
+        return wn.ADJ
+    elif tbank_tag.startswith('V'):
+        return wn.VERB
+    elif tbank_tag.startswith('R'):
+        return wn.ADV
+    else:
+        return wn.NOUN
