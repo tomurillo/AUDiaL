@@ -289,7 +289,6 @@ def getLabelOfPOC(poc):
     :param poc: POC instance
     :return: string; syntactic label of the root of the POC's tree
     """
-
     label = ''
     if poc.tree:
         label = poc.tree.label()

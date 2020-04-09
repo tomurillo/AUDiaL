@@ -89,7 +89,8 @@ class POC(object):
         if type(d) is dict:
             from nltk import Tree
             tree = d.get('tree')
-            self.tree = Tree.fromstring(tree) if tree else None
+            if tree and tree != 'None':
+                self.tree = Tree.fromstring(tree)
             self.rawText = d.get('rawText', '')
             modif = d.get('modifiers', [])
             self.modifiers = [Tree.fromstring(m) for m in modif]
