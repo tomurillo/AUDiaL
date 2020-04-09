@@ -260,19 +260,42 @@ def pathBetweenAnnotations(ptree, ann1, ann2):
     :param ann2: Annotation or POC instance
     :return: list<str> Path of nodes between the parse trees of ann1 and ann2 in ptree
     """
+    from NLP.model.POC import POC
     path = []
     if ptree and ann1.start > -1 and ann2.end > -1:
+        if isinstance(ann1, POC):
+            root1 = getLabelOfPOC(ann1)
+        else:
+            root1 = ann1.tree.label()
+        if isinstance(ann2, POC):
+            root2 = getLabelOfPOC(ann2)
+        else:
+            root2 = ann1.tree.label()
         leafs_path = pathBetweenLeafs(ptree, ann1.start, ann2.end)
-        root1 = ann1.tree.label()
         i = 0
         while i < len(leafs_path) and leafs_path[i] != root1:
             i += 1
-        root2 = ann2.tree.label()
         j = len(leafs_path) - 1
         while j >= 0 and leafs_path[j] != root2:
             j -= 1
         path = leafs_path[i:j+1]
     return path
+
+
+def getLabelOfPOC(poc):
+    """
+    Return the root label of a POC. If the POC does not have an associated Parse Tree (most likely because of being
+    a determinant), search for it in its modifiers
+    :param poc: POC instance
+    :return: string; syntactic label of the root of the POC's tree
+    """
+
+    label = ''
+    if poc.tree:
+        label = poc.tree.label()
+    elif poc.modifiers:
+        label = poc.modifiers[0].label()
+    return label
 
 
 def treeDepth(ptree):
