@@ -51,6 +51,7 @@ class Mapper(object):
                 if types_found:
                     ann.inOntology = True
                     ann.oc_type = types_found
+                    ann.isSynonym = True
                     ann.text = types_found[types_found.keys()[0]]  # Ignore other synonyms for now
             self.updateAnnotationExtras(ann, o)
         q.annotations = clean_anns
