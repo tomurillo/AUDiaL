@@ -1,0 +1,2757 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ontovis="http://ontovis.integriert-studieren.jku.at/ontovis-full#">
+    <Ontology rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#appropiate_for -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#appropiate_for">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation_Subject"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#belongs_to_visual_layer -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#belongs_to_visual_layer">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#depends_on_variable -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#depends_on_variable">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Dependent_Variable"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Independent_Variable"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#expresses_information -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#expresses_information"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_color_named -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_color_named">
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_correspondence -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_correspondence">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_correspondence_of"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_elementary_object -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_elementary_object">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_composite_symbol"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Symbol"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO"/>
+        <rdfs:comment>A link between a Composite Symbol and its constituent Elementary Objects</rdfs:comment>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_object -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_object">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_graphic_object"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_space -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_space">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_graphic_space_of"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_information_type -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_information_type">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_informational_role -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_informational_role">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_orientation_named -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_orientation_named">
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_position_named -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_position_named">
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_shape -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_shape">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_syntactic_role -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_syntactic_role">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_syntactic_role_of"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_visual_attribute -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_visual_attribute">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_attribute_of"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_visual_layer -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_visual_layer">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_layer_of"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#involves_graphic_object -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#involves_graphic_object">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#involves_graphic_space -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#involves_graphic_space">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Space_GS"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_above_visual_layer -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_above_visual_layer">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_below_visual_layer -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_below_visual_layer">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_correspondence_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_correspondence_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_graphic_space_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_graphic_space_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_informational_role_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_informational_role_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_label_for -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_label_for">
+        <inverseOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_labeled_by"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_labeled_by -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_labeled_by">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_composite_symbol -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_composite_symbol">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_graphic_object -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_part_of_graphic_object"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_syntactic_role_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_syntactic_role_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_attribute_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_attribute_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_layer_of -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_visual_layer_of">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+        <rdfs:range rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#related_to -->
+
+    <ObjectProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#related_to">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable"/>
+    </ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#LocationPoint -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#LocationPoint"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#hasSVGElement -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#hasSVGElement">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ID of an SVG Element belonging to an instance (annotation)</rdfs:comment>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#hasXCoordinate -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#hasXCoordinate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Coordinate on the horizontal axis of a visual object.</rdfs:comment>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#hasYCoordinate -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#hasYCoordinate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Coordinate on the vertical axis of a visual object.</rdfs:comment>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_area -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_area">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_brightness -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_brightness">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_color -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_color">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:comment>The color of a graphic object given by its hexadecimal 8-bit RGB representation e.g. #1A2B9F.</rdfs:comment>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_hue -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_hue">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_length -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_length">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_orientation -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_orientation">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_saturation -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_saturation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_text -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_text">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Textual value associated to an element (e.g. text of a label)</rdfs:comment>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#has_width -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_width">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#locationPointX -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#locationPointX"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#locationPointY -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#locationPointY"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#task_has_verbalization -->
+
+    <DatatypeProperty rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#task_has_verbalization">
+        <rdfs:domain rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Arbitrary_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Arbitrary_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Meaningful_GS"/>
+        <rdfs:comment>A graphic space in which no spatial (i.e. object-to-space) Graphic Relations take place</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Area-Fill_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Area-Fill_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA"/>
+        <rdfs:comment>A visual attribute that, when varied, does not alter any point of the anchoring to graphic space of its graphic object.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_GR"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in visual attributes such as size and color (besides position)</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#O2O_GR_Subject"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in blur</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Optics_VA"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Chart_Domain -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Chart_Domain"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>Graphic objects taking part in a clustering graphic relation are visually perceived as being in close proximity to each other forming a single, higher-level, entity i.e. a cluster</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Color-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in color</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Area-Fill_VA"/>
+        <rdfs:comment>A non-exhaustive enumeration of named colors</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A task that contrasts attribute values of several data cases according to the user’s needs. The comparison may take place between (filtered) data cases themselves or between data cases and an external value of interest.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Complex_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Complex_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Representation"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_GO -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_GO">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_object"/>
+                <someValuesFrom rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO"/>
+        <rdfs:comment>A graphic object (with the exception of Composite Symbol) made up of an aggregation of more than one elementary graphic object</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Symbol"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Space_GS"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_Metric_Space_GS"/>
+        <rdfs:comment>A Metric Graphic Space made up of two or more independent Graphic Spaces e.g. the space between the two axes of a scatterplot</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Symbol -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Composite_Symbol">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_elementary_object"/>
+                <someValuesFrom rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A Graphic Object that is composed of a small number of elementary graphic objects (often two) which are arranged in a conventionally fixed arrangement (Engelhardt 2002)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Connector_SR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Connector_SR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>A kind of spatial Graphic Relation in which two graphic objects take part: one named container and another, physically enclosed in its entirety within the container, called content or simply node</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlation_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlation_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A task that deals with finding existing dependencies between data cases</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment>The type of correspondence between what is shown and what is meant (Engelhardt 2002)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Data -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Data"/>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Dependent_Variable -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Dependent_Variable">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Independent_Variable"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A task that computes a numerical aggregation of data cases of interest providing a statistical summary thereof</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Distorted_Elementary_Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distorted_Elementary_Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_Metric_Space_GS"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Integral_Metric_Space_GS"/>
+        <rdfs:comment>An Elementary Metric Graphic Space in which the order and approximate direction between graphic objects is preserved, but the ratios of spatial directions are not (Engelhardt 2002)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Distorted_Integral_Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distorted_Integral_Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Integral_Metric_Space_GS"/>
+        <rdfs:comment>An Integral Metric Graphic Space in which the order and approximate direction between graphic objects is preserved, but the ratios of spatial directions are not</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A task concerned with the study of the empirical measure of certain attributes of  data cases. An answer to a Distribution Task cannot be expressed by means of a single numerical aggregation, requiring longer verbal descriptions</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_GO">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:comment>An atomic Graphic Object with regards to its syntactic interpretation</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Space_GS"/>
+        <rdfs:comment>A Metric Space that cannot be decomposed into smaller Graphic Spaces without losing interpretability</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#hasXCoordinate"/>
+                <qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</qualifiedCardinality>
+                <onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#hasYCoordinate"/>
+                <qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</qualifiedCardinality>
+                <onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A perceivable unit that takes part in a graphic representation.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment>A graphic relation underpins a meaningful interpretation from the relative context of two or more graphic resources i.e., from the way they relate to each other by comparing some of their visual characteristics, such as their relative positions or sizes.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation_Subject -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation_Subject">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Representation -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Representation">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Image"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#is_graphic_space_of"/>
+                <someValuesFrom rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Image"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>The mental construction of one-, two- or three-dimensional spaces that Graphic Objects occupy</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Subject -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Subject">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment>Individuals representing classes of the Graphic Thing hierarchy. Included for OWL DL compliance purposes.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing">
+        <rdfs:comment>This class is the root of the taxonomic tree for the visualization vocabulary</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Grouping_Diagram_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Grouping_Diagram_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Hybrid_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Hybrid_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Representation"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Image -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Image">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#has_graphic_object"/>
+                <someValuesFrom rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Independent_Variable -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Independent_Variable">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Data"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Integral_Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Integral_Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Elementary_Metric_Space_GS"/>
+        <rdfs:comment>A two- or three-dimensional Graphic Space in which all geometric properties of Euclidian space are subject to interpretation (Engelhardt 2002)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>Graphic objects taking part in lineups are arranged in a visually perceivable line, each of them having two immediate neighbors in the resulting ‘chain’ of objects, except for those placed at either end</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Link_Diagram_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Link_Diagram_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>A kind of spatial Graphic Relation made up of three Graphic Objects, two of which are syntactically related in the diagram; and a third one (the connector) bringing forward the relationship between the other two graphic objects by physically connecting them, most commonly in the shape of a straight or curved line segment</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_O2O_GR_Subject"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Map_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Map_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Meaningful_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Meaningful_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+        <rdfs:comment>A Graphic Space which is occupied by Graphic Objects taking part in at least one Spatial Graphic Relation</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Space_GS -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Space_GS">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Meaningful_GS"/>
+        <rdfs:comment>A Graphic Space in which the absolute positioning of Graphic Objects contained therein is subject to strict interpretation</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A tasks that allows users to explore a data visualization in order to get acquainted with it in a general manner before delving into it through the execution of more goal-oriented tasks</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#O2O_GR_Subject -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#O2O_GR_Subject">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+        <disjointWith rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR"/>
+        <rdfs:comment>A graphic relation involving two or more graphic object instances semantically anchored to each other.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+        <rdfs:comment>A meaningful relationship between a graphic object instance and a metric graphic space instance.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Meaningful_GS"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Optics_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Optics_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Area-Fill_VA"/>
+        <rdfs:comment>The category of area-fill Visual Attributes including transparency and blur</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordered_Lineup_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordered_Lineup_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR"/>
+        <rdfs:comment>A special kind of Lineup Graphic Relation in which its constituent Graphic Objects have an associated order; altering the position on an object within the lineup alters the intended meaning of the representation (Engelhardt 2002)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in their orientation</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Photograph_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Photograph_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Picture_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Picture_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Representation"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Division_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Division_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_GR"/>
+        <rdfs:comment>A Containment Graphic Relation in which the container Graphic Object is physically divided into a number of contained Graphic Objects taking up the entirety of its area</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Repetition_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Repetition_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR"/>
+        <rdfs:comment>A special kind of Lineup Graphic Relation which consists of an alignment of identical copies of the same graphic object, as opposed to traditional lineups which can be made up of any number of dissimilar graphic objects.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        <rdfs:comment>A simple analytical task whose goal is to retrieve certain data cases or attributes thereof according to some conditions wihtout comparing or correlating values or attributes between data cases</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Reference_Object_IR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reference_Object_IR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_By_Separator_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_By_Separator_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>A kind of object-to-object Graphic Relation in which its constituent Graphic Objects are grouped into clusters by employing another Graphic Object with the syntactic role of separator. The separator is most commonly drawn as a line segment dividing the space occupied by the graphic objects in two parts.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_by_Separator_O2O_GR_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separator_SR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in their shapes</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Size-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in size</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects that depends on the relative position of the objects with respect to each other e.g. points in a cluster</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#O2O_GR_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute"/>
+        <rdfs:comment>A visual attribute that, when varied, alters at least some points of the anchoring to graphic space of its graphic object.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Statistical_Chart_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Statistical_Chart_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR"/>
+        <rdfs:comment>This kind of Graphic Relation has two associated Graphic Objects: one in the foreground and another one in the background partially occluded by the former</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Symbol_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Symbol_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment>Superclass of Syntactic Roles for Graphic Objects taking part in Graphic Relations</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Table_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Table_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in texture</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Granularity_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Granularity_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Area-Fill_VA"/>
+        <rdfs:comment>The Visual Attribute corresponding to the number of separable marks contained in a unitary area (Bertin 2011)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Time_Chart_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Time_Chart_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency-based_O2O_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency-based_O2O_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR"/>
+        <rdfs:comment>A graphic relation between graphic objects involving variations in their transparency</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Optics_VA"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Variable">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Chart_Domain"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A visually perceivable attribute of a graphic object.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+        <rdfs:comment>A visual layer corresponds to a certain depth level in the equivalent mental space of a diagram, where depth is interpreted as a discrete sequence of levels or “layers”. Visual layers belong to a certain graphic space.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task">
+        <rdfs:comment>This class is the root of the taxonomic tree for the visualization task vocabulary of the Visualization Task Ontology (VTO)</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Written_Text_GR -->
+
+    <Class rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Written_Text_GR">
+        <rdfs:subClassOf rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+    </Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Apply_Query_Filter_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Apply_Query_Filter_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Arbitrary-Conventional_Correspondence -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Arbitrary-Conventional_Correspondence">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+        <rdfs:comment>The type of graphic correspondence in which what is shown seems to stand for what is meant by pure convention (Engelhardt 2002)</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Axis_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Axis_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Big_Size -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Big_Size">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Black -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Black">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Blue -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blue">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Left_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Left_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Middle_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Middle_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Right_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Bottom_Right_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Brown -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Brown">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+        <sameAs rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Quantitative_Information"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Center_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Center_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Characterize_Distribution_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Characterize_Distribution_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">distributed</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">distribution</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">organized</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Circle_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Circle_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Cluster_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cluster_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlation_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cluster</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">group</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Coarse_Grained_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Coarse_Grained_Texture_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Granularity_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compare_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compare_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">compare</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Average_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Average_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">average</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mean</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Kurtosis_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Kurtosis_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Median_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Median_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">median</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">middle</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">midpoint</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Mode_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Mode_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mode</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">most common</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_STD_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_STD_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Sum_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Sum_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">add</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">combine</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sum</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Variance_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Compute_Variance_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Concave_Curve_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Concave_Curve_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Container_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Container_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Content_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Content_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Convex_Curve_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Convex_Curve_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlate_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlate_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Count_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Count_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">count</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how many</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Cyan -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cyan">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Decoration_Object -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Decoration_Object">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Determine_Range_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Determine_Range_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bounds</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">domain</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">extent</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">range</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scope</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">spectrum</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Left_Orientation -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Left_Orientation">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Right_Orientation -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Right_Orientation">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Diagonal_Texture_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Directed_Connector_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Directed_Connector_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Connector_SR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Filter_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Filter_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Anomalies_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Anomalies_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anomalies</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">exceptions</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">outliers</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Extremum_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Extremum_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">extremes</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Maximum_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Maximum_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">biggest</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">highest</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">largest</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">maximum</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">most</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">topmost</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">utmost</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Minimum_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Find_Minimum_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">least</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lowest</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">minimum</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">smallest</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Fine_Grained_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Fine_Grained_Texture_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Granularity_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_First_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_First_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Highest_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Highest_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Home_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Home_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Last_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Last_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Lowest_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Go_to_Lowest_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Green -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Green">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Grey -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Grey">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Grid_Line_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Grid_Line_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Horizontal_Orientation -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Horizontal_Orientation">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Horizontal_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Horizontal_Texture_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Object -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Object">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Intense_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Intense_Blur_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Jump_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Jump_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">go</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">go to</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">goto</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">jump</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">move to</ontovis:task_has_verbalization>
+        <rdfs:comment>Immediately move from the current node to another one, skipping any intermediate ones.</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Label_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Label_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Legend_Reference_Object_IR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Legend_Reference_Object_IR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reference_Object_IR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Line_Locator_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Line_Locator_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Line_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Line_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Literal_Correspondence -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Literal_Correspondence">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+        <rdfs:comment>The type of graphic correspondence which is based on similarity to the physical object or physicall structure that is meant, or on similarity to a prototypical example of the kind of physical object that is mean (Engelhardt 2002)</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Above_Center -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Above_Center">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Below_Center -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Below_Center">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Left_Center -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Left_Center">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Right_Center -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Little_Right_Center">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Medium_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Medium_Blur_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Medium_Size -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Medium_Size">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Metaphoric_Correspondence -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metaphoric_Correspondence">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+        <rdfs:comment>Type of graphic correspondence based on a (supposed) analogy between what is shown and what is meant (Engelhardt 2002)</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Middle_Left_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Middle_Left_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Middle_Right_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Middle_Right_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Modifier_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Modifier_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Down_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Down_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Left_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Left_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Right_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Right_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Up_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Move_Up_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#No_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#No_Blur_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Node_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Node_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#O2S_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#O2S_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+        <rdfs:comment>Graphic object connected to the end of a directed connector in a linking graphic relation</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Opaque_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Opaque_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Orange -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orange">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordered_Lineup_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordered_Lineup_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordered_Lineup_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Pink -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Pink">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Point_Locator_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Point_Locator_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Polygon_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Polygon_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Division_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Division_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Division_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Repetition_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Repetition_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Proportional_Repetition_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Quantitative_Information -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Quantitative_Information">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Information_Type"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Rebus-Based_Correspondence -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Rebus-Based_Correspondence">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+        <rdfs:comment>The type of graphic correspondence which is based on the fact that (part of) the spoken word for what is shown sounds like (part of) the spoken word for what is meant (Engelhardt 2002)</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Rectangle_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Rectangle_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Red -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Red">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Reset_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reset_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_Adjacent_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_Adjacent_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_History -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_History">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_Value_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Retrieve_Value_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_by_Separator_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_by_Separator_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_By_Separator_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Separator_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separator_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Set_Home_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Set_Home_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Nominal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Slight_Blur_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Slight_Blur_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Small_Size -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Small_Size">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Sort_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Sort_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">arrange</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rank</ontovis:task_has_verbalization>
+        <ontovis:task_has_verbalization rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sort</ontovis:task_has_verbalization>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_Reference_Object_IR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_Reference_Object_IR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reference_Object_IR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Square_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Square_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Stacked_Bar_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Stacked_Bar_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Metric_Bar_SR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Subject_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Subject_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Object_Anchoring"/>
+        <rdfs:comment>Graphic object connected to the beginning of a directed connector in a linking graphic relation</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Summary_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Summary_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Spatial_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Surface_Locator_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Surface_Locator_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Dotted_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Dotted_Pattern_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Grid_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Grid_Pattern_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Lined_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Lined_Pattern_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Ordinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Random_Pattern_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Random_Pattern_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Left_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Left_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Middle_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Middle_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Right_Position -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Top_Right_Position">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Translucent_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Translucent_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_O2O_GR_Subject -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_O2O_GR_Subject">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Attribute-based_O2O_GR_Subject"/>
+        <ontovis:appropiate_for rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Cardinal_Information"/>
+        <rdfs:seeAlso rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency-based_O2O_GR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparent_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparent_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Triangular_Shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Triangular_Shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Undirected_Connector_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Undirected_Connector_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Connector_SR"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Vertical_Orientation -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Vertical_Orientation">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Vertical_Texture_VA -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Vertical_Texture_VA">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Very_Big_Size -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Very_Big_Size">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Very_Small_Size -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Very_Small_Size">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Violet -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Violet">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Volume_Locator_SR -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Volume_Locator_SR">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Object_to_Space_Anchoring"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Where_Task -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Where_Task">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+        <rdfs:comment>&apos;Where am I?&apos; i.e. obtain information about the node in the current position</rdfs:comment>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#White -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#White">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#Yellow -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Yellow">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#asterisk_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#asterisk_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#3_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#3_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#4_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#4_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#5_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#5_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#6_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#6_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#7_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#7_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- http://ontovis.integriert-studieren.jku.at/ontovis-full#8_point_star_shape -->
+
+    <NamedIndividual rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#8_point_star_shape">
+        <rdf:type rdf:resource="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+    </NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Blur-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture-based_O2O_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Transparency-based_O2O_GR"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Chart_Domain"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Data"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Thing"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visualization_Task"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Clustering_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Containment_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Lineup_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Linking_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Separation_By_Separator_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Superimposition_GR"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Color_Named_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Optics_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_VA"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Comparison_Task"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correlation_Task"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Derived_Value_Task"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Distribution_Task"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Navigation_Task"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Reading_Task"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Complex_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Hybrid_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Primary_GR"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Correspondence"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Object"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Relation"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Graphic_Space"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Image"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Informational_Role"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Syntactic_Role"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Attribute"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Visual_Layer"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Grouping_Diagram_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Link_Diagram_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Map_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Photograph_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Picture_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Statistical_Chart_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Symbol_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Table_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Time_Chart_GR"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Written_Text_GR"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Orientation_Named_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Position_Named_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Shape_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Size_Named_VA"/>
+        </members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Granularity_Named_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Orientation_Named_VA"/>
+            <rdf:Description rdf:about="http://ontovis.integriert-studieren.jku.at/ontovis-full#Texture_Pattern_Named_VA"/>
+        </members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.6.2018-09-06T00:27:41Z) https://github.com/owlcs/owlapi -->
+
