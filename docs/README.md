@@ -1,6 +1,6 @@
 # Documentation
 
-This directory contains documents in relation with AUDiaL:
+This directory contains documents in relation to AUDiaL:
 
 * [PhD thesis](thesis) in LaTeX and PDF formats.
 * [Defense slides](defense) in LaTeX and PDF formats.
