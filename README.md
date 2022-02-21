@@ -22,7 +22,7 @@ The block diagram above outlines the most relevant components of the proposed fr
 * Output of task result to the user in natural language
 * An accessible Web-based User Interface allowing blind users to access the prototype in an efficient manner
 
-In-depth information about the AUDiaL and its general framework can be consulted in the [`docs`](docs) directory of this repository.
+In-depth information about AUDiaL and its general framework can be found in the [`docs`](docs) directory of this repository.
 
 ## Install (Apache Server)
 
